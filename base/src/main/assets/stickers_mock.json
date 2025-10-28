@@ -1,0 +1,163 @@
+{
+  "status": "success",
+  "data": {
+    "stickers": [
+      {
+        "id": 1,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/3d-emoji-sticker.gif"
+      },
+      {
+        "id": 2,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/angry-3d-sticker.gif"
+      },
+      {
+        "id": 3,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/baby-monkey-sticker-by-nuby-usa.gif"
+      },
+      {
+        "id": 4,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/balloon-air-sticker.gif"
+      },
+      {
+        "id": 5,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/bored-thinking-sticker-by-jin.gif"
+      },
+      {
+        "id": 6,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/cartoon-waiting-sticker-by-whitaswhit.gif"
+      },
+      {
+        "id": 7,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/crypto-playing-sticker-by-abster.gif"
+      },
+      {
+        "id": 8,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/excited-celebration-sticker.gif"
+      },
+      {
+        "id": 9,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/flying-hot-air-balloon-sticker-(3).gif"
+      },
+      {
+        "id": 10,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/flying-hot-air-balloon-sticker.gif"
+      },
+      {
+        "id": 11,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/fun-disappear-sticker.gif"
+      },
+      {
+        "id": 12,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/fun-shaking-sticker-by-simon-falk.gif"
+      },
+      {
+        "id": 13,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/girl-pink-sticker-by-reon-comics.gif"
+      },
+      {
+        "id": 14,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/good-thing-sticker.gif"
+      },
+      {
+        "id": 15,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/happy-3d-sticker.gif"
+      },
+      {
+        "id": 16,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/happy-fun-sticker-by-atamin.gif"
+      },
+      {
+        "id": 17,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/happy-fun-sticker-by-shelby-play.gif"
+      },
+      {
+        "id": 18,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/happy-fun-sticker.gif"
+      },
+      {
+        "id": 19,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/happy-i-love-you-sticker-by-ashleyblanchette.gif"
+      },
+      {
+        "id": 20,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/happy-in-love-sticker.gif"
+      },
+      {
+        "id": 21,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/heart-love-sticker-(1).gif"
+      },
+      {
+        "id": 22,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/heart-love-sticker-(2).gif"
+      },
+      {
+        "id": 23,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/heart-love-sticker.gif"
+      },
+      {
+        "id": 24,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/i-love-you-heart-sticker-by-bombonator_wolph.gif"
+      },
+      {
+        "id": 25,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/i-love-you-heart-sticker-by-simon-falk.gif"
+      },
+      {
+        "id": 26,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/i-love-you-spinning-sticker-by-bikini-junkie-(1).gif"
+      },
+      {
+        "id": 27,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/i-love-you-spinning-sticker-by-bikini-junkie.gif"
+      },
+      {
+        "id": 28,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/in-love-heart-sticker.gif"
+      },
+      {
+        "id": 29,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/love-you-heart-sticker.gif"
+      },
+      {
+        "id": 30,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/merry-christmas-sticker.gif"
+      },
+      {
+        "id": 31,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/party-celebrate-sticker.gif"
+      },
+      {
+        "id": 32,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/party-loop-sticker.gif"
+      },
+      {
+        "id": 33,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/party-wow-sticker.gif"
+      },
+      {
+        "id": 34,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/relax-swing-sticker-by-ottersmile.gif"
+      },
+      {
+        "id": 35,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/sad-rabbit-sticker-by-muffin-&-nuts.gif"
+      },
+      {
+        "id": 36,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/sticker-3d-sticker-by-simon-falk.gif"
+      },
+      {
+        "id": 37,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/swinging-love-you-sticker.gif"
+      },
+      {
+        "id": 38,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/teddy-bear-love-sticker-by-bearish.gif"
+      },
+      {
+        "id": 39,
+        "gifUrl": "https://openai.amobear.com/2025_battery_icon/images/sticker/vitamin-c-sticker-by-scott's.gif"
+      }
+    ]
+  }
+}

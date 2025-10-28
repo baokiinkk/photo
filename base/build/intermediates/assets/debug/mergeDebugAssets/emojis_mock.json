@@ -1,0 +1,397 @@
+{
+  "status": "success",
+  "data": {
+    "emojis": [
+      {
+        "id": "01",
+        "name": "HOT",
+        "items": [
+          {
+            "id": "1",
+            "name": "Cartoon Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "2",
+            "name": "Cartoon Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "7",
+            "name": "Cartoon Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "12",
+            "name": "Cartoon Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "02",
+        "name": "Demon Slayer",
+        "items": [
+          {
+            "id": "3",
+            "name": "Nature Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "4",
+            "name": "Nature Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "8",
+            "name": "Nature Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "13",
+            "name": "Nature Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "03",
+        "name": "Halloween",
+        "items": [
+          {
+            "id": "5",
+            "name": "Heart Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "6",
+            "name": "Heart Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "9",
+            "name": "Heart Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "14",
+            "name": "Heart Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "04",
+        "name": "Sanrio",
+        "items": [
+          {
+            "id": "10",
+            "name": "K-Pop Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "11",
+            "name": "K-Pop Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "15",
+            "name": "K-Pop Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "16",
+            "name": "K-Pop Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "05",
+        "name": "Huntrix",
+        "items": [
+          {
+            "id": "17",
+            "name": "Hot Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "18",
+            "name": "Hot Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "19",
+            "name": "Hot Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "20",
+            "name": "Hot Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "06",
+        "name": "K-Pop",
+        "items": [
+          {
+            "id": "17",
+            "name": "Hot Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "18",
+            "name": "Hot Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "19",
+            "name": "Hot Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "20",
+            "name": "Hot Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "07",
+        "name": "Anime",
+        "items": [
+          {
+            "id": "17",
+            "name": "Hot Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "18",
+            "name": "Hot Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "19",
+            "name": "Hot Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "20",
+            "name": "Hot Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "08",
+        "name": "Actor",
+        "items": [
+          {
+            "id": "17",
+            "name": "Hot Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "18",
+            "name": "Hot Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "19",
+            "name": "Hot Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "20",
+            "name": "Hot Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "09",
+        "name": "Cartoon",
+        "items": [
+          {
+            "id": "17",
+            "name": "Hot Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "18",
+            "name": "Hot Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "19",
+            "name": "Hot Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "20",
+            "name": "Hot Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "10",
+        "name": "Brainrot",
+        "items": [
+          {
+            "id": "17",
+            "name": "Hot Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "18",
+            "name": "Hot Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "19",
+            "name": "Hot Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "20",
+            "name": "Hot Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "11",
+        "name": "Heart",
+        "items": [
+          {
+            "id": "17",
+            "name": "Hot Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "18",
+            "name": "Hot Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "19",
+            "name": "Hot Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "20",
+            "name": "Hot Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "12",
+        "name": "Nature",
+        "items": [
+          {
+            "id": "17",
+            "name": "Hot Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "18",
+            "name": "Hot Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "19",
+            "name": "Hot Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "20",
+            "name": "Hot Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "13",
+        "name": "Fruit",
+        "items": [
+          {
+            "id": "17",
+            "name": "Hot Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "18",
+            "name": "Hot Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "19",
+            "name": "Hot Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "20",
+            "name": "Hot Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "14",
+        "name": "Flower",
+        "items": [
+          {
+            "id": "17",
+            "name": "Hot Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "18",
+            "name": "Hot Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "19",
+            "name": "Hot Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "20",
+            "name": "Hot Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      },
+      {
+        "id": "15",
+        "name": "Food",
+        "items": [
+          {
+            "id": "17",
+            "name": "Hot Battery 1",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50b.png"
+          },
+          {
+            "id": "18",
+            "name": "Hot Battery 2",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f50c.png"
+          },
+          {
+            "id": "19",
+            "name": "Hot Battery 3",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a1.png"
+          },
+          {
+            "id": "20",
+            "name": "Hot Battery 4",
+            "icon_url": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26a1.png"
+          }
+        ]
+      }
+    ]
+  }
+}

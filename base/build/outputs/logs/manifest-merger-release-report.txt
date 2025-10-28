@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/baoho/development/freelance/statusbar/base/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest2645836693718934867.xml:2:13-83
+INJECTED from /Users/baoho/development/freelance/statusbar/base/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest2645836693718934867.xml:2:13-83
+	package
+		INJECTED from /Users/baoho/development/freelance/statusbar/base/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest2645836693718934867.xml
+	xmlns:android
+		ADDED from /Users/baoho/development/freelance/statusbar/base/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest2645836693718934867.xml:2:23-81
+uses-sdk
+INJECTED from /Users/baoho/development/freelance/statusbar/base/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest2645836693718934867.xml reason: use-sdk injection requested
+INJECTED from /Users/baoho/development/freelance/statusbar/base/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest2645836693718934867.xml
+INJECTED from /Users/baoho/development/freelance/statusbar/base/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest2645836693718934867.xml
+	android:targetSdkVersion
+		INJECTED from /Users/baoho/development/freelance/statusbar/base/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest2645836693718934867.xml
+	android:minSdkVersion
+		INJECTED from /Users/baoho/development/freelance/statusbar/base/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest2645836693718934867.xml

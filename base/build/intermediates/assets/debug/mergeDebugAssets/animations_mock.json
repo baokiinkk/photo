@@ -1,0 +1,103 @@
+{
+  "status": "success",
+  "data": {
+    "animations": [
+      {
+        "id": 1,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/bear-no-sticker.gif"
+      },
+      {
+        "id": 2,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/bear-wow-sticker.gif"
+      },
+      {
+        "id": 3,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/cat-hearts-sticker.gif"
+      },
+      {
+        "id": 4,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/cat-no-sticker.gif"
+      },
+      {
+        "id": 5,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/cat-sleep-sticker.gif"
+      },
+      {
+        "id": 6,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/cat-sticker.gif"
+      },
+      {
+        "id": 7,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/cutie-drool-sticker.gif"
+      },
+      {
+        "id": 8,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/eat-sticker.gif"
+      },
+      {
+        "id": 9,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/excited-cat-sticker.gif"
+      },
+      {
+        "id": 10,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/happy-birthday-love-sticker.gif"
+      },
+      {
+        "id": 11,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/happy-dance-sticker.gif"
+      },
+      {
+        "id": 12,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/happy-money-sticker.gif"
+      },
+      {
+        "id": 13,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/heart-love-sticker-1.gif"
+      },
+      {
+        "id": 14,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/heart-love-sticker.gif"
+      },
+      {
+        "id": 15,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/hello-kitty-pixel-sticker.gif"
+      },
+      {
+        "id": 16,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/in-love-stiker-1.gif"
+      },
+      {
+        "id": 17,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/in-love-stiker.gif"
+      },
+      {
+        "id": 18,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/love-stiker.gif"
+      },
+      {
+        "id": 19,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/my-melody-pixel-sticker.gif"
+      },
+      {
+        "id": 20,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/pixel-sticker.gif"
+      },
+      {
+        "id": 21,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/pride-love-sticker.gif"
+      },
+      {
+        "id": 22,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/relax-sticker.gif"
+      },
+      {
+        "id": 23,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/sad-apple-sticker.gif"
+      },
+      {
+        "id": 24,
+        "icon_url": "https://openai.amobear.com/2025_battery_icon/images/animation/tired-night-sticker.gif"
+      }
+    ]
+  }
+}

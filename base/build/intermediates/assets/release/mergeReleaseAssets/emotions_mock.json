@@ -1,0 +1,166 @@
+{
+  "status" : "success",
+  "data" : {
+    "emotions" : [ {
+      "id" : "01",
+      "items" : [ {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/01.webp",
+        "id" : "1_01"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/02.webp",
+        "id" : "1_02"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/03.webp",
+        "id" : "1_03"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/04.webp",
+        "id" : "1_04"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/05.webp",
+        "id" : "1_05"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/06.webp",
+        "id" : "1_06"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/07.webp",
+        "id" : "1_07"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/08.webp",
+        "id" : "1_08"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/09.webp",
+        "id" : "1_09"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/10.webp",
+        "id" : "1_10"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/11.webp",
+        "id" : "1_11"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/12.webp",
+        "id" : "1_12"
+      } ],
+      "name" : "Y2k"
+    }, {
+      "id" : "02",
+      "items" : [ {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/01.webp",
+        "id" : "2_01"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/02.webp",
+        "id" : "2_02"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/03.webp",
+        "id" : "2_03"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/04.webp",
+        "id" : "2_04"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/05.webp",
+        "id" : "2_05"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/06.webp",
+        "id" : "2_06"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/07.webp",
+        "id" : "2_07"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/08.webp",
+        "id" : "2_08"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/09.webp",
+        "id" : "2_09"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/10.webp",
+        "id" : "2_10"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/11.webp",
+        "id" : "2_11"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/12.webp",
+        "id" : "2_12"
+      } ],
+      "name" : "Emoji"
+    }, {
+      "id" : "03",
+      "items" : [ {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/01.webp",
+        "id" : "3_01"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/02.webp",
+        "id" : "3_02"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/03.webp",
+        "id" : "3_03"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/04.webp",
+        "id" : "3_04"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/05.webp",
+        "id" : "3_05"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/06.webp",
+        "id" : "3_06"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/07.webp",
+        "id" : "3_07"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/08.webp",
+        "id" : "3_08"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/09.webp",
+        "id" : "3_09"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/10.webp",
+        "id" : "3_10"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/11.webp",
+        "id" : "3_11"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/12.webp",
+        "id" : "3_12"
+      } ],
+      "name" : "Heart"
+    }, {
+      "id" : "04",
+      "items" : [ {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/01.webp",
+        "id" : "4_01"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/02.webp",
+        "id" : "4_02"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/03.webp",
+        "id" : "4_03"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/04.webp",
+        "id" : "4_04"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/05.webp",
+        "id" : "4_05"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/06.webp",
+        "id" : "4_06"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/07.webp",
+        "id" : "4_07"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/08.webp",
+        "id" : "4_08"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/09.webp",
+        "id" : "4_09"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/10.webp",
+        "id" : "4_10"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/11.webp",
+        "id" : "4_11"
+      }, {
+        "icon_url" : "https://openai.amobear.com/2025_battery_icon/images/emotions/12.webp",
+        "id" : "4_12"
+      } ],
+      "name" : "Fruits"
+    } ]
+  }
+}

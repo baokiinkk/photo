@@ -1,0 +1,335 @@
+<resources>
+    <string name="app_name">Emoji Battery App</string>
+    <string name="title_settings">Setting</string>
+    <string name="setting_language">Language</string>
+    <string name="setting_rate_app">Rate</string>
+    <string name="setting_send_feedback">Send Feedback</string>
+    <string name="setting_share_app">Share app</string>
+    <string name="setting_gdpr">GDPR</string>
+    <string name="setting_privacy_policy">Privacy Policy</string>
+    <!-- Language Selection -->
+    <string name="choose_language">Choose language</string>
+    <string name="language_changed">Language changed successfully</string>
+    <string name="language_change_failed">Failed to change language</string>
+    <string name="back">back</string>
+    <string name="language">language</string>
+    <string name="rate_now">Rate now</string>
+    <string name="emoji_sticker_tutorial">Emoji Sticker tutorial</string>
+    <string name="various_stickers_make_the_status_bar_interesting">Various stickers make the status bar \ninteresting</string>
+    <string name="tutorial_page">Tutorial page %1$d</string>
+    <string name="activate_now">Activate now</string>
+    <string name="next">Next</string>
+    <string name="airplane_title">Airplane</string>
+    <string name="airplane_size">Airplane Size</string>
+    <string name="icon_color">Icon color</string>
+    <string name="battery_title">Battery</string>
+    <string name="selected_content_description">Selected</string>
+    <string name="animation_title">Animation</string>
+    <string name="apply">Apply</string>
+    <string name="enable_animation">Enable Animation</string>
+    <string name="animation_size">Animation Size</string>
+    <string name="left_margin">Left Margin</string>
+    <string name="charge_title">Charge</string>
+    <string name="data_title">Data</string>
+    <string name="date_size">Date Size</string>
+    <string name="data_style">Data Style</string>
+    <string name="adjustment_title">Adjustment</string>
+    <string name="close_button">Close</string>
+    <string name="position">Position</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="up">Up</string>
+    <string name="down">Down</string>
+    <string name="sticker_size">Sticker Size</string>
+    <string name="small">Small</string>
+    <string name="large">Large</string>
+    <string name="rotate">Rotate</string>
+    <string name="rotate_left_180">-180°</string>
+    <string name="rotate_right_180">180°</string>
+    <string name="rotate_left">Rotate Left</string>
+    <string name="rotate_right">Rotate Right</string>
+    <string name="back_button">Back</string>
+    <string name="turn_off">Turn Off</string>
+    <string name="save">Save</string>
+    <string name="add_sticker">Add Sticker</string>
+    <string name="tutorial">Tutorial</string>
+    <string name="my_sticker">My Sticker</string>
+    <string name="remove">Remove</string>
+    <string name="position_button">Position</string>
+    <string name="emotion_title">Emotion</string>
+    <string name="enable_emotion_animation">Enable Animation</string>
+    <string name="emotion_list">Emotion List</string>
+    <string name="hotspot_title">Hotspot</string>
+    <string name="hotspot_size">Hotspot Size</string>
+    <string name="notch_title">Notch</string>
+    <string name="ringer_title">Ringer</string>
+    <string name="ringer_size">Ringer Size</string>
+    <string name="signal_title">Signal</string>
+    <string name="signal_size">Signal Size</string>
+    <string name="emoji_title">Emoji</string>
+    <string name="background_template_title">Background Template</string>
+    <string name="view_more">View More</string>
+    <string name="percentage">Percentage</string>
+    <string name="percentage_color">Percentage color</string>
+    <string name="emoji_size">Emoji size</string>
+    <string name="status_bar_background_theme">Status bar background theme: %s</string>
+    <string name="height">Height</string>
+    <string name="right_margin">Right Margin</string>
+    <string name="status_bar_customize_title">Status Bar Customize</string>
+    <string name="theme">Theme</string>
+    <string name="emoji_battery_size">Emoji battery size</string>
+    <string name="adjust_sticker">Adjust Sticker</string>
+    <string name="turn_sticker_on_off">Turn Sticker On/Off</string>
+    <string name="click_on_the_sticker">Click on the sticker you like to add it to \nMy Sticker</string>
+    <string name="adjust_eachand_position">Adjust each Sticker\'s size, orientation,\nand position</string>
+    <string name="sticker_can_be_display">Sticker can be display or hidden \nby the button</string>
+    <string name="go_it">Got it</string>
+
+    <!-- Settings Screen -->
+    <string name="settings">Settings</string>
+    <string name="english">English</string>
+    <string name="rate_us">Rate us</string>
+    <string name="feedback">Feedback</string>
+    <string name="share_app">Share app</string>
+    <string name="manager_subscription">Manager subscription</string>
+    <string name="gdpr">GDPR</string>
+    <string name="check_app_update">Check app update</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="restore_purchase">Restore Purchase</string>
+    <string name="join_the_community">Join the community</string>
+    <string name="version_with_team">Version %1$s ❤️ AmoBear\'s Team</string>
+
+    <!-- Battery Setting Detail -->
+    <string name="show_emoji">Show Emoji</string>
+    <string name="show_battery_percentage">Show battery percentage</string>
+    <string name="icon_color_title">Icon color</string>
+    <string name="percentage_symbol">%</string>
+    <string name="sample_percentage">50</string>
+
+    <!-- Header Component -->
+    <string name="unsaved_battery_icon">Unsaved Battery Icon</string>
+    <string name="pin_icon_not_saved_message">Your Pin icon is not saved. Are you sure you want to exit?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <!-- Search Screen -->
+    <string name="search_template">Search Template</string>
+    <string name="back_arrow">←</string>
+    <string name="tap_to_search">Tap to Search</string>
+    <string name="close_x">✕</string>
+    <string name="most_searched">Most Searched</string>
+    <string name="recommend">Recommend</string>
+    <string name="no_results_found">No results</string>
+    <string name="try_searching_something_else">We did not find any templates matching this names.</string>
+
+    <!-- Customize Screen -->
+    <string name="customize_icon">Customize Icon</string>
+    <string name="elevated">Elevated</string>
+
+    <!-- Home Screen -->
+    <string name="battery_icon">Battery Icon</string>
+    <string name="enable_emoji_battery_to_begin">Enable emoji battery to begin</string>
+    <string name="start">Start</string>
+
+    <!-- Gesture Screen -->
+    <string name="gesture">Gesture</string>
+    <string name="use_gestures_status_bar_description">Use gestures in the status bar for custom actions</string>
+    <string name="vibrate_feedback">Vibrate feedback</string>
+    <string name="vibration_feedback_description">Vibration feedback when interacting with the status bar</string>
+    <string name="select_action">Select Action</string>
+
+    <!-- Accessibility Permission Dialog -->
+    <string name="accessibility_service_usage">Accessibility Service Usage</string>
+    <string name="please_agree_terms_of_service">Please agree the Terms of Service</string>
+    <string name="app_required_accessibility_permission">This app required the Accessibility Services permission for</string>
+    <string name="display_emoji_battery_icon_customize">Emoji Battery Icon Customize</string>
+    <string name="display_emoji_battery_description">Display "Emoji Battery Icon Customize" view on mobile screen and to detect gestures on the status bar.</string>
+    <string name="display_emoji_battery_prefix">Display "</string>
+    <string name="display_emoji_battery_suffix">" view on mobile screen and to detect gestures on the status bar.</string>
+    <string name="start_accessibility_actions">Start accessibility actions: action to Home, Back, show Recent screen.</string>
+    <string name="app_commit_not_collect_info">The application commits not to collect or share any user information about this accessibility right.</string>
+    <string name="i_have_read_and_agree_terms">I have read and agree terms of service</string>
+    <string name="close">Close</string>
+    <string name="next_button">Next</string>
+
+    <!-- Rating Dialog -->
+    <string name="do_you_like_gps_checker">Do you like GPS Checker?</string>
+    <string name="rate_your_experience">Rate your experience with us!</string>
+
+    <!-- Item Emoji Battery -->
+    <string name="my_sticker_title">My Sticker</string>
+    <string name="sticker_count">10/10</string>
+    <string name="sticker_content_description">Sticker</string>
+
+    <!-- Status Bar Preview -->
+    <string name="status_bar_background_content_description">Status bar background</string>
+    <string name="ringer_info_content_description">ringerInfo</string>
+    <string name="emotion_info_content_description">emotionInfo</string>
+    <string name="animation_content_description">animation</string>
+    <string name="hotspot_info_content_description">hotspotInfo</string>
+    <string name="airplane_content_description">airplane</string>
+    <string name="signal_content_description">Signal</string>
+    <string name="network">Network</string>
+    <string name="wifi_content_description">wifi</string>
+    <string name="battery_content_description">Battery</string>
+    <string name="emoji_content_description">Emoji</string>
+    <string name="charge_content_description">charge</string>
+
+    <!-- Trending Screen -->
+    <string name="cartoon">Cartoon</string>
+    <string name="cartoon_battery_icons">Cartoon Battery Icons</string>
+    <string name="cartoon_battery_1">Cartoon Battery 1</string>
+    <string name="cartoon_battery_2">Cartoon Battery 2</string>
+    <string name="cartoon_battery_3">Cartoon Battery 3</string>
+    <string name="nature">Nature</string>
+    <string name="nature_battery_icons">Nature Battery Icons</string>
+    <string name="nature_battery_1">Nature Battery 1</string>
+    <string name="nature_battery_2">Nature Battery 2</string>
+    <string name="animals">Animals</string>
+    <string name="animal_battery_icons">Animal Battery Icons</string>
+    <string name="animal_battery_1">Animal Battery 1</string>
+    <string name="recommended_1">Recommended 1</string>
+    <string name="recommended_2">Recommended 2</string>
+
+    <!-- Feedback and Sharing -->
+    <string name="feedback_subject">%1$s - Feedback</string>
+    <string name="feedback_body">Hi,\n\nI would like to provide feedback about the %1$s app.\n\n%2$s\n\nFeedback:\n</string>
+    <string name="send_feedback_via_email">Send feedback via email</string>
+    <string name="share_app_title">%1$s - Share App</string>
+    <string name="share_app_body">Download from Play Store: https://play.google.com/store/apps/details?id=%1$s</string>
+    <string name="check_out_app">Check out %1$s</string>
+    <string name="share_app_chooser">Share %1$s</string>
+
+    <!-- URLs -->
+    <string name="gdpr_url">https://example.com/gdpr</string>
+    <string name="privacy_policy_url">https://example.com/privacy</string>
+
+    <!-- Log Messages -->
+    <string name="log_tag_battery_setting_detail">BatterySettingDetailViewModel</string>
+    <string name="log_failed_to_load_battery_config">Failed to load battery config</string>
+    <string name="log_battery_config_saved_successfully">Battery config saved successfully</string>
+    <string name="log_failed_to_save_battery_config">Failed to save battery config</string>
+
+    <!-- Empty Content Description -->
+    <string name="empty_content_description"></string>
+
+    <!-- Gesture Actions -->
+    <string name="single_tap_action">Single-tap action</string>
+    <string name="swipe_up_to_down">Swipe up to down</string>
+    <string name="swipe_left_to_right_action">Swipe left to right action</string>
+    <string name="swipe_right_to_right_action">Swipe right to right action</string>
+    <string name="long_press_action">Long press action</string>
+
+    <!-- Customize Screen -->
+    <string name="notch">Notch</string>
+    <string name="animation">Animation</string>
+
+    <!-- Trending Categories -->
+    <string name="cartoon_category">Cartoon</string>
+    <string name="nature_category">Nature</string>
+    <string name="animals_category">Animals</string>
+
+    <!-- Trending Items -->
+    <string name="cartoon_battery_1_item">Cartoon Battery 1</string>
+    <string name="cartoon_battery_2_item">Cartoon Battery 2</string>
+    <string name="cartoon_battery_3_item">Cartoon Battery 3</string>
+    <string name="nature_battery_1_item">Nature Battery 1</string>
+    <string name="nature_battery_2_item">Nature Battery 2</string>
+    <string name="animal_battery_1_item">Animal Battery 1</string>
+    <string name="recommended_1_item">Recommended 1</string>
+    <string name="recommended_2_item">Recommended 2</string>
+
+    <!-- Bottom Tab Bar -->
+    <string name="trending_tab">Trending</string>
+    <string name="customize_tab">Customize</string>
+    <string name="gesture_tab">Gesture</string>
+
+    <!-- Customize Items -->
+    <string name="emotion_item">Emotion</string>
+    <string name="wifi_item">Wifi</string>
+    <string name="data_item">Data</string>
+
+    <!-- Notch Styles -->
+    <string name="hide_notch">Hide Notch</string>
+
+    <!-- Tab Titles -->
+    <string name="tab_trending">Trending</string>
+    <string name="tab_customize">Customize</string>
+    <string name="tab_gesture">Gesture</string>
+
+    <!-- Guide Screen -->
+    <string name="guide_title">How to use</string>
+    <string name="guide_step_1">1. Select \"Installed services\" in Accessibility Setting</string>
+    <string name="guide_step_2">2. Select \"Emoji Battery Icon Customize\"</string>
+    <string name="guide_step_3">3. Turn On</string>
+    <string name="guide_step_4">4. Click \"Allow\"</string>
+    <string name="start_button">Start</string>
+
+    <!-- URLs -->
+    <string name="cdn_jsdelivr_base_url">https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/</string>
+
+    <!-- Search Keywords -->
+    <string name="search_keywords">SpongeBob, Sanrio, Stitch, Cinnamon, Tom &amp; Jerry</string>
+
+    <!-- Log Tags -->
+    <string name="log_tag_home_activity">HomeActivity</string>
+    <string name="log_tag_battery_setting_detail_viewmodel">BatterySettingDetailViewModel</string>
+
+    <!-- Intent Extras -->
+    <string name="intent_extra_show_success_toast">show_success_toast</string>
+    <string name="intent_extra_arg">arg</string>
+
+    <!-- Date Format -->
+    <string name="date_format_yyyy_mm_dd_hh_mm_ss">yyyy-MM-dd HH:mm:ss</string>
+
+    <!-- Email -->
+    <string name="support_email">support@example.com</string>
+
+    <!-- MIME Types -->
+    <string name="mime_type_text_plain">text/plain</string>
+
+    <!-- Action Types -->
+    <string name="open_app">Open App</string>
+    <string name="do_nothing">Do nothing</string>
+    <string name="back_action">Back Action</string>
+    <string name="home_action">Home Action</string>
+    <string name="recent_action">Recent Action</string>
+    <string name="notification_center">Notification center</string>
+    <string name="control_center">Control center</string>
+    <string name="power_source_options">Power source options</string>
+    <string name="lock_screen">Lock Screen</string>
+    <string name="take_screenshot">Take Screenshot</string>
+
+    <!-- Hash Algorithm -->
+    <string name="hash_algorithm_sha">SHA</string>
+    <string name="left_right_adjustment">Left Right Adjustment</string>
+    <string name="adjust_up_and_down">Adjust up and down</string>
+    <string name="resize">Resize</string>
+    <string name="adjust_the_direction">Adjust the direction</string>
+    <string name="sticker_overlay_turned_on_successfully">Sticker Overlay Turned On Successfully</string>
+    <string name="sticker_overlay_turned_off_successfully">Sticker Overlay Turned Off Successfully</string>
+    <string name="show_date">Show Date</string>
+    <string name="data_size">Data Size</string>
+    <string name="date_style">Date Style</string>
+    <string name="date_time"><![CDATA[Date & Time]]></string>
+    <string name="motion">Motion</string>
+    <string name="you_can_only_add_10_stickers">You can only add 10 stickers. Please remove some.</string>
+
+    <string name="emotion">Emotion</string>
+    <string name="wifi">Wifi</string>
+    <string name="data">Data</string>
+    <string name="signal">Signal</string>
+    <string name="airplane">Airplane</string>
+    <string name="hotspot">Hotspot</string>
+    <string name="ringer">Ringer</string>
+    <string name="charge">Charge</string>
+    <string name="return_to_app_ress_back_twice">3: Return to app (Press back twice)</string>
+    <string name="activate_display_permission">Activate display permission</string>
+    <string name="find_emoji_battery_icon_customize_in_the_apps_list">Find \"Emoji Battery Icon Customize\" in the apps list</string>
+    <string name="intro_permission_emoij">Battery Icon needs your permission to display animated characters. Please tap Start when you\'re ready for these step</string>
+    <string name="background_color">Background color</string>
+    <string name="done">Done</string>
+
+    <string name="congratulations_success">Congratulations success!</string>
+    <string name="all_config_has_been_save">All configuration has been saved.</string>
+</resources>

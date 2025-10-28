@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="status_color">#E1EFFF</color>
+
+    <style name="Theme.Emoji" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@null</item>
+        <!-- Full screen configuration -->
+        <item name="android:statusBarColor">@color/status_color</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:fitsSystemWindows">false</item>
+        <!-- Status bar content color - dark content on light background -->
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>
