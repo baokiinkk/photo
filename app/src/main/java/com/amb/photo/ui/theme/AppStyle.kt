@@ -125,7 +125,7 @@ object AppStyle {
             )
         return BaseStyle(style)
     }
-    fun h3(): BaseStyle {
+    fun h5(): BaseStyle {
         val style = TextStyle(
             fontSize = 20.sp,
             lineHeight = 28.sp,
@@ -251,7 +251,7 @@ class AppColor(private val textStyle: TextStyle) {
 
     fun gray800(): TextStyle {
         return textStyle.copy(
-            color = Color(0xFF1F2937)
+            color = Color(0xFF1D2939)
         )
     }
 
