@@ -5,21 +5,6 @@
       <config />
     </shared>
     <layouts>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_rating_setting.xml">
-        <config>
-          <theme>@style/Theme.Emoji</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_recommend.xml">
-        <config>
-          <theme>@style/Theme.Emoji</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/placeholder_item.xml">
-        <config>
-          <theme>@style/Theme.Emoji</theme>
-        </config>
-      </layout>
       <layout url="file://$PROJECT_DIR$/base/src/main/res/drawable/flat_japan.xml">
         <config>
           <theme>@android:style/Theme.Material.Light</theme>
@@ -57,21 +42,455 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="50e1497e-4d41-47fa-8448-509b6a0f4806" name="Changes" comment="trending screen">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/discover/DiscoverUI.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/BottomTabBar.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/MainActivity.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/MainScreenUI.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/MainViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.13/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.13/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/checksums/md5-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.13/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/checksums/sha1-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/photo.app.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/theme/Theme.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/theme/Theme.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/discover/DiscoverUI.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/discover/DiscoverUI.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/MainScreenUI.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/MainScreenUI.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/results.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/android/amg/AMGUtil.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/BuildConfig.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/components/ComposableSingletons$CustomCardViewKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/components/ComposableSingletons$CustomSwitchKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/components/ComposableSingletons$NavigationBarKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/components/CustomButtonKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/components/CustomCardViewKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/components/CustomSliderKt$CustomSlider$1$2$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/components/CustomSliderKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/components/CustomSwitchKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/components/DrawableCheckboxKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/components/NavigationBarKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/di/BaseModule.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/di/NetworkModuleKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/AuthInterceptor.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/BaseApiServiceKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/NetworkException$NoInternetConnection.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/NetworkException$ParseException.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/NetworkException$ServerError.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/NetworkException$TimeoutException.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/NetworkException$UnknownException.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/NetworkException.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/NetworkUtils.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/SearchApiService.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/StatusBarCustomizeService.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/TrendingApiService.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/mock/IOUtils.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/mock/MockInterceptor$Companion.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/network/mock/MockInterceptor.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/repository/BaseRepository$executeNetworkCall$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/repository/BaseRepository$executeWithRetry$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/repository/BaseRepository.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/repository/BaseResponse.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/result/Result$Error.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/result/Result$Loading.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/result/Result$Success.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/result/Result.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/result/ResultKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/ui/base/ActivityResultManager.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/ui/base/BaseActivity.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ActivityResultExtensionsKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/Comparable.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ComposeExtKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/GsonextKt$fromJsonTypeToken$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/GsonextKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/LiveDataKt$sam$androidx_lifecycle_Observer$0.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/LiveDataKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ModifierKt$clickWithAlphaEffect$1$1$1$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ModifierKt$clickWithAlphaEffect$1$1$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ModifierKt$clickableWithAlphaEffect$1$1$1$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ModifierKt$clickableWithAlphaEffect$1$1$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ModifierKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ValidationUtils.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ViewModelKt$combineSources$1$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ViewModelKt$combineSources$onChange$1$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ViewModelKt$combineSourcesWithoutCancel$1$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ViewModelKt$combineSourcesWithoutCancel$onChange$1$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ViewModelKt$listenerSources$1$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ViewModelKt$listenerSources$onChange$1$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ViewModelKt$mediatorLiveData$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ViewModelKt$sam$androidx_lifecycle_Observer$0.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/utils/ViewModelKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/viewmodel/BaseViewModel$clearError$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/viewmodel/BaseViewModel$execute$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/viewmodel/BaseViewModel$executeResult$1$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/viewmodel/BaseViewModel$executeResult$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/viewmodel/BaseViewModel$executeTask$1.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/viewmodel/BaseViewModel.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/viewmodel/IEvent.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/viewmodel/IEventHandler.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/com/basesource/base/viewmodel/IState.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/org/koin/ksp/generated/BaseModuleGencom_basesource_base_diKt.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/org/koin/ksp/generated/_KSP_ComBasesourceBaseDiBaseModule.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/org/koin/ksp/generated/_KSP_ComBasesourceBaseNetworkAuthInterceptor.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/.transforms/0a8330c6444a095883354666597a6d71/transformed/bundleLibRuntimeToDirDebug/org/koin/ksp/generated/_KSP_ComBasesourceBaseNetworkMockMockInterceptor.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/generated/ksp/release/kotlin/org/koin/ksp/generated/BaseModuleGencom$basesource$base$di.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/generated/ksp/release/kotlin/org/koin/ksp/generated/KoinMeta-72b256e6.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/generated/source/buildConfig/release/com/basesource/base/BuildConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/output-metadata.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/aar_main_jar/debug/syncDebugLibJars/classes.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/aar_main_jar/release/syncReleaseLibJars/classes.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/aar_metadata/release/writeReleaseAarMetadata/aar-metadata.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/annotation_processor_list/release/javaPreCompileRelease/annotationProcessors.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/annotations_typedef_file/debug/extractDebugAnnotations/typedefs.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/annotations_typedef_file/release/extractReleaseAnnotations/typedefs.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/assets/release/mergeReleaseAssets/animations_mock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/assets/release/mergeReleaseAssets/charges_mock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/assets/release/mergeReleaseAssets/emojis_mock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/assets/release/mergeReleaseAssets/emotions_mock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/assets/release/mergeReleaseAssets/search_mock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/assets/release/mergeReleaseAssets/status_bar_customize_mock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/assets/release/mergeReleaseAssets/stickers_mock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/assets/release/mergeReleaseAssets/trending_mock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/compile_library_classes_jar/release/bundleLibCompileToJarRelease/classes.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/compile_r_class_jar/release/generateReleaseRFile/R.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/compile_symbol_list/release/generateReleaseRFile/R.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/default_proguard_files/global/proguard-android-optimize.txt-8.11.1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/default_proguard_files/global/proguard-android.txt-8.11.1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/default_proguard_files/global/proguard-defaults.txt-8.11.1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/full_jar/release/createFullJarRelease/full.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/incremental/debug-mergeJavaRes/merge-state" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/incremental/lintVitalAnalyzeRelease/module.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/incremental/lintVitalAnalyzeRelease/release-artifact-dependencies.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/incremental/lintVitalAnalyzeRelease/release-artifact-libraries.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/incremental/lintVitalAnalyzeRelease/release.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/incremental/mergeReleaseAssets/merger.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/incremental/mergeReleaseJniLibFolders/merger.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/incremental/mergeReleaseShaders/merger.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/incremental/release-mergeJavaRes/merge-state" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/incremental/release/packageReleaseResources/compile-file-map.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/incremental/release/packageReleaseResources/merger.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/java_res/release/processReleaseJavaRes/out/META-INF/base_release.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/android/amg/AMGUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/com/basesource/base/BuildConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/library_and_local_jars_jni/debug/copyDebugJniLibsProjectAndLocalJars/jni/arm64-v8a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/library_and_local_jars_jni/debug/copyDebugJniLibsProjectAndLocalJars/jni/armeabi-v7a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/library_and_local_jars_jni/debug/copyDebugJniLibsProjectAndLocalJars/jni/x86/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/library_and_local_jars_jni/debug/copyDebugJniLibsProjectAndLocalJars/jni/x86_64/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/library_and_local_jars_jni/release/copyReleaseJniLibsProjectAndLocalJars/jni/arm64-v8a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/library_and_local_jars_jni/release/copyReleaseJniLibsProjectAndLocalJars/jni/armeabi-v7a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/library_and_local_jars_jni/release/copyReleaseJniLibsProjectAndLocalJars/jni/x86/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/library_and_local_jars_jni/release/copyReleaseJniLibsProjectAndLocalJars/jni/x86_64/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/library_jni/release/copyReleaseJniLibsProjectOnly/jni/arm64-v8a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/library_jni/release/copyReleaseJniLibsProjectOnly/jni/armeabi-v7a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/library_jni/release/copyReleaseJniLibsProjectOnly/jni/x86/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/library_jni/release/copyReleaseJniLibsProjectOnly/jni/x86_64/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/lint-cache/lintVitalAnalyzeRelease/lint-cache-version.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/lint_model/release/generateReleaseLintModel/module.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/lint_model/release/generateReleaseLintModel/release-artifact-dependencies.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/lint_model/release/generateReleaseLintModel/release-artifact-libraries.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/lint_model/release/generateReleaseLintModel/release.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/lint_model_metadata/release/writeReleaseLintModelMetadata/lint-model-metadata.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/lint_vital_lint_model/release/generateReleaseLintVitalModel/module.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/lint_vital_lint_model/release/generateReleaseLintVitalModel/release-artifact-dependencies.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/lint_vital_lint_model/release/generateReleaseLintVitalModel/release-artifact-libraries.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/lint_vital_lint_model/release/generateReleaseLintVitalModel/release.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/lint_vital_partial_results/release/lintVitalAnalyzeRelease/out/lint-resources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/local_aar_for_lint/release/out.aar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/local_only_symbol_list/release/parseReleaseLocalResources/R-def.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/manifest_merge_blame_file/release/processReleaseManifest/manifest-merger-blame-release-report.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/merged_java_res/debug/mergeDebugJavaResource/feature-base.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/merged_java_res/release/mergeReleaseJavaResource/feature-base.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/merged_jni_libs/release/mergeReleaseJniLibFolders/out/arm64-v8a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/merged_jni_libs/release/mergeReleaseJniLibFolders/out/armeabi-v7a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/merged_jni_libs/release/mergeReleaseJniLibFolders/out/x86/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/merged_jni_libs/release/mergeReleaseJniLibFolders/out/x86_64/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib/arm64-v8a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib/armeabi-v7a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib/x86/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib/x86_64/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/navigation_json/release/extractDeepLinksRelease/navigation.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/nested_resources_validation_report/release/generateReleaseResources/nestedResourcesValidationReport.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/packaged_res/release/packageReleaseResources/drawable/checkbox_active.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/packaged_res/release/packageReleaseResources/drawable/checkbox_inactive.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/packaged_res/release/packageReleaseResources/drawable/flag_en.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/packaged_res/release/packageReleaseResources/drawable/flat_japan.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/packaged_res/release/packageReleaseResources/drawable/flat_macao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/packaged_res/release/packageReleaseResources/drawable/flat_mexico.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/packaged_res/release/packageReleaseResources/drawable/flat_mo.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/packaged_res/release/packageReleaseResources/drawable/flat_myanmar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/packaged_res/release/packageReleaseResources/drawable/flat_vn.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/packaged_res/release/packageReleaseResources/drawable/ic_back_24.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/packaged_res/release/packageReleaseResources/drawable/ic_check.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/packaged_res/release/packageReleaseResources/drawable/ic_choose_color.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/runtime_library_classes_jar/release/bundleLibRuntimeToJarRelease/classes.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/stripped_native_libs/debug/stripDebugDebugSymbols/out/lib/arm64-v8a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/stripped_native_libs/debug/stripDebugDebugSymbols/out/lib/armeabi-v7a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/stripped_native_libs/debug/stripDebugDebugSymbols/out/lib/x86/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/stripped_native_libs/debug/stripDebugDebugSymbols/out/lib/x86_64/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/stripped_native_libs/release/stripReleaseDebugSymbols/out/lib/arm64-v8a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/stripped_native_libs/release/stripReleaseDebugSymbols/out/lib/armeabi-v7a/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/stripped_native_libs/release/stripReleaseDebugSymbols/out/lib/x86/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/stripped_native_libs/release/stripReleaseDebugSymbols/out/lib/x86_64/libamg.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/intermediates/symbol_list_with_package_name/release/generateReleaseRFile/package-aware-r.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.values.at" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.values.at" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.values.at" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.values.at" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values.at" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values.at" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/counters.tab" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/counters.tab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.values.at" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.values.at" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream.len" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream.len" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.len" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.len" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.values.at" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.values.at" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab_i" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab_i" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.values.at" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.values.at" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/last-build.bin" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/compileDebugKotlin/cacheable/last-build.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/constants.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/constants.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/constants.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/constants.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/constants.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/constants.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/constants.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/inline-functions.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/inline-functions.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/inline-functions.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/inline-functions.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/inline-functions.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/inline-functions.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/inline-functions.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/counters.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/cacheable/last-build.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/compileReleaseKotlin/classpath-snapshot/shrunk-classpath-snapshot.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/kaptGenerateStubsDebugKotlin/cacheable/last-build.bin" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kotlin/kaptGenerateStubsDebugKotlin/cacheable/last-build.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/kaptGenerateStubsReleaseKotlin/cacheable/last-build.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kotlin/kaptGenerateStubsReleaseKotlin/classpath-snapshot/shrunk-classpath-snapshot.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/debug/sourceToOutputs" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kspCaches/debug/sourceToOutputs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/debug/symbolLookups/lookups.tab" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kspCaches/debug/symbolLookups/lookups.tab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/debug/symbolLookups/lookups.tab.values.at" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/kspCaches/debug/symbolLookups/lookups.tab.values.at" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/ap-classpath-entries.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/backups/kotlin/org/koin/ksp/generated/BaseModuleGencom$basesource$base$di.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/backups/kotlin/org/koin/ksp/generated/KoinMeta-72b256e6.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/caches.uptodate" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/classpath-entries.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/classpath-structure.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/sealed" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/sourceToOutputs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/counters.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/file-to-id.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/file-to-id.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/file-to-id.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/file-to-id.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/file-to-id.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/file-to-id.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/file-to-id.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/id-to-file.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/id-to-file.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/id-to-file.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/id-to-file.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/id-to-file.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/id-to-file.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/id-to-file.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/lookups.tab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/lookups.tab.keystream" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/lookups.tab.keystream.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/lookups.tab.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/lookups.tab.values.at" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/lookups.tab_i" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbolLookups/lookups.tab_i.len" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/kspCaches/release/symbols" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/outputs/aar/base-debug.aar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/outputs/logs/manifest-merger-debug-report.txt" beforeDir="false" afterPath="$PROJECT_DIR$/base/build/outputs/logs/manifest-merger-debug-report.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/outputs/logs/manifest-merger-release-report.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/compileReleaseJavaWithJavac/previous-compilation-data.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/META-INF/base_release.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/ColorPickerKt$ColorPicker$1$1$2$1$1$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/ColorPickerKt$ColorPicker$2$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/ColorPickerKt$ColorPickerDialog$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/ColorPickerKt$ColorPicker_F2ITRlQ$lambda$10$lambda$9$lambda$8$lambda$7$$inlined$items$default$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/ColorPickerKt$ColorPicker_F2ITRlQ$lambda$10$lambda$9$lambda$8$lambda$7$$inlined$items$default$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/ColorPickerKt$ColorPicker_F2ITRlQ$lambda$10$lambda$9$lambda$8$lambda$7$$inlined$items$default$3.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/ColorPickerKt$ColorPicker_F2ITRlQ$lambda$10$lambda$9$lambda$8$lambda$7$$inlined$items$default$4.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/ColorPickerKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/ComposableSingletons$CustomCardViewKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/ComposableSingletons$CustomSwitchKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/ComposableSingletons$NavigationBarKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/CustomButtonKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/CustomCardViewKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/CustomSliderKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/CustomSwitchKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/DrawableCheckboxKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/NavigationBarKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/SuccessToastKt$SuccessToast$2$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/components/SuccessToastKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/di/BaseModule.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/di/NetworkModuleKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/AuthInterceptor.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/BaseApiServiceKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/NetworkException$NoInternetConnection.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/NetworkException$ParseException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/NetworkException$ServerError.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/NetworkException$TimeoutException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/NetworkException$UnknownException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/NetworkException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/NetworkUtils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/SearchApiService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/StatusBarCustomizeService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/TrendingApiService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/mock/IOUtils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/mock/MockInterceptor$Companion.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/network/mock/MockInterceptor.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/repository/BaseRepository$executeNetworkCall$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/repository/BaseRepository$executeWithRetry$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/repository/BaseRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/repository/BaseResponse.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/result/Result$Error.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/result/Result$Loading.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/result/Result$Success.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/result/Result.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/result/ResultKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/ui/base/ActivityResultManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/ui/base/BaseActivity.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/ui/image/LoadImageKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ActivityResultExtensionsKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/Comparable.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ComposeExtKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/GsonextKt$fromJsonTypeToken$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/GsonextKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/LanguageManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/LanguageType.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/LiveDataKt$sam$androidx_lifecycle_Observer$0.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/LiveDataKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ModifierKt$clickWithAlphaEffect$1$1$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ModifierKt$clickWithAlphaEffect$1$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ModifierKt$clickableWithAlphaEffect$1$1$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ModifierKt$clickableWithAlphaEffect$1$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ModifierKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ValidationUtils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ViewModelKt$combineSources$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ViewModelKt$combineSources$onChange$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ViewModelKt$combineSourcesWithoutCancel$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ViewModelKt$combineSourcesWithoutCancel$onChange$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ViewModelKt$listenerSources$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ViewModelKt$listenerSources$onChange$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ViewModelKt$mediatorLiveData$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ViewModelKt$sam$androidx_lifecycle_Observer$0.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/utils/ViewModelKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/viewmodel/BaseViewModel$clearError$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/viewmodel/BaseViewModel$execute$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/viewmodel/BaseViewModel$executeResult$1$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/viewmodel/BaseViewModel$executeResult$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/viewmodel/BaseViewModel$executeTask$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/viewmodel/BaseViewModel.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/viewmodel/IEvent.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/viewmodel/IEventHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/com/basesource/base/viewmodel/IState.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/org/koin/ksp/generated/BaseModuleGencom_basesource_base_diKt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/org/koin/ksp/generated/_KSP_ComBasesourceBaseDiBaseModule.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/org/koin/ksp/generated/_KSP_ComBasesourceBaseNetworkAuthInterceptor.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/build/tmp/kotlin-classes/release/org/koin/ksp/generated/_KSP_ComBasesourceBaseNetworkMockMockInterceptor.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,7 +500,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=R9WWB0S941F)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/Users/baoho/.android/avd/Medium_Phone.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -151,41 +570,41 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Android App.app.executor": "Run",
-    "ApkExportedModule": "emoij.app",
-    "BundleExportedModule": "emoij.app",
-    "DEBUGGABLE_DEVICE": "samsung-sm_a146p-R9WWB0S941F",
-    "DEBUGGABLE_PROCESS": "com.amb.emoij",
-    "DEBUGGER_ID": "Auto",
-    "ExportApk.ApkPathForemoij.app": "/Users/baoho/development/freelance/statusbar/app",
-    "ExportBundle.BundlePathForemoij.app": "/Users/baoho/development/freelance/statusbar/app",
-    "Gradle.Download Sources.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "SHOW_ALL_PROCESSES": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "com.google.services.firebase.aqiPopupShown": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/baoho/development/freelance/photo/app/src/main/java/com/amb/photo/ui/activities/main",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.17",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
-    "show.migrate.to.gradle.popup": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Android App.app.executor&quot;: &quot;Run&quot;,
+    &quot;ApkExportedModule&quot;: &quot;emoij.app&quot;,
+    &quot;BundleExportedModule&quot;: &quot;emoij.app&quot;,
+    &quot;DEBUGGABLE_DEVICE&quot;: &quot;samsung-sm_a146p-R9WWB0S941F&quot;,
+    &quot;DEBUGGABLE_PROCESS&quot;: &quot;com.amb.emoij&quot;,
+    &quot;DEBUGGER_ID&quot;: &quot;Auto&quot;,
+    &quot;ExportApk.ApkPathForemoij.app&quot;: &quot;/Users/baoho/development/freelance/statusbar/app&quot;,
+    &quot;ExportBundle.BundlePathForemoij.app&quot;: &quot;/Users/baoho/development/freelance/statusbar/app&quot;,
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;SHOW_ALL_PROCESSES&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/baoho/development/freelance/photo/app/src/main/java/com/amb/photo/ui/activities/main&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   },
-  "keyToStringList": {
-    "ExportApk.BuildVariants": [
-      "release"
+  &quot;keyToStringList&quot;: {
+    &quot;ExportApk.BuildVariants&quot;: [
+      &quot;release&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main" />
@@ -195,9 +614,9 @@
       <recent name="$PROJECT_DIR$/app/src/main/java/com/amb/emoij/ui/activities/gesture" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/src/main/res/drawable" />
       <recent name="$PROJECT_DIR$/base/src/main/res/drawable" />
       <recent name="$PROJECT_DIR$/app/src/main/res/raw" />
-      <recent name="$PROJECT_DIR$/app/src/main/res/drawable" />
       <recent name="$PROJECT_DIR$/base/src/main/jniLibs" />
       <recent name="$PROJECT_DIR$/app/src/main/res/font" />
     </key>
@@ -294,22 +713,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1759050989563</updated>
-    </task>
-    <task id="LOCAL-00033" summary="trending screen">
-      <option name="closed" value="true" />
-      <created>1759832556248</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1759832556248</updated>
-    </task>
-    <task id="LOCAL-00034" summary="trending screen">
-      <option name="closed" value="true" />
-      <created>1759891027401</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1759891027401</updated>
     </task>
     <task id="LOCAL-00035" summary="trending screen">
       <option name="closed" value="true" />
@@ -687,7 +1090,23 @@
       <option name="project" value="LOCAL" />
       <updated>1761184002929</updated>
     </task>
-    <option name="localTasksCounter" value="82" />
+    <task id="LOCAL-00082" summary="trending screen">
+      <option name="closed" value="true" />
+      <created>1761829593753</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1761829593753</updated>
+    </task>
+    <task id="LOCAL-00083" summary="trending screen">
+      <option name="closed" value="true" />
+      <created>1761829605121</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1761829605121</updated>
+    </task>
+    <option name="localTasksCounter" value="84" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

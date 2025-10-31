@@ -25,12 +25,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amb.photo.R
+import com.amb.photo.ui.activities.imagepicker.ImagePickerActivity
+import com.amb.photo.ui.activities.main.MainViewModel
 import com.amb.photo.ui.theme.AppStyle
 import com.amb.photo.ui.theme.BackgroundLight
 import com.basesource.base.utils.clickableWithAlphaEffect
 
 @Composable
-fun DiscoverUI() {
+fun DiscoverUI(viewModel: MainViewModel? = null) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -38,7 +40,11 @@ fun DiscoverUI() {
     ) {
         DiscoverBanner()
         Spacer(Modifier.height(20.dp))
-        DiscoverFunctionCards()
+        DiscoverFunctionCards(
+            onCollageClick = {
+                viewModel?.launchActivity(ImagePickerActivity::class.java)
+            }
+        )
         Spacer(Modifier.height(12.dp))
         DiscoverShortcuts()
         DiscoverTemplates()
