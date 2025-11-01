@@ -465,17 +465,35 @@ fun CropImageScreen(imageBitmap: ImageBitmap) {
                 onFormat = { aspect ->
                     if (imageBounds == IntSize.Zero) return@CropControlPanel
 
+                    val canvasWidth = imageBounds.width.toFloat()
+                    val canvasHeight = imageBounds.height.toFloat()
                     val padding = with(density) { 40.dp.toPx() }
-                    val (rw, rh) = aspect.ratio ?: (1 to 1)
 
-                    val width = imageBounds.width.toFloat() - 2 * padding
-                    val height = width * rh / rw
-                    val left = padding
-                    val top = (imageBounds.height - height) / 2f
+                    val newRect = when (aspect) {
+                        CropAspect.ORIGINAL -> {
+                            // 🟣 Full khung ảnh
+                            Rect(0f, 0f, canvasWidth, canvasHeight)
+                        }
+
+                        CropAspect.FREE -> {
+                            // 🟣 Giữ nguyên khung hiện tại
+                            cropState.cropRect
+                        }
+
+                        else -> {
+                            // 🟣 Tính theo tỉ lệ cố định
+                            val (rw, rh) = aspect.ratio ?: (1 to 1)
+                            val width = canvasWidth - 2 * padding
+                            val height = width * rh / rw
+                            val left = padding
+                            val top = (canvasHeight - height) / 2f
+                            Rect(left, top, left + width, top + height)
+                        }
+                    }
 
                     cropState = cropState.copy(
                         aspect = aspect,
-                        cropRect = Rect(left, top, left + width, top + height)
+                        cropRect = newRect
                     )
                 }
             )
@@ -487,11 +505,11 @@ fun CropImageScreen(imageBitmap: ImageBitmap) {
 @Composable
 fun CropControlPanel(
     modifier: Modifier = Modifier,
-    selectedTab: MutableState<String> = remember { mutableStateOf("Format") },
     onCancel: () -> Unit,
     onApply: () -> Unit,
     onFormat: (CropAspect) -> Unit
 ) {
+    val selectedTab = remember { mutableStateOf("Format") }
 //    val formatList = listOf("Original", "Free", "1:1", "4:5", "5:4")
     val positionList = listOf("Horizontal", "Vertical", "Rotate")
 
