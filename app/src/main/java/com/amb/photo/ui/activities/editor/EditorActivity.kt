@@ -108,7 +108,9 @@ class EditorActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Scaffold { inner ->
+            Scaffold(
+                containerColor = Color(0xFFF2F4F8)
+            ) { inner ->
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
@@ -497,7 +499,6 @@ fun CropControlPanel(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.White, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-            .shadow(8.dp, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
             .padding(horizontal = 24.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
