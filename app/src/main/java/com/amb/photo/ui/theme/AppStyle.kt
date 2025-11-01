@@ -254,6 +254,11 @@ class AppColor(private val textStyle: TextStyle) {
             color = Color(0xFF1D2939)
         )
     }
+    fun gray900(): TextStyle {
+        return textStyle.copy(
+            color = Color(0xFF101828)
+        )
+    }
 
     fun gray700(): TextStyle {
         return textStyle.copy(
@@ -348,6 +353,12 @@ class AppColor(private val textStyle: TextStyle) {
     fun primary(): TextStyle {
         return textStyle.copy(
             color = Color(0xFF354CC4)
+        )
+    }
+
+    fun primary500(): TextStyle {
+        return textStyle.copy(
+            color = Color(0xFF6425F3)
         )
     }
 

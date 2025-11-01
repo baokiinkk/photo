@@ -41,6 +41,7 @@ fun ImagePickerScreen(
             GalleryGrid(
                 images = images,
                 selected = selected,
+                modifier = Modifier.weight(1f),
                 onImageClick = { viewModel.toggleSelect(it) }
             )
             SelectedBar(

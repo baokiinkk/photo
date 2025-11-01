@@ -18,7 +18,7 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 @Composable
 fun PickerHeaderBar(folderName: String = "Recent", canNext: Boolean, onBack: () -> Unit, onNext: () -> Unit, onFolderClick: () -> Unit = {}) {
     Row(
-        Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 4.dp),
+        Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 4.dp).statusBarsPadding(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = onBack) {
