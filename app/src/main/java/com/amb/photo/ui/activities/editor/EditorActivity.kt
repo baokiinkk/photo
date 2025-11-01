@@ -146,16 +146,12 @@ fun CropImageScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(Unit) {
-                    if (aspectRatioMode != "Original") {
-                        detectDragGestures { change, dragAmount ->
-                            change.consume()
+                    detectDragGestures { change, dragAmount ->
+                        change.consume()
+                        if (aspectRatioMode != "Original") {
                             cropRect = cropRect.translate(dragAmount)
                         }
                     }
-//                    detectDragGestures { change, dragAmount ->
-//                        change.consume()
-//                        cropRect = cropRect.translate(dragAmount)
-//                    }
                 }
         ) {
             canvasSize = size
