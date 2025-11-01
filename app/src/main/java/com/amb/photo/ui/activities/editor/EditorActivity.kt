@@ -117,6 +117,9 @@ fun CropImageScreen(
     val overlayColor = Color(0f, 0f, 0f, 0.6f)
     val density = LocalDensity.current
 
+    var aspectRatioMode  by remember {
+        mutableStateOf("1:1")
+    }
     // ⚙️ Khi kích thước canvas đã có, setup mặc định khung 1:1
     LaunchedEffect(canvasSize) {
         if (canvasSize != Size.Zero && cropRect == Rect.Zero) {
@@ -143,10 +146,16 @@ fun CropImageScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(Unit) {
-                    detectDragGestures { change, dragAmount ->
-                        change.consume()
-                        cropRect = cropRect.translate(dragAmount)
+                    if (aspectRatioMode != "Original") {
+                        detectDragGestures { change, dragAmount ->
+                            change.consume()
+                            cropRect = cropRect.translate(dragAmount)
+                        }
                     }
+//                    detectDragGestures { change, dragAmount ->
+//                        change.consume()
+//                        cropRect = cropRect.translate(dragAmount)
+//                    }
                 }
         ) {
             canvasSize = size
@@ -249,6 +258,7 @@ fun CropImageScreen(
                 ).forEach { (label, r) ->
                     Button(
                         onClick = {
+                            aspectRatioMode = label
                             ratio = r
                             val padding = with(density) { 40.dp.toPx() }
 
