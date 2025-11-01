@@ -193,6 +193,7 @@ class AppColor(private val textStyle: TextStyle) {
         val Primary = Color(0xFF354CC4)
 
         val Gray100 = Color(0xFFE4E4E7)
+        val Gray400 = Color(0xFF98A2B3)
         val Gray500 = Color(0xFF7C7E83)
         val Gray700 = Color(0xFF4A4B4F)
 
