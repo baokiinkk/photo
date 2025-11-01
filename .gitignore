@@ -18,3 +18,121 @@ local.properties
 /base/build/
 /base/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/
 .idea/.name
+# Được tạo bởi https://www.gitignore.io/api/android,androidstudio,gradle
+# Cập nhật lần cuối: 2024-05-18
+
+### Android
+# Biên dịch/Tạo (Build/Generated)
+/build
+/.cxx
+/captures
+/.externalNativeBuild
+
+# Tập tin log
+*.log
+
+# Android Studio (IDE)
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/libraries
+.idea/gradle.xml
+.idea/asset.xml
+.idea/codeStyles
+.idea/render.experimental
+
+# Tệp của người dùng
+*.iml
+.DS_Store
+*.apk
+*.ap_
+*.aab
+
+# Keystore
+# Nên được mã hóa và lưu trữ an toàn, không nên commit vào repo công khai.
+# Ví dụ:
+# my-release-key.keystore
+
+# Local Configuration
+local.properties
+.DS_Store
+
+# Tệp tài nguyên drawable/layout đã tạo
+# Nếu bạn tạo tài nguyên theo chương trình, không commit các tệp này
+# Ví dụ:
+# res/drawable-generated/
+# res/layout-generated/
+
+# Tệp Gradle đã tạo
+.gradle/
+/out/
+
+# Android Test Output
+/test-output
+
+# Các tệp đã tạo của ProGuard/R8
+/proguard/
+/r8/
+
+# Thư mục đã tạo bởi Firebase/Google Services
+# Lưu trữ thông tin nhạy cảm/cấu hình dự án
+# Lưu ý: `google-services.json` thường CẦN thiết cho việc build,
+# nhưng nếu repo là công khai, hãy cân nhắc việc đưa vào .gitignore và
+# yêu cầu nhà phát triển tự thêm vào.
+# /app/google-services.json
+
+### Android Studio
+# Thư mục dự án đã tạo
+.idea/
+.vscode/
+
+# Thư mục cấu hình cá nhân
+.run/
+
+# Tệp metadata của macOS
+.DS_Store
+
+### Gradle
+# Được thêm thủ công
+.gradle
+build/
+**/*.iml
+
+# Tập tin log
+*.log
+!gradle.log
+
+# Tập tin nhúng (Wrapper)
+# Thường nên *giữ lại* các tập tin này để đảm bảo mọi người sử dụng cùng một phiên bản Gradle.
+# Bỏ ghi chú nếu bạn không muốn commit chúng.
+# !gradle-wrapper.jar
+
+# Tệp thuộc tính người dùng
+# Nên bỏ qua các tệp này vì chúng chứa thông tin cụ thể của người dùng.
+# Các tệp thuộc tính khác (ví dụ: gradle.properties, versions.properties) thường nên được giữ lại.
+org.gradle.daemon.properties
+org.gradle.project.properties
+org.gradle.internal.instrumentation.agent.properties
+
+# Tệp cấu hình cục bộ của IDE
+# Thường bỏ qua vì chúng chứa các thiết lập cụ thể của người dùng hoặc máy.
+# Ví dụ: IntelliJ IDEA, Android Studio
+# .idea/workspace.xml
+# .idea/user-settings.xml
+# .idea/shelf
+
+# Tệp nhị phân đã biên dịch
+# Bỏ qua các tệp nhị phân (ví dụ: JAR, AAR) đã được tạo ra
+# (Ngoại trừ các tệp được commit rõ ràng làm dependency của bên thứ ba)
+# *.jar
+# *.war
+# *.ear
+
+# Tệp kết quả của các tác vụ Gradle (Task Output)
+# Cân nhắc bỏ qua các tệp hoặc thư mục lớn được tạo ra trong quá trình build/test
+# Ví dụ: output/ reports/
+
+# Các tệp cấu hình IDE
+# *.iws
+
+# Tệp backup
+*~
