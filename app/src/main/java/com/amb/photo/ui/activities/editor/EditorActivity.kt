@@ -30,6 +30,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +47,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
@@ -53,6 +55,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -63,26 +66,27 @@ class EditorActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
 
-            var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
-
-            if (imageBitmap == null) {
-                PickImageFromGallery { picked ->
-                    imageBitmap = picked
+                if (imageBitmap == null) {
+                    PickImageFromGallery { picked ->
+                        imageBitmap = picked
+                    }
+                } else {
+                    CropImageScreen(imageBitmap = imageBitmap!!)
                 }
-            } else {
-                CropImageScreen(imageBitmap = imageBitmap!!)
             }
         }
     }
 }
 
 @Composable
-fun PickImageFromGallery(
-    onImagePicked: (ImageBitmap) -> Unit
-) {
+fun PickImageFromGallery(onImagePicked: (ImageBitmap) -> Unit) {
     val context = LocalContext.current
-
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -107,12 +111,26 @@ fun CropImageScreen(
     imageBitmap: ImageBitmap,
     modifier: Modifier = Modifier
 ) {
-    var cropRect by remember { mutableStateOf(Rect(200f, 400f, 800f, 1000f)) }
+    var cropRect by remember { mutableStateOf(Rect.Zero) }
     var ratio by remember { mutableStateOf(Pair(1, 1)) }
+    var canvasSize by remember { mutableStateOf(Size.Zero) }
     val overlayColor = Color(0f, 0f, 0f, 0.6f)
+    val density = LocalDensity.current
+
+    // ⚙️ Khi kích thước canvas đã có, setup mặc định khung 1:1
+    LaunchedEffect(canvasSize) {
+        if (canvasSize != Size.Zero && cropRect == Rect.Zero) {
+            val padding = with(density) { 40.dp.toPx() }
+            val width = canvasSize.width - 2 * padding
+            val height = width // 1:1
+            val left = padding
+            val top = (canvasSize.height - height) / 2f
+            cropRect = Rect(left, top, left + width, top + height)
+        }
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
-        // 1️⃣ Hiển thị ảnh nền
+        // Ảnh nền
         Image(
             bitmap = imageBitmap,
             contentDescription = null,
@@ -120,59 +138,108 @@ fun CropImageScreen(
             modifier = Modifier.fillMaxSize()
         )
 
-        // 2️⃣ Lớp phủ tối + khung crop
-        Canvas(modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectDragGestures { change, dragAmount ->
-                    change.consume()
-                    cropRect = cropRect.translate(dragAmount)
+        // Canvas overlay
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectDragGestures { change, dragAmount ->
+                        change.consume()
+                        cropRect = cropRect.translate(dragAmount)
+                    }
                 }
-            }
         ) {
-            val path = Path().apply {
-                addRect(Rect(0f, 0f, size.width, size.height)) // toàn màn
-                addRect(cropRect) // vùng crop
-                fillType = PathFillType.EvenOdd // phần giao giữa 2 vùng -> "mask"
-            }
+            canvasSize = size
+
             // Làm tối vùng ngoài
+            val path = Path().apply {
+                addRect(Rect(0f, 0f, size.width, size.height))
+                addRect(cropRect)
+                fillType = PathFillType.EvenOdd
+            }
             drawPath(path, overlayColor)
 
-            // Vẽ viền khung crop
+            // --- Vẽ khung crop chính ---
+            val strokeWidth = 2.dp.toPx()
+            val gridColor = Color.White.copy(alpha = 0.6f)
+            val handleRadius = 6.dp.toPx()
+            val barLength = 24.dp.toPx()
+            val barWidth = 6.dp.toPx()
+
+            // Viền trắng
             drawRect(
                 color = Color.White,
                 topLeft = Offset(cropRect.left, cropRect.top),
                 size = Size(cropRect.width, cropRect.height),
-                style = Stroke(width = 2.dp.toPx())
+                style = Stroke(width = strokeWidth)
             )
 
-            // Vẽ các line chia 3x3 trong khung crop
+            // Lưới 3x3
             val stepX = cropRect.width / 3
             val stepY = cropRect.height / 3
             for (i in 1..2) {
                 drawLine(
-                    Color.White.copy(alpha = 0.6f),
-                    Offset(cropRect.left + stepX * i, cropRect.top),
-                    Offset(cropRect.left + stepX * i, cropRect.bottom),
-                    1.dp.toPx()
+                    color = gridColor,
+                    start = Offset(cropRect.left + stepX * i, cropRect.top),
+                    end = Offset(cropRect.left + stepX * i, cropRect.bottom),
+                    strokeWidth = 1.dp.toPx()
                 )
                 drawLine(
-                    Color.White.copy(alpha = 0.6f),
-                    Offset(cropRect.left, cropRect.top + stepY * i),
-                    Offset(cropRect.right, cropRect.top + stepY * i),
-                    1.dp.toPx()
+                    color = gridColor,
+                    start = Offset(cropRect.left, cropRect.top + stepY * i),
+                    end = Offset(cropRect.right, cropRect.top + stepY * i),
+                    strokeWidth = 1.dp.toPx()
                 )
             }
+
+            // 4 chấm tròn ở góc
+            drawCircle(Color.White, handleRadius, Offset(cropRect.left, cropRect.top))
+            drawCircle(Color.White, handleRadius, Offset(cropRect.right, cropRect.top))
+            drawCircle(Color.White, handleRadius, Offset(cropRect.left, cropRect.bottom))
+            drawCircle(Color.White, handleRadius, Offset(cropRect.right, cropRect.bottom))
+
+            // 4 thanh ngắn bo tròn ở giữa mỗi cạnh
+            drawLine(
+                color = Color.White,
+                start = Offset(cropRect.center.x - barLength / 2, cropRect.top),
+                end = Offset(cropRect.center.x + barLength / 2, cropRect.top),
+                strokeWidth = barWidth,
+                cap = StrokeCap.Round
+            )
+            drawLine(
+                color = Color.White,
+                start = Offset(cropRect.center.x - barLength / 2, cropRect.bottom),
+                end = Offset(cropRect.center.x + barLength / 2, cropRect.bottom),
+                strokeWidth = barWidth,
+                cap = StrokeCap.Round
+            )
+            drawLine(
+                color = Color.White,
+                start = Offset(cropRect.left, cropRect.center.y - barLength / 2),
+                end = Offset(cropRect.left, cropRect.center.y + barLength / 2),
+                strokeWidth = barWidth,
+                cap = StrokeCap.Round
+            )
+            drawLine(
+                color = Color.White,
+                start = Offset(cropRect.right, cropRect.center.y - barLength / 2),
+                end = Offset(cropRect.right, cropRect.center.y + barLength / 2),
+                strokeWidth = barWidth,
+                cap = StrokeCap.Round
+            )
         }
 
-        // 3️⃣ Dãy chọn tỉ lệ
+        // Panel chọn tỉ lệ
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .background(Color.White.copy(alpha = 0.9f))
                 .padding(16.dp)
         ) {
-            Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 listOf(
                     "Original" to (0 to 0),
                     "Free" to (0 to 0),
@@ -183,17 +250,25 @@ fun CropImageScreen(
                     Button(
                         onClick = {
                             ratio = r
-                            // Cập nhật lại cropRect theo tỉ lệ
-                            if (r.first != 0 && r.second != 0) {
-                                val center = cropRect.center
-                                val width = cropRect.width
-                                val height = width * r.second / r.first
-                                cropRect = Rect(
-                                    center.x - width / 2,
-                                    center.y - height / 2,
-                                    center.x + width / 2,
-                                    center.y + height / 2
-                                )
+                            val padding = with(density) { 40.dp.toPx() }
+
+                            when {
+                                // ✅ "Original" → full ảnh
+                                label == "Original" -> {
+                                    cropRect = Rect(0f, 0f, canvasSize.width, canvasSize.height)
+                                }
+
+                                // ✅ Tỉ lệ xác định
+                                r.first != 0 && r.second != 0 -> {
+                                    val width = canvasSize.width - 2 * padding
+                                    val height = width * r.second / r.first
+                                    val left = padding
+                                    val top = (canvasSize.height - height) / 2f
+                                    cropRect = Rect(left, top, left + width, top + height)
+                                }
+
+                                // ✅ Free → giữ nguyên
+                                else -> {}
                             }
                         },
                         shape = RoundedCornerShape(8.dp)
@@ -206,183 +281,4 @@ fun CropImageScreen(
     }
 }
 
-@Composable
-fun CropImageView(
-    imageBitmap: ImageBitmap,
-    aspectRatio: Pair<Int, Int>?,
-    rotation: Float,
-    modifier: Modifier = Modifier
-) {
-    // cropRect là vùng crop di chuyển được
-    var cropRect by remember { mutableStateOf<Rect?>(null) }
-    var dragOffset by remember { mutableStateOf(Offset.Zero) }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectDragGestures(
-                    onDragStart = { dragOffset = Offset.Zero },
-                    onDrag = { change, dragAmount ->
-                        change.consume()
-                        cropRect = cropRect?.translate(dragAmount.x, dragAmount.y)
-                    }
-                )
-            }
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val viewWidth = size.width
-            val viewHeight = size.height
-
-            // vẽ ảnh nền
-            withTransform({
-                translate(size.width / 2, size.height / 2)
-                rotate(rotation)
-                translate(-imageBitmap.width / 2f, -imageBitmap.height / 2f)
-            }) {
-                drawImage(imageBitmap)
-            }
-
-            // Khởi tạo cropRect ban đầu
-            if (cropRect == null) {
-                val ratio = aspectRatio?.let {
-                    if (it.first != 0 && it.second != 0)
-                        it.first.toFloat() / it.second.toFloat()
-                    else null
-                }
-
-                val width: Float
-                val height: Float
-                if (ratio != null) {
-                    if (viewWidth / viewHeight > ratio) {
-                        height = viewHeight * 0.8f
-                        width = height * ratio
-                    } else {
-                        width = viewWidth * 0.8f
-                        height = width / ratio
-                    }
-                } else {
-                    width = viewWidth * 0.8f
-                    height = viewHeight * 0.8f
-                }
-
-                cropRect = Rect(
-                    (viewWidth - width) / 2f,
-                    (viewHeight - height) / 2f,
-                    (viewWidth + width) / 2f,
-                    (viewHeight + height) / 2f
-                )
-            }
-
-            val rect = cropRect ?: return@Canvas
-
-            // overlay tối bên ngoài khung crop
-            drawRect(
-                color = Color.Black.copy(alpha = 0.6f),
-                size = size,
-                blendMode = BlendMode.SrcOver
-            )
-
-            // vùng crop sáng lại (clear overlay)
-            drawRect(
-                color = Color.Transparent,
-                topLeft = Offset(rect.left, rect.top),
-                size = Size(rect.width, rect.height),
-                blendMode = BlendMode.Clear
-            )
-
-            // vẽ grid 3x3 trong khung crop
-            val gridColor = Color.White.copy(alpha = 0.8f)
-            val stepX = rect.width / 3
-            val stepY = rect.height / 3
-            for (i in 1..2) {
-                drawLine(
-                    gridColor,
-                    Offset(rect.left + stepX * i, rect.top),
-                    Offset(rect.left + stepX * i, rect.bottom),
-                    strokeWidth = 1.5f
-                )
-                drawLine(
-                    gridColor,
-                    Offset(rect.left, rect.top + stepY * i),
-                    Offset(rect.right, rect.top + stepY * i),
-                    strokeWidth = 1.5f
-                )
-            }
-
-            // viền ngoài khung crop
-            drawRect(
-                color = Color.White,
-                topLeft = Offset(rect.left, rect.top),
-                size = Size(rect.width, rect.height),
-                style = Stroke(width = 3f)
-            )
-        }
-    }
-}
-
-@Composable
-fun CropControlPanel(
-    onRatioSelected: (Pair<Int, Int>) -> Unit,
-    onRotate: (Float) -> Unit,
-    onApply: () -> Unit
-) {
-    var rotation by remember { mutableStateOf(0f) }
-    val ratios = listOf(
-        "Original" to (0 to 0),
-        "Free" to (0 to 0),
-        "1:1" to (1 to 1),
-        "4:5" to (4 to 5),
-        "5:4" to (5 to 4)
-    )
-
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .background(Color(0xFF121212))
-            .padding(vertical = 12.dp)
-    ) {
-        Text(
-            "Rotate",
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        Slider(
-            value = rotation,
-            onValueChange = {
-                rotation = it
-                onRotate(it)
-            },
-            valueRange = -45f..45f,
-            modifier = Modifier.padding(horizontal = 32.dp)
-        )
-
-        Text(
-            "Aspect Ratio",
-            color = Color.White,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 8.dp)
-        )
-
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            items(ratios) { (label, pair) ->
-                TextButton(onClick = { onRatioSelected(pair) }) {
-                    Text(label, color = Color.White)
-                }
-            }
-        }
-
-        Button(
-            onClick = onApply,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 8.dp)
-        ) {
-            Text("Crop")
-        }
-    }
-}
