@@ -105,7 +105,6 @@ fun PickImageFromGallery(onImagePicked: (ImageBitmap) -> Unit) {
         Text("Chọn ảnh từ thư viện")
     }
 }
-
 @Composable
 fun CropImageScreen(
     imageBitmap: ImageBitmap,
@@ -117,10 +116,11 @@ fun CropImageScreen(
     val overlayColor = Color(0f, 0f, 0f, 0.6f)
     val density = LocalDensity.current
 
-    var aspectRatioMode  by remember {
-        mutableStateOf("1:1")
-    }
-    // ⚙️ Khi kích thước canvas đã có, setup mặc định khung 1:1
+    var aspectRatioMode by remember { mutableStateOf("1:1") }
+
+    var activeCorner by remember { mutableStateOf<String?>(null) }
+    var isMoving by remember { mutableStateOf(false) }
+
     LaunchedEffect(canvasSize) {
         if (canvasSize != Size.Zero && cropRect == Rect.Zero) {
             val padding = with(density) { 40.dp.toPx() }
@@ -133,7 +133,6 @@ fun CropImageScreen(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        // Ảnh nền
         Image(
             bitmap = imageBitmap,
             contentDescription = null,
@@ -141,22 +140,114 @@ fun CropImageScreen(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Canvas overlay
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(Unit) {
-                    detectDragGestures { change, dragAmount ->
-                        change.consume()
-                        if (aspectRatioMode != "Original") {
-                            cropRect = cropRect.translate(dragAmount)
+                .pointerInput(aspectRatioMode) {
+                    detectDragGestures(
+                        onDragStart = { offset ->
+                            if (aspectRatioMode == "Original") {
+                                activeCorner = null
+                                isMoving = false
+                                return@detectDragGestures
+                            }
+
+                            val cornerRadius = 80f // tăng vùng chạm
+                            val rect = cropRect
+
+                            if (aspectRatioMode == "Free") {
+                                activeCorner = when {
+                                    (offset - Offset(rect.left, rect.top)).getDistance() < cornerRadius -> "TL"
+                                    (offset - Offset(rect.right, rect.top)).getDistance() < cornerRadius -> "TR"
+                                    (offset - Offset(rect.left, rect.bottom)).getDistance() < cornerRadius -> "BL"
+                                    (offset - Offset(rect.right, rect.bottom)).getDistance() < cornerRadius -> "BR"
+                                    rect.contains(offset) -> {
+                                        isMoving = true
+                                        null
+                                    }
+                                    else -> null
+                                }
+                            } else {
+                                // tỉ lệ cố định → chỉ cho di chuyển
+                                if (rect.contains(offset)) {
+                                    isMoving = true
+                                }
+                            }
+                        },
+                        onDragEnd = {
+                            activeCorner = null
+                            isMoving = false
+                        },
+                        onDrag = { change, dragAmount ->
+                            change.consume()
+
+                            if (aspectRatioMode == "Original") return@detectDragGestures
+
+                            val dx = dragAmount.x
+                            val dy = dragAmount.y
+                            val minSize = 100f
+                            val maxWidth = canvasSize.width
+                            val maxHeight = canvasSize.height
+                            var newRect = cropRect
+
+                            if (isMoving) {
+                                // di chuyển toàn khung
+                                newRect = cropRect.translate(dragAmount)
+
+                                // giữ trong vùng ảnh
+                                val shiftX = when {
+                                    newRect.left < 0 -> -newRect.left
+                                    newRect.right > maxWidth -> maxWidth - newRect.right
+                                    else -> 0f
+                                }
+                                val shiftY = when {
+                                    newRect.top < 0 -> -newRect.top
+                                    newRect.bottom > maxHeight -> maxHeight - newRect.bottom
+                                    else -> 0f
+                                }
+
+                                cropRect = newRect.translate(Offset(shiftX, shiftY))
+                                return@detectDragGestures
+                            }
+
+                            // free mode → co giãn 4 góc
+                            if (aspectRatioMode == "Free") {
+                                newRect = when (activeCorner) {
+                                    "TL" -> Rect(
+                                        (cropRect.left + dx).coerceIn(0f, cropRect.right - minSize),
+                                        (cropRect.top + dy).coerceIn(0f, cropRect.bottom - minSize),
+                                        cropRect.right,
+                                        cropRect.bottom
+                                    )
+                                    "TR" -> Rect(
+                                        cropRect.left,
+                                        (cropRect.top + dy).coerceIn(0f, cropRect.bottom - minSize),
+                                        (cropRect.right + dx).coerceIn(cropRect.left + minSize, maxWidth),
+                                        cropRect.bottom
+                                    )
+                                    "BL" -> Rect(
+                                        (cropRect.left + dx).coerceIn(0f, cropRect.right - minSize),
+                                        cropRect.top,
+                                        cropRect.right,
+                                        (cropRect.bottom + dy).coerceIn(cropRect.top + minSize, maxHeight)
+                                    )
+                                    "BR" -> Rect(
+                                        cropRect.left,
+                                        cropRect.top,
+                                        (cropRect.right + dx).coerceIn(cropRect.left + minSize, maxWidth),
+                                        (cropRect.bottom + dy).coerceIn(cropRect.top + minSize, maxHeight)
+                                    )
+                                    else -> cropRect
+                                }
+                                cropRect = newRect
+                            }
                         }
-                    }
+                    )
                 }
         ) {
             canvasSize = size
 
-            // Làm tối vùng ngoài
+            // Làm tối ngoài khung
             val path = Path().apply {
                 addRect(Rect(0f, 0f, size.width, size.height))
                 addRect(cropRect)
@@ -164,14 +255,8 @@ fun CropImageScreen(
             }
             drawPath(path, overlayColor)
 
-            // --- Vẽ khung crop chính ---
-            val strokeWidth = 2.dp.toPx()
-            val gridColor = Color.White.copy(alpha = 0.6f)
-            val handleRadius = 6.dp.toPx()
-            val barLength = 24.dp.toPx()
-            val barWidth = 6.dp.toPx()
-
             // Viền trắng
+            val strokeWidth = 2.dp.toPx()
             drawRect(
                 color = Color.White,
                 topLeft = Offset(cropRect.left, cropRect.top),
@@ -180,55 +265,59 @@ fun CropImageScreen(
             )
 
             // Lưới 3x3
+            val gridColor = Color.White.copy(alpha = 0.5f)
             val stepX = cropRect.width / 3
             val stepY = cropRect.height / 3
             for (i in 1..2) {
                 drawLine(
-                    color = gridColor,
-                    start = Offset(cropRect.left + stepX * i, cropRect.top),
-                    end = Offset(cropRect.left + stepX * i, cropRect.bottom),
+                    gridColor,
+                    Offset(cropRect.left + stepX * i, cropRect.top),
+                    Offset(cropRect.left + stepX * i, cropRect.bottom),
                     strokeWidth = 1.dp.toPx()
                 )
                 drawLine(
-                    color = gridColor,
-                    start = Offset(cropRect.left, cropRect.top + stepY * i),
-                    end = Offset(cropRect.right, cropRect.top + stepY * i),
+                    gridColor,
+                    Offset(cropRect.left, cropRect.top + stepY * i),
+                    Offset(cropRect.right, cropRect.top + stepY * i),
                     strokeWidth = 1.dp.toPx()
                 )
             }
 
             // 4 chấm tròn ở góc
+            val handleRadius = 6.dp.toPx()
             drawCircle(Color.White, handleRadius, Offset(cropRect.left, cropRect.top))
             drawCircle(Color.White, handleRadius, Offset(cropRect.right, cropRect.top))
             drawCircle(Color.White, handleRadius, Offset(cropRect.left, cropRect.bottom))
             drawCircle(Color.White, handleRadius, Offset(cropRect.right, cropRect.bottom))
 
-            // 4 thanh ngắn bo tròn ở giữa mỗi cạnh
+            // 4 thanh ngắn bo tròn
+            val barLength = 24.dp.toPx()
+            val barWidth = 6.dp.toPx()
             drawLine(
-                color = Color.White,
-                start = Offset(cropRect.center.x - barLength / 2, cropRect.top),
-                end = Offset(cropRect.center.x + barLength / 2, cropRect.top),
+                Color.White,
+                Offset(cropRect.center.x - barLength / 2, cropRect.top),
+                Offset(cropRect.center.x + barLength / 2, cropRect.top),
                 strokeWidth = barWidth,
                 cap = StrokeCap.Round
             )
             drawLine(
-                color = Color.White,
-                start = Offset(cropRect.center.x - barLength / 2, cropRect.bottom),
-                end = Offset(cropRect.center.x + barLength / 2, cropRect.bottom),
+                Color.White,
+                Offset(cropRect.center.x - barLength / 2, cropRect.bottom),
+                Offset(cropRect.center.x + barLength / 2, cropRect.bottom),
                 strokeWidth = barWidth,
                 cap = StrokeCap.Round
             )
             drawLine(
-                color = Color.White,
-                start = Offset(cropRect.left, cropRect.center.y - barLength / 2),
-                end = Offset(cropRect.left, cropRect.center.y + barLength / 2),
+                Color.White,
+                Offset(cropRect.left, cropRect.center.y - barLength / 2),
+                Offset(cropRect.left, cropRect.center.y + barLength / 2),
                 strokeWidth = barWidth,
                 cap = StrokeCap.Round
             )
             drawLine(
-                color = Color.White,
-                start = Offset(cropRect.right, cropRect.center.y - barLength / 2),
-                end = Offset(cropRect.right, cropRect.center.y + barLength / 2),
+                Color.White,
+                Offset(cropRect.right, cropRect.center.y - barLength / 2),
+                Offset(cropRect.right, cropRect.center.y + barLength / 2),
                 strokeWidth = barWidth,
                 cap = StrokeCap.Round
             )
@@ -259,12 +348,10 @@ fun CropImageScreen(
                             val padding = with(density) { 40.dp.toPx() }
 
                             when {
-                                // ✅ "Original" → full ảnh
                                 label == "Original" -> {
                                     cropRect = Rect(0f, 0f, canvasSize.width, canvasSize.height)
                                 }
 
-                                // ✅ Tỉ lệ xác định
                                 r.first != 0 && r.second != 0 -> {
                                     val width = canvasSize.width - 2 * padding
                                     val height = width * r.second / r.first
@@ -273,8 +360,9 @@ fun CropImageScreen(
                                     cropRect = Rect(left, top, left + width, top + height)
                                 }
 
-                                // ✅ Free → giữ nguyên
-                                else -> {}
+                                else -> {
+                                    // Free giữ nguyên
+                                }
                             }
                         },
                         shape = RoundedCornerShape(8.dp)
