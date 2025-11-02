@@ -178,22 +178,30 @@ fun TickMark(value: Int) {
             .background(color)
     )
 }
+/**
+ * Ánh xạ giá trị cuộn (-30 đến 30) sang tỷ lệ zoom và góc xoay.
+ * Đã ĐẢO NGƯỢC chiều xoay.
+ *
+ * @param rulerValue Giá trị từ thước cuộn (-30 đến 30).
+ * @return Pair<zoomScale, rotationAngle>
+ */
+fun mapRulerToScaleAndRotation(rulerValue: Int): Pair<Float, Float> {
+    val maxRulerValue = 30.0f
+    val maxRotation = 45.0f // Góc xoay tối đa (ví dụ: 45 độ)
+    val minScale = 1.0f
+    val maxScale = 3.0f
+    val scaleRange = maxScale - minScale
 
+    // 1. Tính toán Scale (giữ nguyên, chỉ dựa trên giá trị tuyệt đối)
+    val absValue = abs(rulerValue).toFloat()
+    val zoomScale = minScale + (absValue / maxRulerValue) * scaleRange
 
-fun mapRulerToZoomScale(rulerValue: Int): Float {
-    // Chỉ lấy giá trị tuyệt đối, vì cuộn trái/phải đều là zoom in
-    val absValue = abs(rulerValue)
+    // 2. Tính toán Rotation (NHÂN VỚI -1 ĐỂ ĐẢO NGƯỢC CHIỀU)
+    // Ánh xạ tuyến tính rulerValue (-30..+30) -> angle (-45°..+45°)
+    // Đảo ngược: rulerValue (+30) -> angle (-45°), rulerValue (-30) -> angle (+45°)
+    val rotationAngle = (rulerValue / maxRulerValue) * maxRotation * -1.0f // ⭐️ THÊM * -1.0f
 
-    // Ánh xạ tuyến tính:
-    // Ruler: 0 -> 30
-    // Scale: 1.0f -> 3.0f
-
-    // Range của Ruler: 30
-    // Range của Scale: 2.0f
-
-    // Scale = 1.0f + (absValue / 30.0f) * 2.0f
-
-    return 1.0f + (absValue / 30.0f) * 2.0f
+    return Pair(zoomScale, rotationAngle)
 }
 
 

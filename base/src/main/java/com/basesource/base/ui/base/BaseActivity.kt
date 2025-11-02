@@ -1,6 +1,7 @@
 package com.basesource.base.ui.base
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -42,7 +43,7 @@ abstract class BaseActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         setupFullScreen()
-        
+
         // Kiểm tra xem ngôn ngữ có thay đổi không
         val newLanguage = LanguageManager.getCurrentLanguage(this)
         if (_currentLanguage != newLanguage) {
@@ -69,19 +70,22 @@ abstract class BaseActivity : ComponentActivity() {
                 // Set navigation bar behavior to show only when swiped up
                 it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 // Set status bar appearance - dark content on light background
-                it.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS)
+                it.setSystemBarsAppearance(
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                )
             }
         } else {
             // Android 10 and below
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            )
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_FULLSCREEN
+                            or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    )
         }
     }
 
@@ -102,4 +106,8 @@ abstract class BaseActivity : ComponentActivity() {
         _activityResultManager = null
     }
 
+    fun startScreen(startClass: Class<*>) {
+        val intent = Intent(this, startClass)
+        startActivity(intent)
+    }
 }
