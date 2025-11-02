@@ -81,6 +81,7 @@ dependencies {
     implementation(libs.androidx.annotation)
     implementation(libs.lottie.compose)
 
+    implementation("org.wysaid:gpuimage-plus:3.1.0-16k")
 
 }
 

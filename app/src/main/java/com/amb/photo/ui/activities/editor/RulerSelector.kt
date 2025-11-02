@@ -20,6 +20,7 @@ import androidx.compose.ui.zIndex
 import com.amb.photo.ui.theme.AppColor
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 // Phạm vi giá trị của thước đo
@@ -32,7 +33,8 @@ private val TICK_WIDTH = 9.dp
 
 @Composable
 fun RulerSelector(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onValueChange: (Int) -> Unit
 ) {
     val listState = rememberLazyListState()
     val density = LocalDensity.current
@@ -75,6 +77,9 @@ fun RulerSelector(
         }
     }
 
+    LaunchedEffect(currentValue) {
+        onValueChange(currentValue)
+    }
     // Đặt vị trí ban đầu là 0 (index 30)
     // Cần LaunchedEffect để đảm bảo viewportCenter đã có giá trị
     LaunchedEffect(viewportCenter.value) {
@@ -172,14 +177,30 @@ fun TickMark(value: Int) {
             .height(height)
             .background(color)
     )
-    // Khoảng cách giữa các vạch
-//    Spacer(modifier = Modifier.width(TICK_WIDTH))
 }
+
+
+fun mapRulerToZoomScale(rulerValue: Int): Float {
+    // Chỉ lấy giá trị tuyệt đối, vì cuộn trái/phải đều là zoom in
+    val absValue = abs(rulerValue)
+
+    // Ánh xạ tuyến tính:
+    // Ruler: 0 -> 30
+    // Scale: 1.0f -> 3.0f
+
+    // Range của Ruler: 30
+    // Range của Scale: 2.0f
+
+    // Scale = 1.0f + (absValue / 30.0f) * 2.0f
+
+    return 1.0f + (absValue / 30.0f) * 2.0f
+}
+
 
 // -----------------------------------------------------------------------------------
 // VÍ DỤ SỬ DỤNG:
 // Thêm hàm này vào Activity/Fragment của bạn:
 @Composable
 fun PreviewRulerSelector() {
-    RulerSelector()
+//    RulerSelector()
 }

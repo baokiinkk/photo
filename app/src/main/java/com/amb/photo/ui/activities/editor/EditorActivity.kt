@@ -1,5 +1,6 @@
 package com.amb.photo.ui.activities.editor
 
+import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -9,33 +10,24 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -48,50 +40,37 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.amb.photo.R
+import com.amb.photo.ui.activities.editor.blur.ImageBlurScreen
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.clickableWithAlphaEffect
-import kotlin.math.roundToInt
 
 // 🟣 Enum xác định chế độ crop
 enum class CropAspect(val label: String, val ratio: Pair<Int, Int>?) {
@@ -107,7 +86,9 @@ data class CropState(
     val cropRect: Rect = Rect.Zero,
     val aspect: CropAspect = CropAspect.RATIO_1_1,
     val activeCorner: String? = null,
-    val isMoving: Boolean = false
+    val isMoving: Boolean = false,
+    val zoomScale: Float = 1f,
+    val rotationAngle: Float = 0f
 )
 
 class EditorActivity : BaseActivity() {
@@ -126,16 +107,25 @@ class EditorActivity : BaseActivity() {
                         .background(color = Color(0xFFF2F4F8))
 
                 ) {
-                    var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+                    var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
                     if (imageBitmap == null) {
-                        PickImageFromGallery { picked -> imageBitmap = picked }
+                        PickImageFromGallery { uri ->
+//                            imageBitmap = picked
+                            val bitmap = if (Build.VERSION.SDK_INT < 28) {
+                                MediaStore.Images.Media.getBitmap(this@EditorActivity.contentResolver, uri)
+                            } else {
+                                val source = ImageDecoder.createSource(this@EditorActivity.contentResolver, uri)
+                                ImageDecoder.decodeBitmap(source)
+                            }
+                            imageBitmap = bitmap
+//                            imageBitmap = bitmap.asImageBitmap()
+//                            onImagePicked(bitmap.asImageBitmap())
+                        }
                     } else {
-                        CropImageScreen(imageBitmap!!)
+                        CropImageScreen(imageBitmap!!.asImageBitmap())
+//                        ImageBlurScreen(imageBitmap!!)
                     }
-                    RulerSelector(
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
                 }
             }
         }
@@ -143,19 +133,13 @@ class EditorActivity : BaseActivity() {
 }
 
 @Composable
-fun PickImageFromGallery(onImagePicked: (ImageBitmap) -> Unit) {
+fun PickImageFromGallery(onImagePicked: (Uri) -> Unit) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            val bitmap = if (Build.VERSION.SDK_INT < 28) {
-                MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
-            } else {
-                val source = ImageDecoder.createSource(context.contentResolver, uri)
-                ImageDecoder.decodeBitmap(source)
-            }
-            onImagePicked(bitmap.asImageBitmap())
+            onImagePicked.invoke(uri)
         }
     }
 
@@ -193,6 +177,11 @@ fun CropImageScreen(imageBitmap: ImageBitmap) {
                         .fillMaxSize()
                         .onGloballyPositioned {
                             imageBounds = it.size
+                        }
+                        .graphicsLayer {
+                            scaleX = cropState.zoomScale
+                            scaleY = cropState.zoomScale
+                            // TODO: Thêm logic dịch chuyển (pan) nếu cần thiết sau khi zoom
                         }
                 )
 
@@ -500,11 +489,13 @@ fun CropImageScreen(imageBitmap: ImageBitmap) {
                             Rect(left, top, left + width, top + height)
                         }
                     }
-
                     cropState = cropState.copy(
                         aspect = aspect,
                         cropRect = newRect
                     )
+                },
+                onZoomChange = {newScale->
+                    cropState = cropState.copy(zoomScale = newScale)
                 }
             )
         }
@@ -517,10 +508,10 @@ fun CropControlPanel(
     modifier: Modifier = Modifier,
     onCancel: () -> Unit,
     onApply: () -> Unit,
-    onFormat: (CropAspect) -> Unit
+    onFormat: (CropAspect) -> Unit,
+    onZoomChange: (Float) -> Unit
 ) {
     val selectedTab = remember { mutableStateOf("Format") }
-//    val formatList = listOf("Original", "Free", "1:1", "4:5", "5:4")
     val positionList = listOf("Horizontal", "Vertical", "Rotate")
 
     Column(
@@ -557,18 +548,23 @@ fun CropControlPanel(
             }
         }
 
+        RulerSelector() { rulerValue ->
+            // Ánh xạ giá trị cuộn (-30 -> 30) thành tỉ lệ zoom (1.0f -> 3.0f)
+            val newScale = mapRulerToZoomScale(rulerValue)
+            onZoomChange.invoke(newScale)
+        }
         // Center slider or options depending on tab
         if (selectedTab.value == "Format") {
             // Fake alignment slider (visual only)
-            Slider(
-                value = 0f,
-                onValueChange = {},
-                valueRange = -100f..100f,
-                colors = SliderDefaults.colors(
-                    thumbColor = Color(0xFF7C4DFF),
-                    activeTrackColor = Color(0xFF7C4DFF)
-                )
-            )
+//            Slider(
+//                value = 0f,
+//                onValueChange = {},
+//                valueRange = -100f..100f,
+//                colors = SliderDefaults.colors(
+//                    thumbColor = Color(0xFF7C4DFF),
+//                    activeTrackColor = Color(0xFF7C4DFF)
+//                )
+//            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
