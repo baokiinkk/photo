@@ -206,7 +206,7 @@ class AppColor(private val textStyle: TextStyle) {
 
         val Purple50 = Color(0xFFF4F3FF)
         val Purple300 = Color(0xFFB4ABFF)
-        val Purple500 = Color(0xFF8F82FF)
+        val Purple500 = Color(0xFF6425F3)
         val Purple400 = Color(0xFFA59BFF)
         val Purple700 = Color(0xFF665CB5)
 
@@ -280,7 +280,7 @@ class AppColor(private val textStyle: TextStyle) {
 
     fun gray400(): TextStyle {
         return textStyle.copy(
-            color = Color(0xFF96989C)
+            color = Color(0xFF98A2B3)
         )
     }
 

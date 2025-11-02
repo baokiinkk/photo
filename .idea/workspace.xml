@@ -5,6 +5,11 @@
       <config />
     </shared>
     <layouts>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/bg_bottom_bar.xml">
+        <config>
+          <theme>@style/Theme.Emoji</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/base/src/main/res/drawable/flat_japan.xml">
         <config>
           <theme>@android:style/Theme.Material.Light</theme>
@@ -42,34 +47,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="50e1497e-4d41-47fa-8448-509b6a0f4806" name="Changes" comment="trending screen">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_quicks.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_template.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/raw/background.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/raw/doodle.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/raw/filter.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/raw/frame.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/raw/stickers.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/raw/text.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_bottom_bar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_selected_home.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_create_unselect.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_creative_selected.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_fab.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_home_selected.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_home_unselect.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/discover/DiscoverQuickEdits.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/discover/DiscoverQuickEdits.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/discover/DiscoverTemplates.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/discover/DiscoverTemplates.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/discover/DiscoverUI.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/discover/DiscoverUI.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/imagepicker/ImagePickerActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/imagepicker/ImagePickerActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/imagepicker/ImagePickerScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/imagepicker/ImagePickerScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/imagepicker/components/HeaderBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/imagepicker/components/HeaderBar.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/BottomTabBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/BottomTabBar.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/MainScreenUI.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/MainScreenUI.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/MainViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/activities/main/MainViewModel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/theme/AppStyle.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/amb/photo/ui/theme/AppStyle.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/raw/ic_rate_app_arrow.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/raw/ic_rate_app_blink.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/raw/ic_rate_app_star.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/problems/problems-report.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +76,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/Users/baoho/.android/avd/Medium_Phone.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=R9WWB0S941F)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -149,41 +146,41 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Android App.app.executor": "Run",
-    "ApkExportedModule": "emoij.app",
-    "BundleExportedModule": "emoij.app",
-    "DEBUGGABLE_DEVICE": "Medium_Phone [emulator-5554]",
-    "DEBUGGABLE_PROCESS": "com.amb.emoij",
-    "DEBUGGER_ID": "Auto",
-    "ExportApk.ApkPathForemoij.app": "/Users/baoho/development/freelance/statusbar/app",
-    "ExportBundle.BundlePathForemoij.app": "/Users/baoho/development/freelance/statusbar/app",
-    "Gradle.Download Sources.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "SHOW_ALL_PROCESSES": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "com.google.services.firebase.aqiPopupShown": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/baoho/development/freelance/photo",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.17",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
-    "show.migrate.to.gradle.popup": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Android App.app.executor&quot;: &quot;Run&quot;,
+    &quot;ApkExportedModule&quot;: &quot;emoij.app&quot;,
+    &quot;BundleExportedModule&quot;: &quot;emoij.app&quot;,
+    &quot;DEBUGGABLE_DEVICE&quot;: &quot;Medium_Phone [emulator-5554]&quot;,
+    &quot;DEBUGGABLE_PROCESS&quot;: &quot;com.amb.emoij&quot;,
+    &quot;DEBUGGER_ID&quot;: &quot;Auto&quot;,
+    &quot;ExportApk.ApkPathForemoij.app&quot;: &quot;/Users/baoho/development/freelance/statusbar/app&quot;,
+    &quot;ExportBundle.BundlePathForemoij.app&quot;: &quot;/Users/baoho/development/freelance/statusbar/app&quot;,
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;SHOW_ALL_PROCESSES&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/baoho/development/freelance/photo&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   },
-  "keyToStringList": {
-    "ExportApk.BuildVariants": [
-      "release"
+  &quot;keyToStringList&quot;: {
+    &quot;ExportApk.BuildVariants&quot;: [
+      &quot;release&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -193,8 +190,8 @@
       <recent name="$PROJECT_DIR$/base/src/main/res/drawable" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/app/src/main/res/raw" />
       <recent name="$PROJECT_DIR$/app/src/main/res/drawable" />
+      <recent name="$PROJECT_DIR$/app/src/main/res/raw" />
       <recent name="$PROJECT_DIR$/base/src/main/res/drawable" />
       <recent name="$PROJECT_DIR$/base/src/main/jniLibs" />
       <recent name="$PROJECT_DIR$/app/src/main/res/font" />
@@ -292,22 +289,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1759050989563</updated>
-    </task>
-    <task id="LOCAL-00036" summary="trending screen">
-      <option name="closed" value="true" />
-      <created>1759917034037</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1759917034037</updated>
-    </task>
-    <task id="LOCAL-00037" summary="trending screen">
-      <option name="closed" value="true" />
-      <created>1759919516433</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1759919516433</updated>
     </task>
     <task id="LOCAL-00038" summary="trending screen">
       <option name="closed" value="true" />
@@ -685,7 +666,23 @@
       <option name="project" value="LOCAL" />
       <updated>1761893250396</updated>
     </task>
-    <option name="localTasksCounter" value="85" />
+    <task id="LOCAL-00085" summary="trending screen">
+      <option name="closed" value="true" />
+      <created>1761993346021</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1761993346021</updated>
+    </task>
+    <task id="LOCAL-00086" summary="trending screen">
+      <option name="closed" value="true" />
+      <created>1761993381699</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1761993381699</updated>
+    </task>
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -773,12 +770,12 @@
       <map>
         <entry key="com.amb.emoij">
           <value>
-            <CheckInfo lastCheckTimestamp="1761893245767" />
+            <CheckInfo lastCheckTimestamp="1761993342325" />
           </value>
         </entry>
         <entry key="com.amb.emoij.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1761893245739" />
+            <CheckInfo lastCheckTimestamp="1761993342313" />
           </value>
         </entry>
         <entry key="com.amb.speechnotification">
