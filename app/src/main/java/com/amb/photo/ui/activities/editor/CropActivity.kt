@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -158,6 +159,8 @@ fun CropImageScreen(imageBitmap: ImageBitmap) {
     var imageBounds by remember { mutableStateOf(IntSize.Zero) }
     val overlayColor = Color(0f, 0f, 0f, 0.6f)
     val density = LocalDensity.current
+    var scaleXFlip by remember { mutableStateOf(1f) }
+    var scaleYFlip by remember { mutableStateOf(1f) }
 
     Box(
         modifier = Modifier
@@ -171,7 +174,6 @@ fun CropImageScreen(imageBitmap: ImageBitmap) {
                     .weight(1f)
                     .padding(bottom = 16.dp)
                     .clip(RoundedCornerShape(0.dp))
-                    .background(Color.LightGray.copy(alpha = 0.3f))
             ) {
                 // 🟣 Ảnh hiển thị
                 Image(
@@ -185,9 +187,9 @@ fun CropImageScreen(imageBitmap: ImageBitmap) {
                             imageBounds = it.size
                         }
                         .graphicsLayer {
-                            scaleX = cropState.zoomScale
-                            scaleY = cropState.zoomScale
-                            rotationZ = cropState.rotationAngle // ⭐️ Áp dụng góc xoay
+                            scaleX = cropState.zoomScale * scaleXFlip // ⭐️ KẾT HỢP ZOOM VÀ LẬT
+                            scaleY = cropState.zoomScale * scaleYFlip // ⭐️ KẾT HỢP ZOOM VÀ LẬT
+                            rotationZ = cropState.rotationAngle // Áp dụng góc xoay
                         }
                 )
 
@@ -506,6 +508,20 @@ fun CropImageScreen(imageBitmap: ImageBitmap) {
                         zoomScale = newScale,
                         rotationAngle = newAngle
                     )
+                },
+                onRotateClick = {
+                    // Xoay cố định 90 độ
+                    cropState = cropState.copy(
+                        rotationAngle = (cropState.rotationAngle + 90f) % 360
+                    )
+                },
+                onFlipHorizontal = {
+                    // Lật ngang (Horizontal Flip)
+                    scaleXFlip *= -1f
+                },
+                onFlipVertical = {
+                    // Lật dọc (Vertical Flip)
+                    scaleYFlip *= -1f
                 }
             )
         }
@@ -519,7 +535,10 @@ fun CropControlPanel(
     onCancel: () -> Unit,
     onApply: () -> Unit,
     onFormat: (CropAspect) -> Unit,
-    onScaleAndRotationChange: (Float, Float) -> Unit
+    onScaleAndRotationChange: (Float, Float) -> Unit,
+    onRotateClick: () -> Unit, // ⭐️ THÊM: Xoay 90 độ
+    onFlipHorizontal: () -> Unit, // ⭐️ THÊM: Lật ngang
+    onFlipVertical: () -> Unit // ⭐️ THÊM: Lật dọc
 ) {
     val selectedTab = remember { mutableStateOf("Format") }
     val positionList = listOf("Horizontal", "Vertical", "Rotate")
@@ -560,29 +579,10 @@ fun CropControlPanel(
 
         RulerSelector() { rulerValue ->
             val (newScale, newAngle) = mapRulerToScaleAndRotation(rulerValue)
-            // Thay vì onZoomChange, ta giả định có một callback mới
-            // Hoặc truyền trực tiếp vào hàm onZoomChange cũ (cần sửa đổi khai báo)
-            // Tạm thời, giả định ta gọi hàm cập nhật trong CropImageScreen:
-            // Tuy nhiên, vì CropControlPanel là @Composable, nó không thể gọi trực tiếp
-            // Nên ta cần sửa đổi CropImageScreen để xử lý
-
-            // ⭐️ Cần cập nhật hàm onZoomChange trong CropControlPanel
-            // Tạm thời tôi sẽ gửi cả hai qua một callback duy nhất:
             onScaleAndRotationChange(newScale, newAngle)
         }
         // Center slider or options depending on tab
         if (selectedTab.value == "Format") {
-            // Fake alignment slider (visual only)
-//            Slider(
-//                value = 0f,
-//                onValueChange = {},
-//                valueRange = -100f..100f,
-//                colors = SliderDefaults.colors(
-//                    thumbColor = Color(0xFF7C4DFF),
-//                    activeTrackColor = Color(0xFF7C4DFF)
-//                )
-//            )
-
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -606,7 +606,13 @@ fun CropControlPanel(
                 items(positionList) { label ->
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.clickable { /* handle flip/rotate */ }
+                        modifier = Modifier.clickableWithAlphaEffect{
+                            when(label) {
+                                "Rotate" -> onRotateClick()
+                                "Horizontal" -> onFlipHorizontal()
+                                "Vertical" -> onFlipVertical()
+                            }
+                        }
                     ) {
                         Box(
                             modifier = Modifier
