@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import com.amb.photo.ui.theme.BackgroundWhite
+import com.amb.photo.ui.theme.MainTheme
 import com.basesource.base.ui.base.BaseActivity
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -28,14 +29,15 @@ class MainActivity : BaseActivity() {
         observerData()
         setContent {
             val selectedTab by viewModel.selectedTab.collectAsState()
-            MainScreenUI(
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    .background(BackgroundWhite),
-                selectedTab = selectedTab,
-                viewModel = viewModel,
-            )
-
+            MainTheme {
+                MainScreenUI(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .background(BackgroundWhite),
+                    selectedTab = selectedTab,
+                    viewModel = viewModel,
+                )
+            }
         }
     }
 

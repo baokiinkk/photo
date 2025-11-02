@@ -26,9 +26,9 @@ fun CustomButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     colors: List<Color> = listOf(
-        Color(0xFF94F5EC),
-        Color(0xFF82A2FC),
-        Color(0xFFB17BFE)
+        Color(0xFF6425F3),
+        Color(0xFF6425F3),
+        Color(0xFF6425F3)
     ),
     disabledColor: Color = Color(0xFFB9BCBF),
     height: Dp = 48.dp,
@@ -40,7 +40,6 @@ fun CustomButton(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier
-            .fillMaxWidth()
             .height(height)
             .background(
                 brush = if (enabled) {

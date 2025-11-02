@@ -34,7 +34,7 @@ fun GalleryGrid(
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
-        modifier = modifier.heightIn(min = 320.dp)
+        modifier = modifier.heightIn(max = 999.dp)
     ) {
         items(images) { img ->
             Box(modifier = Modifier
