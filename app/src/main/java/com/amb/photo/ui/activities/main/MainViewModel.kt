@@ -45,14 +45,14 @@ class MainViewModel() : BaseViewModel(), KoinComponent {
             TabItem(
                 type = TabType.DISCOVER,
                 title = stringResource(id = R.string.tab_trending),
-                iconEnabled = R.drawable.ic_home_tab_trending_enable,
-                iconDisabled = R.drawable.ic_home_tab_trending_disable,
+                iconEnabled = R.drawable.ic_home_selected,
+                iconDisabled = R.drawable.ic_home_unselect,
             ),
             TabItem(
                 type = TabType.CUSTOMIZE,
                 title = stringResource(id = R.string.tab_customize),
-                iconEnabled = R.drawable.ic_home_tab_custumize_enable,
-                iconDisabled = R.drawable.ic_home_tab_custumize_disable,
+                iconEnabled = R.drawable.ic_creative_selected,
+                iconDisabled = R.drawable.ic_create_unselect,
             ),
         )
     }

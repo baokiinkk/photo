@@ -40,6 +40,7 @@ class MainActivity : BaseActivity() {
             }
         }
     }
+
     private fun observerData() {
         lifecycleScope.launch {
             viewModel.events.collect { event ->
@@ -50,6 +51,7 @@ class MainActivity : BaseActivity() {
                             putExtra("arg", bundle)
                         })
                     }
+
                     is MainScreenEvent.NavigateToTab -> {
                         viewModel.setSelectedTab(event.tabType)
                     }
@@ -57,20 +59,19 @@ class MainActivity : BaseActivity() {
             }
         }
     }
+
     private fun getSignature() {
         try {
             val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
             } else {
-                @Suppress("DEPRECATION")
-                packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+                @Suppress("DEPRECATION") packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
             }
 
             val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 packageInfo.signingInfo?.apkContentsSigners
             } else {
-                @Suppress("DEPRECATION")
-                packageInfo.signatures
+                @Suppress("DEPRECATION") packageInfo.signatures
             }
 
             val md = MessageDigest.getInstance("SHA")

@@ -2,17 +2,26 @@ package com.amb.photo.ui.activities.imagepicker
 
 import android.net.Uri
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.amb.photo.ui.activities.imagepicker.components.BucketSheet
 import com.amb.photo.ui.activities.imagepicker.components.GalleryGrid
 import com.amb.photo.ui.activities.imagepicker.components.PickerHeaderBar
 import com.amb.photo.ui.activities.imagepicker.components.SelectedBar
-import com.amb.photo.ui.activities.imagepicker.components.BucketSheet
 
 @Composable
 fun ImagePickerScreen(
@@ -29,7 +38,9 @@ fun ImagePickerScreen(
 
     LaunchedEffect(Unit) { viewModel.loadInitial() }
 
-    Box(Modifier.fillMaxSize()) {
+    Box(Modifier
+        .fillMaxSize()
+        .background(Color.White)) {
         Column(Modifier.fillMaxSize()) {
             PickerHeaderBar(
                 folderName = currentBucket?.name ?: "Gallery",
@@ -52,10 +63,15 @@ fun ImagePickerScreen(
         }
         if (showSheet) {
             Box(
-                Modifier.fillMaxSize().background(Color(0x66000000)),
+                Modifier
+                    .fillMaxSize()
+                    .background(Color(0x66000000)),
                 contentAlignment = Alignment.TopCenter
             ) {
-                Box(Modifier.fillMaxWidth().wrapContentHeight().background(Color.White)) {
+                Box(Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(Color.White)) {
                     BucketSheet(
                         buckets = buckets,
                         currentBucketId = currentBucket?.id,
