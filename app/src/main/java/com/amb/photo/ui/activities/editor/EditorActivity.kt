@@ -55,6 +55,10 @@ class EditorActivity : BaseActivity() {
 
                     PickImageFromGallery { uri ->
                         pathBitmap = uri.toString()
+                        navigateTo(
+                            startClazz = CropActivity::class.java,
+                            input = CropInput(pathBitmap = pathBitmap)
+                        )
                     }
                 }
             }

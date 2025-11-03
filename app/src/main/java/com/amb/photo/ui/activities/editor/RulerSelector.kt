@@ -98,7 +98,6 @@ fun RulerSelector(
 
         // Vùng hiển thị giá trị hiện tại
         Card(
-            modifier = Modifier.padding(16.dp),
             colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0)),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {

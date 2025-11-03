@@ -438,16 +438,20 @@ fun CropControlPanel(
             }
         }
 
-        RulerSelector() { rulerValue ->
+        RulerSelector(
+            modifier = Modifier.background(Color.Green)
+        ) { rulerValue ->
             val (newScale, newAngle) = mapRulerToScaleAndRotation(rulerValue)
             onScaleAndRotationChange(newScale, newAngle)
         }
         // Center slider or options depending on tab
         if (selectedTab.value == "Format") {
-            Spacer(modifier = Modifier.height(16.dp))
+//            Spacer(modifier = Modifier.height(16.dp))
             LazyRow(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .background(Color.Red),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 verticalAlignment = Alignment.Bottom,
