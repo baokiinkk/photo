@@ -24,14 +24,5 @@ inline fun <reified T> String.fromJsonTypeToken(): T? {
     }
 }
 
-inline fun <reified T> Intent.getInput(): T {
-    val data = getStringExtra("screen_input_key").orEmpty()
-    return data.fromJson()
-}
 
-
-inline fun <reified T> Intent.getOutput(): T {
-    val data = getStringExtra("EXTRA_SCREEN_OUTPUT_KEY").orEmpty()
-    return data.fromJson()
-}
 

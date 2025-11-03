@@ -9,6 +9,8 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven("https://maven.wysaid.org/")
+
     }
 }
 dependencyResolutionManagement {
@@ -17,6 +19,8 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
+        maven("https://maven.wysaid.org/")
+
     }
 }
 
