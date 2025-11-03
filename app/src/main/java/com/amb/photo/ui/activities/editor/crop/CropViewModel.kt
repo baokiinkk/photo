@@ -1,11 +1,8 @@
-package com.amb.photo.ui.activities.editor
+package com.amb.photo.ui.activities.editor.crop
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

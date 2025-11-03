@@ -1,4 +1,4 @@
-package com.amb.photo.ui.activities.editor
+package com.amb.photo.ui.activities.editor.crop
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -70,6 +70,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.amb.photo.R
+import com.amb.photo.ui.activities.editor.RulerSelector
+import com.amb.photo.ui.activities.editor.mapRulerToScaleAndRotation
+import com.amb.photo.ui.activities.editor.toBitmap
 import com.amb.photo.ui.theme.AppColor
 import com.amb.photo.ui.theme.fontFamily
 import com.amb.photo.utils.getInput
@@ -79,63 +82,6 @@ import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-data class IconAspect(
-    val resId: Int,
-    val width: Int,
-    val height: Int
-)
-
-// 🟣 Enum xác định chế độ crop
-enum class CropAspect(val label: String, val ratio: Pair<Int, Int>?, val iconAspect: IconAspect) {
-    ORIGINAL(
-        "Original",
-        null,
-        IconAspect(
-            resId = R.drawable.ic_original,
-            width = 48,
-            height = 48
-        )
-    ),
-    FREE(
-        "Free", null, IconAspect(
-            resId = R.drawable.ic_free,
-            width = 48,
-            height = 48
-        )
-    ),
-    RATIO_1_1(
-        "1:1", 1 to 1, IconAspect(
-            resId = R.drawable.ic_1_1,
-            width = 48,
-            height = 48
-        )
-    ),
-    RATIO_4_5(
-        "4:5", 4 to 5, IconAspect(
-            resId = R.drawable.ic_4_5,
-            width = 48,
-            height = 60
-        )
-    ),
-    RATIO_5_4(
-        "5:4", 5 to 4, IconAspect(
-            resId = R.drawable.ic_5_4,
-            width = 60,
-            height = 48
-        )
-    )
-}
-
-// 🟣 CropState chứa toàn bộ trạng thái hiện tại
-data class CropState(
-    val cropRect: Rect = Rect.Zero,
-    val aspect: CropAspect = CropAspect.RATIO_1_1,
-    val activeCorner: String? = null,
-    val isMoving: Boolean = false,
-    val zoomScale: Float = 1f,
-    val rotationAngle: Float = 0f,
-    val id: String = CropAspect.RATIO_1_1.label
-)
 
 data class CropInput(
     val pathBitmap: String? = null
