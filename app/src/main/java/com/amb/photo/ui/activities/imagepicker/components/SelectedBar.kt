@@ -29,6 +29,7 @@ fun SelectedBar(selected: List<Uri>, onRemove: (Uri) -> Unit, onClearAll: () -> 
     Box(
         Modifier
             .fillMaxWidth()
+            .height(148.dp)
             .background(Color.White)
     ) {
         Row(
