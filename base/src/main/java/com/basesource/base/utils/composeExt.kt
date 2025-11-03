@@ -69,7 +69,7 @@ fun ImageWidget(
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
-    colorFilter: ColorFilter? = null
+    tintColor: Color? = null
 ) = Image(
     modifier = modifier,
     painter = painterResource(resId),
@@ -77,6 +77,6 @@ fun ImageWidget(
     alignment = alignment,
     contentScale = contentScale,
     alpha = alpha,
-    colorFilter = colorFilter,
+    colorFilter = if (tintColor != null) ColorFilter.tint(tintColor) else null,
 )
 

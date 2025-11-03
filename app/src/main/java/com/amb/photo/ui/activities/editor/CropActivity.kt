@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -65,26 +66,33 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import com.amb.photo.R
+import com.amb.photo.ui.theme.AppColor
+import com.amb.photo.ui.theme.fontFamily
 import com.amb.photo.utils.getInput
 import com.amb.photo.utils.viewModelArg
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
+import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 // 🟣 Enum xác định chế độ crop
-enum class CropAspect(val label: String, val ratio: Pair<Int, Int>?) {
-    ORIGINAL("Original", null),
-    FREE("Free", null),
-    RATIO_1_1("1:1", 1 to 1),
-    RATIO_4_5("4:5", 4 to 5),
-    RATIO_5_4("5:4", 5 to 4)
+enum class CropAspect(val label: String, val ratio: Pair<Int, Int>?, val resId: Int) {
+    ORIGINAL("Original", null, R.drawable.ic_original),
+    FREE("Free", null, R.drawable.ic_free),
+    RATIO_1_1("1:1", 1 to 1, R.drawable.ic_original),
+    RATIO_4_5("4:5", 4 to 5, R.drawable.ic_original),
+    RATIO_5_4("5:4", 5 to 4, R.drawable.ic_original)
 }
 
 // 🟣 CropState chứa toàn bộ trạng thái hiện tại
@@ -131,8 +139,15 @@ class CropActivity : BaseActivity() {
                         .background(color = Color(0xFFF2F4F8))
 
                 ) {
-                    screenInput?.getBitmap(this@CropActivity)?.asImageBitmap()?.let {
-                        CropImageScreen(it)
+                    screenInput?.getBitmap(this@CropActivity)?.let { bitmap ->
+                        val width = bitmap.width
+                        val height = bitmap.height
+                        val aspectRatio = width.toFloat() / height.toFloat()
+                        Log.d(
+                            "BitmapInfo",
+                            "Width: $width, Height: $height, AspectRatio: $aspectRatio"
+                        )
+                        CropImageScreen(bitmap.asImageBitmap())
                     }
                 }
             }
@@ -174,8 +189,10 @@ fun CropImageScreen(imageBitmap: ImageBitmap) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 35.dp)
-                    .weight(1f)
+                    .padding(horizontal = 47.dp)
+                    .height(400.dp)
+//                    .aspectRatio(0.5f)
+//                    .weight(1f)
                     .padding(bottom = 16.dp)
                     .clip(RoundedCornerShape(0.dp))
             ) {
@@ -546,7 +563,6 @@ fun CropControlPanel(
 ) {
     val selectedTab = remember { mutableStateOf("Format") }
     val positionList = listOf("Horizontal", "Vertical", "Rotate")
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -591,17 +607,13 @@ fun CropControlPanel(
 
             LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 items(CropAspect.entries.toTypedArray()) { aspect ->
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(Color(0xFFF5F5F5))
-                            .padding(horizontal = 20.dp, vertical = 12.dp)
-                            .clickableWithAlphaEffect {
-                                onFormat.invoke(aspect)
-                            }
-                    ) {
-                        Text(text = aspect.label, color = Color.Black)
-                    }
+                    ItemFormat(
+                        text = aspect.label,
+                        resId = aspect.resId,
+                        onClick = {
+                            onFormat.invoke(aspect)
+                        }
+                    )
                 }
             }
         } else {
@@ -642,18 +654,78 @@ fun CropControlPanel(
         Spacer(modifier = Modifier.height(20.dp))
 
         // Bottom row (Cancel / Confirm)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(onClick = onCancel) {
-                Icon(Icons.Default.Close, contentDescription = "Cancel", tint = Color.Black)
-            }
-            Text(text = "Crop", fontSize = 16.sp, fontWeight = FontWeight.Medium)
-            IconButton(onClick = onApply) {
-                Icon(Icons.Default.Check, contentDescription = "Apply", tint = Color.Black)
-            }
-        }
+        FooterEditor(
+            onCancel = onCancel,
+            onApply = onApply
+        )
     }
 }
 
+@Composable
+fun ItemFormat(
+    text: String,
+    resId: Int,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier.clickableWithAlphaEffect(onClick = onClick)
+    ) {
+        ImageWidget(
+            resId = resId,
+
+            )
+        Text(
+            text = text,
+
+            style = TextStyle(
+                fontSize = 12.sp,
+                lineHeight = 16.sp,
+                fontFamily = fontFamily,
+                fontWeight = FontWeight(500),
+                color = AppColor.Gray800,
+                textAlign = TextAlign.Center,
+            ),
+            modifier = Modifier
+                .padding(top = 8.dp)
+        )
+    }
+}
+
+@Composable
+fun FooterEditor(
+    modifier: Modifier = Modifier,
+    onCancel: () -> Unit,
+    onApply: () -> Unit,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ImageWidget(
+            resId = R.drawable.ic_close,
+            modifier = Modifier
+                .clickableWithAlphaEffect(onClick = onCancel)
+                .padding(start = 16.dp)
+                .size(28.dp)
+        )
+        Text(
+            text = stringResource(R.string.crop),
+            style = TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                fontFamily = fontFamily,
+                fontWeight = FontWeight(600),
+                color = AppColor.Gray900,
+            ),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.weight(1f)
+        )
+        ImageWidget(
+            resId = R.drawable.ic_done,
+            modifier = Modifier
+                .clickableWithAlphaEffect(onClick = onApply)
+                .padding(end = 16.dp)
+                .size(28.dp)
+        )
+    }
+}
