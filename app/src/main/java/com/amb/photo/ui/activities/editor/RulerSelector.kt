@@ -1,23 +1,36 @@
 package com.amb.photo.ui.activities.editor
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.amb.photo.ui.theme.AppColor
+import com.amb.photo.ui.theme.fontFamily
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -48,6 +61,7 @@ fun RulerSelector(
     }
     val contentPaddingDp = with(density) { viewportCenter.value.toDp() }
 
+
     // 🌟 LOGIC CẬP NHẬT GIÁ TRỊ LIÊN TỤC 🌟
     // Tính toán giá trị hiện tại dựa trên vị trí cuộn (Scroll Offset)
     val currentValue by remember {
@@ -77,6 +91,15 @@ fun RulerSelector(
         }
     }
 
+    val maxProgressValue = 30f
+
+    val progress = (kotlin.math.abs(currentValue) / maxProgressValue).coerceIn(0f, 1f)
+
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(300)
+    )
+
     LaunchedEffect(currentValue) {
         onValueChange(currentValue)
     }
@@ -95,22 +118,44 @@ fun RulerSelector(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
+        val isZero = currentValue == 0
         // Vùng hiển thị giá trị hiện tại
-        Card(
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0)),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(32.dp)
+                .clip(CircleShape)
+                .background(
+                    if (isZero){
+                        Color(0xFFF2F4F7)
+                    } else {
+                        Color(0xFFF2F0FE)
+                    }
+                )
         ) {
+
+            // Vòng tròn progress
+            CircularProgressIndicator(
+                progress = { animatedProgress },
+                color = if (isZero) Color(0xFFEAECF0) else Color(0xFF6425F3),
+                strokeWidth = 2.dp,
+                trackColor = if (isZero) Color(0xFFEAECF0) else Color(0xFFDAD3FD),
+                strokeCap = ProgressIndicatorDefaults.CircularDeterminateStrokeCap,
+            )
+
+            // Số ở giữa
             Text(
                 text = currentValue.toString(),
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp,
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight(500),
+                    color = if (isZero) Color(0xFF1D2939) else Color(0xFF6425F3),
+                    textAlign = TextAlign.Center,
+                )
             )
         }
-
-        Spacer(modifier = Modifier.height(30.dp))
 
         Box(
             modifier = Modifier
@@ -122,9 +167,9 @@ fun RulerSelector(
             // Thanh Active màu xanh ở giữa (Centre Mark)
             Spacer(
                 modifier = Modifier
-                    .width(3.dp)
-                    .height(35.dp)
-                    .background(Color(0xFF6200EE))
+                    .width(1.5.dp)
+                    .height(28.dp)
+                    .background(Color(0xFF6425F3))
                     .zIndex(1f)
             )
 
@@ -153,9 +198,9 @@ fun RulerSelector(
 fun TickMark(value: Int) {
     // Chiều cao của vạch
     val height = when {
-        value % 10 == 0 -> 28.dp // Vạch chính (0, +-10, +-20, +-30)
-        value % 5 == 0 -> 20.dp  // Vạch trung bình
-        else -> 12.dp            // Vạch nhỏ
+        value % 10 == 0 -> 18.dp // Vạch chính (0, +-10, +-20, +-30)
+        value % 5 == 0 -> 10.dp  // Vạch trung bình
+        else -> 10.dp            // Vạch nhỏ
     }
     // Màu sắc
     val color = when {
@@ -172,11 +217,12 @@ fun TickMark(value: Int) {
     // Vạch
     Spacer(
         modifier = Modifier
-            .width(width) // Độ dày của vạch
+            .width(1.5.dp) // Độ dày của vạch
             .height(height)
             .background(color)
     )
 }
+
 /**
  * Ánh xạ giá trị cuộn (-30 đến 30) sang tỷ lệ zoom và góc xoay.
  * Đã ĐẢO NGƯỢC chiều xoay.
@@ -201,13 +247,4 @@ fun mapRulerToScaleAndRotation(rulerValue: Int): Pair<Float, Float> {
     val rotationAngle = (rulerValue / maxRulerValue) * maxRotation * -1.0f // ⭐️ THÊM * -1.0f
 
     return Pair(zoomScale, rotationAngle)
-}
-
-
-// -----------------------------------------------------------------------------------
-// VÍ DỤ SỬ DỤNG:
-// Thêm hàm này vào Activity/Fragment của bạn:
-@Composable
-fun PreviewRulerSelector() {
-//    RulerSelector()
 }

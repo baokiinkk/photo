@@ -332,4 +332,8 @@
     <string name="congratulations_success">Congratulations success!</string>
     <string name="all_config_has_been_save">All config has been save</string>
     <string name="crop">Crop</string>
+    <string name="horizontal">Horizontal</string>
+    <string name="Format">Format</string>
+    <string name="vertical">Vertical</string>
+    <string name="format">Format</string>
 </resources>

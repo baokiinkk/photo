@@ -12,7 +12,8 @@ data class CropState(
     val isMoving: Boolean = false,
     val zoomScale: Float = 1f,
     val rotationAngle: Float = 0f,
-    val id: String = CropAspect.RATIO_1_1.label
+    val id: String = CropAspect.RATIO_1_1.label,
+    val rotateImage: Float = 0f
 )
 
 
