@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activities.editor.CropActivityActivity"
+        <activity android:name=".ui.activities.editor.CropActivity"
             android:exported="false"   />
         <activity
             android:name=".ui.activities.main.MainActivity"

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -14,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.basesource.base.utils.LanguageManager
 import com.basesource.base.utils.LanguageType
+import com.basesource.base.utils.toJson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -106,8 +108,24 @@ abstract class BaseActivity : ComponentActivity() {
         _activityResultManager = null
     }
 
-    fun startScreen(startClass: Class<*>) {
-        val intent = Intent(this, startClass)
-        startActivity(intent)
+    fun <D> navigateTo(
+        startClazz: Class<D>,
+        input: IScreenData? = null,
+        addFlags: (Intent.() -> Unit)? = null,
+    ) {
+        val navigateIntent = Intent(this, startClazz)
+
+        if (addFlags != null) {
+            navigateIntent.addFlags()
+        }
+
+        if (input != null) {
+            navigateIntent.putExtra("screen_input_key", input.toJson())
+        }
+        startActivity(navigateIntent)
     }
 }
+
+interface IScreenData
+
+

@@ -1,5 +1,6 @@
 package com.amb.photo.ui.activities.editor
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -43,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,8 +69,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import com.amb.photo.utils.getInput
+import com.amb.photo.utils.viewModelArg
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.clickableWithAlphaEffect
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 // 🟣 Enum xác định chế độ crop
 enum class CropAspect(val label: String, val ratio: Pair<Int, Int>?) {
@@ -89,7 +97,25 @@ data class CropState(
     val rotationAngle: Float = 0f
 )
 
-class CropActivityActivity : BaseActivity() {
+data class CropInput(
+    val pathBitmap: String? = null
+) : IScreenData {
+
+    fun getBitmap(context: Context): Bitmap? {
+        val imageUri = pathBitmap?.toUri()
+        val bitmap = imageUri?.toBitmap(context)
+        return bitmap
+    }
+}
+
+class CropActivity : BaseActivity() {
+
+    private val screenInput: CropInput? by lazy {
+        intent.getInput()
+    }
+
+    private val viewmodel: CropViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -105,30 +131,8 @@ class CropActivityActivity : BaseActivity() {
                         .background(color = Color(0xFFF2F4F8))
 
                 ) {
-                    var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
-
-                    if (imageBitmap == null) {
-                        PickImageFromGallery { uri ->
-//                            imageBitmap = picked
-                            val bitmap = if (Build.VERSION.SDK_INT < 28) {
-                                MediaStore.Images.Media.getBitmap(
-                                    this@CropActivityActivity.contentResolver,
-                                    uri
-                                )
-                            } else {
-                                val source = ImageDecoder.createSource(
-                                    this@CropActivityActivity.contentResolver,
-                                    uri
-                                )
-                                ImageDecoder.decodeBitmap(source)
-                            }
-                            imageBitmap = bitmap
-//                            imageBitmap = bitmap.asImageBitmap()
-//                            onImagePicked(bitmap.asImageBitmap())
-                        }
-                    } else {
-                        CropImageScreen(imageBitmap!!.asImageBitmap())
-//                        ImageBlurScreen(imageBitmap!!)
+                    screenInput?.getBitmap(this@CropActivity)?.asImageBitmap()?.let {
+                        CropImageScreen(it)
                     }
                 }
             }
@@ -606,8 +610,8 @@ fun CropControlPanel(
                 items(positionList) { label ->
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.clickableWithAlphaEffect{
-                            when(label) {
+                        modifier = Modifier.clickableWithAlphaEffect {
+                            when (label) {
                                 "Rotate" -> onRotateClick()
                                 "Horizontal" -> onFlipHorizontal()
                                 "Vertical" -> onFlipVertical()
