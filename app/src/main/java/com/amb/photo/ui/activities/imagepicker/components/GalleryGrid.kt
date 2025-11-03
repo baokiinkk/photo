@@ -17,8 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.amb.photo.ui.activities.imagepicker.GalleryImage
 import com.amb.photo.ui.theme.AppStyle
@@ -30,12 +33,19 @@ fun GalleryGrid(
     images: List<GalleryImage>,
     selected: List<Uri>,
     onImageClick: (GalleryImage) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showCameraTile: Boolean = true,
+    onCameraClick: () -> Unit = {}
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = modifier.heightIn(max = 999.dp)
     ) {
+        if (showCameraTile) {
+            item {
+                CameraGridItem(onClick = onCameraClick)
+            }
+        }
         items(images) { img ->
             Box(modifier = Modifier
                 .padding(4.dp)
@@ -63,6 +73,26 @@ fun GalleryGrid(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun CameraGridItem(onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .padding(4.dp)
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(14.dp))
+            .background(Color(0xFFF4ECFF))
+            .clickableWithAlphaEffect(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "📷",
+            fontSize = 28.sp,
+            color = Color(0xFF9747FF),
+            textAlign = TextAlign.Center
+        )
     }
 }
 

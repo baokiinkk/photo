@@ -30,6 +30,9 @@ abstract class BaseActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // Lưu ngôn ngữ hiện tại khi tạo activity
         _currentLanguage = LanguageManager.getCurrentLanguage(this)
+        // Khởi tạo sớm ActivityResultManager để tránh lỗi register khi đang ở RESUMED
+        @Suppress("UNUSED_VARIABLE")
+        val initManager = activityResultManager
     }
 
     override fun attachBaseContext(newBase: Context) {

@@ -88,3 +88,4 @@ fun ShortcutButton(
 fun DiscoverShortcutsPreview() {
     Surface { DiscoverShortcuts() }
 }
+

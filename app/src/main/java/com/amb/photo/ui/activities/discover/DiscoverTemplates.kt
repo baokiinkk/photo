@@ -77,3 +77,4 @@ fun DiscoverTemplates(onSeeAll: () -> Unit = {}, onTemplateClick: (TemplateItem)
 fun DiscoverTemplatesPreview() {
     Surface { DiscoverTemplates() }
 }
+
