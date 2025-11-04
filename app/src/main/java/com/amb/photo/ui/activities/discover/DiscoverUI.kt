@@ -27,9 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amb.photo.R
-import com.amb.photo.ui.activities.imagepicker.ImagePickerActivity
-import com.amb.photo.ui.activities.imagepicker.ImageRequest
-import com.amb.photo.ui.activities.imagepicker.TypeSelect
+import com.amb.photo.ui.activities.main.FeatureType
 import com.amb.photo.ui.activities.main.MainViewModel
 import com.amb.photo.ui.theme.AppStyle
 import com.amb.photo.ui.theme.BackgroundLight
@@ -47,7 +45,10 @@ fun DiscoverUI(viewModel: MainViewModel? = null) {
         Spacer(Modifier.height(20.dp))
         DiscoverFunctionCards(
             onCollageClick = {
-                viewModel?.launchActivity(ImagePickerActivity::class.java, ImageRequest(type = TypeSelect.MULTI))
+                viewModel?.navigateFeature(FeatureType.COLLAGE)
+            },
+            onFreeStyleClick = {
+                viewModel?.navigateFeature(FeatureType.FREE_STYLE)
             }
         )
         Spacer(Modifier.height(12.dp))

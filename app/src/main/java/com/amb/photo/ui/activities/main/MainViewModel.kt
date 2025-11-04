@@ -1,6 +1,5 @@
 package com.amb.photo.ui.activities.main
 
-import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
@@ -24,9 +23,9 @@ class MainViewModel() : BaseViewModel(), KoinComponent {
     private val _events = MutableSharedFlow<MainScreenEvent>()
     val events: SharedFlow<MainScreenEvent> = _events.asSharedFlow()
 
-    fun <T> launchActivity(cls: Class<T>, data: IScreenData? = null) {
+    fun navigateFeature(type: FeatureType) {
         viewModelScope.launch {
-            _events.emit(MainScreenEvent.LaunchActivity(cls, data))
+            _events.emit(MainScreenEvent.NavigateTo(type))
         }
     }
 
@@ -60,13 +59,16 @@ class MainViewModel() : BaseViewModel(), KoinComponent {
 }
 
 sealed class MainScreenEvent {
-    data class LaunchActivity(val cls: Class<*>, val data: IScreenData? = null) : MainScreenEvent()
-
     data class NavigateToTab(val tabType: TabType) : MainScreenEvent()
+
+    data class NavigateTo(val type: FeatureType) : MainScreenEvent()
 }
 
 enum class TabType {
     DISCOVER, CUSTOMIZE
+}
+enum class FeatureType {
+    COLLAGE, FREE_STYLE, REMOVE_BACKGROUND, AI_ENHANCE, REMOVE_OBJECT, EDIT_PHOTO
 }
 
 data class TabItem(

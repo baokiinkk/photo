@@ -62,7 +62,7 @@ fun BottomTabBar(
                 painter = painterResource(R.drawable.ic_fab),
                 contentDescription = "",
                 modifier = Modifier
-                    .padding(bottom = 24.dp)
+                    .padding(bottom = 28.dp)
                     .size(64.dp),
                 contentScale = ContentScale.Crop
             )
