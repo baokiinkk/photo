@@ -28,6 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amb.photo.R
 import com.amb.photo.ui.activities.imagepicker.ImagePickerActivity
+import com.amb.photo.ui.activities.imagepicker.ImageRequest
+import com.amb.photo.ui.activities.imagepicker.TypeSelect
 import com.amb.photo.ui.activities.main.MainViewModel
 import com.amb.photo.ui.theme.AppStyle
 import com.amb.photo.ui.theme.BackgroundLight
@@ -45,7 +47,8 @@ fun DiscoverUI(viewModel: MainViewModel? = null) {
         Spacer(Modifier.height(20.dp))
         DiscoverFunctionCards(
             onCollageClick = {
-                viewModel?.launchActivity(ImagePickerActivity::class.java)
+                viewModel?.launchActivity(ImagePickerActivity::class.java, ImageRequest(type = TypeSelect.MULTI)
+                )
             }
         )
         Spacer(Modifier.height(12.dp))
@@ -136,7 +139,10 @@ fun DiscoverFunctionCards(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 Image(
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 4.dp).size(32.dp).align(Alignment.End),
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 4.dp)
+                        .size(32.dp)
+                        .align(Alignment.End),
                     painter = painterResource(R.drawable.ic_collage_discover),
                     contentScale = ContentScale.Crop,
                     contentDescription = ""
@@ -166,7 +172,10 @@ fun DiscoverFunctionCards(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 Image(
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 4.dp).size(32.dp).align(Alignment.End),
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 4.dp)
+                        .size(32.dp)
+                        .align(Alignment.End),
                     painter = painterResource(R.drawable.ic_freestyle_discover),
                     contentScale = ContentScale.Crop,
                     contentDescription = ""

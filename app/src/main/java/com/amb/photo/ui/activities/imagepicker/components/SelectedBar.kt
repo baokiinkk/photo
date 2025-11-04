@@ -3,11 +3,15 @@ package com.amb.photo.ui.activities.imagepicker.components
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,57 +20,71 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.amb.photo.R
 import com.amb.photo.ui.theme.AppStyle
 import com.basesource.base.utils.clickableWithAlphaEffect
 
 @Composable
 fun SelectedBar(selected: List<Uri>, onRemove: (Uri) -> Unit, onClearAll: () -> Unit) {
     if(selected.isEmpty()) return
-    Box(
+    Column(
         Modifier
             .fillMaxWidth()
-            .height(148.dp)
             .background(Color.White)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Text(
-                text = "Select 1-10 photos (${selected.size})",
-                style = AppStyle.body1().semibold().primary(),
-                modifier = Modifier.weight(1f)
+                text = "Select 1-10 photos",
+                style = AppStyle.body1().medium().gray800(),
+            )
+            Text(
+                text = "(${selected.size})",
+                style = AppStyle.body1().semibold().primary500(),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 4.dp)
             )
             IconButton(onClick = onClearAll) {
-                Icon(painterResource(android.R.drawable.ic_menu_delete), contentDescription = "Clear All")
+                Image(
+                    painterResource(R.drawable.ic_delete_image),
+                    modifier = Modifier.size(32.dp),
+                    contentDescription = "Clear All"
+                )
             }
         }
         Row(
             Modifier
-                .align(Alignment.BottomStart)
-                .padding(top = 34.dp, bottom = 2.dp)
+                .padding(bottom = 20.dp, start = 16.dp, end = 16.dp)
+                .horizontalScroll(rememberScrollState())
         ) {
             selected.forEach { uri ->
                 Box(Modifier.padding(end = 8.dp)) {
                     AsyncImage(
                         model = uri,
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp).clip(RoundedCornerShape(10.dp))
+                        contentScale = ContentScale.Crop,
+                        contentDescription = null, modifier = Modifier
+                            .padding(top = 6.dp, end = 6.dp)
+                            .size(68.dp)
+                            .clip(RoundedCornerShape(12.dp))
                     )
-                    Box(
-                        Modifier
-                            .offset(x = 30.dp, y = (-6).dp)
+                    Image(
+                        painterResource(R.drawable.ic_close_image),
+                        modifier = Modifier
                             .size(20.dp)
-                            .background(Color(0xFFD72E2C), CircleShape)
-                            .clickableWithAlphaEffect { onRemove(uri) },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("×", style = AppStyle.body2().bold().white())
-                    }
+                            .align(Alignment.TopEnd)
+                            .clickableWithAlphaEffect {
+                                onRemove.invoke(uri)
+                            },
+                        contentDescription = "Clear All"
+                    )
                 }
             }
         }

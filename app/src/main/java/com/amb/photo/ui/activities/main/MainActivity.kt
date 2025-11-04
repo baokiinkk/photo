@@ -16,6 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import com.amb.photo.ui.theme.BackgroundWhite
 import com.amb.photo.ui.theme.MainTheme
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.utils.launchActivity
+import com.basesource.base.utils.toJson
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.security.MessageDigest
@@ -46,10 +48,10 @@ class MainActivity : BaseActivity() {
             viewModel.events.collect { event ->
                 when (event) {
                     is MainScreenEvent.LaunchActivity -> {
-                        startActivity(Intent(this@MainActivity, event.cls).apply {
-                            val bundle = event.bundle
-                            putExtra("arg", bundle)
-                        })
+                        launchActivity(Intent(this@MainActivity, event.cls).apply {
+                            putExtra("arg", event.data?.toJson())
+                        }) { result ->
+                        }
                     }
 
                     is MainScreenEvent.NavigateToTab -> {
