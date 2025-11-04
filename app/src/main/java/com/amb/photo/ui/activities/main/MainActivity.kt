@@ -78,14 +78,14 @@ class MainActivity : BaseActivity() {
 
     private fun gotoCollage() {
         launchActivity(toActivity = ImagePickerActivity::class.java) { result ->
-            val result: List<Uri>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+            val result: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
         }
     }
 
     private fun gotoEditPhoto() {
         launchActivity(toActivity = ImagePickerActivity::class.java, ImageRequest(TypeSelect.SINGLE)) { result ->
-            val result: Uri? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
-            Log.d("quocbao", result?.path.toString())
+            val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
+            Log.d("quocbao", result.toString())
         }
     }
     private fun getSignature() {
