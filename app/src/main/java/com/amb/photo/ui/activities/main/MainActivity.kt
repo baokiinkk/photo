@@ -17,6 +17,7 @@ import com.amb.photo.ui.activities.imagepicker.ImagePickerActivity
 import com.amb.photo.ui.activities.imagepicker.ImagePickerActivity.Companion.RESULT_URI
 import com.amb.photo.ui.activities.imagepicker.ImageRequest
 import com.amb.photo.ui.activities.imagepicker.TypeSelect
+import com.amb.photo.ui.activities.collage.CollageActivity
 import com.amb.photo.ui.theme.BackgroundWhite
 import com.amb.photo.ui.theme.MainTheme
 import com.basesource.base.ui.base.BaseActivity
@@ -27,6 +28,8 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.io.File
+import androidx.core.net.toUri
 
 class MainActivity : BaseActivity() {
     private val viewModel: MainViewModel by viewModel()
@@ -79,6 +82,10 @@ class MainActivity : BaseActivity() {
     private fun gotoCollage() {
         launchActivity(toActivity = ImagePickerActivity::class.java) { result ->
             val result: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+            val uris = result?.map { it.toUri() } ?: emptyList()
+            if (uris.isNotEmpty()) {
+                CollageActivity.start(this, uris)
+            }
         }
     }
 
