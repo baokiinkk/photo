@@ -9,7 +9,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 inline fun <reified T> Intent.getInput(): T {
-    val data = getStringExtra("screen_input_key").orEmpty()
+    val data = getStringExtra("arg").orEmpty()
     return data.fromJson()
 }
 
