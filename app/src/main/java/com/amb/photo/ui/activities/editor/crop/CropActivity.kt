@@ -190,32 +190,31 @@ fun CropImageScreen(
 //                cropState.bitmap!!.height.toFloat() / cropState.bitmap!!.width.toFloat()
 //            else
 //                cropState.bitmap!!.width.toFloat() / cropState.bitmap!!.height.toFloat()
-            val aspectRatio = cropState.bitmap!!.width.toFloat() / cropState.bitmap!!.height.toFloat()
+            val aspectRatio =
+                cropState.bitmap!!.width.toFloat() / cropState.bitmap!!.height.toFloat()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .weight(1f)
+//                    .padding(horizontal = 16.dp)
 //                    .padding(horizontal = if (flipHorizontal)16.dp else 60.dp)
+                    .weight(1f)
 //                    .aspectRatio(aspectRatio,!flipHorizontal)
                     .background(Color.Green)
                     .padding(bottom = 16.dp, top = 12.dp)
                     .clip(RoundedCornerShape(0.dp))
                     .graphicsLayer {
+                        rotationZ = cropState.rotateImage
                         Log.d("aaa", "CropImageScreen:${cropState.rotateImage}")
                         if (cropState.rotateImage % 180f != 0f && imageBounds.width != 0 && imageBounds.height != 0) {
                             val scale = imageBounds.width.toFloat() / imageBounds.height.toFloat()
-                            Log.d("aaa","scale")
-                            scaleX = scale
-                            scaleY = scale
+                            Log.d("aaa", "scale")
+                            scaleX = 0.5f
+                            scaleY = 0.7f
                         } else {
-//                            val scale = cropState.bitmap!!.width.toFloat() / cropState.bitmap!!.height.toFloat()
-//                            Log.d("aaa", "scale:${scale} :width ${cropState.bitmap!!.width.toFloat()} h: ${cropState.bitmap!!.height.toFloat()}")
-                            val scale = imageBounds.width.toFloat() / imageBounds.height.toFloat()
-                            scaleX = scale
-                            scaleY = scale
+                            Log.d("aaa", "scale")
+                            scaleX = aspectRatio
+//                            scaleY = scale
                         }
-                        rotationZ = cropState.rotateImage
                     }
                     .onGloballyPositioned {
                         Log.d("aaa", "it.size:${it.size}")
