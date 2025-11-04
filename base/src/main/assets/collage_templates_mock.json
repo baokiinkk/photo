@@ -1,0 +1,60 @@
+{
+  "status": "success",
+  "data": {
+    "templates": [
+      {
+        "id": "1-full",
+        "cells": [ { "x": 0.0, "y": 0.0, "width": 1.0, "height": 1.0, "shape": "rect" } ]
+      },
+      {
+        "id": "1-full-margin",
+        "cells": [ { "x": 0.03, "y": 0.03, "width": 0.94, "height": 0.94, "shape": "rect" } ]
+      },
+      {
+        "id": "2-vertical",
+        "cells": [
+          { "x": 0.0, "y": 0.0, "width": 0.5, "height": 1.0, "shape": "rect" },
+          { "x": 0.5, "y": 0.0, "width": 0.5, "height": 1.0, "shape": "rect" }
+        ]
+      },
+      {
+        "id": "2-horizontal",
+        "cells": [
+          { "x": 0.0, "y": 0.0, "width": 1.0, "height": 0.5, "shape": "rect" },
+          { "x": 0.0, "y": 0.5, "width": 1.0, "height": 0.5, "shape": "rect" }
+        ]
+      },
+      {
+        "id": "2-diagonal",
+        "cells": [
+          { "x": 0.0, "y": 0.0, "width": 1.0, "height": 1.0, "shape": "diag_tlbr" },
+          { "x": 0.0, "y": 0.0, "width": 1.0, "height": 1.0, "shape": "diag_bltr" }
+        ]
+      },
+      {
+        "id": "left-big-right-2",
+        "cells": [
+          { "x": 0.0, "y": 0.0, "width": 0.63, "height": 1.0, "shape": "rect" },
+          { "x": 0.66, "y": 0.0, "width": 0.34, "height": 0.48, "shape": "rect" },
+          { "x": 0.66, "y": 0.52, "width": 0.34, "height": 0.48, "shape": "rect" }
+        ]
+      },
+      {
+        "id": "top2-bottom1",
+        "cells": [
+          { "x": 0.0, "y": 0.0, "width": 0.5, "height": 0.52, "shape": "rect" },
+          { "x": 0.5, "y": 0.0, "width": 0.5, "height": 0.52, "shape": "rect" },
+          { "x": 0.0, "y": 0.54, "width": 1.0, "height": 0.46, "shape": "rect" }
+        ]
+      },
+      {
+        "id": "right-big-left-2",
+        "cells": [
+          { "x": 0.37, "y": 0.0, "width": 0.63, "height": 1.0, "shape": "rect" },
+          { "x": 0.0, "y": 0.0, "width": 0.34, "height": 0.48, "shape": "rect" },
+          { "x": 0.0, "y": 0.52, "width": 0.34, "height": 0.48, "shape": "rect" }
+        ]
+      }
+    ]
+  }
+}
