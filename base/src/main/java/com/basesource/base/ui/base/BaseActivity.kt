@@ -1,24 +1,16 @@
 package com.basesource.base.ui.base
 
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.activity.ComponentActivity
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import com.basesource.base.utils.LanguageManager
 import com.basesource.base.utils.LanguageType
-import com.basesource.base.utils.toJson
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import java.util.Locale
 
 abstract class BaseActivity : ComponentActivity() {
@@ -30,6 +22,9 @@ abstract class BaseActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // Lưu ngôn ngữ hiện tại khi tạo activity
         _currentLanguage = LanguageManager.getCurrentLanguage(this)
+        // Khởi tạo sớm ActivityResultManager để tránh lỗi register khi đang ở RESUMED
+        @Suppress("UNUSED_VARIABLE")
+        val initManager = activityResultManager
     }
 
     override fun attachBaseContext(newBase: Context) {
@@ -106,23 +101,6 @@ abstract class BaseActivity : ComponentActivity() {
         super.onDestroy()
         _activityResultManager?.clearCallbacks()
         _activityResultManager = null
-    }
-
-    fun <D> navigateTo(
-        startClazz: Class<D>,
-        input: IScreenData? = null,
-        addFlags: (Intent.() -> Unit)? = null,
-    ) {
-        val navigateIntent = Intent(this, startClazz)
-
-        if (addFlags != null) {
-            navigateIntent.addFlags()
-        }
-
-        if (input != null) {
-            navigateIntent.putExtra("screen_input_key", input.toJson())
-        }
-        startActivity(navigateIntent)
     }
 }
 

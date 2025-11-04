@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
 import com.amb.photo.R
+import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,9 +24,9 @@ class MainViewModel() : BaseViewModel(), KoinComponent {
     private val _events = MutableSharedFlow<MainScreenEvent>()
     val events: SharedFlow<MainScreenEvent> = _events.asSharedFlow()
 
-    fun <T> launchActivity(cls: Class<T>, bundle: Bundle? = null) {
+    fun <T> launchActivity(cls: Class<T>, data: IScreenData? = null) {
         viewModelScope.launch {
-            _events.emit(MainScreenEvent.LaunchActivity(cls, bundle))
+            _events.emit(MainScreenEvent.LaunchActivity(cls, data))
         }
     }
 
@@ -59,7 +60,7 @@ class MainViewModel() : BaseViewModel(), KoinComponent {
 }
 
 sealed class MainScreenEvent {
-    data class LaunchActivity(val cls: Class<*>, val bundle: Bundle?) : MainScreenEvent()
+    data class LaunchActivity(val cls: Class<*>, val data: IScreenData? = null) : MainScreenEvent()
 
     data class NavigateToTab(val tabType: TabType) : MainScreenEvent()
 }

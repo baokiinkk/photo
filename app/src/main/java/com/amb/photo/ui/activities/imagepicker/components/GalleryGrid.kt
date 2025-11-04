@@ -2,13 +2,19 @@ package com.amb.photo.ui.activities.imagepicker.components
 
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,9 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.amb.photo.R
 import com.amb.photo.ui.activities.imagepicker.GalleryImage
 import com.amb.photo.ui.theme.AppStyle
 import com.basesource.base.utils.clickableWithAlphaEffect
@@ -30,12 +38,29 @@ fun GalleryGrid(
     images: List<GalleryImage>,
     selected: List<Uri>,
     onImageClick: (GalleryImage) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showCameraTile: Boolean = true,
+    onCameraClick: () -> Unit = {}
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = modifier.heightIn(max = 999.dp)
     ) {
+        if (showCameraTile) {
+            item {
+                Image(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(14.dp))
+                        .clickableWithAlphaEffect{
+                            onCameraClick.invoke()
+                        },
+                    painter = painterResource(R.drawable.ic_camera),
+                    contentDescription = ""
+                )
+            }
+        }
         items(images) { img ->
             Box(modifier = Modifier
                 .padding(4.dp)
@@ -53,7 +78,7 @@ fun GalleryGrid(
                 if(idx >= 0) {
                     Box(
                         Modifier
-                            .align(Alignment.TopEnd)
+                            .align(Alignment.BottomEnd)
                             .padding(6.dp)
                             .size(24.dp)
                             .background(Color(0xFF9747FF), CircleShape), contentAlignment = Alignment.Center

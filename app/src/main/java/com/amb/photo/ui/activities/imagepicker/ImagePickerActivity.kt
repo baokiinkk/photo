@@ -1,18 +1,19 @@
 package com.amb.photo.ui.activities.imagepicker
 
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.amb.photo.ui.theme.MainTheme
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.ui.base.IScreenData
+import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.requestPermission
 
 class ImagePickerActivity : BaseActivity() {
+    val args: ImageRequest? by lazy { intent.getStringExtra("arg")?.fromJson() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,9 +40,14 @@ class ImagePickerActivity : BaseActivity() {
         setContent {
             MainTheme {
                 ImagePickerScreen(
+                    dataRequest = args,
                     onDone = { uris ->
                         val data = Intent().apply {
-                            putParcelableArrayListExtra(RESULT_LIST, ArrayList(uris))
+                            if (uris.size > 1) {
+                                putParcelableArrayListExtra(RESULT_URI, ArrayList(uris))
+                            } else {
+                                putExtra(RESULT_URI, uris.firstOrNull())
+                            }
                         }
                         setResult(RESULT_OK, data)
                         finish()
@@ -53,6 +59,15 @@ class ImagePickerActivity : BaseActivity() {
     }
 
     companion object {
-        const val RESULT_LIST = "selected_image_uris"
+        const val RESULT_URI = "RESULT_URI"
     }
+}
+
+data class ImageRequest(
+    val type: TypeSelect = TypeSelect.MULTI
+) : IScreenData
+
+enum class TypeSelect {
+    MULTI,
+    SINGLE
 }

@@ -24,6 +24,7 @@ import com.amb.photo.ui.activities.editor.crop.PickImageFromGallery
 import com.amb.photo.ui.activities.imagepicker.ImagePickerActivity
 import com.basesource.base.components.CustomButton
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.utils.launchActivity
 
 class EditorActivity : BaseActivity() {
 
@@ -42,21 +43,21 @@ class EditorActivity : BaseActivity() {
                     verticalArrangement = Arrangement.Center
                 ) {
                     CustomButton("crop") {
-                        navigateTo(
-                            startClazz = CropActivity::class.java,
+                        launchActivity(
+                            toActivity = CropActivity::class.java,
                             input = CropInput(pathBitmap = pathBitmap)
                         )
                     }
 
                     Spacer(modifier = Modifier.height(40.dp))
                     CustomButton("ImagePickerActivity") {
-                        navigateTo(ImagePickerActivity::class.java)
+                        launchActivity(ImagePickerActivity::class.java)
                     }
 
                     PickImageFromGallery { uri ->
                         pathBitmap = uri.toString()
-                        navigateTo(
-                            startClazz = CropActivity::class.java,
+                        launchActivity(
+                            toActivity = CropActivity::class.java,
                             input = CropInput(pathBitmap = pathBitmap)
                         )
                     }

@@ -55,7 +55,7 @@ class ActivityResultManager(activity: ComponentActivity) {
     fun launchActivity(
         intent: Intent,
         options: ActivityOptionsCompat? = null,
-        callback: (ActivityResult) -> Unit
+        callback: ((ActivityResult) -> Unit)? = null
     ) {
         activityCallback = callback
         activityLauncher.launch(intent, options)

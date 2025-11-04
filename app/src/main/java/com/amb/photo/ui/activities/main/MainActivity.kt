@@ -1,6 +1,5 @@
 package com.amb.photo.ui.activities.main
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -16,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.amb.photo.ui.theme.BackgroundWhite
 import com.amb.photo.ui.theme.MainTheme
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.utils.launchActivity
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.security.MessageDigest
@@ -46,10 +46,9 @@ class MainActivity : BaseActivity() {
             viewModel.events.collect { event ->
                 when (event) {
                     is MainScreenEvent.LaunchActivity -> {
-                        startActivity(Intent(this@MainActivity, event.cls).apply {
-                            val bundle = event.bundle
-                            putExtra("arg", bundle)
-                        })
+                        launchActivity(toActivity = event.cls, input = event.data) { result ->
+
+                        }
                     }
 
                     is MainScreenEvent.NavigateToTab -> {
