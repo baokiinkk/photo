@@ -12,9 +12,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
-import com.amb.photo.ui.activities.imagepicker.ImagePickerActivity
-import com.amb.photo.ui.activities.imagepicker.ImageRequest
-import com.amb.photo.ui.activities.imagepicker.TypeSelect
 import com.amb.photo.ui.theme.BackgroundWhite
 import com.amb.photo.ui.theme.MainTheme
 import com.basesource.base.ui.base.BaseActivity
@@ -49,7 +46,7 @@ class MainActivity : BaseActivity() {
             viewModel.events.collect { event ->
                 when (event) {
                     is MainScreenEvent.LaunchActivity -> {
-                        launchActivity(toActivity = ImagePickerActivity::class.java, input = ImageRequest(type = TypeSelect.SINGLE)) { result ->
+                        launchActivity(toActivity = event.cls, input = event.data) { result ->
 
                         }
                     }

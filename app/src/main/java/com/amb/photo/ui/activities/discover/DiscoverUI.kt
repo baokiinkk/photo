@@ -47,8 +47,7 @@ fun DiscoverUI(viewModel: MainViewModel? = null) {
         Spacer(Modifier.height(20.dp))
         DiscoverFunctionCards(
             onCollageClick = {
-                viewModel?.launchActivity(ImagePickerActivity::class.java, ImageRequest(type = TypeSelect.MULTI)
-                )
+                viewModel?.launchActivity(ImagePickerActivity::class.java, ImageRequest(type = TypeSelect.MULTI))
             }
         )
         Spacer(Modifier.height(12.dp))
