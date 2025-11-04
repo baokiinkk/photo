@@ -1,5 +1,6 @@
 package com.amb.photo.ui.activities.editor.crop
 
+import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Rect
 import com.amb.photo.R
 
@@ -13,7 +14,8 @@ data class CropState(
     val zoomScale: Float = 1f,
     val rotationAngle: Float = 0f,
     val id: String = CropAspect.RATIO_1_1.label,
-    val rotateImage: Float = 0f
+    val rotateImage: Float = 0f,
+    val bitmap: Bitmap? = null
 )
 
 

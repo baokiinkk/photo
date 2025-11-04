@@ -112,6 +112,7 @@ class CropActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewmodel.setBitmap(screenInput?.getBitmap(this@CropActivity))
         enableEdgeToEdge()
         setContent {
             Scaffold(
@@ -125,25 +126,22 @@ class CropActivity : BaseActivity() {
                         .background(color = Color(0xFFF2F4F8))
 
                 ) {
-                    screenInput?.getBitmap(this@CropActivity)?.let { bitmap ->
-                        val width = bitmap.width
-                        val height = bitmap.height
-                        val aspectRatio = width.toFloat() / height.toFloat()
-                        Log.d(
-                            "BitmapInfo",
-                            "Width: $width, Height: $height, AspectRatio: $aspectRatio"
-                        )
-                        CropImageScreen(
-                            bitmap.asImageBitmap(),
-                            viewmodel,
-                            onCancel = {
-                                finish()
-                            },
-                            onApply = {
+//                    val width = bitmap.width
+//                    val height = bitmap.height
+//                    val aspectRatio = width.toFloat() / height.toFloat()
+//                    Log.d(
+//                        "BitmapInfo",
+//                        "Width: $width, Height: $height, AspectRatio: $aspectRatio"
+//                    )
+                    CropImageScreen(
+                        viewmodel,
+                        onCancel = {
+                            finish()
+                        },
+                        onApply = {
 
-                            }
-                        )
-                    }
+                        }
+                    )
                 }
             }
         }
@@ -166,10 +164,8 @@ fun PickImageFromGallery(onImagePicked: (Uri) -> Unit) {
     }
 }
 
-// Trong CropActivity.kt (Cập nhật CropImageScreen)
 @Composable
 fun CropImageScreen(
-    imageBitmap: ImageBitmap,
     viewModel: CropViewModel,
     onCancel: () -> Unit,
     onApply: () -> Unit
@@ -184,13 +180,16 @@ fun CropImageScreen(
     var scaleYFlip by remember { mutableStateOf(1f) } // State UI cục bộ
     val coroutineScope = rememberCoroutineScope() // Cần nếu logic cần Coroutine (ví dụ: onApply)
 
-    val flipHorizontal = cropState.rotateImage == 90f || cropState.rotateImage == 270f
+    val flipHorizontal = cropState.rotateImage % 180f != 0f
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
         Column {
-
+            val aspectRatio = if (flipHorizontal)
+                cropState.bitmap!!.height.toFloat() / cropState.bitmap!!.width.toFloat()
+            else
+                cropState.bitmap!!.width.toFloat() / cropState.bitmap!!.height.toFloat()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -198,33 +197,46 @@ fun CropImageScreen(
                     .weight(1f)
                     .padding(bottom = 16.dp, top = 12.dp)
                     .clip(RoundedCornerShape(0.dp))
+//                    .aspectRatio(aspectRatio)
+//                    .background(Color.Red)
                     .graphicsLayer {
                         Log.d("aaa", "CropImageScreen:${cropState.rotateImage}")
                         rotationZ = cropState.rotateImage
+                        if (cropState.rotateImage % 180f != 0f && imageBounds.width != 0 && imageBounds.height != 0) {
+                            val scale = imageBounds.width.toFloat() / imageBounds.height.toFloat()
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                    }
+                    .onGloballyPositioned {
+                        Log.d("aaa", "it.size:${it.size}")
+                        imageBounds = it.size
+                        viewModel.resetCropRect()
                     }
             ) {
 
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
+                        .background(Color.Red)
                 ) {
-                    Image(
-                        bitmap = imageBitmap,
-                        contentDescription = null,
-                        contentScale = ContentScale.FillBounds,
-                        alignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .onGloballyPositioned {
-                                Log.d("aaa", "it.size:${it.size}")
-                                imageBounds = it.size
-                            }
-                            .graphicsLayer {
-                                scaleX = cropState.zoomScale * scaleXFlip // ⭐️ KẾT HỢP ZOOM VÀ LẬT
-                                scaleY = cropState.zoomScale * scaleYFlip // ⭐️ KẾT HỢP ZOOM VÀ LẬT
-                                rotationZ = cropState.rotationAngle // Áp dụng góc xoay
-                            }
-                    )
+                    cropState.bitmap?.asImageBitmap()?.let {
+                        Image(
+                            bitmap = it,
+                            contentDescription = null,
+                            contentScale = ContentScale.FillBounds,
+                            alignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .graphicsLayer {
+                                    scaleX =
+                                        cropState.zoomScale * scaleXFlip // ⭐️ KẾT HỢP ZOOM VÀ LẬT
+                                    scaleY =
+                                        cropState.zoomScale * scaleYFlip // ⭐️ KẾT HỢP ZOOM VÀ LẬT
+                                    rotationZ = cropState.rotationAngle // Áp dụng góc xoay
+                                }
+                        )
+                    }
 
 
                     if (imageBounds != IntSize.Zero) {
@@ -288,6 +300,8 @@ fun CropImageScreen(
                             )
 
                             // 3x3 grid lines inside rect
+                            val rotation = cropState.rotateImage
+
                             val gridColor = Color.White.copy(alpha = 0.6f)
                             val stepX = rect.width / 3f
                             val stepY = rect.height / 3f

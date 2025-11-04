@@ -1,5 +1,6 @@
 package com.amb.photo.ui.activities.editor.crop
 
+import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.IntSize
@@ -16,8 +17,18 @@ class CropViewModel() : BaseViewModel() {
     private val _uiState = MutableStateFlow(CropState())
     val uiState: StateFlow<CropState> = _uiState
 
+    fun setBitmap(bitmap: Bitmap?) {
+        _uiState.update {
+            it.copy(bitmap = bitmap)
+        }
+    }
+
     fun updateCropState(newState: CropState) {
         _uiState.value = newState
+    }
+
+    fun resetCropRect() {
+        updateCropState(uiState.value.copy(cropRect = Rect.Zero))
     }
 
     fun updateScaleAndRotation(newScale: Float, newAngle: Float) {
@@ -26,7 +37,9 @@ class CropViewModel() : BaseViewModel() {
 
 
     fun rotateImage() {
-        _uiState.update { it.copy(rotateImage = (it.rotateImage + 90f) % 360) }
+        val it = uiState.value
+        val rotateImage = (it.rotateImage + 90f) % 360
+        _uiState.update { it.copy(rotateImage = rotateImage) }
     }
 
     /**
@@ -186,7 +199,7 @@ class CropViewModel() : BaseViewModel() {
         }
     }
 
-    fun onAspectFormatSelected(imageBounds:IntSize,aspect:CropAspect,padding: Float) {
+    fun onAspectFormatSelected(imageBounds: IntSize, aspect: CropAspect, padding: Float) {
         if (imageBounds == IntSize.Zero) return
         val cropState = uiState.value
         val canvasWidth = imageBounds.width.toFloat()
