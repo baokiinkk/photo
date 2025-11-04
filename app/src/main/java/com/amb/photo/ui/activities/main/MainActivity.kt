@@ -1,6 +1,5 @@
 package com.amb.photo.ui.activities.main
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -13,11 +12,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
+import com.amb.photo.ui.activities.imagepicker.ImagePickerActivity
+import com.amb.photo.ui.activities.imagepicker.ImageRequest
+import com.amb.photo.ui.activities.imagepicker.TypeSelect
 import com.amb.photo.ui.theme.BackgroundWhite
 import com.amb.photo.ui.theme.MainTheme
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.launchActivity
-import com.basesource.base.utils.toJson
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.security.MessageDigest
@@ -48,9 +49,8 @@ class MainActivity : BaseActivity() {
             viewModel.events.collect { event ->
                 when (event) {
                     is MainScreenEvent.LaunchActivity -> {
-                        launchActivity(Intent(this@MainActivity, event.cls).apply {
-                            putExtra("arg", event.data?.toJson())
-                        }) { result ->
+                        launchActivity(toActivity = ImagePickerActivity::class.java, input = ImageRequest(type = TypeSelect.SINGLE)) { result ->
+
                         }
                     }
 

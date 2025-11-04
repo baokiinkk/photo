@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResult
 import androidx.core.app.ActivityOptionsCompat
 import com.basesource.base.ui.base.ActivityResultManager
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.ui.base.IScreenData
 
 /**
  * Extension functions để sử dụng ActivityResultManager một cách gọn gàng hơn
@@ -15,11 +16,18 @@ import com.basesource.base.ui.base.BaseActivity
 /**
  * Extension function cho BaseActivity để launch activity với callback inline
  */
-fun BaseActivity.launchActivity(
-    intent: Intent,
+fun <D> BaseActivity.launchActivity(
+    toActivity: Class<D>,
+    input: IScreenData? = null,
+    addFlags: (Intent.() -> Unit)? = null,
     options: ActivityOptionsCompat? = null,
-    callback: (ActivityResult) -> Unit
+    callback: ((ActivityResult) -> Unit)? = null
 ) {
+    val intent = Intent(this, toActivity)
+    intent.putExtra("arg", input?.toJson())
+    if (addFlags != null) {
+        intent.addFlags()
+    }
     activityResultManager.launchActivity(intent, options, callback)
 }
 
