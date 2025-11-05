@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,11 +38,21 @@ import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.launchActivity
 import androidx.core.net.toUri
+import com.amb.photo.utils.getInput
+import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.toJson
+
+data class EditorInput(
+    val pathBitmap: String? = null
+) : IScreenData
 
 class EditorActivity : BaseActivity() {
 
     var pathBitmap: String? = null
+
+    private val screenInput: EditorInput? by lazy {
+        intent.getInput()
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +61,9 @@ class EditorActivity : BaseActivity() {
         setContent {
             var pathBitmapResult by remember { mutableStateOf<String?>(null) }
 
+            LaunchedEffect(Unit) {
+                pathBitmapResult = screenInput?.pathBitmap
+            }
             Scaffold(
                 containerColor = Color(0xFFF2F4F8)
             ) { inner ->
@@ -77,7 +91,7 @@ class EditorActivity : BaseActivity() {
                         launchActivity(
                             toActivity = CropActivity::class.java,
                             input = CropInput(pathBitmap = pathBitmap),
-                            callback = {result->
+                            callback = { result ->
                                 if (result.resultCode == Activity.RESULT_OK) {
                                     val pathBitmap = result.data?.getStringExtra("pathBitmap")
                                     pathBitmapResult = pathBitmap
