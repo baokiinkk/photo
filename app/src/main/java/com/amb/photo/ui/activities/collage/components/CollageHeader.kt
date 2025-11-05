@@ -26,7 +26,7 @@ import com.amb.photo.ui.theme.Primary500
 import com.basesource.base.utils.clickableWithAlphaEffect
 
 @Composable
-fun CollageHeader(
+fun FeaturePhotoHeader(
     onBack: () -> Unit,
     onUndo: () -> Unit,
     onRedo: () -> Unit,
@@ -40,7 +40,8 @@ fun CollageHeader(
             .fillMaxWidth()
             .background(Color.White)
             .statusBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp)
+            .padding(top = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -88,7 +89,7 @@ fun CollageHeader(
 @Preview(showBackground = true)
 @Composable
 private fun CollageHeaderPreview() {
-    CollageHeader(
+    FeaturePhotoHeader(
         onBack = {},
         onUndo = {},
         onRedo = {},

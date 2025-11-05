@@ -144,13 +144,13 @@ fun BottomTabBarTrendingPreview() {
     val mockTabs = listOf(
         TabItem(
             type = TabType.DISCOVER,
-            title = stringResource(id = R.string.tab_trending),
+            title = stringResource(id = R.string.discover),
             iconEnabled = R.drawable.ic_home_selected,
             iconDisabled = R.drawable.ic_home_unselect,
         ),
         TabItem(
             type = TabType.CUSTOMIZE,
-            title = stringResource(id = R.string.tab_customize),
+            title = stringResource(id = R.string.my_creative),
             iconEnabled = R.drawable.ic_creative_selected,
             iconDisabled = R.drawable.ic_create_unselect,
         ),
@@ -169,13 +169,13 @@ fun BottomTabBarGesturePreview() {
     val mockTabs = listOf(
         TabItem(
             type = TabType.DISCOVER,
-            title = stringResource(id = R.string.trending_tab),
+            title = stringResource(id = R.string.discover),
             iconEnabled = R.drawable.ic_home_tab_trending_enable,
             iconDisabled = R.drawable.ic_home_tab_trending_disable,
         ),
         TabItem(
             type = TabType.CUSTOMIZE,
-            title = stringResource(id = R.string.customize_tab),
+            title = stringResource(id = R.string.my_creative),
             iconEnabled = R.drawable.ic_home_tab_custumize_enable,
             iconDisabled = R.drawable.ic_home_tab_custumize_disable,
         )
@@ -194,13 +194,13 @@ fun BottomTabBarCustomizePreview() {
     val mockTabs = listOf(
         TabItem(
             type = TabType.DISCOVER,
-            title = stringResource(id = R.string.trending_tab),
+            title = stringResource(id = R.string.discover),
             iconEnabled = R.drawable.ic_home_tab_trending_enable,
             iconDisabled = R.drawable.ic_home_tab_trending_disable,
         ),
         TabItem(
             type = TabType.CUSTOMIZE,
-            title = stringResource(id = R.string.customize_tab),
+            title = stringResource(id = R.string.my_creative),
             iconEnabled = R.drawable.ic_home_tab_custumize_enable,
             iconDisabled = R.drawable.ic_home_tab_custumize_disable,
         )
@@ -219,13 +219,13 @@ fun BottomTabBarDarkBackgroundPreview() {
     val mockTabs = listOf(
         TabItem(
             type = TabType.DISCOVER,
-            title = stringResource(id = R.string.trending_tab),
+            title = stringResource(id = R.string.discover),
             iconEnabled = R.drawable.ic_home_tab_trending_enable,
             iconDisabled = R.drawable.ic_home_tab_trending_disable,
         ),
         TabItem(
             type = TabType.CUSTOMIZE,
-            title = stringResource(id = R.string.customize_tab),
+            title = stringResource(id = R.string.my_creative),
             iconEnabled = R.drawable.ic_home_tab_custumize_enable,
             iconDisabled = R.drawable.ic_home_tab_custumize_disable,
         )

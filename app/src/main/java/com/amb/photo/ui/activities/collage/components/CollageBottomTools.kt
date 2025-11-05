@@ -1,103 +1,88 @@
 package com.amb.photo.ui.activities.collage.components
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
-import com.basesource.base.utils.clickableWithAlphaEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.amb.photo.R
+import com.amb.photo.ui.theme.AppStyle
+import com.basesource.base.utils.clickableWithAlphaEffect
 
 enum class CollageTool {
-    GRIDS,
-    RATIO,
-    BACKGROUND,
-    FRAME,
-    TEXT,
-    STICKER
+    GRIDS, RATIO, BACKGROUND, FRAME, TEXT, STICKER, ADD_PHOTO
 }
 
 data class ToolItem(
-    val tool: CollageTool,
-    val label: String,
-    val icon: String
+    val tool: CollageTool, @StringRes val label: Int, @DrawableRes val icon: Int
 )
 
+val toolsCollage = listOf(
+    ToolItem(CollageTool.GRIDS, R.string.grids, R.drawable.ic_grid),
+    ToolItem(CollageTool.RATIO, R.string.ratio_tool, R.drawable.ic_ratio),
+    ToolItem(CollageTool.BACKGROUND, R.string.background_tool, R.drawable.ic_background_tool),
+    ToolItem(CollageTool.FRAME, R.string.frame_tool, R.drawable.ic_frame_tool),
+    ToolItem(CollageTool.TEXT, R.string.text_tool, R.drawable.ic_text_tool),
+    ToolItem(CollageTool.STICKER, R.string.sticker_tool, R.drawable.ic_sticker_tool),
+    ToolItem(CollageTool.ADD_PHOTO, R.string.add_photo_tool, R.drawable.ic_photo_tool)
+)
 @Composable
-fun CollageBottomTools(
-    selectedTool: CollageTool?,
+fun FeatureBottomTools(
+    tools: List<ToolItem> = listOf(),
     onToolClick: (CollageTool) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val tools = listOf(
-        ToolItem(CollageTool.GRIDS, "Grids", "⊞"),
-        ToolItem(CollageTool.RATIO, "Ratio", "□"),
-        ToolItem(CollageTool.BACKGROUND, "Background", "▱"),
-        ToolItem(CollageTool.FRAME, "Frame", "◈"),
-        ToolItem(CollageTool.TEXT, "Text", "Aa"),
-        ToolItem(CollageTool.STICKER, "Sticker", "😊")
-    )
-
-    Box(
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(vertical = 16.dp)
+            .horizontalScroll(rememberScrollState())
     ) {
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp)
-        ) {
-            items(tools) { item ->
-                ToolItem(
-                    item = item,
-                    isSelected = selectedTool == item.tool,
-                    onClick = { onToolClick(item.tool) }
-                )
-            }
+        tools.forEach { item ->
+            ToolItem(
+                item = item,
+                onClick = { onToolClick(item.tool) }
+            )
         }
     }
 }
 
 @Composable
 private fun ToolItem(
-    item: ToolItem,
-    isSelected: Boolean,
-    onClick: () -> Unit
+    item: ToolItem, onClick: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickableWithAlphaEffect(onClick = onClick)
+        modifier = Modifier
+            .width(65.dp)
+            .padding(vertical = 12.dp)
+            .clickableWithAlphaEffect(onClick = onClick)
     ) {
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .background(
-                    if (isSelected) Color(0xFFEEE1FF) else Color(0xFFF5F5F7),
-                    CircleShape
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = item.icon,
-                fontSize = 20.sp,
-                color = if (isSelected) Color(0xFF9747FF) else Color(0xFF666666)
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
+        Image(
+            painterResource(item.icon),
+            contentDescription = "",
+            modifier = Modifier.size(24.dp)
+        )
         Text(
-            text = item.label,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-            color = if (isSelected) Color(0xFF9747FF) else Color(0xFF666666)
+            modifier = Modifier.padding(top = 2.dp),
+            text = stringResource(item.label),
+            style = AppStyle.caption2().medium().gray800()
         )
     }
 }
@@ -105,9 +90,8 @@ private fun ToolItem(
 @Preview(showBackground = true)
 @Composable
 private fun CollageBottomToolsPreview() {
-    CollageBottomTools(
-        selectedTool = CollageTool.GRIDS,
-        onToolClick = {}
-    )
+    FeatureBottomTools(
+        tools = toolsCollage,
+        onToolClick = {})
 }
 
