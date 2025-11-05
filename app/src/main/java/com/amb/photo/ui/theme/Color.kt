@@ -9,13 +9,14 @@ val Pink80 = Color(0xFFEFB8C8)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val Gray900 = Color(0xFF191A1A)
 val Gray25 = Color(0xFFF9F9FB)
 val Gray50 = Color(0xFFF2F2F2)
 val Neutral01 =  Color(0xFF1A1B1D)
 val Neutral03 = Color(0xFF505050)
 
+val Gray900 = Color(0xFF101828)
 val Gray500 = Color(0xFF7C7E83)
+val Gray300 = Color(0xFFD0D5DD)
 // Primary Colors
 val Purple40 = Color(0xFF354CC4)
 val Purple200 = Color(0xFFCBC6FF)
@@ -34,6 +35,7 @@ val TextWhite = Color.White
 // Border Colors
 val Primary500 = Color(0xFF6425F3)
 val Background1 = Color(0xFFF8FAFC)
+val Background2 = Color(0xFFF2F4F8)
 val BorderPrimary = Color(0xFF354CC4)
 val BorderLight = Color(0xFFE5E7EB)
 val BorderGray = Color(0xFFB0B2B5)
