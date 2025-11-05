@@ -32,8 +32,10 @@ internal class CropStateManager(
     private val contentScale: ContentScale,
     private val gridLinesVisibility: GridLinesVisibility,
     private val handleRadius: Dp,
-    private val touchPadding: Dp
+    private val touchPadding: Dp,
+    val initialPadding: Dp
 ) {
+
 
     private val _state = MutableStateFlow(CropState(bitmap))
     val state = _state.asStateFlow()
@@ -41,6 +43,9 @@ internal class CropStateManager(
     private var dragMode: DragMode = DragMode.None
     private val density get() = Resources.getSystem().displayMetrics.density
     private val handleRadiusPx: Float get() = handleRadius.value * density
+
+    // Chuyển đổi Dp sang pixel một lần để tái sử dụng
+    private val paddingPx = initialPadding.value * density // <-- THÊM DÒNG NÀY
 
     init {
         reset(bitmap)
@@ -327,8 +332,10 @@ internal class CropStateManager(
         val cropOffset: Offset
 
         if (aspectRatio != null) {
-            val availableWidth = scaledSize.width
-            val availableHeight = scaledSize.height
+//            val availableWidth = scaledSize.width
+//            val availableHeight = scaledSize.height
+            val availableWidth = scaledSize.width - (paddingPx * 2)
+            val availableHeight = scaledSize.height // Giả sử chỉ có padding ngang
 
             var cropWidth = availableWidth
             var cropHeight = cropWidth / aspectRatio
@@ -340,13 +347,17 @@ internal class CropStateManager(
 
             cropSize = Size(cropWidth, cropHeight)
             cropOffset = Offset(
-                offsetX + (availableWidth - cropWidth) / 2,
+                offsetX + paddingPx + (availableWidth - cropWidth) / 2,
                 offsetY + (availableHeight - cropHeight) / 2
+//                offsetX + (availableWidth - cropWidth) / 2,
+//                offsetY + (availableHeight - cropHeight) / 2
             )
         } else {
             // Free form
-            cropSize = Size(scaledSize.width, scaledSize.height)
-            cropOffset = Offset(offsetX, offsetY)
+//            cropSize = Size(scaledSize.width, scaledSize.height)
+//            cropOffset = Offset(offsetX, offsetY)
+            cropSize = Size(scaledSize.width - (paddingPx * 2), scaledSize.height)
+            cropOffset = Offset(offsetX + paddingPx, offsetY)
         }
         val cropRect = Rect(cropOffset, cropSize)
 
@@ -403,8 +414,11 @@ internal class CropStateManager(
         val cropOffset: Offset
 
         if (aspectRatio != null) {
-            val availableWidth = scaledSize.width
+//            val availableWidth = scaledSize.width
+//            val availableHeight = scaledSize.height
+            val availableWidth = scaledSize.width - (paddingPx * 2)
             val availableHeight = scaledSize.height
+
 
             var cropWidth = availableWidth
             var cropHeight = cropWidth / aspectRatio
@@ -421,8 +435,10 @@ internal class CropStateManager(
             )
         } else {
             // Free form
-            cropSize = Size(scaledSize.width, scaledSize.height)
-            cropOffset = Offset(offsetX, offsetY)
+//            cropSize = Size(scaledSize.width, scaledSize.height)
+//            cropOffset = Offset(offsetX, offsetY)
+            cropSize = Size(scaledSize.width - (paddingPx * 2), scaledSize.height)
+            cropOffset = Offset(offsetX + paddingPx, offsetY)
         }
         val cropRect = Rect(cropOffset, cropSize)
 

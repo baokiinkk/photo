@@ -18,7 +18,6 @@ class CropController(
     val cropColors: CropColors,
 ) {
 
-
     private val stateManager: CropStateManager = CropStateManager(
         bitmap = bitmap,
         cropShape = cropOptions.cropShape,
@@ -26,7 +25,8 @@ class CropController(
         contentScale = cropOptions.contentScale,
         gridLinesVisibility = cropOptions.gridLinesVisibility,
         handleRadius = cropOptions.handleRadius,
-        touchPadding = cropOptions.touchPadding
+        touchPadding = cropOptions.touchPadding,
+        initialPadding = cropOptions.initialPadding
     )
 
     /**

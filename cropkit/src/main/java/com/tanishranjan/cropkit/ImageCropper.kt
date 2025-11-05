@@ -26,6 +26,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -91,14 +92,15 @@ fun ImageCropper(
                 Box(
                     Modifier
                         .fillMaxSize()
-                        .aspectRatio(state.imageRect.width.toFloat() / state.imageRect.height.toFloat())
+                        .aspectRatio(state.imageRect.width / state.imageRect.height)
+                        .background(Color.Red)
                         .clipToBounds(),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
                         bitmap = bmp,
                         contentDescription = null,
-                        contentScale = ContentScale.None,
+                        contentScale = ContentScale.Fit,
                         alignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxSize()
@@ -126,7 +128,6 @@ fun ImageCropper(
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 10.dp)
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragStart = { offset ->
@@ -248,12 +249,14 @@ fun ImageCropper(
                 }
 
                 // Draw edge handles only for free form cropping only
-                val handles = if (cropOptions.cropShape is CropShape.FreeForm) {
-                    state.handles.getAllHandles()
-                } else {
-                    state.handles.getCornerHandles()
-                }
+//                val handles = if (cropOptions.cropShape is CropShape.FreeForm) {
+//                    state.handles.getAllHandles()
+//                } else {
+//                    state.handles.getCornerHandles()
+//                }
 
+                val handles = state.handles.getCornerHandles()
+                val edgeHandles = state.handles.getAllHandles()
                 handles.forEach { handle ->
                     drawOval(
                         color = cropColors.handle,
@@ -263,6 +266,62 @@ fun ImageCropper(
                     )
                 }
 
+                val barLength = 24.dp.toPx()
+                val barWidth = 6.dp.toPx()
+
+                drawLine(
+                    Color.White,
+                    Offset(
+                        cropRect.center.x - barLength / 2,
+                        cropRect.top
+                    ),
+                    Offset(
+                        cropRect.center.x + barLength / 2,
+                        cropRect.top
+                    ),
+                    strokeWidth = barWidth,
+                    cap = StrokeCap.Round
+                )
+
+                drawLine(
+                    Color.White,
+                    Offset(
+                        cropRect.center.x - barLength / 2,
+                        cropRect.bottom
+                    ),
+                    Offset(
+                        cropRect.center.x + barLength / 2,
+                        cropRect.bottom
+                    ),
+                    strokeWidth = barWidth,
+                    cap = StrokeCap.Round
+                )
+                drawLine(
+                    Color.White,
+                    Offset(
+                        cropRect.left,
+                        cropRect.center.y - barLength / 2
+                    ),
+                    Offset(
+                        cropRect.left,
+                        cropRect.center.y + barLength / 2
+                    ),
+                    strokeWidth = barWidth,
+                    cap = StrokeCap.Round
+                )
+                drawLine(
+                    Color.White,
+                    Offset(
+                        cropRect.right,
+                        cropRect.center.y - barLength / 2
+                    ),
+                    Offset(
+                        cropRect.right,
+                        cropRect.center.y + barLength / 2
+                    ),
+                    strokeWidth = barWidth,
+                    cap = StrokeCap.Round
+                )
             }
 
         }

@@ -182,25 +182,17 @@ fun CropImageScreen(
     onCancel: () -> Unit,
     onApply: () -> Unit
 ) {
-//    var cropState by remember { mutableStateOf(CropState()) }
     val cropState by viewModel.uiState.collectAsStateWithLifecycle()
-    val density = LocalDensity.current
 
-    var imageBounds by remember { mutableStateOf(IntSize.Zero) }
-    val overlayColor = Color(1.0f, 1.0f, 1.0f, 0.6f)
-    var scaleXFlip by remember { mutableStateOf(1f) } // State UI cục bộ
-    var scaleYFlip by remember { mutableStateOf(1f) } // State UI cục bộ
-    val coroutineScope = rememberCoroutineScope() // Cần nếu logic cần Coroutine (ví dụ: onApply)
-
-
-    var cropShape: CropShape by remember { mutableStateOf(CropShape.Original) }
+    var cropShape: CropShape by remember { mutableStateOf(CropShape.AspectRatio(CropAspect.RATIO_1_1.ratio.toAspectRatio(),false)) }
     var gridLinesType by remember { mutableStateOf(GridLinesType.GRID) }
     val cropController = rememberCropController(
         bitmap = cropState.bitmap!!,
         cropOptions = CropDefaults.cropOptions(
             cropShape = cropShape,
             gridLinesType = gridLinesType,
-            touchPadding = 24.dp
+            touchPadding = 24.dp,
+            initialPadding = 0.dp
         )
     )
     Column(

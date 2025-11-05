@@ -2,6 +2,7 @@ package com.tanishranjan.cropkit
 
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 /**
  * Options for configuring the [ImageCropper].
@@ -19,5 +20,6 @@ data class CropOptions(
     val gridLinesVisibility: GridLinesVisibility,
     val gridLinesType: GridLinesType,
     val handleRadius: Dp,
-    val touchPadding: Dp
+    val touchPadding: Dp,
+    val initialPadding: Dp
 )
