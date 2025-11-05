@@ -89,6 +89,7 @@ import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
+import com.tanishranjan.cropkit.CropColors
 import com.tanishranjan.cropkit.CropDefaults
 import com.tanishranjan.cropkit.CropRatio
 import com.tanishranjan.cropkit.CropShape
@@ -211,6 +212,13 @@ fun CropImageScreen(
             initialPadding = 0.dp,
             zoomScale = zoomScale,
             rotationZBitmap = rotationZBitmap,
+        ),
+        cropColors = CropColors(
+            overlay = Color(1.0f, 1.0f, 1.0f, 0.6f),
+            overlayActive = Color(1.0f, 1.0f, 1.0f, 0.6f),
+            gridlines = Color.White,
+            cropRectangle = Color.White,
+            handle = Color.White
         )
     )
     Column(
@@ -223,8 +231,7 @@ fun CropImageScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
-                .padding(horizontal = 16.dp)
-            ,
+                .padding(horizontal = 16.dp),
             cropController = cropController
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -264,17 +271,17 @@ fun CropImageScreen(
             },
             onRotateClick = {
                 val rotateImage = (rotateBitmap + 90f) % 360
-                cropController.rotateClockwise{
+                cropController.rotateClockwise {
                     viewModel.updateBitmap(it)
                 }
             },
             onFlipHorizontal = {
-                cropController.flipHorizontally{
+                cropController.flipHorizontally {
                     viewModel.updateBitmap(it)
                 }
             },
             onFlipVertical = {
-                cropController.flipVertically{
+                cropController.flipVertically {
                     viewModel.updateBitmap(it)
                 }
             }
