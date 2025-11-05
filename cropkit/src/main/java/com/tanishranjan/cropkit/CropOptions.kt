@@ -21,5 +21,7 @@ data class CropOptions(
     val gridLinesType: GridLinesType,
     val handleRadius: Dp,
     val touchPadding: Dp,
-    val initialPadding: Dp
+    val initialPadding: Dp,
+    val zoomScale: Float? = null,
+    val rotationZBitmap: Float? = null
 )

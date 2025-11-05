@@ -184,15 +184,29 @@ fun CropImageScreen(
 ) {
     val cropState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    var cropShape: CropShape by remember { mutableStateOf(CropShape.AspectRatio(CropAspect.RATIO_1_1.ratio.toAspectRatio(),false)) }
+    var cropShape: CropShape by remember {
+        mutableStateOf(
+            CropShape.AspectRatio(
+                CropAspect.RATIO_1_1.ratio.toAspectRatio(),
+                false
+            )
+        )
+    }
     var gridLinesType by remember { mutableStateOf(GridLinesType.GRID) }
+
+    var zoomScale: Float? by remember { mutableStateOf(null) }
+
+    var rotationZBitmap: Float? by remember { mutableStateOf(null) }
+
     val cropController = rememberCropController(
         bitmap = cropState.bitmap!!,
         cropOptions = CropDefaults.cropOptions(
             cropShape = cropShape,
             gridLinesType = gridLinesType,
             touchPadding = 24.dp,
-            initialPadding = 0.dp
+            initialPadding = 0.dp,
+            zoomScale = zoomScale,
+            rotationZBitmap = rotationZBitmap
         )
     )
     Column(
@@ -245,11 +259,13 @@ fun CropImageScreen(
             onScaleAndRotationChange = { newScale, newAngle ->
                 // ⭐️ GỌI VIEWMODEL ĐỂ THAY ĐỔI TRẠNG THÁI
                 viewModel.updateScaleAndRotation(newScale, newAngle)
-                cropController.setZoomScale(
-                    scaleXBitmap = newScale,
-                    scaleYBitmap = newScale,
-                    rotationZBitmap = newAngle
-                )
+                zoomScale = newScale
+                rotationZBitmap = newAngle
+//                cropController.setZoomScale(
+//                    scaleXBitmap = newScale,
+//                    scaleYBitmap = newScale,
+//                    rotationZBitmap = newAngle
+//                )
             },
             onRotateClick = {
                 cropController.rotateClockwise()

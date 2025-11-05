@@ -29,7 +29,6 @@ internal data class CropState(
     val isDragging: Boolean = false,
     val gridlinesActive: Boolean = false,
     val aspectRatio: Float = 1f,
-    val scaleXBitmap: Float? = null,
-    val scaleYBitmap: Float? = null,
+    val zoomScale: Float? = null,
     val rotationZBitmap: Float? = null,
 )

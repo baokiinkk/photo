@@ -33,9 +33,10 @@ internal class CropStateManager(
     private val gridLinesVisibility: GridLinesVisibility,
     private val handleRadius: Dp,
     private val touchPadding: Dp,
-    val initialPadding: Dp
+    val initialPadding: Dp,
+    val zoomScale: Float? = null,
+    val rotationZBitmap: Float? = null
 ) {
-
 
     private val _state = MutableStateFlow(CropState(bitmap))
     val state = _state.asStateFlow()
@@ -48,6 +49,12 @@ internal class CropStateManager(
     private val paddingPx = initialPadding.value * density // <-- THÊM DÒNG NÀY
 
     init {
+        _state.update {
+            it.copy(
+                zoomScale = zoomScale,
+                rotationZBitmap = rotationZBitmap
+            )
+        }
         reset(bitmap)
     }
 
@@ -468,13 +475,13 @@ internal class CropStateManager(
         scaleYBitmap: Float,
         rotationZBitmap: Float
     ) {
-        _state.update {
-            it.copy(
-                scaleXBitmap = scaleXBitmap,
-                scaleYBitmap = scaleYBitmap,
-                rotationZBitmap = rotationZBitmap
-            )
-        }
+//        _state.update {
+//            it.copy(
+//                scaleXBitmap = scaleXBitmap,
+//                scaleYBitmap = scaleYBitmap,
+//                rotationZBitmap = rotationZBitmap
+//            )
+//        }
     }
 
     companion object {

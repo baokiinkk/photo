@@ -17,7 +17,9 @@ object CropDefaults {
         gridLinesType: GridLinesType = GridLinesType.GRID,
         handleRadius: Dp = 8.dp,
         touchPadding: Dp = 10.dp,
-        initialPadding: Dp = 0.dp
+        initialPadding: Dp = 0.dp,
+        zoomScale: Float?=null,
+        rotationZBitmap: Float?=null
     ) = CropOptions(
         cropShape = cropShape,
         contentScale = contentScale,
@@ -25,7 +27,9 @@ object CropDefaults {
         gridLinesType = gridLinesType,
         handleRadius = handleRadius,
         touchPadding = touchPadding,
-        initialPadding = initialPadding
+        initialPadding = initialPadding,
+        zoomScale = zoomScale,
+        rotationZBitmap =rotationZBitmap
     )
 
     /**

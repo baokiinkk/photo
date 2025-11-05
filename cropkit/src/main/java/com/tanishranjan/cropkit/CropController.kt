@@ -26,7 +26,9 @@ class CropController(
         gridLinesVisibility = cropOptions.gridLinesVisibility,
         handleRadius = cropOptions.handleRadius,
         touchPadding = cropOptions.touchPadding,
-        initialPadding = cropOptions.initialPadding
+        initialPadding = cropOptions.initialPadding,
+        zoomScale = cropOptions.zoomScale,
+        rotationZBitmap = cropOptions.rotationZBitmap
     )
 
     /**
