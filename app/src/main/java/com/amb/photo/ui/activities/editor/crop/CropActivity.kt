@@ -1,27 +1,27 @@
 package com.amb.photo.ui.activities.editor.crop
 
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,55 +32,29 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Matrix
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathFillType
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.rotate
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.amb.photo.R
-import com.amb.photo.ui.activities.editor.RulerSelector
 import com.amb.photo.ui.activities.editor.crop.CropAspect.Companion.toAspectRatio
-import com.amb.photo.ui.activities.editor.mapRulerToScaleAndRotation
 import com.amb.photo.ui.activities.editor.toBitmap
 import com.amb.photo.ui.theme.AppColor
 import com.amb.photo.ui.theme.fontFamily
@@ -91,13 +65,14 @@ import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.tanishranjan.cropkit.CropColors
 import com.tanishranjan.cropkit.CropDefaults
-import com.tanishranjan.cropkit.CropRatio
 import com.tanishranjan.cropkit.CropShape
 import com.tanishranjan.cropkit.GridLinesType
 import com.tanishranjan.cropkit.ImageCropper
 import com.tanishranjan.cropkit.rememberCropController
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlin.times
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 
 
 data class CropInput(
@@ -150,7 +125,11 @@ class CropActivity : BaseActivity() {
                                 finish()
                             },
                             onApply = {
-
+                                val intent = Intent()
+                                intent.putExtra("pathBitmap", it)
+                                setResult(RESULT_OK,intent)
+                                finish()
+                                Toast.makeText(this@CropActivity, "Image Saved", Toast.LENGTH_SHORT).show()
                             }
                         )
                     }
@@ -181,7 +160,7 @@ fun PickImageFromGallery(onImagePicked: (Uri) -> Unit) {
 fun CropImageScreen(
     viewModel: CropViewModel,
     onCancel: () -> Unit,
-    onApply: () -> Unit
+    onApply: (String) -> Unit
 ) {
     val cropState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -199,9 +178,7 @@ fun CropImageScreen(
 
     var rotationZBitmap: Float? by remember { mutableStateOf(null) }
 
-    var rotateBitmap by remember {
-        mutableStateOf(0f)
-    }
+    val context = LocalContext.current
 
     val cropController = rememberCropController(
         bitmap = cropState.bitmap!!,
@@ -239,7 +216,13 @@ fun CropImageScreen(
         CropControlPanel(
             idCropState = cropState.id,
             onCancel = onCancel,
-            onApply = onApply,
+            onApply = {
+                saveImage(
+                    context = context,
+                    croppedImage = cropController.crop(),
+                    onImageSaved = onApply
+                )
+            },
             onFormat = { aspect ->
                 cropShape = when (aspect) {
                     CropAspect.ORIGINAL -> {
@@ -259,18 +242,11 @@ fun CropImageScreen(
                 viewModel.onAspectFormatSelected(aspect)
             },
             onScaleAndRotationChange = { newScale, newAngle ->
-                // ⭐️ GỌI VIEWMODEL ĐỂ THAY ĐỔI TRẠNG THÁI
                 viewModel.updateScaleAndRotation(newScale, newAngle)
                 zoomScale = newScale
                 rotationZBitmap = newAngle
-//                cropController.setZoomScale(
-//                    scaleXBitmap = newScale,
-//                    scaleYBitmap = newScale,
-//                    rotationZBitmap = newAngle
-//                )
             },
             onRotateClick = {
-                val rotateImage = (rotateBitmap + 90f) % 360
                 cropController.rotateClockwise {
                     viewModel.updateBitmap(it)
                 }
@@ -615,8 +591,38 @@ fun FooterEditor(
         }
     }
 }
+private fun saveImage(context: Context, croppedImage: Bitmap, onImageSaved: (String) -> Unit) {
+    val filename = "${System.currentTimeMillis()}.jpg"
+    var fos: OutputStream? = null
+    var imagePath: String? = null
 
-fun Bitmap.rotate(degrees: Float): Bitmap {
-    val matrix = android.graphics.Matrix().apply { postRotate(degrees) } // Sửa thành postRotate
-    return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        val resolver = context.contentResolver
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+        }
+
+        val imageUri: Uri? = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        fos = imageUri?.let { uri ->
+            resolver.openOutputStream(uri)
+        }
+
+        // ✅ lấy path thực tế từ MediaStore
+        imageUri?.let { uri ->
+            imagePath = uri.toString() // hoặc bạn có thể query path vật lý nếu cần
+        }
+    } else {
+        val imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val imageFile = File(imagesDir, filename)
+        fos = FileOutputStream(imageFile)
+        imagePath = imageFile.absolutePath // ✅ trả về path thật
+    }
+
+    fos?.use { stream ->
+        croppedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+    }
+
+    imagePath?.let { onImageSaved.invoke(it) }
 }

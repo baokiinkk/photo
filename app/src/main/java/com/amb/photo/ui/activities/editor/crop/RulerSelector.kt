@@ -1,21 +1,14 @@
-package com.amb.photo.ui.activities.editor
+package com.amb.photo.ui.activities.editor.crop
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ProgressIndicatorDefaults
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,8 +24,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.amb.photo.ui.theme.AppColor
 import com.amb.photo.ui.theme.fontFamily
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -93,7 +84,7 @@ fun RulerSelector(
 
     val maxProgressValue = 30f
 
-    val progress = (kotlin.math.abs(currentValue) / maxProgressValue).coerceIn(0f, 1f)
+    val progress = (abs(currentValue) / maxProgressValue).coerceIn(0f, 1f)
 
     val animatedProgress by animateFloatAsState(
         targetValue = progress,

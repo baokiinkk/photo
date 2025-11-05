@@ -1,20 +1,29 @@
 package com.amb.photo.ui.activities.editor
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -25,20 +34,25 @@ import com.amb.photo.ui.activities.editor.crop.PickImageFromGallery
 import com.amb.photo.ui.activities.imagepicker.ImagePickerActivity
 import com.basesource.base.components.CustomButton
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.launchActivity
+import androidx.core.net.toUri
+import com.basesource.base.utils.toJson
 
 class EditorActivity : BaseActivity() {
 
     var pathBitmap: String? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            var pathBitmapResult by remember { mutableStateOf<String?>(null) }
+
             Scaffold(
                 containerColor = Color(0xFFF2F4F8)
             ) { inner ->
-
                 Column(
                     modifier = Modifier.padding(inner),
                     verticalArrangement = Arrangement.Center
@@ -46,7 +60,10 @@ class EditorActivity : BaseActivity() {
                     CustomButton("crop") {
                         launchActivity(
                             toActivity = CropActivity_phase_1::class.java,
-                            input = CropInput(pathBitmap = pathBitmap)
+                            input = CropInput(pathBitmap = pathBitmap),
+                            callback = {
+
+                            }
                         )
                     }
 
@@ -59,8 +76,21 @@ class EditorActivity : BaseActivity() {
                         pathBitmap = uri.toString()
                         launchActivity(
                             toActivity = CropActivity::class.java,
-                            input = CropInput(pathBitmap = pathBitmap)
+                            input = CropInput(pathBitmap = pathBitmap),
+                            callback = {result->
+                                if (result.resultCode == Activity.RESULT_OK) {
+                                    val pathBitmap = result.data?.getStringExtra("pathBitmap")
+                                    pathBitmapResult = pathBitmap
+                                }
+                            }
                         )
+                    }
+
+                    Spacer(modifier = Modifier.height(40.dp))
+
+                    pathBitmapResult?.let {
+                        val uri = it.toUri()
+                        LoadImage(model = uri)
                     }
                 }
             }
