@@ -100,8 +100,10 @@ fun RulerSelector(
         animationSpec = tween(300)
     )
 
-    LaunchedEffect(currentValue) {
-        onValueChange(currentValue)
+    LaunchedEffect(currentValue,listState.isScrollInProgress) {
+        if (listState.isScrollInProgress) {
+            onValueChange(currentValue)
+        }
     }
     // Đặt vị trí ban đầu là 0 (index 30)
     // Cần LaunchedEffect để đảm bảo viewportCenter đã có giá trị

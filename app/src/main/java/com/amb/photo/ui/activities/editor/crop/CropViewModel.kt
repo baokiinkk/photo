@@ -235,6 +235,15 @@ class CropViewModel() : BaseViewModel() {
         }
     }
 
+    fun onAspectFormatSelected(aspect: CropAspect) {
+        _uiState.update {
+            it.copy(
+                aspect = aspect,
+                id = aspect.label
+            )
+        }
+    }
+
 
 }
 

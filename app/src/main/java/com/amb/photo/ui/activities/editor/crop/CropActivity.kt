@@ -79,6 +79,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.amb.photo.R
 import com.amb.photo.ui.activities.editor.RulerSelector
+import com.amb.photo.ui.activities.editor.crop.CropAspect.Companion.toAspectRatio
 import com.amb.photo.ui.activities.editor.mapRulerToScaleAndRotation
 import com.amb.photo.ui.activities.editor.toBitmap
 import com.amb.photo.ui.theme.AppColor
@@ -88,7 +89,14 @@ import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
+import com.tanishranjan.cropkit.CropDefaults
+import com.tanishranjan.cropkit.CropRatio
+import com.tanishranjan.cropkit.CropShape
+import com.tanishranjan.cropkit.GridLinesType
+import com.tanishranjan.cropkit.ImageCropper
+import com.tanishranjan.cropkit.rememberCropController
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.times
 
 
 data class CropInput(
@@ -118,8 +126,8 @@ class CropActivity : BaseActivity() {
             Scaffold(
                 containerColor = Color(0xFFF2F4F8)
             ) { inner ->
-                Box(
-                    contentAlignment = Alignment.Center,
+                Column(
+//                    contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(top = inner.calculateTopPadding())
@@ -133,15 +141,19 @@ class CropActivity : BaseActivity() {
 //                        "BitmapInfo",
 //                        "Width: $width, Height: $height, AspectRatio: $aspectRatio"
 //                    )
-                    CropImageScreen(
-                        viewmodel,
-                        onCancel = {
-                            finish()
-                        },
-                        onApply = {
+                    val uistate by viewmodel.uiState.collectAsStateWithLifecycle()
+                    uistate.bitmap?.let {
+                        CropImageScreen(
+                            viewmodel,
+                            onCancel = {
+                                finish()
+                            },
+                            onApply = {
 
-                        }
-                    )
+                            }
+                        )
+                    }
+
                 }
             }
         }
@@ -172,262 +184,91 @@ fun CropImageScreen(
 ) {
 //    var cropState by remember { mutableStateOf(CropState()) }
     val cropState by viewModel.uiState.collectAsStateWithLifecycle()
+    val density = LocalDensity.current
 
     var imageBounds by remember { mutableStateOf(IntSize.Zero) }
-    val overlayColor = Color(0f, 0f, 0f, 0.6f)
-    val density = LocalDensity.current
+    val overlayColor = Color(1.0f, 1.0f, 1.0f, 0.6f)
     var scaleXFlip by remember { mutableStateOf(1f) } // State UI cục bộ
     var scaleYFlip by remember { mutableStateOf(1f) } // State UI cục bộ
     val coroutineScope = rememberCoroutineScope() // Cần nếu logic cần Coroutine (ví dụ: onApply)
 
-    val flipHorizontal = cropState.rotateImage % 180f != 0f
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
+
+    var cropShape: CropShape by remember { mutableStateOf(CropShape.Original) }
+    var gridLinesType by remember { mutableStateOf(GridLinesType.GRID) }
+    val cropController = rememberCropController(
+        bitmap = cropState.bitmap!!,
+        cropOptions = CropDefaults.cropOptions(
+            cropShape = cropShape,
+            gridLinesType = gridLinesType,
+            touchPadding = 24.dp
+        )
+    )
+    Column(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column {
-//            val aspectRatio = if (flipHorizontal)
-//                cropState.bitmap!!.height.toFloat() / cropState.bitmap!!.width.toFloat()
-//            else
-//                cropState.bitmap!!.width.toFloat() / cropState.bitmap!!.height.toFloat()
-            val aspectRatio =
-                cropState.bitmap!!.width.toFloat() / cropState.bitmap!!.height.toFloat()
+        Spacer(modifier = Modifier.height(12.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .clip(RoundedCornerShape(0.dp))
+        ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-//                    .padding(horizontal = 16.dp)
-//                    .padding(horizontal = if (flipHorizontal)16.dp else 60.dp)
-                    .weight(1f)
-//                    .aspectRatio(aspectRatio,!flipHorizontal)
-                    .background(Color.Green)
-                    .padding(bottom = 16.dp, top = 12.dp)
+                    .fillMaxHeight()
+                    .padding(horizontal = 60.dp)
                     .clip(RoundedCornerShape(0.dp))
-                    .graphicsLayer {
-                        rotationZ = cropState.rotateImage
-                        Log.d("aaa", "CropImageScreen:${cropState.rotateImage}")
-                        if (cropState.rotateImage % 180f != 0f && imageBounds.width != 0 && imageBounds.height != 0) {
-                            val scale = imageBounds.width.toFloat() / imageBounds.height.toFloat()
-                            Log.d("aaa", "scale")
-                            scaleX = 0.5f
-                            scaleY = 0.7f
-                        } else {
-                            Log.d("aaa", "scale")
-                            scaleX = aspectRatio
-//                            scaleY = scale
-                        }
-                    }
-                    .onGloballyPositioned {
-                        Log.d("aaa", "it.size:${it.size}")
-                        imageBounds = it.size
-                        viewModel.resetCropRect()
-                    }
             ) {
-
-                Box(
+                ImageCropper(
                     modifier = Modifier
-                        .fillMaxHeight()
-                ) {
-                    cropState.bitmap?.asImageBitmap()?.let {
-                        Image(
-                            bitmap = it,
-                            contentDescription = null,
-                            contentScale = ContentScale.FillBounds,
-                            alignment = Alignment.Center,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .graphicsLayer {
-                                    scaleX =
-                                        cropState.zoomScale * scaleXFlip // ⭐️ KẾT HỢP ZOOM VÀ LẬT
-                                    scaleY =
-                                        cropState.zoomScale * scaleYFlip // ⭐️ KẾT HỢP ZOOM VÀ LẬT
-                                    rotationZ = cropState.rotationAngle // Áp dụng góc xoay
-                                }
-                        )
-                    }
-
-
-                    if (imageBounds != IntSize.Zero) {
-                        val canvasWidth = imageBounds.width.toFloat()
-                        val canvasHeight = imageBounds.height.toFloat()
-
-                        // 🟣 Canvas hiển thị đúng trên vùng ảnh
-                        Canvas(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .pointerInput(cropState.aspect) {
-                                    detectDragGestures(
-                                        onDragStart = { offset ->
-                                            viewModel.onDragStart(offset)
-                                        },
-                                        onDragEnd = {
-                                            viewModel.onDragEnd()
-                                        },
-                                        onDrag = { change, dragAmount ->
-                                            change.consume()
-
-                                            viewModel.onDrag(
-                                                dragAmount,
-                                                canvasWidth,
-                                                canvasHeight
-                                            )
-                                        }
-                                    )
-                                }
-                        ) {
-                            val rect = cropState.cropRect
-
-                            // 🟣 Khởi tạo cropRect ban đầu theo kích thước ảnh
-                            if (rect == Rect.Zero) {
-                                val padding = with(density) { 10.dp.toPx() }
-                                val width = canvasWidth - 2 * padding
-                                val height = width
-                                val left = padding
-                                val top = (canvasHeight - height) / 2f
-                                viewModel.updateCropState(
-                                    cropState.copy(
-                                        cropRect = Rect(left, top, left + width, top + height)
-                                    )
-                                )
-                            }
-
-                            // vùng tối bên ngoài
-                            val path = Path().apply {
-                                addRect(Rect(0f, 0f, canvasWidth, canvasHeight))
-                                addRect(cropState.cropRect)
-                                fillType = PathFillType.EvenOdd
-                            }
-                            drawPath(path, overlayColor)
-
-                            // khung trắng
-                            drawRect(
-                                Color.White,
-                                Offset(cropState.cropRect.left, cropState.cropRect.top),
-                                Size(cropState.cropRect.width, cropState.cropRect.height),
-                                style = Stroke(width = 2.dp.toPx())
-                            )
-
-                            // 3x3 grid lines inside rect
-                            val rotation = cropState.rotateImage
-
-                            val gridColor = Color.White.copy(alpha = 0.6f)
-                            val stepX = rect.width / 3f
-                            val stepY = rect.height / 3f
-                            val gridStroke = 1.dp.toPx()
-                            for (i in 1..2) {
-                                // vertical
-                                drawLine(
-                                    color = gridColor,
-                                    start = Offset(rect.left + stepX * i, rect.top),
-                                    end = Offset(rect.left + stepX * i, rect.bottom),
-                                    strokeWidth = gridStroke
-                                )
-                                // horizontal
-                                drawLine(
-                                    color = gridColor,
-                                    start = Offset(rect.left, rect.top + stepY * i),
-                                    end = Offset(rect.right, rect.top + stepY * i),
-                                    strokeWidth = gridStroke
-                                )
-                            }
-
-
-                            // 4 chấm góc
-                            val handleRadius = 6.dp.toPx()
-                            drawCircle(Color.White, handleRadius, Offset(rect.left, rect.top))
-                            drawCircle(Color.White, handleRadius, Offset(rect.right, rect.top))
-                            drawCircle(Color.White, handleRadius, Offset(rect.left, rect.bottom))
-                            drawCircle(Color.White, handleRadius, Offset(rect.right, rect.bottom))
-
-                            val barLength = 24.dp.toPx()
-                            val barWidth = 6.dp.toPx()
-                            drawLine(
-                                Color.White,
-                                Offset(
-                                    cropState.cropRect.center.x - barLength / 2,
-                                    cropState.cropRect.top
-                                ),
-                                Offset(
-                                    cropState.cropRect.center.x + barLength / 2,
-                                    cropState.cropRect.top
-                                ),
-                                strokeWidth = barWidth,
-                                cap = StrokeCap.Round
-                            )
-                            drawLine(
-                                Color.White,
-                                Offset(
-                                    cropState.cropRect.center.x - barLength / 2,
-                                    cropState.cropRect.bottom
-                                ),
-                                Offset(
-                                    cropState.cropRect.center.x + barLength / 2,
-                                    cropState.cropRect.bottom
-                                ),
-                                strokeWidth = barWidth,
-                                cap = StrokeCap.Round
-                            )
-                            drawLine(
-                                Color.White,
-                                Offset(
-                                    cropState.cropRect.left,
-                                    cropState.cropRect.center.y - barLength / 2
-                                ),
-                                Offset(
-                                    cropState.cropRect.left,
-                                    cropState.cropRect.center.y + barLength / 2
-                                ),
-                                strokeWidth = barWidth,
-                                cap = StrokeCap.Round
-                            )
-                            drawLine(
-                                Color.White,
-                                Offset(
-                                    cropState.cropRect.right,
-                                    cropState.cropRect.center.y - barLength / 2
-                                ),
-                                Offset(
-                                    cropState.cropRect.right,
-                                    cropState.cropRect.center.y + barLength / 2
-                                ),
-                                strokeWidth = barWidth,
-                                cap = StrokeCap.Round
-                            )
-                        }
-                    }
-                }
+                        .fillMaxSize(),
+                    cropController = cropController
+                )
             }
-
-
-            // 🟣 UI chọn tỉ lệ (đè lên hình)
-            CropControlPanel(
-                idCropState = cropState.id,
-                onCancel = onCancel,
-                onApply = onApply,
-                onFormat = { aspect ->
-                    viewModel.onAspectFormatSelected(
-                        imageBounds = imageBounds,
-                        aspect = aspect,
-                        padding = with(density) { 10.dp.toPx() }
-                    )
-                },
-                onScaleAndRotationChange = { newScale, newAngle ->
-                    // ⭐️ GỌI VIEWMODEL ĐỂ THAY ĐỔI TRẠNG THÁI
-                    viewModel.updateScaleAndRotation(newScale, newAngle)
-                },
-                onRotateClick = {
-                    // ⭐️ GỌI VIEWMODEL ĐỂ THAY ĐỔI TRẠNG THÁI
-                    viewModel.rotateImage()
-                },
-                onFlipHorizontal = {
-                    // ⭐️ STATE LẬT NẰM Ở UI CỤC BỘ
-                    scaleXFlip *= -1f
-                },
-                onFlipVertical = {
-                    // ⭐️ STATE LẬT NẰM Ở UI CỤC BỘ
-                    scaleYFlip *= -1f
-                }
-            )
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        // 🟣 UI chọn tỉ lệ (đè lên hình)
+        CropControlPanel(
+            idCropState = cropState.id,
+            onCancel = onCancel,
+            onApply = onApply,
+            onFormat = { aspect ->
+                cropShape = when (aspect) {
+                    CropAspect.ORIGINAL -> {
+                        aspect.ratio = cropState.bitmap!!.width to cropState.bitmap!!.height
+                        CropShape.Original
+                    }
+
+                    CropAspect.FREE -> CropShape.AspectRatio(
+                        cropState.aspect.ratio.toAspectRatio(),
+                        true
+                    )
+
+                    else -> CropShape.AspectRatio(aspect.ratio.toAspectRatio(), false)
+                }
+
+                cropController.setAspectRatio(cropShape)
+                viewModel.onAspectFormatSelected(aspect)
+            },
+            onScaleAndRotationChange = { newScale, newAngle ->
+                // ⭐️ GỌI VIEWMODEL ĐỂ THAY ĐỔI TRẠNG THÁI
+                viewModel.updateScaleAndRotation(newScale, newAngle)
+                cropController.setZoomScale(
+                    scaleXBitmap = newScale,
+                    scaleYBitmap = newScale,
+                    rotationZBitmap = newAngle
+                )
+            },
+            onRotateClick = {
+                cropController.rotateClockwise()
+            },
+            onFlipHorizontal = {
+                cropController.flipHorizontally()
+            },
+            onFlipVertical = {
+                cropController.flipVertically()
+            }
+        )
     }
 }
 
@@ -513,6 +354,7 @@ fun CropControlPanel(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) { rulerValue ->
             val (newScale, newAngle) = mapRulerToScaleAndRotation(rulerValue)
+            Log.d("dddd", "ddddd $newScale && $newAngle")
             onScaleAndRotationChange(newScale, newAngle)
         }
         // Center slider or options depending on tab

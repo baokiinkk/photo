@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.amb.photo.ui.activities.editor.crop.CropActivity
+import com.amb.photo.ui.activities.editor.crop.CropActivity_phase_1
 import com.amb.photo.ui.activities.editor.crop.CropInput
 import com.amb.photo.ui.activities.editor.crop.PickImageFromGallery
 import com.amb.photo.ui.activities.imagepicker.ImagePickerActivity
@@ -44,7 +45,7 @@ class EditorActivity : BaseActivity() {
                 ) {
                     CustomButton("crop") {
                         launchActivity(
-                            toActivity = CropActivity::class.java,
+                            toActivity = CropActivity_phase_1::class.java,
                             input = CropInput(pathBitmap = pathBitmap)
                         )
                     }
