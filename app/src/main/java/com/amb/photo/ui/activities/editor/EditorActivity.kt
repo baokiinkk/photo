@@ -73,22 +73,6 @@ class EditorActivity : BaseActivity() {
                 ) {
                     CustomButton("crop") {
                         launchActivity(
-                            toActivity = CropActivity_phase_1::class.java,
-                            input = CropInput(pathBitmap = pathBitmap),
-                            callback = {
-
-                            }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(40.dp))
-                    CustomButton("ImagePickerActivity") {
-                        launchActivity(ImagePickerActivity::class.java)
-                    }
-
-                    PickImageFromGallery { uri ->
-                        pathBitmap = uri.toString()
-                        launchActivity(
                             toActivity = CropActivity::class.java,
                             input = CropInput(pathBitmap = pathBitmap),
                             callback = { result ->
