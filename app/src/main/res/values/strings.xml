@@ -31,4 +31,9 @@
     <string name="format">Format</string>
     <string name="rotate">Rotate</string>
     <string name="position">Position</string>
+    <string name="square">Square</string>
+    <string name="adjust">Adjust</string>
+    <string name="filter">Filter</string>
+    <string name="blur">Blur</string>
+    <string name="background">Background</string>
 </resources>
