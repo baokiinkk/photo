@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.amb.photo.data.model.collage.CellSpec
 import com.amb.photo.data.model.collage.CollageTemplate
 import com.amb.photo.ui.theme.AppStyle
@@ -27,7 +29,6 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 fun GridsSheet(
     templates: List<CollageTemplate>,
     selectedTemplate: CollageTemplate?,
-    previewImages: List<Uri>,
     onTemplateSelect: (CollageTemplate) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -43,28 +44,22 @@ fun GridsSheet(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        LazyRow(
+        Row(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(templates) { template ->
-                Box(
+            templates.forEach { template ->
+                CollagePreview(
+                    images = templates.map {
+                        "".toUri()
+                    },
+                    template = template,
+                    gap = 2.2.dp,
+                    corner = 4.dp,
                     modifier = Modifier
-                        .size(88.dp)
-                        .background(
-                            if (template.id == selectedTemplate?.id) Color(0xFFEEE1FF) else Color(0xFFF3F4F6),
-                            RoundedCornerShape(12.dp)
-                        )
+                        .size(44.dp)
                         .padding(6.dp)
                         .clickableWithAlphaEffect { onTemplateSelect(template) }
-                ) {
-                    CollagePreview(
-                        images = previewImages,
-                        template = template,
-                        gap = 2.dp,
-                        corner = 6.dp,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
+                )
             }
         }
     }
@@ -92,7 +87,6 @@ private fun GridsSheetPreview() {
     GridsSheet(
         templates = mockTemplates,
         selectedTemplate = mockTemplates.first(),
-        previewImages = emptyList(),
         onTemplateSelect = {}
     )
 }

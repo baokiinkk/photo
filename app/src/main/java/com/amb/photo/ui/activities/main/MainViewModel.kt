@@ -40,17 +40,17 @@ class MainViewModel() : BaseViewModel(), KoinComponent {
     }
 
     @Composable
-    fun getTabs(): List<com.amb.photo.ui.activities.main.TabItem> {
+    fun getTabs(): List<TabItem> {
         return listOf(
             TabItem(
                 type = TabType.DISCOVER,
-                title = stringResource(id = R.string.tab_trending),
+                title = stringResource(id = R.string.discover),
                 iconEnabled = R.drawable.ic_home_selected,
                 iconDisabled = R.drawable.ic_home_unselect,
             ),
             TabItem(
                 type = TabType.CUSTOMIZE,
-                title = stringResource(id = R.string.tab_customize),
+                title = stringResource(id = R.string.my_creative),
                 iconEnabled = R.drawable.ic_creative_selected,
                 iconDisabled = R.drawable.ic_create_unselect,
             ),

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amb.photo.ui.activities.collage.CollageTemplates
 import com.amb.photo.ui.activities.collage.CollageViewModel
-import com.amb.photo.ui.theme.Background1
 import com.amb.photo.ui.theme.Background2
 import com.amb.photo.ui.theme.BackgroundWhite
 
@@ -32,7 +30,6 @@ import com.amb.photo.ui.theme.BackgroundWhite
 fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
     var gap by remember { mutableStateOf(1.dp) }
     var corner by remember { mutableStateOf(1.dp) }
-    var selectedTool by remember { mutableStateOf<CollageTool?>(null) }
     var showGridsSheet by remember { mutableStateOf(false) }
 
     val options by vm.templates.collectAsState()
@@ -77,16 +74,13 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
             }
             // Bottom tools
             CollageBottomTools(
-                selectedTool = selectedTool,
                 onToolClick = { tool ->
                     when (tool) {
                         CollageTool.GRIDS -> {
-                            selectedTool = tool
                             showGridsSheet = true
                         }
 
                         else -> {
-                            selectedTool = tool
                             showGridsSheet = false
                         }
                     }
@@ -96,25 +90,18 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
 
         // Grids Sheet (hiện khi click Grids tool)
         if (showGridsSheet) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0x66000000)),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                GridsSheet(
+            GridsSheet(
                     templates = options,
                     selectedTemplate = selected,
-                    previewImages = uris,
                     onTemplateSelect = { template ->
                         vm.select(template)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
+                        .align(Alignment.BottomCenter)
                 )
             }
-        }
     }
 }
 
@@ -161,7 +148,6 @@ private fun CollageScreenPreview() {
 
             // Bottom tools
             CollageBottomTools(
-                selectedTool = CollageTool.GRIDS,
                 onToolClick = {}
             )
         }

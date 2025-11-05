@@ -73,7 +73,7 @@ fun CollagePreview(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize(),
-                    error = painterResource(R.drawable.ic_4_5)
+                    error = painterResource(R.drawable.ic_empty_image)
                 )
             }
         }

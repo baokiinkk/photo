@@ -96,6 +96,14 @@ object AppStyle {
         )
         return BaseStyle(style)
     }
+    fun caption2(): BaseStyle {
+        val style = TextStyle(
+            fontSize = 10.sp,
+            lineHeight = 16.sp,
+            fontFamily = fontFamily,
+        )
+        return BaseStyle(style)
+    }
 
     fun h1(): BaseStyle {
         val style = TextStyle(
