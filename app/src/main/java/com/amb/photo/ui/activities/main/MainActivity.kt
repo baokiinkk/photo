@@ -30,6 +30,8 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.io.File
 import androidx.core.net.toUri
+import com.amb.photo.ui.activities.editor.EditorActivity
+import com.amb.photo.ui.activities.editor.EditorInput
 
 class MainActivity : BaseActivity() {
     private val viewModel: MainViewModel by viewModel()
@@ -90,17 +92,30 @@ class MainActivity : BaseActivity() {
     }
 
     private fun gotoEditPhoto() {
-        launchActivity(toActivity = ImagePickerActivity::class.java, ImageRequest(TypeSelect.SINGLE)) { result ->
+        launchActivity(
+            toActivity = ImagePickerActivity::class.java,
+            ImageRequest(TypeSelect.SINGLE)
+        ) { result ->
             val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
+            result?.let {
+                launchActivity(
+                    toActivity = EditorActivity::class.java,
+                    input = EditorInput(pathBitmap = it),
+                )
+            }
             Log.d("quocbao", result.toString())
         }
     }
+
     private fun getSignature() {
         try {
             val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
             } else {
-                @Suppress("DEPRECATION") packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+                @Suppress("DEPRECATION") packageManager.getPackageInfo(
+                    packageName,
+                    PackageManager.GET_SIGNATURES
+                )
             }
 
             val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

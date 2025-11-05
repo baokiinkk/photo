@@ -1,0 +1,83 @@
+package com.tanishranjan.cropkit
+
+import android.graphics.Bitmap
+import android.util.Log
+import com.tanishranjan.cropkit.internal.CropStateManager
+import com.tanishranjan.cropkit.internal.CropStateChangeActions
+
+/**
+ * CropController is the main class that is used to interact with the [ImageCropper].
+ *
+ * @param bitmap The bitmap that needs to be cropped.
+ * @param cropOptions The options that are used to configure the ImageCropper.
+ * @param cropColors The colors that are used to style the ImageCropper.
+ */
+class CropController(
+    bitmap: Bitmap,
+    val cropOptions: CropOptions,
+    val cropColors: CropColors,
+) {
+
+    private val stateManager: CropStateManager = CropStateManager(
+        bitmap = bitmap,
+        cropShape = cropOptions.cropShape,
+        isMoveEnabled = (cropOptions.cropShape as? CropShape.AspectRatio)?.isMove ?: false,
+        contentScale = cropOptions.contentScale,
+        gridLinesVisibility = cropOptions.gridLinesVisibility,
+        handleRadius = cropOptions.handleRadius,
+        touchPadding = cropOptions.touchPadding,
+        initialPadding = cropOptions.initialPadding,
+        zoomScale = cropOptions.zoomScale,
+        rotationZBitmap = cropOptions.rotationZBitmap,
+    )
+
+    /**
+     * State flow of the ImageCropper current state.
+     */
+    internal val state = stateManager.state
+
+    /**
+     * Returns the cropped bitmap.
+     */
+    fun crop(): Bitmap = stateManager.crop()
+
+    /**
+     * Rotates the bitmap clockwise in the ImageCropper.
+     */
+    fun rotateClockwise(onNewBitmap: (Bitmap) -> Unit) = stateManager.rotateClockwise(onNewBitmap)
+
+
+    fun setZoomScale(
+        scaleXBitmap: Float,
+        scaleYBitmap: Float,
+        rotationZBitmap: Float
+    ) = stateManager.setZoomScale(scaleXBitmap, scaleYBitmap, rotationZBitmap)
+
+    fun setAspectRatio(cropShape:CropShape) {
+        stateManager.setAspectRatio(cropShape)
+    }
+    /**
+     * Rotates the bitmap anti-clockwise in the ImageCropper.
+     */
+    fun rotateAntiClockwise(onNewBitmap: (Bitmap) -> Unit) = stateManager.rotateAntiClockwise(onNewBitmap)
+
+    /**
+     * Flips the bitmap horizontally in the ImageCropper.
+     */
+    fun flipHorizontally(onNewBitmap: (Bitmap) -> Unit) = stateManager.flipHorizontally(onNewBitmap)
+
+    /**
+     * Flips the bitmap vertically in the ImageCropper.
+     */
+    fun flipVertically(onNewBitmap: (Bitmap) -> Unit) = stateManager.flipVertically(onNewBitmap)
+
+    internal fun onStateChange(action: CropStateChangeActions) {
+        when (action) {
+            is CropStateChangeActions.DragStart -> stateManager.onDragStart(action.offset)
+            is CropStateChangeActions.DragEnd -> stateManager.onDragEnd()
+            is CropStateChangeActions.DragBy -> stateManager.onDrag(action.offset)
+            is CropStateChangeActions.CanvasSizeChanged -> stateManager.updateCanvasSize(action.size)
+        }
+    }
+
+}

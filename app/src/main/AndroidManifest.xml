@@ -11,7 +11,9 @@
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -31,18 +33,30 @@
         <activity
             android:name=".ui.activities.editor.EditorActivity"
             android:exported="true">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
 
-        <activity android:name=".ui.activities.editor.crop.CropActivity"
-            android:exported="false"   />
+        <activity
+            android:name=".ui.activities.editor.crop.CropActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.activities.editor.crop.CropActivity_phase_1"
+            android:exported="false" />
+
+
         <activity
             android:name=".ui.activities.main.MainActivity"
             android:exported="true">
-                        <intent-filter>
-                            <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-                            <category android:name="android.intent.category.LAUNCHER" />
-                        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".ui.activities.imagepicker.ImagePickerActivity" />
         <activity android:name=".ui.activities.collage.CollageActivity" />

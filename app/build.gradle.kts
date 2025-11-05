@@ -87,6 +87,7 @@ dependencies {
 
 private fun DependencyHandlerScope.coreAndroid() {
     implementation(project(":base"))
+    implementation(project(":cropkit"))
     implementation(libs.androidx.core.ktx.v1120)
     implementation(libs.androidx.lifecycle.runtime.ktx.v270)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

@@ -1,5 +1,6 @@
 package com.amb.photo.ui.activities.main
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -66,6 +67,7 @@ fun BottomTabBar(
                     .padding(bottom = 28.dp)
                     .size(64.dp)
                     .clickableWithAlphaEffect {
+                        Log.d("thanhnc","ffffff")
                         onEditPhoto?.invoke()
                     },
                 contentScale = ContentScale.Crop

@@ -1,5 +1,6 @@
 package com.amb.photo.ui.activities.editor.crop
 
+import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Rect
 import com.amb.photo.R
 
@@ -12,7 +13,9 @@ data class CropState(
     val isMoving: Boolean = false,
     val zoomScale: Float = 1f,
     val rotationAngle: Float = 0f,
-    val id: String = CropAspect.RATIO_1_1.label
+    val id: String = CropAspect.RATIO_1_1.label,
+    val rotateImage: Float = 0f,
+    val bitmap: Bitmap? = null
 )
 
 
@@ -23,7 +26,11 @@ data class IconAspect(
 )
 
 // 🟣 Enum xác định chế độ crop
-enum class CropAspect(val label: String, val ratio: Pair<Int, Int>?, val iconAspect: IconAspect) {
+enum class CropAspect(
+    val label: String,
+    var ratio: Pair<Int, Int>?,
+    val iconAspect: IconAspect
+) {
     ORIGINAL(
         "Original",
         null,
@@ -109,5 +116,12 @@ enum class CropAspect(val label: String, val ratio: Pair<Int, Int>?, val iconAsp
             width = 32,
             height = 64
         )
-    )
+    );
+    companion object{
+        fun Pair<Int, Int>?.toAspectRatio(): Float {
+            return this?.let { (w, h) ->
+                if (h != 0) w.toFloat() / h.toFloat() else 1f
+            } ?: 1f
+        }
+    }
 }
