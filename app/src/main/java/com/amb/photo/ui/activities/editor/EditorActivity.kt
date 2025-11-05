@@ -2,18 +2,14 @@ package com.amb.photo.ui.activities.editor
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,19 +24,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.amb.photo.ui.activities.editor.crop.CropActivity
-import com.amb.photo.ui.activities.editor.crop.CropActivity_phase_1
 import com.amb.photo.ui.activities.editor.crop.CropInput
-import com.amb.photo.ui.activities.editor.crop.PickImageFromGallery
-import com.amb.photo.ui.activities.imagepicker.ImagePickerActivity
+import com.amb.photo.utils.getInput
 import com.basesource.base.components.CustomButton
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.launchActivity
-import androidx.core.net.toUri
-import com.amb.photo.utils.getInput
-import com.basesource.base.ui.base.IScreenData
-import com.basesource.base.utils.toJson
 
 data class EditorInput(
     val pathBitmap: String? = null
@@ -74,7 +66,7 @@ class EditorActivity : BaseActivity() {
                     CustomButton("crop") {
                         launchActivity(
                             toActivity = CropActivity::class.java,
-                            input = CropInput(pathBitmap = pathBitmap),
+                            input = CropInput(pathBitmap = pathBitmapResult),
                             callback = { result ->
                                 if (result.resultCode == Activity.RESULT_OK) {
                                     val pathBitmap = result.data?.getStringExtra("pathBitmap")

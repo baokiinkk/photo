@@ -29,4 +29,6 @@
     <string name="Format">Format</string>
     <string name="vertical">Vertical</string>
     <string name="format">Format</string>
+    <string name="rotate">Rotate</string>
+    <string name="position">Position</string>
 </resources>
