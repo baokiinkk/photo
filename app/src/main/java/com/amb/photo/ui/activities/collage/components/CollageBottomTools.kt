@@ -33,19 +33,21 @@ data class ToolItem(
     val tool: CollageTool, @StringRes val label: Int, @DrawableRes val icon: Int
 )
 
+val toolsCollage = listOf(
+    ToolItem(CollageTool.GRIDS, R.string.grids, R.drawable.ic_grid),
+    ToolItem(CollageTool.RATIO, R.string.ratio_tool, R.drawable.ic_ratio),
+    ToolItem(CollageTool.BACKGROUND, R.string.background_tool, R.drawable.ic_background_tool),
+    ToolItem(CollageTool.FRAME, R.string.frame_tool, R.drawable.ic_frame_tool),
+    ToolItem(CollageTool.TEXT, R.string.text_tool, R.drawable.ic_text_tool),
+    ToolItem(CollageTool.STICKER, R.string.sticker_tool, R.drawable.ic_sticker_tool),
+    ToolItem(CollageTool.ADD_PHOTO, R.string.add_photo_tool, R.drawable.ic_photo_tool)
+)
 @Composable
-fun CollageBottomTools(
-    onToolClick: (CollageTool) -> Unit, modifier: Modifier = Modifier
+fun FeatureBottomTools(
+    tools: List<ToolItem> = listOf(),
+    onToolClick: (CollageTool) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val tools = listOf(
-        ToolItem(CollageTool.GRIDS, R.string.grids, R.drawable.ic_grid),
-        ToolItem(CollageTool.RATIO, R.string.ratio_tool, R.drawable.ic_ratio),
-        ToolItem(CollageTool.BACKGROUND, R.string.background_tool, R.drawable.ic_background_tool),
-        ToolItem(CollageTool.FRAME, R.string.frame_tool, R.drawable.ic_frame_tool),
-        ToolItem(CollageTool.TEXT, R.string.text_tool, R.drawable.ic_text_tool),
-        ToolItem(CollageTool.STICKER, R.string.sticker_tool, R.drawable.ic_sticker_tool),
-        ToolItem(CollageTool.ADD_PHOTO, R.string.add_photo_tool, R.drawable.ic_photo_tool)
-    )
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -88,7 +90,8 @@ private fun ToolItem(
 @Preview(showBackground = true)
 @Composable
 private fun CollageBottomToolsPreview() {
-    CollageBottomTools(
+    FeatureBottomTools(
+        tools = toolsCollage,
         onToolClick = {})
 }
 

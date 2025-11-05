@@ -46,7 +46,7 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
     ) {
         Column(Modifier.fillMaxSize()) {
             // Header
-            CollageHeader(
+            FeaturePhotoHeader(
                 onBack = onBack,
                 onUndo = { /* TODO */ },
                 onRedo = { /* TODO */ },
@@ -73,7 +73,8 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                 )
             }
             // Bottom tools
-            CollageBottomTools(
+            FeatureBottomTools(
+                tools = toolsCollage,
                 onToolClick = { tool ->
                     when (tool) {
                         CollageTool.GRIDS -> {
@@ -119,7 +120,7 @@ private fun CollageScreenPreview() {
     ) {
         Column(Modifier.fillMaxSize()) {
             // Header
-            CollageHeader(
+            FeaturePhotoHeader(
                 onBack = {},
                 onUndo = {},
                 onRedo = {},
@@ -147,7 +148,8 @@ private fun CollageScreenPreview() {
             }
 
             // Bottom tools
-            CollageBottomTools(
+            FeatureBottomTools(
+                tools = toolsCollage,
                 onToolClick = {}
             )
         }

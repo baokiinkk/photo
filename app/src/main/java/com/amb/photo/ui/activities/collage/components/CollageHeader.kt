@@ -26,7 +26,7 @@ import com.amb.photo.ui.theme.Primary500
 import com.basesource.base.utils.clickableWithAlphaEffect
 
 @Composable
-fun CollageHeader(
+fun FeaturePhotoHeader(
     onBack: () -> Unit,
     onUndo: () -> Unit,
     onRedo: () -> Unit,
@@ -89,7 +89,7 @@ fun CollageHeader(
 @Preview(showBackground = true)
 @Composable
 private fun CollageHeaderPreview() {
-    CollageHeader(
+    FeaturePhotoHeader(
         onBack = {},
         onUndo = {},
         onRedo = {},
