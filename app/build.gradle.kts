@@ -13,7 +13,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.amb.emoij"
+        applicationId = "com.amb.photo"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

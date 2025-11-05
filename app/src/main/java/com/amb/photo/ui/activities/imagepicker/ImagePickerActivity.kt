@@ -11,6 +11,7 @@ import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.requestPermission
+import com.basesource.base.utils.toJson
 
 class ImagePickerActivity : BaseActivity() {
     val args: ImageRequest? by lazy { intent.getStringExtra("arg")?.fromJson() }
@@ -44,9 +45,9 @@ class ImagePickerActivity : BaseActivity() {
                     onDone = { uris ->
                         val data = Intent().apply {
                             if (uris.size > 1) {
-                                putParcelableArrayListExtra(RESULT_URI, ArrayList(uris))
+                                putExtra(RESULT_URI, uris.map { it.toString() }.toJson())
                             } else {
-                                putExtra(RESULT_URI, uris.firstOrNull())
+                                putExtra(RESULT_URI, uris.firstOrNull()?.toString()?.toJson())
                             }
                         }
                         setResult(RESULT_OK, data)

@@ -136,3 +136,4 @@ org.gradle.internal.instrumentation.agent.properties
 
 # Tệp backup
 *~
+/.idea/

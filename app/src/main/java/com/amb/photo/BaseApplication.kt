@@ -55,7 +55,7 @@ fun initKoin(context: Context) {
         modules(
             BaseModule().module,
             AppModule().module,
-            networkModule
+            networkModule,
         )
     }
 }

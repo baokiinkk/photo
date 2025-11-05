@@ -29,6 +29,7 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 fun BottomTabBar(
     tabs: List<TabItem>,
     onTabSelected: (TabType) -> Unit,
+    onEditPhoto: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     selected: TabType
 ) {
@@ -62,8 +63,11 @@ fun BottomTabBar(
                 painter = painterResource(R.drawable.ic_fab),
                 contentDescription = "",
                 modifier = Modifier
-                    .padding(bottom = 24.dp)
-                    .size(64.dp),
+                    .padding(bottom = 28.dp)
+                    .size(64.dp)
+                    .clickableWithAlphaEffect {
+                        onEditPhoto?.invoke()
+                    },
                 contentScale = ContentScale.Crop
             )
             TabItem(

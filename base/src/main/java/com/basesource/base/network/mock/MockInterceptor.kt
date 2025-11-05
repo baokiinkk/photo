@@ -17,53 +17,9 @@ class MockInterceptor(private val context: Context) : Interceptor {
         val uri = chain.request().url.toUri().toString()
         println("DEBUG: MockInterceptor - Request URI: $uri")
         val responseString = when {
-            uri.endsWith(MOCK_TRENDING_API) -> {
-                println("DEBUG: Matched MOCK_TRENDING_API")
-                getJsonStringFromFile(context.assets, MOCK_FILE_TRENDING_JSON)
-            }
-
-            uri.contains(MOCK_SEARCH_API) -> {
-                println("DEBUG: Matched MOCK_SEARCH_API")
-                getJsonStringFromFile(context.assets, MOCK_FILE_SEARCH_JSON)
-            }
-
-            uri.contains(MOCK_MOST_SEARCHED_API) -> {
-                println("DEBUG: Matched MOCK_MOST_SEARCHED_API")
-                getJsonStringFromFile(context.assets, MOCK_FILE_TRENDING_JSON)
-            }
-
-            uri.contains(MOCK_RECOMMEND_API) -> {
-                println("DEBUG: Matched MOCK_RECOMMEND_API")
-                getJsonStringFromFile(context.assets, MOCK_FILE_TRENDING_JSON)
-            }
-
-            uri.contains(MOCK_STATUS_BAR_CUSTOMIZE_API) -> {
-                println("DEBUG: Matched MOCK_STATUS_BAR_CUSTOMIZE_API")
-                getJsonStringFromFile(context.assets, MOCK_STATUS_BAR_CUSTOMIZE_API)
-            }
-
-            uri.contains(MOCK_EMOJIS_API) -> {
-                println("DEBUG: Matched MOCK_EMOJIS_API")
-                getJsonStringFromFile(context.assets, MOCK_EMOJIS_API)
-            }
-
-            uri.contains(MOCK_ANIMATIONS_API) -> {
-                println("DEBUG: Matched MOCK_ANIMATIONS_API")
-                getJsonStringFromFile(context.assets, MOCK_ANIMATIONS_API)
-            }
-
-            uri.contains(MOCK_EMOTIONS_API) -> {
-                println("DEBUG: Matched MOCK_EMOTIONS_API")
-                getJsonStringFromFile(context.assets, MOCK_EMOTIONS_API)
-            }
-
-            uri.contains(MOCK_CHARGE_API) -> {
-                println("DEBUG: Matched MOCK_CHARGE_API")
-                getJsonStringFromFile(context.assets, MOCK_CHARGE_API)
-            }
-            uri.contains(STICKERS_MOCK_API) -> {
-                println("DEBUG: Matched STICKERS_MOCK_API")
-                getJsonStringFromFile(context.assets, STICKERS_MOCK_API)
+            uri.contains(MOCK_COLLAGE_TEMPLATES_API) -> {
+                println("DEBUG: Matched MOCK_COLLAGE_TEMPLATES_API")
+                getJsonStringFromFile(context.assets, COLLAGE_TEMPLATES_FILE)
             }
 
             else -> {
@@ -90,23 +46,8 @@ class MockInterceptor(private val context: Context) : Interceptor {
     }
 
     companion object {
-        const val MOCK_TRENDING_API = "mock/trending"
-        const val MOCK_FILE_TRENDING_JSON = "trending_mock.json"
-        const val MOCK_SEARCH_API = "mock/search"
-        const val MOCK_FILE_SEARCH_JSON = "search_mock.json"
-        const val MOCK_MOST_SEARCHED_API = "mock/most_searched"
-        const val MOCK_RECOMMEND_API = "mock/recommend"
-        const val MOCK_STATUS_BAR_CUSTOMIZE_API = "status_bar_customize_mock.json"
-
-        const val MOCK_EMOJIS_API = "emojis_mock.json"
-
-        const val MOCK_ANIMATIONS_API = "animations_mock.json"
-
-        const val MOCK_EMOTIONS_API = "emotions_mock.json"
-
-        const val MOCK_CHARGE_API = "charges_mock.json"
-
-        const val STICKERS_MOCK_API = "stickers_mock.json"
+        const val MOCK_COLLAGE_TEMPLATES_API = "mock/collage_templates"
+        const val COLLAGE_TEMPLATES_FILE = "collage_templates_mock.json"
     }
 
 }

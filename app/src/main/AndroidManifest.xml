@@ -59,6 +59,7 @@
 <!--            </intent-filter>-->
         </activity>
         <activity android:name=".ui.activities.imagepicker.ImagePickerActivity" />
+        <activity android:name=".ui.activities.collage.CollageActivity" />
     </application>
 
 </manifest>

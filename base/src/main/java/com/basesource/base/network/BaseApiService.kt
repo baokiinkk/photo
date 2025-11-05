@@ -91,3 +91,9 @@ fun decryptResponse(context: Context, encryptedBody: String): String {
         ""
     }
 }
+
+inline fun <T, R> Result<T>.map(transform: (T) -> R): Result<R> = when (this) {
+    is Result.Success -> Result.Success(transform(data))
+    is Result.Error -> this
+    is Result.Loading -> this
+}
