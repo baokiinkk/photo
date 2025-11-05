@@ -42,6 +42,10 @@ class CropViewModel() : BaseViewModel() {
         _uiState.update { it.copy(rotateImage = rotateImage) }
     }
 
+    fun updateBitmap(newBitmap: Bitmap) {
+        _uiState.update { it.copy(bitmap = newBitmap) }
+    }
+
     /**
      * Lật ngang.
      */

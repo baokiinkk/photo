@@ -135,15 +135,19 @@ internal class CropStateManager(
         }
     }
 
-    fun rotateClockwise() = transformBitmap { matrix -> matrix.postRotate(90f) }
+    fun rotateClockwise(onNewBitmap: (Bitmap) -> Unit) =
+        transformBitmap(onNewBitmap) { matrix -> matrix.postRotate(90f) }
 
-    fun rotateAntiClockwise() = transformBitmap { matrix -> matrix.postRotate(-90f) }
+    fun rotateAntiClockwise(onNewBitmap: (Bitmap) -> Unit) =
+        transformBitmap(onNewBitmap) { matrix -> matrix.postRotate(-90f) }
 
-    fun flipHorizontally() = transformBitmap { matrix -> matrix.postScale(-1f, 1f) }
+    fun flipHorizontally(onNewBitmap: (Bitmap) -> Unit) =
+        transformBitmap(onNewBitmap) { matrix -> matrix.postScale(-1f, 1f) }
 
-    fun flipVertically() = transformBitmap { matrix -> matrix.postScale(1f, -1f) }
+    fun flipVertically(onNewBitmap: (Bitmap) -> Unit) =
+        transformBitmap(onNewBitmap) { matrix -> matrix.postScale(1f, -1f) }
 
-    private fun transformBitmap(transformation: (Matrix) -> Unit) {
+    private fun transformBitmap(onNewBitmap: (Bitmap) -> Unit, transformation: (Matrix) -> Unit) {
         val bitmap = state.value.bitmap
         val matrix = Matrix().apply(transformation)
         val newBitmap = Bitmap.createBitmap(
@@ -151,6 +155,7 @@ internal class CropStateManager(
             bitmap.width, bitmap.height,
             matrix, true
         )
+        onNewBitmap.invoke(newBitmap)
         reset(newBitmap)
     }
 

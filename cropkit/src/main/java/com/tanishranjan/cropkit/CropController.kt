@@ -44,7 +44,7 @@ class CropController(
     /**
      * Rotates the bitmap clockwise in the ImageCropper.
      */
-    fun rotateClockwise() = stateManager.rotateClockwise()
+    fun rotateClockwise(onNewBitmap: (Bitmap) -> Unit) = stateManager.rotateClockwise(onNewBitmap)
 
 
     fun setZoomScale(
@@ -59,17 +59,17 @@ class CropController(
     /**
      * Rotates the bitmap anti-clockwise in the ImageCropper.
      */
-    fun rotateAntiClockwise() = stateManager.rotateAntiClockwise()
+    fun rotateAntiClockwise(onNewBitmap: (Bitmap) -> Unit) = stateManager.rotateAntiClockwise(onNewBitmap)
 
     /**
      * Flips the bitmap horizontally in the ImageCropper.
      */
-    fun flipHorizontally() = stateManager.flipHorizontally()
+    fun flipHorizontally(onNewBitmap: (Bitmap) -> Unit) = stateManager.flipHorizontally(onNewBitmap)
 
     /**
      * Flips the bitmap vertically in the ImageCropper.
      */
-    fun flipVertically() = stateManager.flipVertically()
+    fun flipVertically(onNewBitmap: (Bitmap) -> Unit) = stateManager.flipVertically(onNewBitmap)
 
     internal fun onStateChange(action: CropStateChangeActions) {
         when (action) {

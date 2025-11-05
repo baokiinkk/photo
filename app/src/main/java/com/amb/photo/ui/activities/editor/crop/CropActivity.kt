@@ -264,13 +264,19 @@ fun CropImageScreen(
             },
             onRotateClick = {
                 val rotateImage = (rotateBitmap + 90f) % 360
-                cropController.rotateClockwise()
+                cropController.rotateClockwise{
+                    viewModel.updateBitmap(it)
+                }
             },
             onFlipHorizontal = {
-                cropController.flipHorizontally()
+                cropController.flipHorizontally{
+                    viewModel.updateBitmap(it)
+                }
             },
             onFlipVertical = {
-                cropController.flipVertically()
+                cropController.flipVertically{
+                    viewModel.updateBitmap(it)
+                }
             }
         )
     }
