@@ -198,6 +198,10 @@ fun CropImageScreen(
 
     var rotationZBitmap: Float? by remember { mutableStateOf(null) }
 
+    var rotateBitmap by remember {
+        mutableStateOf(0f)
+    }
+
     val cropController = rememberCropController(
         bitmap = cropState.bitmap!!,
         cropOptions = CropDefaults.cropOptions(
@@ -206,32 +210,23 @@ fun CropImageScreen(
             touchPadding = 24.dp,
             initialPadding = 0.dp,
             zoomScale = zoomScale,
-            rotationZBitmap = rotationZBitmap
+            rotationZBitmap = rotationZBitmap,
         )
     )
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .clip(RoundedCornerShape(0.dp))
     ) {
         Spacer(modifier = Modifier.height(12.dp))
-        Box(
+        ImageCropper(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .weight(1f)
-                .clip(RoundedCornerShape(0.dp))
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(horizontal = 60.dp)
-                    .clip(RoundedCornerShape(0.dp))
-            ) {
-                ImageCropper(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    cropController = cropController
-                )
-            }
-        }
+                .padding(horizontal = 16.dp)
+            ,
+            cropController = cropController
+        )
         Spacer(modifier = Modifier.height(16.dp))
         // 🟣 UI chọn tỉ lệ (đè lên hình)
         CropControlPanel(
@@ -268,6 +263,7 @@ fun CropImageScreen(
 //                )
             },
             onRotateClick = {
+                val rotateImage = (rotateBitmap + 90f) % 360
                 cropController.rotateClockwise()
             },
             onFlipHorizontal = {

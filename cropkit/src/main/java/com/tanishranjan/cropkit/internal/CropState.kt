@@ -31,4 +31,5 @@ internal data class CropState(
     val aspectRatio: Float = 1f,
     val zoomScale: Float? = null,
     val rotationZBitmap: Float? = null,
+    val rotateBitmap: Float = 0f
 )

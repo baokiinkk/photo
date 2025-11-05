@@ -9,21 +9,33 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.scale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -75,22 +87,22 @@ fun ImageCropper(
 
     key(cropController) {
         Box(
-            modifier = modifier
-                .clipToBounds()
+            modifier = modifier,
+            contentAlignment = Alignment.Center
         ) {
             state.imageBitmap?.let { bmp ->
                 Box(
                     Modifier
-                        .fillMaxSize()
                         .aspectRatio(state.imageRect.width / state.imageRect.height)
                         .background(Color.Red)
-                        .clipToBounds(),
+                        .clipToBounds()
+                    ,
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
                         bitmap = bmp,
                         contentDescription = null,
-                        contentScale = ContentScale.Fit,
+                        contentScale = ContentScale.None,
                         alignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxSize()
@@ -108,6 +120,9 @@ fun ImageCropper(
                                         rotationZ = state.rotationZBitmap
                                     }
                                 }
+                                transformOrigin = TransformOrigin.Center
+                                clip = true
+                                shape = RectangleShape
                             }
                     )
                 }
@@ -141,12 +156,91 @@ fun ImageCropper(
             ) {
 
                 state.imageBitmap?.let {
-                    // Image
-//                    drawImage(
-//                        image = it,
-//                        topLeft = state.imageRect.topLeft
-//                    )
 
+//                    clipPath(
+//                        path = Path().apply {
+//                            when (cropOptions.gridLinesType) {
+//                                GridLinesType.CIRCLE, GridLinesType.GRID_AND_CIRCLE -> addOval(state.cropRect)
+//                                else -> addRect(state.cropRect)
+//                            }
+//                        },
+//                        clipOp = ClipOp.Difference // Chỉ vẽ ở vùng BÊN NGOÀI path
+//                    ) {
+//                        drawRect(
+//                            color = overlay.value,
+//                            size = this.size // Vẽ trên toàn bộ Canvas để che phủ đúng
+//                        )
+//                    }
+//
+//                    clipPath(path = Path().apply { addRect(state.cropRect) }) {
+//                        // Bên trong khuôn cắt, ta áp dụng các phép biến đổi
+//                        withTransform({
+//                            // Di chuyển hệ tọa độ đến góc trên bên trái của ảnh
+//                            translate(left = state.imageRect.left, top = state.imageRect.top)
+//
+//                            // Áp dụng scale, với tâm là tâm của ảnh
+//                            state.zoomScale?.let {
+//                                scale(
+//                                    scaleX = it,
+//                                    scaleY = it,
+//                                    pivot = state.imageRect.center - state.imageRect.topLeft
+//                                )
+//                            }
+//
+//                            // Áp dụng xoay, với tâm là tâm của ảnh
+//                            state.rotationZBitmap?.let {
+//                                rotate(
+//                                    degrees = it,
+//                                    pivot = state.imageRect.center - state.imageRect.topLeft
+//                                )
+//                            }
+//                        }) {
+//                            // Sau khi đã biến đổi không gian vẽ, ta vẽ ảnh tại gốc tọa độ mới (0,0)
+//                            drawImage(
+//                                image = it,
+//                                topLeft = Offset.Zero
+//                            )
+//                        }
+//                    }
+
+
+//                    clipPath(
+//                        path = Path().apply {
+//                            addRect(state.cropRect)
+//                        }
+//                    ) {
+//                        // SỬA LỖI: Sử dụng 'withTransform' để áp dụng các phép biến đổi
+//                        withTransform({
+//                            // 1. Di chuyển toàn bộ canvas đến vị trí của ảnh
+//                            translate(left = state.imageRect.left, top = state.imageRect.top)
+//
+//                            // 2. Áp dụng scale quanh tâm của ảnh
+//                            state.zoomScale?.let {
+//                                scale(
+//                                    scaleX = it,
+//                                    scaleY = it,
+//                                    // Pivot là tâm của ảnh, nhưng trong hệ tọa độ đã di chuyển
+//                                    pivot = state.imageRect.center - state.imageRect.topLeft
+//                                )
+//                            }
+//
+//                            // 3. Áp dụng rotation quanh tâm của ảnh
+//                            state.rotationZBitmap?.let {
+//                                rotate(
+//                                    degrees = it,
+//                                    // Pivot cũng là tâm của ảnh
+//                                    pivot = state.imageRect.center - state.imageRect.topLeft
+//                                )
+//                            }
+//                        }) {
+//                            // 4. Vẽ hình ảnh tại gốc tọa độ MỚI (0,0),
+//                            // vì canvas đã được di chuyển đến đúng vị trí
+//                            drawImage(
+//                                image = it,
+//                                topLeft = state.imageRect.topLeft
+//                            )
+//                        }
+//                    }
                     // Dark overlay outside crop area
                     clipPath(
                         path = Path().apply {
@@ -163,6 +257,7 @@ fun ImageCropper(
                             size = state.imageRect.size
                         )
                     }
+
                 }
 
                 val cropRect = state.cropRect
@@ -311,7 +406,6 @@ fun ImageCropper(
                     cap = StrokeCap.Round
                 )
             }
-
         }
     }
 

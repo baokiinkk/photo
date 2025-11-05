@@ -35,7 +35,7 @@ internal class CropStateManager(
     private val touchPadding: Dp,
     val initialPadding: Dp,
     val zoomScale: Float? = null,
-    val rotationZBitmap: Float? = null
+    val rotationZBitmap: Float? = null,
 ) {
 
     private val _state = MutableStateFlow(CropState(bitmap))
@@ -391,83 +391,139 @@ internal class CropStateManager(
     }
 
     fun setAspectRatio(cropShape: CropShape) {
+        // Lấy các giá trị cần thiết từ state hiện tại
+        val currentState = state.value
+        val canvasSize = currentState.canvasSize
+        val imageRect = currentState.imageRect // Sử dụng imageRect đã có
+        val imageWidth = imageRect.width
+        val imageHeight = imageRect.height
+        val originalBitmapWidth = currentState.bitmap.width.toFloat()
+        val originalBitmapHeight = currentState.bitmap.height.toFloat()
 
-        val bitmap = state.value.bitmap
-
-        val canvasSize = state.value.canvasSize
         if (canvasSize == Size.Zero) {
             return
         }
-        val imageWidth = bitmap.width.toFloat()
-        val imageHeight = bitmap.height.toFloat()
 
-        val scaledSize = MathUtils.calculateScaledSize(
-            srcWidth = imageWidth,
-            srcHeight = imageHeight,
-            dstWidth = canvasSize.width,
-            dstHeight = canvasSize.height,
-            contentScale = contentScale
-        )
-        val offsetX = (canvasSize.width - scaledSize.width) / 2f
-        val offsetY = (canvasSize.height - scaledSize.height) / 2f
-
-        val aspectRatio = when (cropShape) {
-            is CropShape.FreeForm -> null
+        // Tính toán aspectRatio mới
+        val newAspectRatio = when (cropShape) {
+            is CropShape.FreeForm -> 0f // hoặc null tùy vào logic của bạn
             is CropShape.AspectRatio -> cropShape.ratio
-            is CropShape.Original -> imageWidth / imageHeight
+            is CropShape.Original -> originalBitmapWidth / originalBitmapHeight
         }
 
         val cropSize: Size
         val cropOffset: Offset
 
-        if (aspectRatio != null) {
-//            val availableWidth = scaledSize.width
-//            val availableHeight = scaledSize.height
-            val availableWidth = scaledSize.width - (paddingPx * 2)
-            val availableHeight = scaledSize.height
-
+        // Tính toán cropRect mới dựa trên imageRect hiện tại và aspectRatio mới
+        if (newAspectRatio != 0f) {
+            val availableWidth = imageRect.width - (paddingPx * 2)
+            val availableHeight = imageRect.height
 
             var cropWidth = availableWidth
-            var cropHeight = cropWidth / aspectRatio
+            var cropHeight = cropWidth / newAspectRatio
 
             if (cropHeight > availableHeight) {
                 cropHeight = availableHeight
-                cropWidth = cropHeight * aspectRatio
+                cropWidth = cropHeight * newAspectRatio
             }
 
             cropSize = Size(cropWidth, cropHeight)
             cropOffset = Offset(
-                offsetX + (availableWidth - cropWidth) / 2,
-                offsetY + (availableHeight - cropHeight) / 2
+                imageRect.left + paddingPx + (availableWidth - cropWidth) / 2,
+                imageRect.top + (availableHeight - cropHeight) / 2
             )
         } else {
             // Free form
-//            cropSize = Size(scaledSize.width, scaledSize.height)
-//            cropOffset = Offset(offsetX, offsetY)
-            cropSize = Size(scaledSize.width - (paddingPx * 2), scaledSize.height)
-            cropOffset = Offset(offsetX + paddingPx, offsetY)
+            cropSize = Size(imageRect.width - (paddingPx * 2), imageRect.height)
+            cropOffset = Offset(imageRect.left + paddingPx, imageRect.top)
         }
-        val cropRect = Rect(cropOffset, cropSize)
+        val newCropRect = Rect(cropOffset, cropSize)
 
         _state.update {
             it.copy(
-                bitmap = bitmap,
-                imageRect = Rect(
-                    Offset(offsetX, offsetY),
-                    Size(scaledSize.width, scaledSize.height)
-                ),
-                imageBitmap = bitmap.asImageBitmap(),
-                cropRect = cropRect,
-                handles = GestureUtils.getNewHandleMeasures(cropRect, handleRadiusPx),
-                gridlinesActive = gridLinesVisibility == GridLinesVisibility.ALWAYS,
-                aspectRatio = when (cropShape) {
-                    is CropShape.AspectRatio -> cropShape.ratio
-                    CropShape.FreeForm -> 0f
-                    CropShape.Original -> imageWidth / imageHeight
-                },
+                // Chỉ cập nhật các giá trị liên quan đến crop và aspect ratio
+                cropRect = newCropRect,
+                handles = GestureUtils.getNewHandleMeasures(newCropRect, handleRadiusPx),
+                aspectRatio = newAspectRatio,
+                // Không ghi đè lại bitmap hay imageBitmap
             )
         }
-
+//
+//        val bitmap = state.value.bitmap
+//
+//        val canvasSize = state.value.canvasSize
+//        if (canvasSize == Size.Zero) {
+//            return
+//        }
+//        val imageWidth = bitmap.width.toFloat()
+//        val imageHeight = bitmap.height.toFloat()
+//
+//        val scaledSize = MathUtils.calculateScaledSize(
+//            srcWidth = imageWidth,
+//            srcHeight = imageHeight,
+//            dstWidth = canvasSize.width,
+//            dstHeight = canvasSize.height,
+//            contentScale = contentScale
+//        )
+//        val offsetX = (canvasSize.width - scaledSize.width) / 2f
+//        val offsetY = (canvasSize.height - scaledSize.height) / 2f
+//
+//        val aspectRatio = when (cropShape) {
+//            is CropShape.FreeForm -> null
+//            is CropShape.AspectRatio -> cropShape.ratio
+//            is CropShape.Original -> imageWidth / imageHeight
+//        }
+//
+//        val cropSize: Size
+//        val cropOffset: Offset
+//
+//        if (aspectRatio != null) {
+////            val availableWidth = scaledSize.width
+////            val availableHeight = scaledSize.height
+//            val availableWidth = scaledSize.width - (paddingPx * 2)
+//            val availableHeight = scaledSize.height
+//
+//
+//            var cropWidth = availableWidth
+//            var cropHeight = cropWidth / aspectRatio
+//
+//            if (cropHeight > availableHeight) {
+//                cropHeight = availableHeight
+//                cropWidth = cropHeight * aspectRatio
+//            }
+//
+//            cropSize = Size(cropWidth, cropHeight)
+//            cropOffset = Offset(
+//                offsetX + (availableWidth - cropWidth) / 2,
+//                offsetY + (availableHeight - cropHeight) / 2
+//            )
+//        } else {
+//            // Free form
+////            cropSize = Size(scaledSize.width, scaledSize.height)
+////            cropOffset = Offset(offsetX, offsetY)
+//            cropSize = Size(scaledSize.width - (paddingPx * 2), scaledSize.height)
+//            cropOffset = Offset(offsetX + paddingPx, offsetY)
+//        }
+//        val cropRect = Rect(cropOffset, cropSize)
+//
+//        _state.update {
+//            it.copy(
+//                bitmap = bitmap,
+//                imageRect = Rect(
+//                    Offset(offsetX, offsetY),
+//                    Size(scaledSize.width, scaledSize.height)
+//                ),
+//                imageBitmap = bitmap.asImageBitmap(),
+//                cropRect = cropRect,
+//                handles = GestureUtils.getNewHandleMeasures(cropRect, handleRadiusPx),
+//                gridlinesActive = gridLinesVisibility == GridLinesVisibility.ALWAYS,
+//                aspectRatio = when (cropShape) {
+//                    is CropShape.AspectRatio -> cropShape.ratio
+//                    CropShape.FreeForm -> 0f
+//                    CropShape.Original -> imageWidth / imageHeight
+//                },
+//            )
+//        }
     }
 
     fun setZoomScale(

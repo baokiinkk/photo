@@ -23,5 +23,5 @@ data class CropOptions(
     val touchPadding: Dp,
     val initialPadding: Dp,
     val zoomScale: Float? = null,
-    val rotationZBitmap: Float? = null
+    val rotationZBitmap: Float? = null,
 )

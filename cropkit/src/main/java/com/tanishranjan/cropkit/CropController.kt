@@ -28,7 +28,7 @@ class CropController(
         touchPadding = cropOptions.touchPadding,
         initialPadding = cropOptions.initialPadding,
         zoomScale = cropOptions.zoomScale,
-        rotationZBitmap = cropOptions.rotationZBitmap
+        rotationZBitmap = cropOptions.rotationZBitmap,
     )
 
     /**
