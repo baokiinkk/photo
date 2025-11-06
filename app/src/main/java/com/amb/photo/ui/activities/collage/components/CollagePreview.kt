@@ -26,7 +26,7 @@ import coil.compose.AsyncImage
 import com.amb.photo.R
 import com.amb.photo.data.model.collage.CellSpec
 import com.amb.photo.data.model.collage.CollageTemplate
-import com.amb.photo.data.model.collage.DiagonalShape
+import com.amb.photo.data.model.collage.FreePolygonShape
 import com.amb.photo.ui.theme.BackgroundWhite
 import com.amb.photo.ui.theme.Primary500
 
@@ -71,13 +71,13 @@ fun CollagePreview(
                     )
             }
 
-            val shape = when (cell.shape) {
-                "diag_tlbr" -> DiagonalShape(true)
-                "diag_bltr" -> DiagonalShape(false)
-                else -> RoundedCornerShape(corner)
+            // Luôn dùng FreePolygonShape; nếu không có points thì sinh ra theo shape/rect
+            val points: List<Float> = when {
+                cell.points != null && cell.points.size == 8 -> cell.points
+                else -> listOf(0f,0f, 1f,0f, 1f,1f, 0f,1f)
             }
 
-            Box(base.clip(shape)) {
+            Box(base.clip(FreePolygonShape(points))) {
                 AsyncImage(
                     model = img,
                     contentDescription = null,

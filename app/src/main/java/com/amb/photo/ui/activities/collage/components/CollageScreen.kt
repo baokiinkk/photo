@@ -92,17 +92,19 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
         // Grids Sheet (hiện khi click Grids tool)
         if (showGridsSheet) {
             GridsSheet(
-                    templates = options,
-                    selectedTemplate = selected,
-                    onTemplateSelect = { template ->
-                        vm.select(template)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .align(Alignment.BottomCenter)
-                )
-            }
+                templates = options,
+                selectedTemplate = selected,
+                onTemplateSelect = { template ->
+                    vm.select(template)
+                },
+                onClose = { showGridsSheet = false },
+                onConfirm = { showGridsSheet = false },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.BottomCenter)
+            )
+        }
     }
 }
 

@@ -4,55 +4,132 @@
     "templates": [
       {
         "id": "1-full",
-        "cells": [ { "x": 0.0, "y": 0.0, "width": 1.0, "height": 1.0, "shape": "rect" } ]
+        "cells": [ { "x": 0.0, "y": 0.0, "width": 1.0, "height": 1.0, "points": [0,0, 1,0, 1,1, 0,1] } ]
       },
       {
         "id": "1-full-margin",
-        "cells": [ { "x": 0.03, "y": 0.03, "width": 0.94, "height": 0.94, "shape": "rect" } ]
+        "cells": [ { "x": 0.03, "y": 0.03, "width": 0.94, "height": 0.94, "points": [0,0, 1,0, 1,1, 0,1] } ]
       },
       {
         "id": "2-vertical",
         "cells": [
-          { "x": 0.0, "y": 0.0, "width": 0.5, "height": 1.0, "shape": "rect" },
-          { "x": 0.5, "y": 0.0, "width": 0.5, "height": 1.0, "shape": "rect" }
+          { "x": 0.0, "y": 0.0, "width": 0.5, "height": 1.0, "points": [0,0, 1,0, 1,1, 0,1] },
+          { "x": 0.5, "y": 0.0, "width": 0.5, "height": 1.0, "points": [0,0, 1,0, 1,1, 0,1] }
         ]
       },
       {
         "id": "2-horizontal",
         "cells": [
-          { "x": 0.0, "y": 0.0, "width": 1.0, "height": 0.5, "shape": "rect" },
-          { "x": 0.0, "y": 0.5, "width": 1.0, "height": 0.5, "shape": "rect" }
+          { "x": 0.0, "y": 0.0, "width": 1.0, "height": 0.5, "points": [0,0, 1,0, 1,1, 0,1] },
+          { "x": 0.0, "y": 0.5, "width": 1.0, "height": 0.5, "points": [0,0, 1,0, 1,1, 0,1] }
         ]
       },
       {
         "id": "2-diagonal",
         "cells": [
-          { "x": 0.0, "y": 0.0, "width": 1.0, "height": 1.0, "shape": "diag_tlbr" },
-          { "x": 0.0, "y": 0.0, "width": 1.0, "height": 1.0, "shape": "diag_bltr" }
+          { "x": 0.0, "y": 0.0, "width": 1.0, "height": 1.0, "points": [0,0, 1,0, 0,1, 0,1] },
+          { "x": 0.0, "y": 0.0, "width": 1.0, "height": 1.0, "points": [0,1, 1,1, 1,0, 1,0] }
         ]
       },
       {
         "id": "left-big-right-2",
         "cells": [
-          { "x": 0.0, "y": 0.0, "width": 0.63, "height": 1.0, "shape": "rect" },
-          { "x": 0.66, "y": 0.0, "width": 0.34, "height": 0.48, "shape": "rect" },
-          { "x": 0.66, "y": 0.52, "width": 0.34, "height": 0.48, "shape": "rect" }
+          { "x": 0.0, "y": 0.0, "width": 0.63, "height": 1.0, "points": [0,0, 1,0, 1,1, 0,1] },
+          { "x": 0.66, "y": 0.0, "width": 0.34, "height": 0.48, "points": [0,0, 1,0, 1,1, 0,1] },
+          { "x": 0.66, "y": 0.52, "width": 0.34, "height": 0.48, "points": [0,0, 1,0, 1,1, 0,1] }
         ]
       },
       {
         "id": "top2-bottom1",
         "cells": [
-          { "x": 0.0, "y": 0.0, "width": 0.5, "height": 0.52, "shape": "rect" },
-          { "x": 0.5, "y": 0.0, "width": 0.5, "height": 0.52, "shape": "rect" },
-          { "x": 0.0, "y": 0.54, "width": 1.0, "height": 0.46, "shape": "rect" }
+          { "x": 0.0, "y": 0.0, "width": 0.5, "height": 0.52, "points": [0,0, 1,0, 1,1, 0,1] },
+          { "x": 0.5, "y": 0.0, "width": 0.5, "height": 0.52, "points": [0,0, 1,0, 1,1, 0,1] },
+          { "x": 0.0, "y": 0.54, "width": 1.0, "height": 0.46, "points": [0,0, 1,0, 1,1, 0,1] }
         ]
       },
       {
         "id": "right-big-left-2",
         "cells": [
-          { "x": 0.37, "y": 0.0, "width": 0.63, "height": 1.0, "shape": "rect" },
-          { "x": 0.0, "y": 0.0, "width": 0.34, "height": 0.48, "shape": "rect" },
-          { "x": 0.0, "y": 0.52, "width": 0.34, "height": 0.48, "shape": "rect" }
+          { "x": 0.37, "y": 0.0, "width": 0.63, "height": 1.0, "points": [0,0, 1,0, 1,1, 0,1] },
+          { "x": 0.0, "y": 0.0, "width": 0.34, "height": 0.48, "points": [0,0, 1,0, 1,1, 0,1] },
+          { "x": 0.0, "y": 0.52, "width": 0.34, "height": 0.48, "points": [0,0, 1,0, 1,1, 0,1] }
+        ]
+      },
+      {
+        "id": "para-3-right",
+        "cells": [
+          { "x": 0.0, "y": 0.0, "width": 0.33, "height": 1.0, "points": [0.14,0.0, 1.0,0.0, 0.86,1.0, 0.0,1.0] },
+          { "x": 0.33, "y": 0.0, "width": 0.34, "height": 1.0, "points": [0.14,0.0, 1.0,0.0, 0.86,1.0, 0.0,1.0] },
+          { "x": 0.67, "y": 0.0, "width": 0.33, "height": 1.0, "points": [0.14,0.0, 1.0,0.0, 0.86,1.0, 0.0,1.0] }
+        ]
+      },
+      {
+        "id": "left-2small-right-slanted",
+        "cells": [
+          { "x": 0.00, "y": 0.00, "width": 0.42, "height": 0.48 },
+          { "x": 0.00, "y": 0.52, "width": 0.42, "height": 0.48 },
+          { "x": 0.46, "y": 0.00, "width": 0.54, "height": 1.00,
+            "points": [0.08,0.00, 1.00,0.00, 0.92,1.00, 0.00,1.00] }
+        ]
+      },
+      {
+        "id": "stripes-horizontal-3",
+        "cells": [
+          { "x": 0.00, "y": 0.00,   "width": 1.00, "height": 0.3333,
+            "points": [0.10,0.00, 1.00,0.00, 0.90,1.00, 0.00,1.00] },
+
+          { "x": 0.00, "y": 0.3333, "width": 1.00, "height": 0.3334,
+            "points": [0.10,0.00, 1.00,0.00, 0.90,1.00, 0.00,1.00] },
+
+          { "x": 0.00, "y": 0.6667, "width": 1.00, "height": 0.3333,
+            "points": [0.10,0.00, 1.00,0.00, 0.90,1.00, 0.00,1.00] }
+        ]
+      },
+      {
+        "id": "top-flat_bottom-slant-inout",
+        "cells": [
+          {
+            "x": 0.00,
+            "y": 0.00,
+            "width": 1.00,
+            "height": 0.58,
+            "points": [
+              0.00, 0.00,
+              1.00, 0.00,
+              1.00, 0.88,
+              0.00, 1.00
+            ]
+          },
+          {
+            "x": 0.00,
+            "y": 0.62,
+            "width": 0.49,
+            "height": 0.38,
+            "points": [
+              0.00, 0.00,
+              1.00, 0.88,
+              1.00, 1.00,
+              0.00, 1.00
+            ]
+          },
+          "points": [
+            0.00, 0.00,   // A: góc trên trái
+            0.94, 0.06,   // B: gần góc trên phải nhưng hạ xuống một chút (chéo nhẹ)
+            0.88, 1.00,   // C: gần góc dưới phải, hơi lùi trái => tạo cạnh phải nghiêng ra TRÁI
+            0.00, 1.00    // D: góc dưới trái
+          ]
+          {
+            "x": 0.51,
+            "y": 0.62,
+            "width": 0.49,
+            "height": 0.38,
+            "points": [
+              0.06, 0.06,
+              1.00, 0.00,
+              1.00, 1.00,
+              0.12, 1.00
+            ]
+          }
         ]
       }
     ]

@@ -39,8 +39,8 @@ object CollageTemplates {
     val TWO_DIAGONAL = CollageTemplate(
         id = "2-diagonal",
         cells = listOf(
-            CellSpec(0f, 0f, 1f, 1f, "diag_tlbr"),
-            CellSpec(0f, 0f, 1f, 1f, "diag_bltr")
+            CellSpec(0f, 0f, 1f, 1f, points = listOf(0f,0f, 1f,0f, 0f,1f, 0f,1f)),
+            CellSpec(0f, 0f, 1f, 1f, points = listOf(0f,1f, 1f,1f, 1f,0f, 1f,0f))
         )
     )
 
