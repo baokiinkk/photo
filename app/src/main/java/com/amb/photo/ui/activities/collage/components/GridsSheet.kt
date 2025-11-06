@@ -50,7 +50,7 @@ fun GridsSheet(
             templates.forEach { template ->
                 CollagePreview(
                     images = templates.map {
-                        "".toUri()
+                        "${selectedTemplate?.id == template.id}".toUri()
                     },
                     template = template,
                     gap = 2.2.dp,

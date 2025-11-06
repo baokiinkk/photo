@@ -20,9 +20,7 @@ class CollageActivity : BaseActivity() {
         val list = intent.getParcelableArrayListExtra<Uri>(EXTRA_URIS) ?: arrayListOf()
         setContent {
             MainTheme {
-                Surface(color = Color(0xFF2C2C2E)) {
-                    CollageScreen(list, vm, onBack = { finish() })
-                }
+                CollageScreen(list, vm, onBack = { finish() })
             }
         }
     }
