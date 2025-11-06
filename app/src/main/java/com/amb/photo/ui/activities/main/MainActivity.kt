@@ -103,7 +103,6 @@ class MainActivity : BaseActivity() {
                     input = EditorInput(pathBitmap = it),
                 )
             }
-            Log.d("quocbao", result.toString())
         }
     }
 

@@ -2,6 +2,7 @@ package com.amb.photo.ui.activities.collage.components
 
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,12 +21,14 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.amb.photo.R
 import com.amb.photo.data.model.collage.CellSpec
 import com.amb.photo.data.model.collage.CollageTemplate
 import com.amb.photo.data.model.collage.DiagonalShape
 import com.amb.photo.ui.theme.BackgroundWhite
+import com.amb.photo.ui.theme.Primary500
 
 @Composable
 fun CollagePreview(
@@ -59,6 +62,13 @@ fun CollagePreview(
                     .size(cw.toDp(), ch.toDp())
                     .padding(gap / 2)
                     .background(BackgroundWhite)
+                    .then(
+                        if (img.toString().contains("true")) {
+                            Modifier.border(1.dp, Primary500, RoundedCornerShape(corner))
+                        } else {
+                            Modifier
+                        }
+                    )
             }
 
             val shape = when (cell.shape) {
@@ -107,7 +117,7 @@ private fun CollagePreviewPreview(
     @PreviewParameter(TemplatePreviewProvider::class) template: CollageTemplate
 ) {
     val mockUris = when (template.cells.size) {
-        1 -> listOf(Uri.EMPTY)
+        1 -> listOf("true".toUri())
         2 -> listOf(Uri.EMPTY, Uri.EMPTY)
         else -> listOf(Uri.EMPTY, Uri.EMPTY, Uri.EMPTY)
     }
