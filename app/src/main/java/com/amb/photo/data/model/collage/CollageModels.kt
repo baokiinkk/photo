@@ -14,11 +14,13 @@ data class CollageTemplate(
 )
 
 data class CellSpec(
-    @SerializedName("x") val x: Float,          // 0..1 (left)
-    @SerializedName("y") val y: Float,          // 0..1 (top)
-    @SerializedName("width") val width: Float,  // 0..1 (relative to parent width)
-    @SerializedName("height") val height: Float,// 0..1
-    @SerializedName("points") val points: List<Float>? = null
+    // Legacy fields (optional, for backward compatibility)
+    @SerializedName("x") val x: Float? = null,          // 0..1 (left)
+    @SerializedName("y") val y: Float? = null,          // 0..1 (top)
+    @SerializedName("width") val width: Float? = null,  // 0..1 (relative to parent width)
+    @SerializedName("height") val height: Float? = null,// 0..1
+    // Points: absolute coordinates in parent (0..1), format: [x0,y0,x1,y1,x2,y2,x3,y3]
+    @SerializedName("points") val points: List<Float>
 )
 
 class FreePolygonShape(

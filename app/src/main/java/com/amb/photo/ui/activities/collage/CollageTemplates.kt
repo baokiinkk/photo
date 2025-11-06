@@ -8,14 +8,14 @@ object CollageTemplates {
     val ONE_FULL = CollageTemplate(
         id = "1-full",
         cells = listOf(
-            CellSpec(0f, 0f, 1f, 1f)
+            CellSpec(points = listOf(0f,0f, 1f,0f, 1f,1f, 0f,1f))
         )
     )
     // 1 ảnh: viền trắng giả (dùng để minh họa thêm)
     val ONE_FULL_MARGIN = CollageTemplate(
         id = "1-full-margin",
         cells = listOf(
-            CellSpec(0.03f, 0.03f, 0.94f, 0.94f)
+            CellSpec(points = listOf(0.03f,0.03f, 0.97f,0.03f, 0.97f,0.97f, 0.03f,0.97f))
         )
     )
 
@@ -23,24 +23,24 @@ object CollageTemplates {
     val TWO_VERTICAL = CollageTemplate(
         id = "2-vertical",
         cells = listOf(
-            CellSpec(0f, 0f, 0.5f, 1f),
-            CellSpec(0.5f, 0f, 0.5f, 1f)
+            CellSpec(points = listOf(0f,0f, 0.5f,0f, 0.5f,1f, 0f,1f)),
+            CellSpec(points = listOf(0.5f,0f, 1f,0f, 1f,1f, 0.5f,1f))
         )
     )
     // 2 ảnh: chia đôi ngang
     val TWO_HORIZONTAL = CollageTemplate(
         id = "2-horizontal",
         cells = listOf(
-            CellSpec(0f, 0f, 1f, 0.5f),
-            CellSpec(0f, 0.5f, 1f, 0.5f)
+            CellSpec(points = listOf(0f,0f, 1f,0f, 1f,0.5f, 0f,0.5f)),
+            CellSpec(points = listOf(0f,0.5f, 1f,0.5f, 1f,1f, 0f,1f))
         )
     )
     // 2 ảnh: chia chéo
     val TWO_DIAGONAL = CollageTemplate(
         id = "2-diagonal",
         cells = listOf(
-            CellSpec(0f, 0f, 1f, 1f, points = listOf(0f,0f, 1f,0f, 0f,1f, 0f,1f)),
-            CellSpec(0f, 0f, 1f, 1f, points = listOf(0f,1f, 1f,1f, 1f,0f, 1f,0f))
+            CellSpec(points = listOf(0f,0f, 1f,0f, 0f,1f, 0f,1f)),
+            CellSpec(points = listOf(0f,1f, 1f,1f, 1f,0f, 1f,0f))
         )
     )
 
@@ -48,27 +48,27 @@ object CollageTemplates {
     val LEFT_BIG_RIGHT_2 = CollageTemplate(
         id = "left-big-right-2",
         cells = listOf(
-            CellSpec(0f, 0f, 0.63f, 1f),
-            CellSpec(0.66f, 0f, 0.34f, 0.48f),
-            CellSpec(0.66f, 0.52f, 0.34f, 0.48f)
+            CellSpec(points = listOf(0f,0f, 0.63f,0f, 0.63f,1f, 0f,1f)),
+            CellSpec(points = listOf(0.66f,0f, 1f,0f, 1f,0.48f, 0.66f,0.48f)),
+            CellSpec(points = listOf(0.66f,0.52f, 1f,0.52f, 1f,1f, 0.66f,1f))
         )
     )
     // 3 ảnh: trên 2 ô, dưới 1 ô
     val TOP_2_BOTTOM_1 = CollageTemplate(
         id = "top2-bottom1",
         cells = listOf(
-            CellSpec(0f, 0f, 0.5f, 0.52f),
-            CellSpec(0.5f, 0f, 0.5f, 0.52f),
-            CellSpec(0f, 0.54f, 1f, 0.46f)
+            CellSpec(points = listOf(0f,0f, 0.5f,0f, 0.5f,0.52f, 0f,0.52f)),
+            CellSpec(points = listOf(0.5f,0f, 1f,0f, 1f,0.52f, 0.5f,0.52f)),
+            CellSpec(points = listOf(0f,0.54f, 1f,0.54f, 1f,1f, 0f,1f))
         )
     )
     // 3 ảnh: phải lớn, trái 2 ô
     val RIGHT_BIG_LEFT_2 = CollageTemplate(
         id = "right-big-left-2",
         cells = listOf(
-            CellSpec(0.37f, 0f, 0.63f, 1f),
-            CellSpec(0f, 0f, 0.34f, 0.48f),
-            CellSpec(0f, 0.52f, 0.34f, 0.48f)
+            CellSpec(points = listOf(0.37f,0f, 1f,0f, 1f,1f, 0.37f,1f)),
+            CellSpec(points = listOf(0f,0f, 0.34f,0f, 0.34f,0.48f, 0f,0.48f)),
+            CellSpec(points = listOf(0f,0.52f, 0.34f,0.52f, 0.34f,1f, 0f,1f))
         )
     )
 

@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import android.net.Uri
 import androidx.core.net.toUri
 import com.amb.photo.data.model.collage.CellSpec
 import com.amb.photo.data.model.collage.CollageTemplate
@@ -78,7 +79,7 @@ fun GridsSheet(
             )
 
             Text(
-                text = "Layout",
+                text = "Margin",
                 style = AppStyle.body2().medium().let {
                     if (selectedTab == GridsTab.MARGIN) it.white() else it.gray900()
                 },
@@ -86,7 +87,7 @@ fun GridsSheet(
                     .background(if (selectedTab == GridsTab.MARGIN) Color(0xFF9747FF) else Color(0xFFF3F4F6), RoundedCornerShape(24.dp))
                     .padding(horizontal = 12.dp, vertical = 4.dp)
                     .clickableWithAlphaEffect {
-                        selectedTab == GridsTab.MARGIN
+                        selectedTab = GridsTab.MARGIN
                     }
             )
         }
@@ -103,7 +104,6 @@ fun GridsSheet(
             ) {
                 items(templates) { template ->
                     GridItem(
-                        templates = templates,
                         template = template,
                         isSelected = template.id == selectedTemplate?.id,
                         onClick = { onTemplateSelect(template) }
@@ -159,7 +159,6 @@ fun GridsSheet(
 
 @Composable
 private fun GridItem(
-    templates: List<CollageTemplate>,
     template: CollageTemplate,
     isSelected: Boolean,
     onClick: () -> Unit
@@ -170,7 +169,7 @@ private fun GridItem(
             .clickableWithAlphaEffect(onClick = onClick)
     ) {
         CollagePreview(
-            images = templates.map {
+            images = template.cells.map {
                 "$isSelected".toUri()
             },
             template = template,
@@ -187,44 +186,46 @@ private fun GridsSheetPreview() {
     val mockTemplates = listOf(
         CollageTemplate(
             "left-big-right-2", listOf(
-                CellSpec(0f, 0f, 0.63f, 1f),
-                CellSpec(0.66f, 0f, 0.34f, 0.48f),
-                CellSpec(0.66f, 0.52f, 0.34f, 0.48f)
+                CellSpec(points = listOf(0f,0f, 0.63f,0f, 0.63f,1f, 0f,1f)),
+                CellSpec(points = listOf(0.66f,0f, 1f,0f, 1f,0.48f, 0.66f,0.48f)),
+                CellSpec(points = listOf(0.66f,0.52f, 1f,0.52f, 1f,1f, 0.66f,1f))
             )
         ),
         CollageTemplate(
             "2-horizontal", listOf(
-                CellSpec(0f, 0f, 1f, 0.5f),
-                CellSpec(0f, 0.5f, 1f, 0.5f)
+                CellSpec(points = listOf(0f,0f, 1f,0f, 1f,0.5f, 0f,0.5f)),
+                CellSpec(points = listOf(0f,0.5f, 1f,0.5f, 1f,1f, 0f,1f))
             )
         ),
         CollageTemplate(
             "3-horizontal", listOf(
-                CellSpec(0f, 0f, 1f, 0.33f),
-                CellSpec(0f, 0.33f, 1f, 0.33f),
-                CellSpec(0f, 0.66f, 1f, 0.34f)
+                CellSpec(points = listOf(0f,0f, 1f,0f, 1f,0.33f, 0f,0.33f)),
+                CellSpec(points = listOf(0f,0.33f, 1f,0.33f, 1f,0.66f, 0f,0.66f)),
+                CellSpec(points = listOf(0f,0.66f, 1f,0.66f, 1f,1f, 0f,1f))
             )
         ),
-        CollageTemplate("1-full", listOf(CellSpec(0f, 0f, 1f, 1f))),
+        CollageTemplate("1-full", listOf(
+            CellSpec(points = listOf(0f,0f, 1f,0f, 1f,1f, 0f,1f))
+        )),
         CollageTemplate(
             "2-vertical", listOf(
-                CellSpec(0f, 0f, 0.5f, 1f),
-                CellSpec(0.5f, 0f, 0.5f, 1f)
+                CellSpec(points = listOf(0f,0f, 0.5f,0f, 0.5f,1f, 0f,1f)),
+                CellSpec(points = listOf(0.5f,0f, 1f,0f, 1f,1f, 0.5f,1f))
             )
         ),
         CollageTemplate(
             "4-equal", listOf(
-                CellSpec(0f, 0f, 0.5f, 0.5f),
-                CellSpec(0.5f, 0f, 0.5f, 0.5f),
-                CellSpec(0f, 0.5f, 0.5f, 0.5f),
-                CellSpec(0.5f, 0.5f, 0.5f, 0.5f)
+                CellSpec(points = listOf(0f,0f, 0.5f,0f, 0.5f,0.5f, 0f,0.5f)),
+                CellSpec(points = listOf(0.5f,0f, 1f,0f, 1f,0.5f, 0.5f,0.5f)),
+                CellSpec(points = listOf(0f,0.5f, 0.5f,0.5f, 0.5f,1f, 0f,1f)),
+                CellSpec(points = listOf(0.5f,0.5f, 1f,0.5f, 1f,1f, 0.5f,1f))
             )
         ),
         CollageTemplate(
             "3-vertical", listOf(
-                CellSpec(0f, 0f, 0.33f, 1f),
-                CellSpec(0.33f, 0f, 0.33f, 1f),
-                CellSpec(0.66f, 0f, 0.34f, 1f)
+                CellSpec(points = listOf(0f,0f, 0.33f,0f, 0.33f,1f, 0f,1f)),
+                CellSpec(points = listOf(0.33f,0f, 0.66f,0f, 0.66f,1f, 0.33f,1f)),
+                CellSpec(points = listOf(0.66f,0f, 1f,0f, 1f,1f, 0.66f,1f))
             )
         )
     )
