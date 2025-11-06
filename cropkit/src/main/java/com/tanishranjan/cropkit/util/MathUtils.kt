@@ -5,7 +5,7 @@ import androidx.compose.ui.layout.ContentScale
 import kotlin.math.max
 import kotlin.math.min
 
-internal object MathUtils {
+ object MathUtils {
 
     /**
      * Calculate the scaled size of the source image based on the destination size and content scale.

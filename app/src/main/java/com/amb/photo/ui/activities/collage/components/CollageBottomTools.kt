@@ -26,11 +26,15 @@ import com.amb.photo.ui.theme.AppStyle
 import com.basesource.base.utils.clickableWithAlphaEffect
 
 enum class CollageTool {
-    GRIDS, RATIO, BACKGROUND, FRAME, TEXT, STICKER, ADD_PHOTO
+    GRIDS, RATIO, BACKGROUND, FRAME, TEXT, STICKER, ADD_PHOTO,
+    SQUARE_OR_ORIGINAL, CROP, ADJUST, FILTER, BLUR, REMOVE, ENHANCE, REMOVE_BG, DRAW
 }
 
 data class ToolItem(
-    val tool: CollageTool, @StringRes val label: Int, @DrawableRes val icon: Int
+    val tool: CollageTool,
+    @StringRes val label: Int,
+    @DrawableRes val icon: Int,
+    var isToggle: Boolean = false
 )
 
 val toolsCollage = listOf(
@@ -42,6 +46,7 @@ val toolsCollage = listOf(
     ToolItem(CollageTool.STICKER, R.string.sticker_tool, R.drawable.ic_sticker_tool),
     ToolItem(CollageTool.ADD_PHOTO, R.string.add_photo_tool, R.drawable.ic_photo_tool)
 )
+
 @Composable
 fun FeatureBottomTools(
     tools: List<ToolItem> = listOf(),
