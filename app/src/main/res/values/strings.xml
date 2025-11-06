@@ -36,4 +36,9 @@
     <string name="filter">Filter</string>
     <string name="blur">Blur</string>
     <string name="background">Background</string>
+    <string name="original">Original</string>
+    <string name="remove">Remove</string>
+    <string name="enhance">Enhance</string>
+    <string name="remove_bg">Remove BG</string>
+    <string name="draw">Draw</string>
 </resources>

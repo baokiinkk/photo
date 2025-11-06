@@ -27,11 +27,14 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 
 enum class CollageTool {
     GRIDS, RATIO, BACKGROUND, FRAME, TEXT, STICKER, ADD_PHOTO,
-    SQUARE, CROP, ADJUST, FILTER, BLUR
+    SQUARE_OR_ORIGINAL, CROP, ADJUST, FILTER, BLUR, REMOVE, ENHANCE, REMOVE_BG, DRAW
 }
 
 data class ToolItem(
-    val tool: CollageTool, @StringRes val label: Int, @DrawableRes val icon: Int
+    val tool: CollageTool,
+    @StringRes val label: Int,
+    @DrawableRes val icon: Int,
+    var isToggle: Boolean = false
 )
 
 val toolsCollage = listOf(
