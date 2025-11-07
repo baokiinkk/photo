@@ -64,7 +64,7 @@ fun GridsSheet(
     onTemplateSelect: (CollageTemplate) -> Unit,
     selectedType: GridsTab = GridsTab.LAYOUT,
     onClose: () -> Unit,
-    onConfirm: () -> Unit,
+    onConfirm: (GridsTab) -> Unit, // Truyền tab hiện tại khi confirm
     // Margin values và callbacks
     topMargin: Float = 0f,
     onTopMarginChange: (Float) -> Unit = {},
@@ -153,7 +153,7 @@ fun GridsSheet(
                     style = AppStyle.title2().medium().gray900()
                 )
 
-                IconButton(onClick = onConfirm) {
+                IconButton(onClick = { onConfirm(selectedTab) }) {
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = "Confirm",
@@ -213,7 +213,7 @@ fun GridsSheet(
                     style = AppStyle.title2().medium().gray900()
                 )
 
-                IconButton(onClick = onConfirm) {
+                IconButton(onClick = { onConfirm(selectedTab) }) {
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = "Confirm",
@@ -336,7 +336,7 @@ private fun GridsSheetPreview() {
         selectedTemplate = mockTemplates.first(),
         onTemplateSelect = {},
         onClose = {},
-        onConfirm = {}
+        onConfirm = { _ -> }
     )
 }
 
@@ -347,6 +347,6 @@ private fun GridsSheetMarginPreview() {
         selectedType = GridsTab.MARGIN,
         onTemplateSelect = {},
         onClose = {},
-        onConfirm = {}
+        onConfirm = { _ -> }
     )
 }

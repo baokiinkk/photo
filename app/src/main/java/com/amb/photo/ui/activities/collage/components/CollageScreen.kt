@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.amb.photo.ui.activities.collage.CollageTemplates
 import com.amb.photo.ui.activities.collage.CollageViewModel
@@ -29,15 +28,19 @@ import com.amb.photo.ui.theme.BackgroundWhite
 
 @Composable
 fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
-    var gap by remember { mutableStateOf(1.dp) }
-    var corner by remember { mutableStateOf(1.dp) }
-    var topMargin by remember { mutableStateOf(0f) }
-    var columnMargin by remember { mutableStateOf(0f) }
-    var cornerRadius by remember { mutableStateOf(0f) }
+    // Observe state from ViewModel
+    val templates by vm.templates.collectAsState()
+    val selected by vm.selected.collectAsState()
+    val collageState by vm.collageState.collectAsState()
+    val canUndo by vm.canUndo.collectAsState()
+    val canRedo by vm.canRedo.collectAsState()
+
     var showGridsSheet by remember { mutableStateOf(false) }
 
-    val options by vm.templates.collectAsState()
-    val selected by vm.selected.collectAsState()
+    // Extract values from state
+    val topMargin = collageState.topMargin
+    val columnMargin = collageState.columnMargin
+    val cornerRadius = collageState.cornerRadius
 
     LaunchedEffect(Unit) {
         vm.load(uris.size.coerceAtLeast(1))
@@ -52,11 +55,11 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
             // Header
             FeaturePhotoHeader(
                 onBack = onBack,
-                onUndo = { /* TODO */ },
-                onRedo = { /* TODO */ },
+                onUndo = { vm.undo() },
+                onRedo = { vm.redo() },
                 onSave = { /* TODO */ },
-                canUndo = false,
-                canRedo = false
+                canUndo = canUndo,
+                canRedo = canRedo
             )
             Box(
                 modifier = Modifier
@@ -72,7 +75,7 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                     )
 
             ) {
-                val templateToUse = selected ?: options.firstOrNull() ?: CollageTemplates.defaultFor(uris.size.coerceAtLeast(1))
+                val templateToUse = selected ?: templates.firstOrNull() ?: CollageTemplates.defaultFor(uris.size.coerceAtLeast(1))
                 // Map slider values to Dp
                 val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
                 val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
@@ -104,19 +107,22 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
         // Grids Sheet (hiện khi click Grids tool)
         if (showGridsSheet) {
             GridsSheet(
-                templates = options,
+                templates = templates,
                 selectedTemplate = selected,
                 onTemplateSelect = { template ->
-                    vm.select(template)
+                    vm.selectTemplate(template)
                 },
                 onClose = { showGridsSheet = false },
-                onConfirm = { showGridsSheet = false },
+                onConfirm = { tab ->
+                    vm.confirmGridsChanges(tab)
+                    showGridsSheet = false
+                },
                 topMargin = topMargin,
-                onTopMarginChange = { topMargin = it },
+                onTopMarginChange = { vm.updateTopMargin(it) },
                 columnMargin = columnMargin,
-                onColumnMarginChange = { columnMargin = it },
+                onColumnMarginChange = { vm.updateColumnMargin(it) },
                 cornerRadius = cornerRadius,
-                onCornerRadiusChange = { cornerRadius = it },
+                onCornerRadiusChange = { vm.updateCornerRadius(it) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
