@@ -1,15 +1,20 @@
 package com.amb.photo.ui.activities.collage.components
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -19,20 +24,30 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import android.net.Uri
 import androidx.core.net.toUri
+import com.amb.photo.R
 import com.amb.photo.data.model.collage.CellSpec
 import com.amb.photo.data.model.collage.CollageTemplate
 import com.amb.photo.ui.theme.AppStyle
@@ -42,17 +57,24 @@ enum class GridsTab {
     LAYOUT,
     MARGIN
 }
-
 @Composable
 fun GridsSheet(
-    templates: List<CollageTemplate>,
-    selectedTemplate: CollageTemplate?,
+    templates: List<CollageTemplate> = emptyList(),
+    selectedTemplate: CollageTemplate? = null,
     onTemplateSelect: (CollageTemplate) -> Unit,
+    selectedType: GridsTab = GridsTab.LAYOUT,
     onClose: () -> Unit,
     onConfirm: () -> Unit,
+    // Margin values và callbacks
+    topMargin: Float = 0f,
+    onTopMarginChange: (Float) -> Unit = {},
+    columnMargin: Float = 0f,
+    onColumnMarginChange: (Float) -> Unit = {},
+    cornerRadius: Float = 0f,
+    onCornerRadiusChange: (Float) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var selectedTab by remember { mutableStateOf(GridsTab.LAYOUT) }
+    var selectedTab by remember(selectedType) { mutableStateOf(selectedType) }
 
     Column(
         modifier = modifier
@@ -141,17 +163,63 @@ fun GridsSheet(
             }
 
         } else {
-            // Margin tab - TODO: implement margin controls
-            Box(
+            // Margin tab
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
+                    .padding(horizontal = 16.dp, vertical = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                Text(
-                    text = "Margin controls coming soon",
-                    style = AppStyle.body2().medium().gray500()
+                // Top Margin Slider
+                MarginSlider(
+                    icon = R.drawable.ic_margin_tool,
+                    value = topMargin,
+                    onValueChange = onTopMarginChange
                 )
+
+                // Column Margin Slider
+                MarginSlider(
+                    icon = R.drawable.ic_padding_tool,
+                    value = columnMargin,
+                    onValueChange = onColumnMarginChange
+                )
+
+                // Corner Radius Slider
+                MarginSlider(
+                    icon = R.drawable.ic_border_tool,
+                    value = cornerRadius,
+                    onValueChange = onCornerRadiusChange
+                )
+            }
+
+            // Bottom Action Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onClose) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close",
+                        tint = Color.Black
+                    )
+                }
+
+                Text(
+                    text = "Grids",
+                    style = AppStyle.title2().medium().gray900()
+                )
+
+                IconButton(onClick = onConfirm) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Confirm",
+                        tint = Color(0xFF9747FF)
+                    )
+                }
             }
         }
     }
@@ -176,6 +244,40 @@ private fun GridItem(
             gap = 2.2.dp,
             corner = 4.dp,
             modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@Composable
+private fun MarginSlider(
+    @DrawableRes icon: Int,
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth().padding(horizontal = 32.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(icon),
+            contentDescription = "",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.size(24.dp)
+        )
+
+        // Slider
+        Slider(
+            value = value,
+            onValueChange = onValueChange,
+            valueRange = 0f..1f,
+            modifier = Modifier.weight(1f),
+            colors = SliderDefaults.colors(
+                thumbColor = Color(0xFF1F2937),
+                activeTrackColor = Color(0xFF1F2937),
+                inactiveTrackColor = Color(0xFFE5E7EB)
+            )
         )
     }
 }
@@ -232,6 +334,17 @@ private fun GridsSheetPreview() {
     GridsSheet(
         templates = mockTemplates,
         selectedTemplate = mockTemplates.first(),
+        onTemplateSelect = {},
+        onClose = {},
+        onConfirm = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun GridsSheetMarginPreview() {
+    GridsSheet(
+        selectedType = GridsTab.MARGIN,
         onTemplateSelect = {},
         onClose = {},
         onConfirm = {}
