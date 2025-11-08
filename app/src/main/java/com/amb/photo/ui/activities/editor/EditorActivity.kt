@@ -1,7 +1,9 @@
 package com.amb.photo.ui.activities.editor
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -40,10 +42,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.amb.photo.ui.activities.collage.components.CollageTool
 import com.amb.photo.ui.activities.collage.components.FeatureBottomTools
 import com.amb.photo.ui.activities.collage.components.FeaturePhotoHeader
+import com.amb.photo.ui.activities.editor.adjust.AdjustActivity
+import com.amb.photo.ui.activities.editor.crop.CropActivity
+import com.amb.photo.ui.activities.editor.crop.ToolInput
 import com.amb.photo.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
+import com.basesource.base.utils.launchActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.wysaid.nativePort.CGENativeLibrary
+import org.wysaid.nativePort.CGENativeLibrary.LoadImageCallback
+import java.io.IOException
 
 data class EditorInput(
     val pathBitmap: String? = null
@@ -63,8 +72,32 @@ class EditorActivity : BaseActivity() {
         return bitmap
     }
 
+    var mLoadImageCallback: LoadImageCallback = object : LoadImageCallback {
+        override fun loadImage(str: String?, obj: Any?): Bitmap? {
+            try {
+                return BitmapFactory.decodeStream(assets.open(str!!))
+            } catch (io: IOException) {
+                io.printStackTrace()
+                return null
+            }
+        }
+
+        override fun loadImageOK(bitmap: Bitmap, obj: Any?) {
+            bitmap.recycle()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        try {
+            System.loadLibrary("ffmpeg")
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+
+        CGENativeLibrary.setLoadImageCallback(this.mLoadImageCallback, null)
+
+
         viewmodel.setPathBitmap(screenInput?.pathBitmap.toBitmap(this))
         enableEdgeToEdge()
         setContent {
@@ -91,6 +124,25 @@ class EditorActivity : BaseActivity() {
                         when (it) {
                             CollageTool.SQUARE_OR_ORIGINAL -> {
                                 viewmodel.toggleOriginal()
+                            }
+
+                            CollageTool.CROP -> {
+                                launchActivity(
+                                    toActivity = CropActivity::class.java,
+                                    input = ToolInput(pathBitmap = pathBitmapResult),
+                                    callback = { result ->
+                                        if (result.resultCode == Activity.RESULT_OK) {
+                                            val pathBitmap = result.data?.getStringExtra("pathBitmap")
+                                            pathBitmapResult = pathBitmap
+                                        }
+                                    }
+                                )
+                            }
+                            CollageTool.ADJUST -> {
+                                launchActivity(
+                                    toActivity = AdjustActivity::class.java,
+                                    input = ToolInput(pathBitmap = pathBitmapResult)
+                                )
                             }
 
                             else -> {
