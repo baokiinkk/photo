@@ -210,6 +210,7 @@ class AppColor(private val textStyle: TextStyle) {
         val Gray300 = Color(0xFFB0B2B5)
 
         val Gray50 = Color(0xFFEBEDF9)
+        val Gray200 = Color(0xFFEAECF0)
 
         val background = Color(0xFFF3F7FA)
 

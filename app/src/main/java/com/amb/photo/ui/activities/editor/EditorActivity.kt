@@ -98,14 +98,10 @@ class EditorActivity : BaseActivity() {
         CGENativeLibrary.setLoadImageCallback(this.mLoadImageCallback, null)
 
 
-        viewmodel.setPathBitmap(screenInput?.pathBitmap.toBitmap(this))
+        viewmodel.setPathBitmap(screenInput?.pathBitmap, screenInput?.pathBitmap.toBitmap(this))
         enableEdgeToEdge()
         setContent {
-            var pathBitmapResult by remember { mutableStateOf<String?>(null) }
 
-            LaunchedEffect(Unit) {
-                pathBitmapResult = screenInput?.pathBitmap
-            }
             Scaffold(
                 containerColor = Color(0xFFF2F4F8)
             ) { inner ->
@@ -129,19 +125,24 @@ class EditorActivity : BaseActivity() {
                             CollageTool.CROP -> {
                                 launchActivity(
                                     toActivity = CropActivity::class.java,
-                                    input = ToolInput(pathBitmap = pathBitmapResult),
+                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
                                     callback = { result ->
-                                        if (result.resultCode == Activity.RESULT_OK) {
-                                            val pathBitmap = result.data?.getStringExtra("pathBitmap")
-                                            pathBitmapResult = pathBitmap
+                                        if (result.resultCode == RESULT_OK) {
+                                            val pathBitmap =
+                                                result.data?.getStringExtra("pathBitmap")
+                                            viewmodel.setPathBitmap(
+                                                pathBitmap,
+                                                pathBitmap.toBitmap(this)
+                                            )
                                         }
                                     }
                                 )
                             }
+
                             CollageTool.ADJUST -> {
                                 launchActivity(
                                     toActivity = AdjustActivity::class.java,
-                                    input = ToolInput(pathBitmap = pathBitmapResult)
+                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult)
                                 )
                             }
 

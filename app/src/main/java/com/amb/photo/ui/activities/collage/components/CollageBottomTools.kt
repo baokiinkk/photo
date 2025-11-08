@@ -37,7 +37,8 @@ data class ToolItem(
     val tool: CollageTool,
     @StringRes val label: Int,
     @DrawableRes val icon: Int,
-    var isToggle: Boolean = false
+    var isToggle: Boolean = false,
+    val index: Int = 0,
 )
 
 val toolsCollage = listOf(
@@ -54,8 +55,9 @@ val toolsCollage = listOf(
 fun FeatureBottomTools(
     modifier: Modifier = Modifier,
     tools: List<ToolItem> = listOf(),
-    onToolClick: (CollageTool) -> Unit,
-    tool: CollageTool = CollageTool.NONE
+    onToolClick: (CollageTool) -> Unit = {},
+    tool: CollageTool = CollageTool.NONE,
+    onItemSelect: (ToolItem) -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -69,6 +71,7 @@ fun FeatureBottomTools(
                 isSelect = tool == item.tool,
                 onClick = {
                     onToolClick(item.tool)
+                    onItemSelect.invoke(item)
                 }
             )
         }
