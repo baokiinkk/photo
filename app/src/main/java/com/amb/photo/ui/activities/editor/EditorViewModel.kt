@@ -42,8 +42,10 @@ class EditorViewModel : BaseViewModel() {
 
     val uiState = MutableStateFlow(EditorUIState(items = items))
 
+    var pathBitmapResult: String? = null
 
-    fun setPathBitmap(bitmap: Bitmap?) {
+    fun setPathBitmap(pathBitmap: String?, bitmap: Bitmap?) {
+        pathBitmapResult = pathBitmap
         uiState.update {
             it.copy(
                 bitmap = bitmap,

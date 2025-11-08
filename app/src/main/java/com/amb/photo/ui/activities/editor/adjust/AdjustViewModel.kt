@@ -13,17 +13,21 @@ import org.koin.android.annotation.KoinViewModel
 class AdjustViewModel : BaseViewModel() {
 
     val items = listOf(
-        ToolItem(CollageTool.BRIGHTNESS, R.string.brightness, R.drawable.ic_brightness),
-        ToolItem(CollageTool.CONTRAST, R.string.contrast, R.drawable.ic_contrast),
-        ToolItem(CollageTool.SATURATION, R.string.saturation, R.drawable.ic_saturation),
-        ToolItem(CollageTool.WARMTH, R.string.warmth, R.drawable.ic_warmth),
-        ToolItem(CollageTool.FADE, R.string.fade, R.drawable.ic_fade),
-        ToolItem(CollageTool.HIGHLIGHT, R.string.highlight, R.drawable.ic_highlight),
-        ToolItem(CollageTool.SHADOW, R.string.shadow, R.drawable.ic_shadow),
-        ToolItem(CollageTool.HUE, R.string.hue, R.drawable.ic_hue),
-        ToolItem(CollageTool.VIGNETTE, R.string.vignette, R.drawable.ic_vignette),
-        ToolItem(CollageTool.SHARPEN, R.string.sharpen, R.drawable.ic_sharpen),
-        ToolItem(CollageTool.GRAIN, R.string.grain, R.drawable.ic_grain),
+        ToolItem(
+            CollageTool.BRIGHTNESS, R.string.brightness,
+            R.drawable.ic_brightness,
+            index = 0
+        ),
+        ToolItem(CollageTool.CONTRAST, R.string.contrast, R.drawable.ic_contrast, index = 1),
+        ToolItem(CollageTool.SATURATION, R.string.saturation, R.drawable.ic_saturation, index = 2),
+        ToolItem(CollageTool.WARMTH, R.string.warmth, R.drawable.ic_warmth, index = 3),
+        ToolItem(CollageTool.FADE, R.string.fade, R.drawable.ic_fade, index = 4),
+        ToolItem(CollageTool.HIGHLIGHT, R.string.highlight, R.drawable.ic_highlight, index = 5),
+        ToolItem(CollageTool.SHADOW, R.string.shadow, R.drawable.ic_shadow, index = 6),
+        ToolItem(CollageTool.HUE, R.string.hue, R.drawable.ic_hue, index = 7),
+        ToolItem(CollageTool.VIGNETTE, R.string.vignette, R.drawable.ic_vignette, index = 8),
+        ToolItem(CollageTool.SHARPEN, R.string.sharpen, R.drawable.ic_sharpen, index = 9),
+        ToolItem(CollageTool.GRAIN, R.string.grain, R.drawable.ic_grain, index = 10),
     )
 
     val uiState = MutableStateFlow(AdjustUIState(items = items))
@@ -37,18 +41,38 @@ class AdjustViewModel : BaseViewModel() {
         }
     }
 
-    fun itemSelected(tool: CollageTool){
+    fun itemSelected(index: Int, tool: CollageTool) {
         uiState.update {
             it.copy(
-                tool = tool
+                tool = tool,
+                index = index
             )
         }
     }
+
+    fun updateBrightness(brightness: Float) {
+        uiState.update {
+            it.copy(
+                brightness = brightness
+            )
+        }
+    }
+
+    fun reset(){
+        uiState.update {
+            it.copy(
+                brightness = 50f
+            )
+        }
+    }
+
 }
 
 data class AdjustUIState(
     val bitmap: Bitmap? = null,
     val originBitmap: Bitmap? = null,
     val items: List<ToolItem> = emptyList(),
-    val tool: CollageTool = CollageTool.BRIGHTNESS
+    val tool: CollageTool = CollageTool.BRIGHTNESS,
+    val index: Int = 0,
+    val brightness: Float = 50f
 )
