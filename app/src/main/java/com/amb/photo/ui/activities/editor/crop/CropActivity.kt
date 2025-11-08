@@ -428,6 +428,7 @@ fun CropControlPanel(
             }
         }
         // Bottom row (Cancel / Confirm)
+        Spacer(modifier = Modifier.height(16.dp))
         FooterEditor(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -551,7 +552,6 @@ fun FooterEditor(
     onApply: () -> Unit,
 ) {
     Column {
-        Spacer(modifier = Modifier.height(16.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()

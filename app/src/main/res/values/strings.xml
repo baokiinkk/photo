@@ -41,4 +41,15 @@
     <string name="enhance">Enhance</string>
     <string name="remove_bg">Remove BG</string>
     <string name="draw">Draw</string>
+    <string name="brightness">Brightness</string>
+    <string name="contrast">Contrast</string>
+    <string name="saturation">Saturation</string>
+    <string name="warmth">Warmth</string>
+    <string name="fade">Fade</string>
+    <string name="highlight">Highlight</string>
+    <string name="shadow">Shadow</string>
+    <string name="hue">Hue</string>
+    <string name="vignette">Vignette</string>
+    <string name="sharpen">Sharpen</string>
+    <string name="grain">Grain</string>
 </resources>
