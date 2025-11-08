@@ -75,7 +75,7 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 
 
-data class CropInput(
+data class ToolInput(
     val pathBitmap: String? = null
 ) : IScreenData {
 
@@ -88,7 +88,7 @@ data class CropInput(
 
 class CropActivity : BaseActivity() {
 
-    private val screenInput: CropInput? by lazy {
+    private val screenInput: ToolInput? by lazy {
         intent.getInput()
     }
 
@@ -428,6 +428,7 @@ fun CropControlPanel(
             }
         }
         // Bottom row (Cancel / Confirm)
+        Spacer(modifier = Modifier.height(16.dp))
         FooterEditor(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -546,11 +547,11 @@ fun ItemPosition(
 @Composable
 fun FooterEditor(
     modifier: Modifier = Modifier,
+    title: String = stringResource(R.string.crop),
     onCancel: () -> Unit,
     onApply: () -> Unit,
 ) {
     Column {
-        Spacer(modifier = Modifier.height(16.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -570,7 +571,7 @@ fun FooterEditor(
                     .size(28.dp)
             )
             Text(
-                text = stringResource(R.string.crop),
+                text = title,
                 style = TextStyle(
                     fontSize = 16.sp,
                     lineHeight = 24.sp,

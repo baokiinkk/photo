@@ -79,7 +79,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CropActivity_phase_1 : BaseActivity() {
 
-    private val screenInput: CropInput? by lazy {
+    private val screenInput: ToolInput? by lazy {
         intent.getInput()
     }
 

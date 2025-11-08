@@ -17,17 +17,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amb.photo.R
+import com.amb.photo.ui.theme.AppColor
 import com.amb.photo.ui.theme.AppStyle
 import com.basesource.base.utils.clickableWithAlphaEffect
 
 enum class CollageTool {
     GRIDS, RATIO, BACKGROUND, FRAME, TEXT, STICKER, ADD_PHOTO,
-    SQUARE_OR_ORIGINAL, CROP, ADJUST, FILTER, BLUR, REMOVE, ENHANCE, REMOVE_BG, DRAW
+    SQUARE_OR_ORIGINAL, CROP, ADJUST, FILTER, BLUR, REMOVE, ENHANCE, REMOVE_BG, DRAW, NONE,
+    BRIGHTNESS, CONTRAST, SATURATION, WARMTH, FADE, HIGHLIGHT, SHADOW, HUE, VIGNETTE, SHARPEN, GRAIN
 }
 
 data class ToolItem(
@@ -49,9 +52,10 @@ val toolsCollage = listOf(
 
 @Composable
 fun FeatureBottomTools(
+    modifier: Modifier = Modifier,
     tools: List<ToolItem> = listOf(),
     onToolClick: (CollageTool) -> Unit,
-    modifier: Modifier = Modifier
+    tool: CollageTool = CollageTool.NONE
 ) {
     Row(
         modifier = modifier
@@ -62,7 +66,10 @@ fun FeatureBottomTools(
         tools.forEach { item ->
             ToolItem(
                 item = item,
-                onClick = { onToolClick(item.tool) }
+                isSelect = tool == item.tool,
+                onClick = {
+                    onToolClick(item.tool)
+                }
             )
         }
     }
@@ -70,7 +77,9 @@ fun FeatureBottomTools(
 
 @Composable
 private fun ToolItem(
-    item: ToolItem, onClick: () -> Unit
+    item: ToolItem,
+    isSelect: Boolean,
+    onClick: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -82,12 +91,14 @@ private fun ToolItem(
         Image(
             painterResource(item.icon),
             contentDescription = "",
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
+            colorFilter = if (isSelect) ColorFilter.tint(AppColor.Primary500) else null,
         )
         Text(
             modifier = Modifier.padding(top = 2.dp),
             text = stringResource(item.label),
-            style = AppStyle.caption2().medium().gray800()
+            style = if (isSelect) AppStyle.caption2().medium().primary500() else AppStyle.caption2()
+                .medium().gray800()
         )
     }
 }
