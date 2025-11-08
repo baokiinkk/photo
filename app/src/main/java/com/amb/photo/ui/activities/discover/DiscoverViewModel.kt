@@ -36,3 +36,4 @@ class DiscoverViewModel : BaseViewModel() {
 data class TemplateItem(val id: Int, val name: String, val imageRes: Int)
 data class QuickEditItem(val id: Int, val title: String, val imageRes: Int)
 
+

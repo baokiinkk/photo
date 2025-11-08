@@ -28,12 +28,19 @@ import com.amb.photo.ui.theme.BackgroundWhite
 
 @Composable
 fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
-    var gap by remember { mutableStateOf(1.dp) }
-    var corner by remember { mutableStateOf(1.dp) }
+    // Observe state from ViewModel
+    val templates by vm.templates.collectAsState()
+    val selected by vm.selected.collectAsState()
+    val collageState by vm.collageState.collectAsState()
+    val canUndo by vm.canUndo.collectAsState()
+    val canRedo by vm.canRedo.collectAsState()
+
     var showGridsSheet by remember { mutableStateOf(false) }
 
-    val options by vm.templates.collectAsState()
-    val selected by vm.selected.collectAsState()
+    // Extract values from state
+    val topMargin = collageState.topMargin
+    val columnMargin = collageState.columnMargin
+    val cornerRadius = collageState.cornerRadius
 
     LaunchedEffect(Unit) {
         vm.load(uris.size.coerceAtLeast(1))
@@ -48,11 +55,11 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
             // Header
             FeaturePhotoHeader(
                 onBack = onBack,
-                onUndo = { /* TODO */ },
-                onRedo = { /* TODO */ },
+                onUndo = { vm.undo() },
+                onRedo = { vm.redo() },
                 onSave = { /* TODO */ },
-                canUndo = false,
-                canRedo = false
+                canUndo = canUndo,
+                canRedo = canRedo
             )
             Box(
                 modifier = Modifier
@@ -60,16 +67,24 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                     .padding(horizontal = 16.dp)
                     .padding(top = 80.dp, bottom = 175.dp)
                     .background(BackgroundWhite)
-                    .padding(8.dp)
+                    .padding(
+                        top = (8 + topMargin * 40).dp, // topMargin: 0-1 -> 8-48dp
+                        start = 8.dp,
+                        end = 8.dp,
+                        bottom = 8.dp
+                    )
 
             ) {
-
-                val templateToUse = selected ?: options.firstOrNull() ?: CollageTemplates.defaultFor(uris.size.coerceAtLeast(1))
+                val templateToUse = selected ?: templates.firstOrNull() ?: CollageTemplates.defaultFor(uris.size.coerceAtLeast(1))
+                // Map slider values to Dp
+                val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
+                val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
+                
                 CollagePreview(
                     images = uris,
                     template = templateToUse,
-                    gap = gap,
-                    corner = corner,
+                    gap = gapValue,
+                    corner = cornerValue,
                 )
             }
             // Bottom tools
@@ -92,17 +107,28 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
         // Grids Sheet (hiện khi click Grids tool)
         if (showGridsSheet) {
             GridsSheet(
-                    templates = options,
-                    selectedTemplate = selected,
-                    onTemplateSelect = { template ->
-                        vm.select(template)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .align(Alignment.BottomCenter)
-                )
-            }
+                templates = templates,
+                selectedTemplate = selected,
+                onTemplateSelect = { template ->
+                    vm.selectTemplate(template)
+                },
+                onClose = { showGridsSheet = false },
+                onConfirm = { tab ->
+                    vm.confirmGridsChanges(tab)
+                    showGridsSheet = false
+                },
+                topMargin = topMargin,
+                onTopMarginChange = { vm.updateTopMargin(it) },
+                columnMargin = columnMargin,
+                onColumnMarginChange = { vm.updateColumnMargin(it) },
+                cornerRadius = cornerRadius,
+                onCornerRadiusChange = { vm.updateCornerRadius(it) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.BottomCenter)
+            )
+        }
     }
 }
 

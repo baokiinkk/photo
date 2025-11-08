@@ -14,29 +14,31 @@ data class CollageTemplate(
 )
 
 data class CellSpec(
-    @SerializedName("x") val x: Float,          // 0..1 (left)
-    @SerializedName("y") val y: Float,          // 0..1 (top)
-    @SerializedName("width") val width: Float,  // 0..1 (relative to parent width)
-    @SerializedName("height") val height: Float,// 0..1
-    @SerializedName("shape") val shape: String? = null // rect | diag_tlbr | diag_bltr
+    // Legacy fields (optional, for backward compatibility)
+    @SerializedName("x") val x: Float? = null,          // 0..1 (left)
+    @SerializedName("y") val y: Float? = null,          // 0..1 (top)
+    @SerializedName("width") val width: Float? = null,  // 0..1 (relative to parent width)
+    @SerializedName("height") val height: Float? = null,// 0..1
+    // Points: absolute coordinates in parent (0..1), format: [x0,y0,x1,y1,x2,y2,x3,y3]
+    @SerializedName("points") val points: List<Float>
 )
 
-/**
- * Compose Shape cho 2 loại split chéo. Dùng để clip nội dung ảnh theo hình.
- */
-class DiagonalShape(private val tlbr: Boolean) : Shape {
+class FreePolygonShape(
+    private val points: List<Float>
+) : Shape {
+    init {
+        require(points.size == 8) { "points must have 8 floats (x0,y0,...,x3,y3)" }
+    }
+
     override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
         val path = Path()
-        if (tlbr) {
-            // tam giác phía trên-trái
-            path.moveTo(0f, 0f)
-            path.lineTo(size.width, 0f)
-            path.lineTo(0f, size.height)
-        } else {
-            // tam giác phía dưới-trái
-            path.moveTo(0f, size.height)
-            path.lineTo(size.width, size.height)
-            path.lineTo(size.width, 0f)
+        val x0 = points[0] * size.width
+        val y0 = points[1] * size.height
+        path.moveTo(x0, y0)
+        for (i in 2 until 8 step 2) {
+            val x = points[i] * size.width
+            val y = points[i + 1] * size.height
+            path.lineTo(x, y)
         }
         path.close()
         return Outline.Generic(path)
