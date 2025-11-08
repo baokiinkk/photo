@@ -128,16 +128,6 @@ fun AdjustScreen(
     onApply: () -> Unit,
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
-//    var brightness by remember { mutableStateOf(50f) }
-    var contrast by remember { mutableStateOf(1f) }
-    var saturation by remember { mutableStateOf(1f) }
-    var warmth by remember { mutableStateOf(0f) }
-    var hue by remember { mutableStateOf(0f) }
-    var shadow by remember { mutableStateOf(0f) }
-    var highlight by remember { mutableStateOf(0f) }
-    var vignetteStart by remember { mutableStateOf(0f) }
-    var vignetteEnd by remember { mutableStateOf(0f) }
-    var sharpen by remember { mutableStateOf(0f) }
     var showOriginal by remember { mutableStateOf(false) }
     Column(
         modifier = modifier
@@ -162,12 +152,11 @@ fun AdjustScreen(
                             .align(Alignment.Center)
 
                     ) {
-                        GpuImageAdjustView2(
+                        GpuImageAdjustView(
                             modifier = Modifier
                                 .fillMaxSize(),
                             bitmap = it,
-                            index = uiState.index,
-                            intensity = getIntensity(uiState)
+                            uiState = uiState
                         )
                         Image(
                             bitmap = it.asImageBitmap(),
@@ -231,43 +220,133 @@ fun AdjustScreen(
                 }
 
                 CollageTool.CONTRAST -> {
-
+                    SliderAdjust(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 23.dp),
+                        value = uiState.contrast,
+                        onValueChange = {
+                            viewmodel.updateContrast(it)
+                        },
+                        valueRange = 0f..100f
+                    )
                 }
 
                 CollageTool.SATURATION -> {
-
+                    SliderAdjust(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 23.dp),
+                        value = uiState.saturation,
+                        onValueChange = {
+                            viewmodel.updateSaturation(it)
+                        },
+                        valueRange = 0f..100f
+                    )
                 }
 
                 CollageTool.WARMTH -> {
-
+                    SliderAdjust(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 23.dp),
+                        value = uiState.warmth,
+                        onValueChange = {
+                            viewmodel.updateWarmth(it)
+                        },
+                        valueRange = 0f..100f
+                    )
                 }
 
                 CollageTool.FADE -> {
-
+                    SliderAdjust(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 23.dp),
+                        value = uiState.fade,
+                        onValueChange = {
+                            viewmodel.updateFade(it)
+                        },
+                        valueRange = 0f..100f
+                    )
                 }
 
                 CollageTool.HIGHLIGHT -> {
-
+                    SliderAdjust(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 23.dp),
+                        value = uiState.highlight,
+                        onValueChange = {
+                            viewmodel.updateHighlight(it)
+                        },
+                        valueRange = 0f..100f
+                    )
                 }
 
                 CollageTool.SHADOW -> {
-
+                    SliderAdjust(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 23.dp),
+                        value = uiState.shadow,
+                        onValueChange = {
+                            viewmodel.updateShadow(it)
+                        },
+                        valueRange = 0f..100f
+                    )
                 }
 
                 CollageTool.HUE -> {
-
+                    SliderAdjust(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 23.dp),
+                        value = uiState.hue,
+                        onValueChange = {
+                            viewmodel.updateHue(it)
+                        },
+                        valueRange = 0f..100f
+                    )
                 }
 
                 CollageTool.VIGNETTE -> {
-
+                    SliderAdjust(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 23.dp),
+                        value = uiState.vignette,
+                        onValueChange = {
+                            viewmodel.updateVignette(it)
+                        },
+                        valueRange = 0f..100f
+                    )
                 }
 
                 CollageTool.SHARPEN -> {
-
+                    SliderAdjust(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 23.dp),
+                        value = uiState.sharpen,
+                        onValueChange = {
+                            viewmodel.updateSharpen(it)
+                        },
+                        valueRange = 0f..100f
+                    )
                 }
 
                 CollageTool.GRAIN -> {
-
+                    SliderAdjust(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 23.dp),
+                        value = uiState.grain,
+                        onValueChange = {
+                            viewmodel.updateGrain(it)
+                        },
+                        valueRange = 0f..100f
+                    )
                 }
 
                 else -> {
@@ -313,28 +392,6 @@ fun calcIntensity(intensity: Float, minValue: Float, maxValue: Float, originValu
         result = maxValue + (originValue - maxValue) * (1.0f - intensity) * 2.0f
     }
     return result
-}
-
-fun getIntensity(
-    uiState: AdjustUIState
-): Float {
-    return when (uiState.tool) {
-        CollageTool.BRIGHTNESS -> {
-//            val newBrightness = (uiState.brightness / 50f) - 1f
-//            Log.d("aaaa", "$newBrightness")
-//            newBrightness
-            calcIntensity(
-                intensity = uiState.brightness / 100f,
-                minValue = -1f,
-                maxValue = 1f,
-                originValue = 0f
-            )
-        }
-
-        else -> {
-            0f
-        }
-    }
 }
 
 @Composable
@@ -437,91 +494,10 @@ fun SliderAdjust(
 }
 
 @Composable
-fun GpuAdjustExample(
-    viewModel: AdjustViewModel
-) {
-    var brightness by remember { mutableStateOf(50f) }
-    var contrast by remember { mutableStateOf(1f) }
-    var saturation by remember { mutableStateOf(1f) }
-    var warmth by remember { mutableStateOf(0f) }
-    var hue by remember { mutableStateOf(0f) }
-    var shadow by remember { mutableStateOf(0f) }
-    var highlight by remember { mutableStateOf(0f) }
-    var vignetteStart by remember { mutableStateOf(0f) }
-    var vignetteEnd by remember { mutableStateOf(0f) }
-    var sharpen by remember { mutableStateOf(0f) }
-
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    uiState.bitmap?.let {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Red)
-        ) {
-//            GpuImageAdjustView2(
-//                modifier = Modifier
-//                    .weight(1f)
-//                    .fillMaxWidth(),
-//                bitmap = it,
-//                index = 0,
-//                intensity = 1f
-//            )
-
-            Column(Modifier.padding(8.dp)) {
-//                Text("Brightness: %.2f".format(brightness), color = Color.White)
-//                Slider(
-//                    value = brightness,
-//                    onValueChange = { brightness = it },
-//                    valueRange = -1f..1f
-//                )
-//
-//                Text("Contrast: %.2f".format(contrast), color = Color.White)
-//                Slider(value = contrast, onValueChange = { contrast = it }, valueRange = 0f..4f)
-//
-//                Text("Saturation: %.2f".format(saturation), color = Color.White)
-//                Slider(value = saturation, onValueChange = { saturation = it }, valueRange = 0f..2f)
-//
-//                Text("warmth: %.2f".format(warmth), color = Color.White)
-//                Slider(value = warmth, onValueChange = { warmth = it }, valueRange = 0.0f..2f)
-//  ====================== đã theo tools =================================================
-//                Text("shadow: %.2f".format(shadow), color = Color.White)
-//                Slider(value = shadow, onValueChange = { shadow = it }, valueRange = -200f..100f)
-//
-//                Text("highlight: %.2f".format(highlight), color = Color.White)
-//                Slider(
-//                    value = highlight,
-//                    onValueChange = { highlight = it },
-//                    valueRange = -100f..200f
-//                )
-//
-//                Text("Hue: %.2f".format(hue), color = Color.White)
-//                Slider(value = hue, onValueChange = { hue = it }, valueRange = 0f..6f)
-
-                Text("vignette start: %.2f".format(vignetteStart), color = Color.White)
-                Slider(value = vignetteStart, onValueChange = {
-                    vignetteStart = it
-                }, valueRange = 0f..1f)
-                Text("vignette end: %.2f".format(vignetteEnd), color = Color.White)
-                Slider(
-                    value = vignetteEnd,
-                    onValueChange = { vignetteEnd = it },
-                    valueRange = 0f..1f
-                )
-
-                Text("sharpen: %.2f".format(sharpen), color = Color.White)
-                Slider(value = sharpen, onValueChange = { sharpen = it }, valueRange = 0f..10f)
-            }
-        }
-    }
-}
-
-@Composable
-fun GpuImageAdjustView2(
-    index: Int,
+fun GpuImageAdjustView(
     bitmap: Bitmap,
     modifier: Modifier = Modifier,
-    intensity: Float,
+    uiState: AdjustUIState
 ) {
 
     AndroidView(
@@ -531,125 +507,47 @@ fun GpuImageAdjustView2(
             val glView = ImageGLSurfaceView(context, null)
             glView.displayMode = ImageGLSurfaceView.DisplayMode.DISPLAY_ASPECT_FIT
             glView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
-            // Load bitmap trước, nhưng đợi Surface ready
             glView.setSurfaceCreatedCallback {
                 glView.setImageBitmap(bitmap)
                 glView.setFilterWithConfig(
-                    getConfig()
+                    getNewConfig(uiState)
                 )
             }
             glView
         },
         update = { view ->
             view.queueEvent { // đảm bảo chạy trong GL thread
-                view.setFilterIntensityForIndex(intensity, index, true)
+                val config = getNewConfig(uiState)
+                view.setFilterWithConfig(config)
             }
         }
     )
 }
 
-@Composable
-fun GpuImageAdjustDefault(
-    bitmap: Bitmap,
-    modifier: Modifier = Modifier,
-) {
-
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
-            val glView = ImageGLSurfaceView(context, null)
-            glView.displayMode = ImageGLSurfaceView.DisplayMode.DISPLAY_ASPECT_FIT
-            glView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
-            // Load bitmap trước, nhưng đợi Surface ready
-            glView.setSurfaceCreatedCallback {
-                glView.setImageBitmap(bitmap)
-                glView.setFilterWithConfig(
-                    getConfig()
-                )
-            }
-            glView
-        },
-        update = { view ->
-
-        }
-    )
-}
-
-fun getConfig(
-    brightness: Float = 0.0f,
-    contrast: Float = 1.0f,
-    saturation: Float = 1.0f,
-    warmth: Float = 0.0f,
-    sharpen: Float = 0.0f,
-    shadow: Float = 0f,
-    highlight: Float = 0f,
-    hue: Float = 0f,
+fun getNewConfig(
+    uiState: AdjustUIState
 ): String {
+    val brightness = getBrightness(uiState.brightness)
+    val contrast = getContrast(uiState.contrast)
+    val saturation = getSaturation(uiState.saturation)
+    val warmth = getWarmth(uiState.warmth)
+    val highlight = getHighlight(uiState.highlight)
+    val shadow = getShadow(uiState.shadow)
+    val hue = getHue(uiState.hue)
+    val vignette = getVignette(uiState.vignette)
+    val sharpen = getSharpen(uiState.sharpen)
+    val fade = getFade(uiState.fade)
+    val grain = getGrain(uiState.grain)
+    Log.d("getNewConfig", "brightness: $brightness && vignette: $vignette")
     return "@adjust brightness $brightness " +
             "@adjust contrast $contrast " +
             "@adjust saturation $saturation " +
-            "@adjust sharpen $sharpen 10" +
             "@adjust whitebalance $warmth 1.0 " +
             "@adjust shadowhighlight $shadow $highlight " +
             "@adjust hue $hue " +
-            "@vignette 1.0 1.0"
-}
+            "@adjust sharpen $sharpen " +
+            "@vignette $vignette 1.0" +
+            "@adjust fade $fade" +
+            "@adjust grain $grain"
 
-@Composable
-fun GpuImageAdjustView(
-    modifier: Modifier = Modifier,
-    context: Context = LocalContext.current,
-    bitmap: Bitmap,
-    brightness: Float = 0.0f,
-    contrast: Float = 1.0f,
-    saturation: Float = 1.0f,
-    warmth: Float = 1.0f,
-    hue: Float = 0.0f
-) {
-    AndroidView(
-        modifier = modifier,
-        factory = {
-            val glView = ImageGLSurfaceView(context, null)
-            glView.setImageBitmap(bitmap)
-//            glView.displayMode = ImageGLSurfaceView.DisplayMode.DISPLAY_ASPECT_FIT
-//            glView.setImageBitmap(bitmap)
-//            glView.setFilterWithConfig(
-//                generateFilterConfig(
-//                    brightness,
-//                    contrast,
-//                    saturation,
-//                    warmth,
-//                    hue
-//                )
-//            )
-            glView
-        },
-        update = { view ->
-//            view.setFilterWithConfig(
-//                generateFilterConfig(
-//                    brightness,
-//                    contrast,
-//                    saturation,
-//                    warmth,
-//                    hue
-//                )
-//            )
-        }
-    )
-}
-
-private fun generateFilterConfig(
-    brightness: Float,
-    contrast: Float,
-    saturation: Float,
-    warmth: Float,
-    hue: Float
-): String {
-    return """
-        @adjust brightness ${brightness};
-        @adjust contrast ${contrast};
-        @adjust saturation ${saturation};
-        @adjust temperature ${warmth};
-        @adjust hue ${hue};
-    """.trimIndent()
 }
