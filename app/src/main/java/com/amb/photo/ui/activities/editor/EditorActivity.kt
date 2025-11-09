@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Canvas
@@ -142,7 +143,17 @@ class EditorActivity : BaseActivity() {
                             CollageTool.ADJUST -> {
                                 launchActivity(
                                     toActivity = AdjustActivity::class.java,
-                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult)
+                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                    callback = { result ->
+                                        if (result.resultCode == RESULT_OK) {
+                                            val pathBitmap = result.data?.getStringExtra("adjust")
+                                            Log.d("aaaa", "asdasdasd $pathBitmap")
+                                            viewmodel.updateBitmap(
+                                                pathBitmap,
+                                                pathBitmap.toBitmap(this)
+                                            )
+                                        }
+                                    }
                                 )
                             }
 
@@ -208,35 +219,37 @@ fun EditorScreen(
                     .weight(1f)
                     .padding(top = 20.dp, bottom = 23.dp)
                     .onSizeChanged { layout ->
-                        val newSize = layout
-                        if (newSize != boxSize) {
-                            boxSize = newSize
-                            // Báo kích thước Box lên ViewModel
-                            viewmodel.scaleBitmapToBox(newSize.toSize())
-                        }
+                        viewmodel.canvasSize = layout.toSize()
+                        viewmodel.scaleBitmapToBox(layout.toSize())
+//                        val newSize = layout
+//                        if (newSize != boxSize) {
+//                            boxSize = newSize
+//                            // Báo kích thước Box lên ViewModel
+//                            viewmodel.scaleBitmapToBox(newSize.toSize())
+//                        }
                     }
             ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    uiState.bitmap?.let { bmp ->
-                        drawImage(
-                            image = bmp.asImageBitmap(),
-                            topLeft = Offset(
-                                (size.width - bmp.width) / 2,
-                                (size.height - bmp.height) / 2
-                            )
-                        )
-                    }
-                }
-//                uiState.bitmap?.let {
-//                    Image(
-//                        bitmap = it.asImageBitmap(),
-//                        contentDescription = null,
-//                        contentScale = ContentScale.None,
-//                        alignment = Alignment.Center,
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                    )
+//                Canvas(modifier = Modifier.fillMaxSize()) {
+//                    uiState.bitmap?.let { bmp ->
+//                        drawImage(
+//                            image = bmp.asImageBitmap(),
+//                            topLeft = Offset(
+//                                (size.width - bmp.width) / 2,
+//                                (size.height - bmp.height) / 2
+//                            )
+//                        )
+//                    }
 //                }
+                uiState.bitmap?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = null,
+                        contentScale = ContentScale.None,
+                        alignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                }
             }
         } else {
             Box(
@@ -250,12 +263,14 @@ fun EditorScreen(
                         .fillMaxSize()
                         .aspectRatio(1f)
                         .onSizeChanged { layout ->
-                            val newSize = layout
-                            if (newSize != boxSize) {
-                                boxSize = newSize
-                                // Báo kích thước Box lên ViewModel
-                                viewmodel.scaleBitmapToBox(newSize.toSize())
-                            }
+                            viewmodel.canvasSize = layout.toSize()
+                            viewmodel.scaleBitmapToBox(layout.toSize())
+//                            val newSize = layout
+//                            if (newSize != boxSize) {
+//                                boxSize = newSize
+//                                // Báo kích thước Box lên ViewModel
+//                                viewmodel.scaleBitmapToBox(newSize.toSize())
+//                            }
                         }
                 ) {
                     uiState.originBitmap?.let {

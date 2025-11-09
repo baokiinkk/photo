@@ -44,6 +44,7 @@ class EditorViewModel : BaseViewModel() {
 
     var pathBitmapResult: String? = null
 
+    var canvasSize: Size? = null
     fun setPathBitmap(pathBitmap: String?, bitmap: Bitmap?) {
         pathBitmapResult = pathBitmap
         uiState.update {
@@ -51,6 +52,26 @@ class EditorViewModel : BaseViewModel() {
                 bitmap = bitmap,
                 originBitmap = bitmap
             )
+        }
+    }
+
+    fun updateBitmap(pathBitmap: String?, bitmap: Bitmap?) {
+        if (bitmap == null || canvasSize == null) return
+        pathBitmapResult = pathBitmap
+        viewModelScope.launch(Dispatchers.Default) {
+            val imageWidth = bitmap.width.toFloat()
+            val imageHeight = bitmap.height.toFloat()
+
+            val scaledSize = MathUtils.calculateScaledSize(
+                srcWidth = imageWidth,
+                srcHeight = imageHeight,
+                dstWidth = canvasSize!!.width,
+                dstHeight = canvasSize!!.height,
+                contentScale = ContentScale.Fit
+            )
+
+            val newBitmap = bitmap.scale(scaledSize.width.toInt(), scaledSize.height.toInt())
+            uiState.update { it.copy(bitmap = newBitmap) }
         }
     }
 

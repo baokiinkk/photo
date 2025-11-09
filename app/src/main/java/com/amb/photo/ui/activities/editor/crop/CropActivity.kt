@@ -592,7 +592,7 @@ fun FooterEditor(
         }
     }
 }
-private fun saveImage(context: Context, croppedImage: Bitmap, onImageSaved: (String) -> Unit) {
+ fun saveImage(context: Context, croppedImage: Bitmap, onImageSaved: (String) -> Unit) {
     val filename = "${System.currentTimeMillis()}.jpg"
     var fos: OutputStream? = null
     var imagePath: String? = null
