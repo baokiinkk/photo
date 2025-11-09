@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Outline
@@ -33,6 +35,7 @@ import com.amb.photo.data.model.collage.CollageTemplate
 import com.amb.photo.data.model.collage.FreePolygonShape
 import com.amb.photo.ui.theme.BackgroundWhite
 import com.amb.photo.ui.theme.Primary500
+import androidx.core.graphics.toColorInt
 
 @Composable
 fun CollagePreview(
@@ -41,9 +44,21 @@ fun CollagePreview(
     gap: Dp = 6.dp,
     corner: Dp = 1.dp,
     borderWidth: Dp = 5.dp,
+    backgroundColor: String? = null,
     modifier: Modifier = Modifier
 ) {
-    BoxWithConstraints(modifier = modifier.background(BackgroundWhite)) {
+    // Parse background color from hex string
+    val bgColor = remember(backgroundColor) {
+        backgroundColor?.let {
+            try {
+                Color(it.toColorInt())
+            } catch (e: Exception) {
+                BackgroundWhite
+            }
+        } ?: BackgroundWhite
+    }
+
+    BoxWithConstraints(modifier = modifier.background(bgColor)) {
         val density = LocalDensity.current
         val w = constraints.maxWidth.toFloat()
         val h = constraints.maxHeight.toFloat()
@@ -51,7 +66,7 @@ fun CollagePreview(
         Box(
             Modifier
                 .fillMaxSize()
-                .background(BackgroundWhite)
+                .background(bgColor)
         )
 
         template.cells.forEachIndexed { index, cell ->
@@ -94,7 +109,7 @@ fun CollagePreview(
                     .offset(x = left.toDp(), y = top.toDp())
                     .size(cw.toDp(), ch.toDp())
                     .padding(gap / 2)
-                    .background(BackgroundWhite)
+                    .background(bgColor)
                     .clip(shape)
             }
 

@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,10 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amb.photo.ui.activities.collage.CollageTemplates
 import com.amb.photo.ui.activities.collage.CollageViewModel
-import com.amb.photo.ui.activities.editor.crop.CropAspect
 import com.amb.photo.ui.theme.Background2
 import com.amb.photo.ui.theme.BackgroundWhite
-import androidx.compose.foundation.layout.aspectRatio
 
 @Composable
 fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
@@ -39,6 +38,7 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
 
     var showGridsSheet by remember { mutableStateOf(false) }
     var showRatioSheet by remember { mutableStateOf(false) }
+    var showBackgroundSheet by remember { mutableStateOf(false) }
 
     // Extract values from state
     val topMargin = collageState.topMargin
@@ -90,12 +90,6 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                         }
                     )
                     .background(BackgroundWhite)
-                    .padding(
-                        top = (8 + topMargin * 40).dp, // topMargin: 0-1 -> 8-48dp
-                        start = 8.dp,
-                        end = 8.dp,
-                        bottom = 8.dp
-                    )
 
             ) {
                 val templateToUse = selected ?: templates.firstOrNull() ?: CollageTemplates.defaultFor(uris.size.coerceAtLeast(1))
@@ -108,29 +102,33 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                     template = templateToUse,
                     gap = gapValue,
                     corner = cornerValue,
+                    backgroundColor = collageState.backgroundColor
                 )
             }
             // Bottom tools
             FeatureBottomTools(
                 tools = toolsCollage,
-                tool = when {
-                    showGridsSheet -> CollageTool.GRIDS
-                    showRatioSheet -> CollageTool.RATIO
-                    else -> CollageTool.NONE
-                },
                 onToolClick = { tool ->
                     when (tool) {
                         CollageTool.GRIDS -> {
                             showGridsSheet = true
                             showRatioSheet = false
+                            showBackgroundSheet = false
                         }
                         CollageTool.RATIO -> {
                             showRatioSheet = true
                             showGridsSheet = false
+                            showBackgroundSheet = false
+                        }
+                        CollageTool.BACKGROUND -> {
+                            showBackgroundSheet = true
+                            showGridsSheet = false
+                            showRatioSheet = false
                         }
                         else -> {
                             showGridsSheet = false
                             showRatioSheet = false
+                            showBackgroundSheet = false
                         }
                     }
                 }
@@ -177,6 +175,27 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                 onConfirm = {
                     vm.confirmRatioChanges()
                     showRatioSheet = false
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.BottomCenter)
+            )
+        }
+
+        if (showBackgroundSheet) {
+            BackgroundSheet(
+                selectedColor = collageState.backgroundColor,
+                onColorSelect = { color ->
+                    vm.updateBackgroundColor(color)
+                },
+                onClose = {
+                    vm.cancelBackgroundChanges()
+                    showBackgroundSheet = false
+                },
+                onConfirm = {
+                    vm.confirmBackgroundChanges()
+                    showBackgroundSheet = false
                 },
                 modifier = Modifier
                     .fillMaxWidth()
