@@ -1,14 +1,10 @@
 package com.amb.photo.ui.activities.editor.adjust
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.PixelFormat
-import android.net.Uri
 import android.opengl.GLSurfaceView
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.MotionEvent
 import androidx.activity.compose.setContent
@@ -48,13 +44,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.amb.photo.R
 import com.amb.photo.ui.activities.collage.components.CollageTool
@@ -67,18 +60,10 @@ import com.amb.photo.ui.theme.AppStyle
 import com.amb.photo.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.ImageWidget
-import com.tanishranjan.cropkit.CropShape
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.wysaid.myUtils.ImageUtil
 import org.wysaid.nativePort.CGENativeLibrary
 import org.wysaid.nativePort.CGENativeLibrary.LoadImageCallback
 import org.wysaid.view.ImageGLSurfaceView
-import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 
 
@@ -199,7 +184,6 @@ fun AdjustScreen(
                         modifier = Modifier
                             .fillMaxHeight()
                             .aspectRatio(it.width / it.height.toFloat())
-                            .background(Color.Green)
                             .align(Alignment.Center)
                             .captureComposableBounds { rect ->
                                 viewmodel.captureRect = rect
@@ -262,7 +246,7 @@ fun AdjustScreen(
         ) {
             when (uiState.tool) {
                 CollageTool.BRIGHTNESS -> {
-                    SliderAdjust(
+                    SliderTool(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 23.dp),
@@ -275,7 +259,7 @@ fun AdjustScreen(
                 }
 
                 CollageTool.CONTRAST -> {
-                    SliderAdjust(
+                    SliderTool(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 23.dp),
@@ -288,7 +272,7 @@ fun AdjustScreen(
                 }
 
                 CollageTool.SATURATION -> {
-                    SliderAdjust(
+                    SliderTool(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 23.dp),
@@ -301,7 +285,7 @@ fun AdjustScreen(
                 }
 
                 CollageTool.WARMTH -> {
-                    SliderAdjust(
+                    SliderTool(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 23.dp),
@@ -314,7 +298,7 @@ fun AdjustScreen(
                 }
 
                 CollageTool.FADE -> {
-                    SliderAdjust(
+                    SliderTool(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 23.dp),
@@ -327,7 +311,7 @@ fun AdjustScreen(
                 }
 
                 CollageTool.HIGHLIGHT -> {
-                    SliderAdjust(
+                    SliderTool(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 23.dp),
@@ -340,7 +324,7 @@ fun AdjustScreen(
                 }
 
                 CollageTool.SHADOW -> {
-                    SliderAdjust(
+                    SliderTool(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 23.dp),
@@ -353,7 +337,7 @@ fun AdjustScreen(
                 }
 
                 CollageTool.HUE -> {
-                    SliderAdjust(
+                    SliderTool(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 23.dp),
@@ -366,7 +350,7 @@ fun AdjustScreen(
                 }
 
                 CollageTool.VIGNETTE -> {
-                    SliderAdjust(
+                    SliderTool(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 23.dp),
@@ -379,7 +363,7 @@ fun AdjustScreen(
                 }
 
                 CollageTool.SHARPEN -> {
-                    SliderAdjust(
+                    SliderTool(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 23.dp),
@@ -392,7 +376,7 @@ fun AdjustScreen(
                 }
 
                 CollageTool.GRAIN -> {
-                    SliderAdjust(
+                    SliderTool(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 23.dp),
@@ -514,7 +498,7 @@ fun ResetButton(
 }
 
 @Composable
-fun SliderAdjust(
+fun SliderTool(
     modifier: Modifier = Modifier,
     value: Float,
     onValueChange: (Float) -> Unit,
