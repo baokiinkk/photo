@@ -48,6 +48,12 @@ class CollageViewModel(
     private val _canRedo = MutableStateFlow(false)
     val canRedo: StateFlow<Boolean> = _canRedo.asStateFlow()
 
+    // Lưu ratio tạm thời khi đang chọn (chưa confirm)
+    private var tempRatio: String? = null
+
+    // Lưu background color tạm thời khi đang chọn (chưa confirm)
+    private var tempBackgroundColor: String? = null
+
     fun load(count: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             when (val res = repository.getTemplates()) {
@@ -98,6 +104,76 @@ class CollageViewModel(
         }
     }
 
+    fun updateRatio(ratio: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tempRatio = ratio
+            _collageState.value = _collageState.value.copy(ratio = ratio)
+        }
+    }
+
+    fun cancelRatioChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            // Khôi phục ratio về state đã lưu cuối cùng
+            val lastSavedState = undoRedoManager.getLastState()
+            val ratioToRestore = lastSavedState?.ratio ?: initialState?.ratio
+            tempRatio = null
+            _collageState.value = _collageState.value.copy(ratio = ratioToRestore)
+        }
+    }
+
+    fun confirmRatioChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            val lastSavedState = undoRedoManager.getLastState()
+            
+            // Tạo state mới với ratio đã chọn
+            val newState = currentState.copy(
+                ratio = currentState.ratio
+            )
+            
+            // Merge với lastSavedState để giữ nguyên các giá trị không thay đổi
+            val stateToSave = lastSavedState?.let { last ->
+                newState.copy(
+                    // Giữ các giá trị khác từ last saved state
+                    templateId = last.templateId,
+                    topMargin = last.topMargin,
+                    columnMargin = last.columnMargin,
+                    cornerRadius = last.cornerRadius,
+                    backgroundColor = last.backgroundColor,
+                    backgroundImage = last.backgroundImage,
+                    frameStyle = last.frameStyle,
+                    frameWidth = last.frameWidth,
+                    frameColor = last.frameColor,
+                    texts = last.texts,
+                    stickers = last.stickers,
+                    filter = last.filter,
+                    blur = last.blur,
+                    brightness = last.brightness,
+                    contrast = last.contrast,
+                    saturation = last.saturation
+                )
+            } ?: newState
+            
+            // Nếu đây là lần đầu confirm (redo stack rỗng) và có initial state, lưu initial state trước
+            if (!undoRedoManager.canUndo() && initialState != null) {
+                val initial = initialState!!
+                // Kiểm tra xem có thay đổi so với initial state không
+                val hasChanges = initial.ratio != stateToSave.ratio
+                
+                if (hasChanges) {
+                    // Lưu initial state vào redo stack trước (để có thể undo về ban đầu)
+                    undoRedoManager.saveState(initial.copy())
+                }
+            }
+            
+            // Lưu state vào redo stack
+            undoRedoManager.saveState(stateToSave)
+            _collageState.value = stateToSave
+            tempRatio = null // Clear temp ratio sau khi confirm
+            updateUndoRedoState()
+        }
+    }
+
     fun confirmGridsChanges(tab: GridsTab) {
         viewModelScope.launch(Dispatchers.IO) {
             val currentState = _collageState.value
@@ -128,11 +204,39 @@ class CollageViewModel(
                         // Giữ margin từ last saved state
                         topMargin = last.topMargin,
                         columnMargin = last.columnMargin,
-                        cornerRadius = last.cornerRadius
+                        cornerRadius = last.cornerRadius,
+                        // Giữ ratio và các giá trị khác
+                        ratio = last.ratio,
+                        backgroundColor = last.backgroundColor,
+                        backgroundImage = last.backgroundImage,
+                        frameStyle = last.frameStyle,
+                        frameWidth = last.frameWidth,
+                        frameColor = last.frameColor,
+                        texts = last.texts,
+                        stickers = last.stickers,
+                        filter = last.filter,
+                        blur = last.blur,
+                        brightness = last.brightness,
+                        contrast = last.contrast,
+                        saturation = last.saturation
                     )
                     GridsTab.MARGIN -> newState.copy(
                         // Giữ templateId từ last saved state
-                        templateId = last.templateId
+                        templateId = last.templateId,
+                        // Giữ ratio và các giá trị khác
+                        ratio = last.ratio,
+                        backgroundColor = last.backgroundColor,
+                        backgroundImage = last.backgroundImage,
+                        frameStyle = last.frameStyle,
+                        frameWidth = last.frameWidth,
+                        frameColor = last.frameColor,
+                        texts = last.texts,
+                        stickers = last.stickers,
+                        filter = last.filter,
+                        blur = last.blur,
+                        brightness = last.brightness,
+                        contrast = last.contrast,
+                        saturation = last.saturation
                     )
                 }
             } ?: newState
@@ -157,6 +261,76 @@ class CollageViewModel(
             // Lưu state vào redo stack
             undoRedoManager.saveState(stateToSave)
             _collageState.value = stateToSave
+            updateUndoRedoState()
+        }
+    }
+
+    fun updateBackgroundColor(color: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tempBackgroundColor = color
+            _collageState.value = _collageState.value.copy(backgroundColor = color)
+        }
+    }
+
+    fun cancelBackgroundChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            // Khôi phục background color về state đã lưu cuối cùng
+            val lastSavedState = undoRedoManager.getLastState()
+            val backgroundColorToRestore = lastSavedState?.backgroundColor ?: initialState?.backgroundColor
+            tempBackgroundColor = null
+            _collageState.value = _collageState.value.copy(backgroundColor = backgroundColorToRestore)
+        }
+    }
+
+    fun confirmBackgroundChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            val lastSavedState = undoRedoManager.getLastState()
+            
+            // Tạo state mới với background color đã chọn
+            val newState = currentState.copy(
+                backgroundColor = currentState.backgroundColor
+            )
+            
+            // Merge với lastSavedState để giữ nguyên các giá trị không thay đổi
+            val stateToSave = lastSavedState?.let { last ->
+                newState.copy(
+                    // Giữ các giá trị khác từ last saved state
+                    templateId = last.templateId,
+                    topMargin = last.topMargin,
+                    columnMargin = last.columnMargin,
+                    cornerRadius = last.cornerRadius,
+                    ratio = last.ratio,
+                    backgroundImage = last.backgroundImage,
+                    frameStyle = last.frameStyle,
+                    frameWidth = last.frameWidth,
+                    frameColor = last.frameColor,
+                    texts = last.texts,
+                    stickers = last.stickers,
+                    filter = last.filter,
+                    blur = last.blur,
+                    brightness = last.brightness,
+                    contrast = last.contrast,
+                    saturation = last.saturation
+                )
+            } ?: newState
+            
+            // Nếu đây là lần đầu confirm (redo stack rỗng) và có initial state, lưu initial state trước
+            if (!undoRedoManager.canUndo() && initialState != null) {
+                val initial = initialState!!
+                // Kiểm tra xem có thay đổi so với initial state không
+                val hasChanges = initial.backgroundColor != stateToSave.backgroundColor
+                
+                if (hasChanges) {
+                    // Lưu initial state vào redo stack trước (để có thể undo về ban đầu)
+                    undoRedoManager.saveState(initial.copy())
+                }
+            }
+            
+            // Lưu state vào redo stack
+            undoRedoManager.saveState(stateToSave)
+            _collageState.value = stateToSave
+            tempBackgroundColor = null // Clear temp background color sau khi confirm
             updateUndoRedoState()
         }
     }

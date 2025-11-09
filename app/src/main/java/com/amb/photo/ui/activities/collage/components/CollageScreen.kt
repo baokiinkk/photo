@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,11 +37,14 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
     val canRedo by vm.canRedo.collectAsState()
 
     var showGridsSheet by remember { mutableStateOf(false) }
+    var showRatioSheet by remember { mutableStateOf(false) }
+    var showBackgroundSheet by remember { mutableStateOf(false) }
 
     // Extract values from state
     val topMargin = collageState.topMargin
     val columnMargin = collageState.columnMargin
     val cornerRadius = collageState.cornerRadius
+    val ratio = collageState.ratio
 
     LaunchedEffect(Unit) {
         vm.load(uris.size.coerceAtLeast(1))
@@ -58,21 +62,34 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                 onUndo = { vm.undo() },
                 onRedo = { vm.redo() },
                 onSave = { /* TODO */ },
-                canUndo = canUndo,
-                canRedo = canRedo
+                canUndo = canUndo && !showGridsSheet && !showRatioSheet,
+                canRedo = canRedo && !showGridsSheet && !showRatioSheet
             )
+            // Calculate aspect ratio from ratio string (e.g., "1:1" -> 1.0, "4:5" -> 0.8)
+            val aspectRatioValue = remember(ratio) {
+                when (ratio) {
+                    "Original" -> null // No aspect ratio constraint for Original
+                    "1:1" -> 1f
+                    "4:5" -> 4f / 5f
+                    "5:4" -> 5f / 4f
+                    "3:4" -> 3f / 4f
+                    else -> null
+                }
+            }
+
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 16.dp)
                     .padding(top = 80.dp, bottom = 175.dp)
-                    .background(BackgroundWhite)
-                    .padding(
-                        top = (8 + topMargin * 40).dp, // topMargin: 0-1 -> 8-48dp
-                        start = 8.dp,
-                        end = 8.dp,
-                        bottom = 8.dp
+                    .then(
+                        if (aspectRatioValue != null) {
+                            Modifier.aspectRatio(aspectRatioValue)
+                        } else {
+                            Modifier
+                        }
                     )
+                    .background(BackgroundWhite)
 
             ) {
                 val templateToUse = selected ?: templates.firstOrNull() ?: CollageTemplates.defaultFor(uris.size.coerceAtLeast(1))
@@ -85,6 +102,7 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                     template = templateToUse,
                     gap = gapValue,
                     corner = cornerValue,
+                    backgroundColor = collageState.backgroundColor
                 )
             }
             // Bottom tools
@@ -94,10 +112,23 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                     when (tool) {
                         CollageTool.GRIDS -> {
                             showGridsSheet = true
+                            showRatioSheet = false
+                            showBackgroundSheet = false
                         }
-
+                        CollageTool.RATIO -> {
+                            showRatioSheet = true
+                            showGridsSheet = false
+                            showBackgroundSheet = false
+                        }
+                        CollageTool.BACKGROUND -> {
+                            showBackgroundSheet = true
+                            showGridsSheet = false
+                            showRatioSheet = false
+                        }
                         else -> {
                             showGridsSheet = false
+                            showRatioSheet = false
+                            showBackgroundSheet = false
                         }
                     }
                 }
@@ -123,6 +154,49 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                 onColumnMarginChange = { vm.updateColumnMargin(it) },
                 cornerRadius = cornerRadius,
                 onCornerRadiusChange = { vm.updateCornerRadius(it) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.BottomCenter)
+            )
+        }
+
+        // Ratio Sheet (hiện khi click Ratio tool)
+        if (showRatioSheet) {
+            RatioSheet(
+                selectedRatio = ratio,
+                onRatioSelect = { aspect ->
+                    vm.updateRatio(aspect.label)
+                },
+                onClose = {
+                    vm.cancelRatioChanges()
+                    showRatioSheet = false
+                },
+                onConfirm = {
+                    vm.confirmRatioChanges()
+                    showRatioSheet = false
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.BottomCenter)
+            )
+        }
+
+        if (showBackgroundSheet) {
+            BackgroundSheet(
+                selectedColor = collageState.backgroundColor,
+                onColorSelect = { color ->
+                    vm.updateBackgroundColor(color)
+                },
+                onClose = {
+                    vm.cancelBackgroundChanges()
+                    showBackgroundSheet = false
+                },
+                onConfirm = {
+                    vm.confirmBackgroundChanges()
+                    showBackgroundSheet = false
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()

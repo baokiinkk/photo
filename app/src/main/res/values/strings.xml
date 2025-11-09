@@ -53,4 +53,6 @@
     <string name="sharpen">Sharpen</string>
     <string name="grain">Grain</string>
     <string name="reset">Reset</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 </resources>
