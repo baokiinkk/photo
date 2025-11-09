@@ -1,11 +1,14 @@
 package com.amb.photo.ui.activities.editor.adjust
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.PixelFormat
+import android.net.Uri
 import android.opengl.GLSurfaceView
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.MotionEvent
 import androidx.activity.compose.setContent
@@ -36,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +49,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -55,16 +61,24 @@ import com.amb.photo.ui.activities.collage.components.CollageTool
 import com.amb.photo.ui.activities.collage.components.FeatureBottomTools
 import com.amb.photo.ui.activities.editor.crop.FooterEditor
 import com.amb.photo.ui.activities.editor.crop.ToolInput
+import com.amb.photo.ui.activities.editor.crop.saveImage
 import com.amb.photo.ui.theme.AppColor
 import com.amb.photo.ui.theme.AppStyle
 import com.amb.photo.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.ImageWidget
 import com.tanishranjan.cropkit.CropShape
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.wysaid.myUtils.ImageUtil
 import org.wysaid.nativePort.CGENativeLibrary
 import org.wysaid.nativePort.CGENativeLibrary.LoadImageCallback
 import org.wysaid.view.ImageGLSurfaceView
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 
 
@@ -91,18 +105,24 @@ class AdjustActivity : BaseActivity() {
         }
     }
 
+    private lateinit var glView: ImageGLSurfaceView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         CGENativeLibrary.setLoadImageCallback(this.mLoadImageCallback, null)
-
+        glView = ImageGLSurfaceView(this, null)
         viewmodel.initBitmap(screenInput?.getBitmap(this@AdjustActivity))
         enableEdgeToEdge()
         setContent {
+            val coroutineScope = rememberCoroutineScope()
             Scaffold(
                 containerColor = Color(0xFFF2F4F8)
             ) { inner ->
 //                GpuAdjustExample(viewmodel)
+                val view = LocalView.current
+
                 AdjustScreen(
+                    glView = glView,
                     modifier = Modifier.padding(
                         top = inner.calculateTopPadding(),
                         bottom = inner.calculateBottomPadding()
@@ -112,7 +132,33 @@ class AdjustActivity : BaseActivity() {
                         finish()
                     },
                     onApply = {
-                        finish()
+                        glView.getResultBitmap {
+//                            val pathBitmap = ImageUtil.saveBitmap(it)
+                            saveImage(
+                                context = this,
+                                croppedImage = it,
+                                onImageSaved = {pathBitmap->
+                                    val intent = Intent()
+                                    intent.putExtra("adjust", "$pathBitmap")
+                                    setResult(RESULT_OK, intent)
+                                    finish()
+                                }
+                            )
+                        }
+//                        coroutineScope.launch {
+//                            val bitmap =
+//                                captureComposableToBitmapFinal(view, viewmodel.captureRect!!)
+//                            saveImage(
+//                                context = this@AdjustActivity,
+//                                croppedImage = bitmap,
+//                                onImageSaved = { uri ->
+//                                    val intent = Intent()
+//                                    intent.putExtra("adjust", uri)
+//                                    setResult(RESULT_OK, intent)
+//                                    finish()
+//                                }
+//                            )
+//                        }
                     }
                 )
             }
@@ -122,6 +168,7 @@ class AdjustActivity : BaseActivity() {
 
 @Composable
 fun AdjustScreen(
+    glView: ImageGLSurfaceView,
     modifier: Modifier,
     viewmodel: AdjustViewModel,
     onCancel: () -> Unit,
@@ -129,6 +176,10 @@ fun AdjustScreen(
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     var showOriginal by remember { mutableStateOf(false) }
+
+//    val captureRect = remember { mutableStateOf<IntRect?>(null) }
+
+
     Column(
         modifier = modifier
     ) {
@@ -150,9 +201,13 @@ fun AdjustScreen(
                             .aspectRatio(it.width / it.height.toFloat())
                             .background(Color.Green)
                             .align(Alignment.Center)
+                            .captureComposableBounds { rect ->
+                                viewmodel.captureRect = rect
+                            }
 
                     ) {
                         GpuImageAdjustView(
+                            glView = glView,
                             modifier = Modifier
                                 .fillMaxSize(),
                             bitmap = it,
@@ -497,14 +552,13 @@ fun SliderAdjust(
 fun GpuImageAdjustView(
     bitmap: Bitmap,
     modifier: Modifier = Modifier,
-    uiState: AdjustUIState
+    uiState: AdjustUIState,
+    glView: ImageGLSurfaceView
 ) {
-
     AndroidView(
         modifier = modifier,
         factory = { context ->
             Log.d("updateV", "22222")
-            val glView = ImageGLSurfaceView(context, null)
             glView.displayMode = ImageGLSurfaceView.DisplayMode.DISPLAY_ASPECT_FIT
             glView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
             glView.setSurfaceCreatedCallback {
@@ -549,5 +603,4 @@ fun getNewConfig(
             "@vignette $vignette 1.0" +
             "@adjust fade $fade" +
             "@adjust grain $grain"
-
 }

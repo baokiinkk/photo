@@ -1,6 +1,7 @@
 package com.amb.photo.ui.activities.editor.adjust
 
 import android.graphics.Bitmap
+import androidx.compose.ui.unit.IntRect
 import com.amb.photo.R
 import com.amb.photo.ui.activities.collage.components.CollageTool
 import com.amb.photo.ui.activities.collage.components.ToolItem
@@ -31,6 +32,8 @@ class AdjustViewModel : BaseViewModel() {
     )
 
     val uiState = MutableStateFlow(AdjustUIState(items = items))
+
+    var captureRect: IntRect? = null
 
     fun initBitmap(bitmap: Bitmap?) {
         uiState.update {
