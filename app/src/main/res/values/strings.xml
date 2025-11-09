@@ -55,4 +55,10 @@
     <string name="reset">Reset</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="shapes">Shapes</string>
+    <string name="selfie">Selfie</string>
+    <string name="memory">Memory</string>
+    <string name="eart">Heart</string>
+    <string name="fancy">Fancy</string>
+    <string name="heart">Heart</string>
 </resources>

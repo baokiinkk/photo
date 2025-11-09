@@ -44,6 +44,7 @@ import com.amb.photo.ui.activities.collage.components.CollageTool
 import com.amb.photo.ui.activities.collage.components.FeatureBottomTools
 import com.amb.photo.ui.activities.collage.components.FeaturePhotoHeader
 import com.amb.photo.ui.activities.editor.adjust.AdjustActivity
+import com.amb.photo.ui.activities.editor.blur.BlurActivity
 import com.amb.photo.ui.activities.editor.crop.CropActivity
 import com.amb.photo.ui.activities.editor.crop.ToolInput
 import com.amb.photo.utils.getInput
@@ -154,6 +155,13 @@ class EditorActivity : BaseActivity() {
                                             )
                                         }
                                     }
+                                )
+                            }
+
+                            CollageTool.BLUR -> {
+                                launchActivity(
+                                    toActivity = BlurActivity::class.java,
+                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
                                 )
                             }
 

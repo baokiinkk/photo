@@ -62,6 +62,7 @@
         <activity android:name=".ui.activities.collage.CollageActivity" />
 
         <activity android:name=".ui.activities.editor.adjust.AdjustActivity" />
+        <activity android:name=".ui.activities.editor.blur.BlurActivity"/>
     </application>
 
 </manifest>
