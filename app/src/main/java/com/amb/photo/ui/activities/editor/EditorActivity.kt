@@ -147,7 +147,7 @@ class EditorActivity : BaseActivity() {
                                     input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
                                     callback = { result ->
                                         if (result.resultCode == RESULT_OK) {
-                                            val pathBitmap = result.data?.getStringExtra("adjust")
+                                            val pathBitmap = result.data?.getStringExtra("pathBitmap")
                                             Log.d("aaaa", "asdasdasd $pathBitmap")
                                             viewmodel.updateBitmap(
                                                 pathBitmap,
@@ -162,6 +162,15 @@ class EditorActivity : BaseActivity() {
                                 launchActivity(
                                     toActivity = BlurActivity::class.java,
                                     input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                    callback = { result ->
+                                        if (result.resultCode == RESULT_OK) {
+                                            val pathBitmap = result.data?.getStringExtra("pathBitmap")
+                                            viewmodel.updateBitmap(
+                                                pathBitmap,
+                                                pathBitmap.toBitmap(this)
+                                            )
+                                        }
+                                    }
                                 )
                             }
 

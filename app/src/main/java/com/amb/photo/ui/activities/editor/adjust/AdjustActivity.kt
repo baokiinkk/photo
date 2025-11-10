@@ -121,10 +121,10 @@ class AdjustActivity : BaseActivity() {
 //                            val pathBitmap = ImageUtil.saveBitmap(it)
                             saveImage(
                                 context = this,
-                                croppedImage = it,
+                                bitmap = it,
                                 onImageSaved = {pathBitmap->
                                     val intent = Intent()
-                                    intent.putExtra("adjust", "$pathBitmap")
+                                    intent.putExtra("pathBitmap", "$pathBitmap")
                                     setResult(RESULT_OK, intent)
                                     finish()
                                 }

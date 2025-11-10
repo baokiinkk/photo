@@ -219,7 +219,7 @@ fun CropImageScreen(
             onApply = {
                 saveImage(
                     context = context,
-                    croppedImage = cropController.crop(),
+                    bitmap = cropController.crop(),
                     onImageSaved = onApply
                 )
             },
@@ -592,7 +592,7 @@ fun FooterEditor(
         }
     }
 }
- fun saveImage(context: Context, croppedImage: Bitmap, onImageSaved: (String) -> Unit) {
+ fun saveImage(context: Context, bitmap: Bitmap, onImageSaved: (String) -> Unit) {
     val filename = "${System.currentTimeMillis()}.jpg"
     var fos: OutputStream? = null
     var imagePath: String? = null
@@ -622,7 +622,7 @@ fun FooterEditor(
     }
 
     fos?.use { stream ->
-        croppedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
     }
 
     imagePath?.let { onImageSaved.invoke(it) }

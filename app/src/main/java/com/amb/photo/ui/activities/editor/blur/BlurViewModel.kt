@@ -10,7 +10,6 @@ import org.koin.android.annotation.KoinViewModel
 @KoinViewModel
 class BlurViewModel : BaseViewModel() {
 
-
     fun getShapes(): List<Shape> {
         val mutableList = mutableListOf<Shape>()
         for (index in 1..27) {
@@ -57,6 +56,19 @@ class BlurViewModel : BaseViewModel() {
             )
         }
     }
+
+    fun updateBlur(blur: Float) {
+        uiState.update {
+            it.copy(blurBitmap = blur)
+        }
+    }
+
+    fun updateBlurBrush(blur: Float) {
+        uiState.update {
+            it.copy(blurBrush = blur)
+        }
+    }
+
 }
 
 data class BlurUIState(
@@ -64,7 +76,8 @@ data class BlurUIState(
     val shapeId: String = "1",
     val bitmap: Bitmap? = null,
     val originBitmap: Bitmap? = null,
-    val blur: Float = 0f
+    val blurBitmap: Float = 30f,
+    val blurBrush: Float = 0f
 )
 
 data class Shape(
