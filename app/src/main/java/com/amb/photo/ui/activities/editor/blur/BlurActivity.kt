@@ -1,6 +1,7 @@
 package com.amb.photo.ui.activities.editor.blur
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
@@ -65,8 +66,15 @@ class BlurActivity : BaseActivity() {
         intent.getInput()
     }
 
+    private lateinit var blurView: BlurView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        blurView = BlurView(this)
+        blurView.refreshDrawableState();
+        blurView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        blurView.addSticker(
+            viewmodel.getShapes()[0].item
+        )
         viewmodel.initBitmap(screenInput?.getBitmap(this))
 
         enableEdgeToEdge()
@@ -117,12 +125,17 @@ class BlurActivity : BaseActivity() {
                                     modifier = Modifier
                                         .fillMaxSize()
                                 )
+                                BlurView(
+                                    modifier = Modifier.fillMaxSize(),
+                                    blurView = blurView,
+                                    bitmap = it,
+                                    intensity = uiState.blur
+                                )
                             }
                         }
                     }
 
                     Spacer(modifier = Modifier.height(32.dp))
-
                     EditorToolPanel(
                         uiState = uiState,
                         modifier = Modifier
@@ -133,6 +146,10 @@ class BlurActivity : BaseActivity() {
                         selectedTab = selectedTab,
                         onItemClick = {
                             viewmodel.selectedItem(it)
+                            blurView.addSticker(it.item)
+                        },
+                        onSliderChange = {
+                            viewmodel.updateBlur(it)
                         }
                     )
                 }
@@ -148,7 +165,6 @@ fun EditorToolPanel(
     modifier: Modifier = Modifier,
     selectedTab: Int = 0,
     onTabSelected: (Int) -> Unit,
-    sliderValue: Float = 0.5f,
     onSliderChange: (Float) -> Unit = {},
     onItemClick: (Shape) -> Unit
 ) {
@@ -177,9 +193,7 @@ fun EditorToolPanel(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             value = uiState.blur,
-            onValueChange = {
-//                viewmodel.updateBrightness(it)
-            },
+            onValueChange = onSliderChange,
             valueRange = 0f..100f
         )
 
