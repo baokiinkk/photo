@@ -47,6 +47,7 @@ import com.amb.photo.ui.activities.editor.adjust.AdjustActivity
 import com.amb.photo.ui.activities.editor.blur.BlurActivity
 import com.amb.photo.ui.activities.editor.crop.CropActivity
 import com.amb.photo.ui.activities.editor.crop.ToolInput
+import com.amb.photo.ui.activities.editor.filter.FilterActivity
 import com.amb.photo.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
@@ -161,6 +162,22 @@ class EditorActivity : BaseActivity() {
                             CollageTool.BLUR -> {
                                 launchActivity(
                                     toActivity = BlurActivity::class.java,
+                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                    callback = { result ->
+                                        if (result.resultCode == RESULT_OK) {
+                                            val pathBitmap = result.data?.getStringExtra("pathBitmap")
+                                            viewmodel.updateBitmap(
+                                                pathBitmap,
+                                                pathBitmap.toBitmap(this)
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+
+                            CollageTool.FILTER -> {
+                                launchActivity(
+                                    toActivity = FilterActivity::class.java,
                                     input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
                                     callback = { result ->
                                         if (result.resultCode == RESULT_OK) {

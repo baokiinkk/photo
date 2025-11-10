@@ -72,12 +72,11 @@ class BlurActivity : BaseActivity() {
     }
 
     private lateinit var blurView: BlurView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         blurView = BlurView(this)
         blurView.tabShape()
-//        blurView.refreshDrawableState();
-//        blurView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         blurView.addSticker(
             viewmodel.getShapes()[0].item
         )
@@ -170,7 +169,7 @@ class BlurActivity : BaseActivity() {
                         canRedo = true
                         blurView.tabBrush()
                     }
-                    EditorToolPanel(
+                    BlurToolPanel(
                         uiState = uiState,
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -198,7 +197,7 @@ class BlurActivity : BaseActivity() {
 }
 
 @Composable
-fun EditorToolPanel(
+fun BlurToolPanel(
     uiState: BlurUIState,
     modifier: Modifier = Modifier,
     selectedTab: Int = TAB_BLUR.SHAPE.index,
@@ -255,7 +254,7 @@ fun EditorToolPanel(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 items(uiState.shapes) { item ->
-                    FilterItem(
+                    BlurItem(
                         item = item,
                         isSelected = uiState.shapeId == item.id,
                         onClick = {
@@ -441,7 +440,7 @@ private fun TabButton(
 }
 
 @Composable
-private fun FilterItem(
+private fun BlurItem(
     item: Shape,
     isSelected: Boolean,
     onClick: () -> Unit
