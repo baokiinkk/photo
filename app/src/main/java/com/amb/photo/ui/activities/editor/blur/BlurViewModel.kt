@@ -59,7 +59,13 @@ class BlurViewModel : BaseViewModel() {
 
     fun updateBlur(blur: Float) {
         uiState.update {
-            it.copy(blur = blur)
+            it.copy(blurBitmap = blur)
+        }
+    }
+
+    fun updateBlurBrush(blur: Float) {
+        uiState.update {
+            it.copy(blurBrush = blur)
         }
     }
 
@@ -70,7 +76,8 @@ data class BlurUIState(
     val shapeId: String = "1",
     val bitmap: Bitmap? = null,
     val originBitmap: Bitmap? = null,
-    val blur: Float = 30f
+    val blurBitmap: Float = 30f,
+    val blurBrush: Float = 0f
 )
 
 data class Shape(

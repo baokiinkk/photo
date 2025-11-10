@@ -13,6 +13,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.RectF
+import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -31,6 +32,7 @@ import java.util.Random
 import java.util.Stack
 import kotlin.math.atan2
 import kotlin.math.sqrt
+import androidx.core.graphics.createBitmap
 
 @Composable
 fun BlurView(
@@ -48,11 +50,27 @@ fun BlurView(
             blurView
         },
         update = { view ->
-            val bitmap = getBlurImageFromBitmap(bitmap, intensity/10)
+            val bitmap = getBlurImageFromBitmap(bitmap, intensity / 10)
             view.setImageBitmap(bitmap)
+
         }
     )
 }
+
+fun BlurView.tabShape() {
+    refreshDrawableState()
+    setLayerType(View.LAYER_TYPE_SOFTWARE, null as Paint?) //1
+    currentSplashMode = 0
+    invalidate()
+}
+
+fun BlurView.tabBrush() {
+    refreshDrawableState()
+    setLayerType(View.LAYER_TYPE_SOFTWARE, null as Paint?) //1
+    currentSplashMode = 1
+    invalidate()
+}
+
 
 fun getBlurImageFromBitmap(bitmap: Bitmap?, f: Float, total: Float = 10.0f): Bitmap? {
     val create = SharedContext.create()
@@ -480,40 +498,55 @@ class BlurView : AppCompatImageView {
         return !this.mRedoPaths.empty()
     }
 
+    fun getSoftwareBitmap(src: Bitmap): Bitmap {
+        // Nếu bitmap đã là software, trả luôn
+        if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                src.config != Bitmap.Config.HARDWARE
+            } else {
+                return src
+            }
+        ) return src
+
+        val bmp = src.copy(Bitmap.Config.ARGB_8888, true) // copy sang software
+        return bmp
+    }
+
     fun getBitmap(bitmap2: Bitmap): Bitmap {
+        val bitmap1 = getSoftwareBitmap(this.bitmap!!)
+        val bmp2 = getSoftwareBitmap(bitmap2)
+
         val width = getWidth()
         val height = getHeight()
         val createBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(createBitmap)
         canvas.drawBitmap(
-            this.bitmap!!,
-            null as Rect?,
-            RectF(0.0f, 0.0f, width.toFloat(), height.toFloat()),
-            null as Paint?
+            bitmap1,
+            null,
+            RectF(0f, 0f, width.toFloat(), height.toFloat()),
+            null
         )
+
         if (this.currentSplashMode == 0) {
             drawStickers(canvas)
         } else {
-            val it: MutableIterator<*> = this.mPoints.iterator()
-            while (it.hasNext()) {
-                val linePath: LinePath = it.next() as LinePath
-                canvas.drawPath(linePath.drawPath!!, linePath.drawPaint!!)
+            for (linePath in mPoints) {
+                canvas.drawPath(linePath?.drawPath!!, linePath.drawPaint!!)
             }
         }
-        val createBitmap2 =
-            Bitmap.createBitmap(bitmap2.getWidth(), bitmap2.getHeight(), Bitmap.Config.ARGB_8888)
+
+        val createBitmap2 = Bitmap.createBitmap(bmp2.width, bmp2.height, Bitmap.Config.ARGB_8888)
         val canvas2 = Canvas(createBitmap2)
         canvas2.drawBitmap(
-            bitmap2,
-            null as Rect?,
-            RectF(0.0f, 0.0f, bitmap2.getWidth().toFloat(), bitmap2.getHeight().toFloat()),
-            null as Paint?
+            bmp2,
+            null,
+            RectF(0f, 0f, bmp2.width.toFloat(), bmp2.height.toFloat()),
+            null
         )
         canvas2.drawBitmap(
             createBitmap,
-            null as Rect?,
-            RectF(0.0f, 0.0f, bitmap2.getWidth().toFloat(), bitmap2.getHeight().toFloat()),
-            null as Paint?
+            null,
+            RectF(0f, 0f, bmp2.width.toFloat(), bmp2.height.toFloat()),
+            null
         )
         return createBitmap2
     }

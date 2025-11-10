@@ -1,7 +1,7 @@
 package com.amb.photo.ui.activities.editor.blur
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
@@ -23,7 +23,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -39,16 +41,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.amb.photo.R
 import com.amb.photo.ui.activities.collage.components.FeaturePhotoHeader
 import com.amb.photo.ui.activities.editor.adjust.SliderTool
 import com.amb.photo.ui.activities.editor.crop.ToolInput
+import com.amb.photo.ui.activities.editor.crop.saveImage
 import com.amb.photo.ui.theme.AppColor
 import com.amb.photo.ui.theme.AppStyle
 import com.amb.photo.utils.getInput
@@ -57,6 +57,11 @@ import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
+enum class TAB_BLUR(val index: Int, val res: Int) {
+    SHAPE(0, R.string.shapes),
+    BRUSH(1, R.string.brush)
+}
 
 class BlurActivity : BaseActivity() {
 
@@ -70,8 +75,9 @@ class BlurActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         blurView = BlurView(this)
-        blurView.refreshDrawableState();
-        blurView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        blurView.tabShape()
+//        blurView.refreshDrawableState();
+//        blurView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         blurView.addSticker(
             viewmodel.getShapes()[0].item
         )
@@ -79,9 +85,10 @@ class BlurActivity : BaseActivity() {
 
         enableEdgeToEdge()
         setContent {
-            var selectedTab by remember { mutableStateOf(0) }
+            var selectedTab by remember { mutableStateOf(TAB_BLUR.SHAPE.index) }
             val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
-
+            var canUndo by remember { mutableStateOf(false) }
+            var canRedo by remember { mutableStateOf(false) }
             Scaffold(
                 containerColor = Color.White
             ) { inner ->
@@ -98,11 +105,28 @@ class BlurActivity : BaseActivity() {
                         onBack = {
                             finish()
                         },
-                        onUndo = { /* TODO */ },
-                        onRedo = { /* TODO */ },
-                        onSave = { /* TODO */ },
-                        canUndo = false,
-                        canRedo = false
+                        onUndo = {
+                            blurView.undo()
+                        },
+                        onRedo = {
+                            blurView.redo()
+                        },
+                        onSave = {
+                            uiState.bitmap?.let {
+                                saveImage(
+                                    context = this@BlurActivity,
+                                    bitmap = blurView.getBitmap(it),
+                                    onImageSaved = { pathBitmap ->
+                                        val intent = Intent()
+                                        intent.putExtra("pathBitmap", "$pathBitmap")
+                                        setResult(RESULT_OK, intent)
+                                        finish()
+                                    }
+                                )
+                            }
+                        },
+                        canUndo = canUndo,
+                        canRedo = canRedo
                     )
 
                     Spacer(modifier = Modifier.height(28.dp))
@@ -129,13 +153,23 @@ class BlurActivity : BaseActivity() {
                                     modifier = Modifier.fillMaxSize(),
                                     blurView = blurView,
                                     bitmap = it,
-                                    intensity = uiState.blur
+                                    intensity = uiState.blurBitmap
                                 )
                             }
                         }
                     }
 
                     Spacer(modifier = Modifier.height(32.dp))
+
+                    if (selectedTab == TAB_BLUR.SHAPE.index) {
+                        blurView.tabShape()
+                        canUndo = false
+                        canRedo = false
+                    } else {
+                        canUndo = true
+                        canRedo = true
+                        blurView.tabBrush()
+                    }
                     EditorToolPanel(
                         uiState = uiState,
                         modifier = Modifier
@@ -148,8 +182,12 @@ class BlurActivity : BaseActivity() {
                             viewmodel.selectedItem(it)
                             blurView.addSticker(it.item)
                         },
-                        onSliderChange = {
+                        onSliderShapeChange = {
                             viewmodel.updateBlur(it)
+                        },
+                        onSliderBrushChange = {
+                            viewmodel.updateBlurBrush(it)
+                            blurView.setBrushBitmapSize(it.toInt() + 25)
                         }
                     )
                 }
@@ -163,9 +201,10 @@ class BlurActivity : BaseActivity() {
 fun EditorToolPanel(
     uiState: BlurUIState,
     modifier: Modifier = Modifier,
-    selectedTab: Int = 0,
+    selectedTab: Int = TAB_BLUR.SHAPE.index,
     onTabSelected: (Int) -> Unit,
-    onSliderChange: (Float) -> Unit = {},
+    onSliderShapeChange: (Float) -> Unit,
+    onSliderBrushChange: (Float) -> Unit,
     onItemClick: (Shape) -> Unit
 ) {
 
@@ -181,43 +220,197 @@ fun EditorToolPanel(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            TabButton(0, "Shapes", selectedTab == 0, onTabSelected)
-            TabButton(1, "Brush", selectedTab == 1, onTabSelected)
+            TabButton(
+                0,
+                stringResource(TAB_BLUR.SHAPE.res),
+                selectedTab == TAB_BLUR.SHAPE.index,
+                onTabSelected
+            )
+            TabButton(
+                1,
+                stringResource(TAB_BLUR.BRUSH.res),
+                selectedTab == TAB_BLUR.BRUSH.index,
+                onTabSelected
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
         // Slider + value
-        SliderTool(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            value = uiState.blur,
-            onValueChange = onSliderChange,
-            valueRange = 0f..100f
-        )
+        if (selectedTab == TAB_BLUR.SHAPE.index) {
+            SliderTool(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                value = uiState.blurBitmap,
+                onValueChange = onSliderShapeChange,
+                valueRange = 0f..100f
+            )
+            Spacer(modifier = Modifier.height(20.dp))
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Horizontal filter list
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(uiState.shapes) { item ->
-                FilterItem(
-                    item = item,
-                    isSelected = uiState.shapeId == item.id,
-                    onClick = {
-                        onItemClick.invoke(item)
-                    }
-                )
+            // Horizontal filter list
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(uiState.shapes) { item ->
+                    FilterItem(
+                        item = item,
+                        isSelected = uiState.shapeId == item.id,
+                        onClick = {
+                            onItemClick.invoke(item)
+                        }
+                    )
+                }
             }
+        } else {
+            SliderTool(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                value = uiState.blurBitmap,
+                onValueChange = onSliderShapeChange,
+                valueRange = 0f..100f
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            BrushShapeSlider(
+                value = uiState.blurBrush,
+                onValueChange = onSliderBrushChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+
+        Spacer(modifier = Modifier.height(18.dp))
     }
 }
+
+@Composable
+fun BrushShapeSlider(
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ImageWidget(
+            resId = R.drawable.ic_brush_24,
+            modifier = Modifier.size(24.dp)
+        )
+
+        Spacer(modifier = Modifier.width(20.dp))
+
+        SliderZoom(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier
+                .weight(1f)
+        )
+
+        Spacer(modifier = Modifier.width(20.dp))
+
+        Text(
+            text = value.toInt().toString(),
+            style = AppStyle.body1().medium().gray800()
+        )
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SliderZoom(
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+//        Canvas(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(14.dp)
+//        ) {
+//            val width = size.width
+//            val height = size.height
+//
+//            // Độ dày đầu nhỏ / đầu to
+//            val startThickness = height * 0.3f
+//            val endThickness = height * 0.9f
+//
+//            val startRadius = startThickness / 2f
+//            val endRadius = endThickness / 2f
+//            val centerY = height / 2f
+//
+//            // Vẽ phần giữa (hình tứ giác nối hai đầu)
+//            val path = Path().apply {
+//                moveTo(startRadius, centerY - startRadius)
+//                lineTo(width - endRadius, centerY - endRadius)
+//                lineTo(width - endRadius, centerY + endRadius)
+//                lineTo(startRadius, centerY + startRadius)
+//                close()
+//            }
+//
+//            drawPath(
+//                path = path,
+//                color = Color(0xFFE9EDF3)
+//            )
+//
+//            // Vẽ hai đầu tròn
+//            drawCircle(
+//                color = Color(0xFFE9EDF3),
+//                radius = startRadius,
+//                center = Offset(startRadius, centerY)
+//            )
+//
+//            drawCircle(
+//                color = Color(0xFFE9EDF3),
+//                radius = endRadius,
+//                center = Offset(width - endRadius, centerY)
+//            )
+//        }
+
+        ImageWidget(
+            resId = R.drawable.bg_line_blur,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(14.dp)
+        )
+        // Slider chỉ để nhận drag và hiển thị thumb
+        Slider(
+            value = value,
+            onValueChange = onValueChange,
+            valueRange = 0f..100f,
+            modifier = Modifier
+                .fillMaxWidth(),
+            colors = SliderDefaults.colors(
+                thumbColor = Color(0xFF0F1826),
+                activeTrackColor = Color.Transparent,
+                inactiveTrackColor = Color.Transparent
+            ),
+            thumb = {
+                Box(
+                    modifier = Modifier
+                        .size(20.dp) // Tăng kích thước!
+                        .background(
+                            color = AppColor.Gray800,
+                            shape = CircleShape
+                        )
+                )
+            }
+        )
+    }
+}
+
 
 @Composable
 private fun TabButton(
@@ -231,7 +424,7 @@ private fun TabButton(
         modifier = Modifier.clickableWithAlphaEffect { onTabSelected(tabIndex) }
     ) {
         val icon =
-            if (text == stringResource(R.string.shapes)) R.drawable.ic_shapes else R.drawable.ic_brush
+            if (tabIndex == TAB_BLUR.SHAPE.index) R.drawable.ic_shapes else R.drawable.ic_brush
 
         ImageWidget(
             modifier = Modifier.size(32.dp),
