@@ -54,6 +54,7 @@ import com.amb.photo.ui.activities.editor.crop.CropActivity
 import com.amb.photo.ui.activities.editor.crop.ToolInput
 import com.amb.photo.ui.activities.editor.filter.FilterActivity
 import com.amb.photo.ui.activities.editor.sticker.StickerActivity
+import com.amb.photo.ui.activities.editor.text_sticker.TextStickerActivity
 import com.amb.photo.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
@@ -206,6 +207,23 @@ class EditorActivity : BaseActivity() {
                             CollageTool.STICKER -> {
                                 launchActivity(
                                     toActivity = StickerActivity::class.java,
+                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                    callback = { result ->
+                                        if (result.resultCode == RESULT_OK) {
+                                            val pathBitmap =
+                                                result.data?.getStringExtra("pathBitmap")
+                                            viewmodel.updateBitmap(
+                                                pathBitmap,
+                                                pathBitmap.toBitmap(this)
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+
+                            CollageTool.TEXT -> {
+                                launchActivity(
+                                    toActivity = TextStickerActivity::class.java,
                                     input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
                                     callback = { result ->
                                         if (result.resultCode == RESULT_OK) {

@@ -4,15 +4,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toUri
 import com.amb.photo.ui.activities.editor.sticker.lib.DrawableSticker
 import com.amb.photo.ui.activities.editor.sticker.lib.Sticker
 import com.amb.photo.ui.activities.editor.sticker.lib.StickerAsset.loadBitmapFromAssets
 import com.amb.photo.ui.activities.editor.sticker.lib.StickerView
+import com.amb.photo.ui.activities.editor.toBitmap
+
+sealed class StickerData {
+    data class StickerFromAsset(
+        val pathSticker: String,
+        val timestamp: Long = System.currentTimeMillis()
+    ) : StickerData()
+    data class StickerFromGallery(
+        val pathSticker: String,
+        val timestamp: Long = System.currentTimeMillis()
+    ) : StickerData()
+}
 
 @Composable
 fun StickerViewCompose(
     modifier: Modifier,
-    pathSticker: String,
+    input: StickerData,
 ) {
     AndroidView(
         modifier = modifier,
@@ -35,6 +48,7 @@ fun StickerViewCompose(
                 }
 
                 override fun onStickerDeleted(param1Sticker: Sticker) {
+
                 }
 
                 override fun onTextStickerEdit(param1Sticker: Sticker) {
@@ -81,15 +95,27 @@ fun StickerViewCompose(
             stickerView
         },
         update = { view ->
-            if (pathSticker.isNotEmpty()){
-                val drawable = loadBitmapFromAssets(
-                    view.context,
-                    pathSticker
-                )
-                view.addSticker(
-                    DrawableSticker(drawable?.toDrawable(view.resources))
-                )
+            when (input) {
+                is StickerData.StickerFromAsset -> {
+                    if (input.pathSticker.isNotEmpty()) {
+                        val drawable = loadBitmapFromAssets(
+                            view.context,
+                            input.pathSticker
+                        )
+                        view.addSticker(
+                            DrawableSticker(drawable?.toDrawable(view.resources))
+                        )
+                    }
+                }
+
+                is StickerData.StickerFromGallery -> {
+                    val bitmap = input.pathSticker.toUri().toBitmap(view.context)
+                    view.addSticker(
+                        DrawableSticker(bitmap?.toDrawable(view.resources))
+                    )
+                }
             }
+
         }
     )
 }

@@ -37,6 +37,7 @@ koin-annotation = "2.1.0"
 ksp = "2.2.0-2.0.2"
 coil = "2.4.0"
 lifecycleService = "2.9.4"
+ui = "1.9.4"
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityCompose" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
@@ -89,6 +90,7 @@ koin-core-coroutines = { group = "io.insert-koin", name = "koin-core-coroutines"
 koin-annotation = { group = "io.insert-koin", name = "koin-annotations", version.ref = "koin-annotation" }
 koin-ksp-compiler = { group = "io.insert-koin", name = "koin-ksp-compiler", version.ref = "koin-annotation" }
 androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

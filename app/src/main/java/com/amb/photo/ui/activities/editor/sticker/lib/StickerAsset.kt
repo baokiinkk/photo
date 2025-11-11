@@ -18,6 +18,13 @@ object StickerAsset {
         val stickerAssetEntities: MutableList<EmojiTab> = ArrayList()
         stickerAssetEntities.add(
             EmojiTab(
+                "Emoji",
+                R.drawable.ic_cate_sticker_emoij,
+                lstEmoj()
+            )
+        )
+        stickerAssetEntities.add(
+            EmojiTab(
                 "CatFace",
                 R.drawable.ic_cate_sticker_cat,
                 items = lstCatFaces()
@@ -70,13 +77,6 @@ object StickerAsset {
                 "Heart",
                 R.drawable.ic_cate_sticker_heart,
                 lstHearts()
-            )
-        )
-        stickerAssetEntities.add(
-            EmojiTab(
-                "Emoji",
-                R.drawable.ic_cate_sticker_emoij,
-                lstEmoj()
             )
         )
         stickerAssetEntities.add(
@@ -665,7 +665,7 @@ object StickerAsset {
     fun loadBitmapFromAssets(context: Context, str: String): Bitmap? {
         val inputStream: InputStream?
         try {
-            inputStream = context.getAssets().open(str)
+            inputStream = context.assets.open(str)
             val decodeStream = BitmapFactory.decodeStream(inputStream)
             inputStream.close()
             return decodeStream

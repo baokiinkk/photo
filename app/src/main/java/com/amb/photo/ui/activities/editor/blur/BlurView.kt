@@ -500,18 +500,7 @@ class BlurView : AppCompatImageView {
         return !this.mRedoPaths.empty()
     }
 
-    fun getSoftwareBitmap(src: Bitmap): Bitmap {
-        // Nếu bitmap đã là software, trả luôn
-        if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                src.config != Bitmap.Config.HARDWARE
-            } else {
-                return src
-            }
-        ) return src
 
-        val bmp = src.copy(Bitmap.Config.ARGB_8888, true) // copy sang software
-        return bmp
-    }
 
     fun getBitmap(bitmap2: Bitmap): Bitmap {
         val bitmap1 = getSoftwareBitmap(this.bitmap!!)
@@ -589,4 +578,17 @@ object SystemUtil {
         val tag = "lg"
         logs(tag, log)
     }
+}
+
+fun getSoftwareBitmap(src: Bitmap): Bitmap {
+    // Nếu bitmap đã là software, trả luôn
+    if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            src.config != Bitmap.Config.HARDWARE
+        } else {
+            return src
+        }
+    ) return src
+
+    val bmp = src.copy(Bitmap.Config.ARGB_8888, true) // copy sang software
+    return bmp
 }

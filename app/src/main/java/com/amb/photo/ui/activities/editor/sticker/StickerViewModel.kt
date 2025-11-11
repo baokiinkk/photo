@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.amb.photo.R
 import com.amb.photo.ui.activities.editor.sticker.lib.EmojiTab
 import com.amb.photo.ui.activities.editor.sticker.lib.StickerAsset
-import com.amb.photo.ui.activities.editor.sticker.lib.StickerAsset.lstCatFaces
+import com.amb.photo.ui.activities.editor.sticker.lib.StickerAsset.lstEmoj
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,24 +43,48 @@ class StickerViewModel : BaseViewModel() {
         }
     }
 
-    fun selectedSticker(path: String) {
+    fun addStickerFromAsset(path: String) {
         uiState.update {
             it.copy(
-                pathSticker = path
+                pathSticker = StickerData.StickerFromAsset(path)
             )
         }
     }
 
+    fun addStickerFromGallery(path: String) {
+        uiState.update {
+            it.copy(
+                pathSticker = StickerData.StickerFromGallery(path)
+            )
+        }
+    }
+
+    fun showLoading() {
+        uiState.update {
+            it.copy(
+                isLoading = true
+            )
+        }
+    }
+
+    fun hideLoading() {
+        uiState.update {
+            it.copy(
+                isLoading = false
+            )
+        }
+    }
 }
 
 data class StickerUIState(
     val originBitmap: Bitmap? = null,
     val currentTab: EmojiTab = EmojiTab(
-        "CatFace",
-        R.drawable.ic_cate_sticker_cat,
-        items = lstCatFaces()
+        "Emoji",
+        R.drawable.ic_cate_sticker_emoij,
+        items = lstEmoj()
     ),
     val emojiTabs: List<EmojiTab> = emptyList(),
-    val pathSticker: String= ""
+    val pathSticker: StickerData = StickerData.StickerFromAsset(""),
+    val isLoading: Boolean = false,
 )
 

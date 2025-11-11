@@ -215,7 +215,7 @@ class StickerView : RelativeLayout {
 
     fun configStickerIcons() {
         val bitmapStickerIcon = BitmapStickerIcon(
-            ContextCompat.getDrawable(context, R.drawable.ic_sticker_cancel),
+            ContextCompat.getDrawable(context, R.drawable.ic_close_sticker),
             0,
             BitmapStickerIcon.REMOVE
         )
@@ -250,14 +250,14 @@ class StickerView : RelativeLayout {
     }
 
     fun configDefaultIcons() {
-        val bitmapStickerIcon: BitmapStickerIcon = BitmapStickerIcon(
-            ContextCompat.getDrawable(context, R.drawable.ic_sticker_cancel),
+        val bitmapStickerIcon = BitmapStickerIcon(
+            ContextCompat.getDrawable(context, R.drawable.ic_close_sticker),
             0,
             BitmapStickerIcon.REMOVE
         )
         bitmapStickerIcon.setIconEvent(DeleteIconEvent())
 
-        val zoomIcon: BitmapStickerIcon = BitmapStickerIcon(
+        val zoomIcon = BitmapStickerIcon(
             ContextCompat.getDrawable(context, R.drawable.ic_sticker_scale),
             3,
             BitmapStickerIcon.ZOOM
