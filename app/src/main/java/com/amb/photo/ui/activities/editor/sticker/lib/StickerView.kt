@@ -223,17 +223,17 @@ class StickerView : RelativeLayout {
 
         val bitmapStickerIcon3: BitmapStickerIcon = BitmapStickerIcon(
             ContextCompat.getDrawable(context, R.drawable.ic_sticker_flip),
-            1,
+            2,
             BitmapStickerIcon.FLIP
         )
         bitmapStickerIcon3.setIconEvent(FlipHorizontallyEvent())
 
-        val resetIcon: BitmapStickerIcon = BitmapStickerIcon(
-            ContextCompat.getDrawable(context, R.drawable.ic_textrestore),
-            2,
-            BitmapStickerIcon.RESET
-        )
-        resetIcon.setIconEvent(ResetIconEvent())
+//        val resetIcon = BitmapStickerIcon(
+//            ContextCompat.getDrawable(context, R.drawable.ic_textrestore),
+//            2,
+//            BitmapStickerIcon.RESET
+//        )
+//        resetIcon.setIconEvent(ResetIconEvent())
 
         val bitmapStickerIcon2: BitmapStickerIcon = BitmapStickerIcon(
             ContextCompat.getDrawable(context, R.drawable.ic_sticker_scale),
@@ -246,7 +246,7 @@ class StickerView : RelativeLayout {
         this.icons.add(bitmapStickerIcon)
         this.icons.add(bitmapStickerIcon2)
         this.icons.add(bitmapStickerIcon3)
-        this.icons.add(resetIcon)
+//        this.icons.add(resetIcon)
     }
 
     fun configDefaultIcons() {
