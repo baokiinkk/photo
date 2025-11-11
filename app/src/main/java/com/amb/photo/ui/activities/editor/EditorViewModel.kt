@@ -71,7 +71,12 @@ class EditorViewModel : BaseViewModel() {
             )
 
             val newBitmap = bitmap.scale(scaledSize.width.toInt(), scaledSize.height.toInt())
-            uiState.update { it.copy(bitmap = newBitmap) }
+            uiState.update {
+                it.copy(
+                    bitmap = newBitmap,
+                    originBitmap = bitmap
+                )
+            }
         }
     }
 

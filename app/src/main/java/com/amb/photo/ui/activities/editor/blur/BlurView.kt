@@ -17,6 +17,7 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,7 +25,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.view.MotionEventCompat
 import androidx.core.view.ViewCompat
-import com.amb.photo.ui.activities.editor.sticker.Sticker
+import com.amb.photo.ui.activities.editor.sticker.lib.Sticker
 import org.wysaid.common.SharedContext
 import org.wysaid.nativePort.CGEImageHandler
 import java.text.MessageFormat
@@ -32,14 +33,14 @@ import java.util.Random
 import java.util.Stack
 import kotlin.math.atan2
 import kotlin.math.sqrt
-import androidx.core.graphics.createBitmap
 
 @Composable
 fun BlurView(
     modifier: Modifier,
     blurView: BlurView,
     bitmap: Bitmap,
-    intensity: Float
+    intensity: Float,
+    scaleType: ImageView.ScaleType = ImageView.ScaleType.FIT_CENTER
 ) {
     AndroidView(
         modifier = modifier,
@@ -47,12 +48,12 @@ fun BlurView(
             blurView.setImageBitmap(
                 getBlurImageFromBitmap(bitmap, 3.0f)
             )
+            blurView.scaleType = scaleType
             blurView
         },
         update = { view ->
             val bitmap = getBlurImageFromBitmap(bitmap, intensity / 10)
             view.setImageBitmap(bitmap)
-
         }
     )
 }
@@ -426,6 +427,7 @@ class BlurView : AppCompatImageView {
 
 
     fun findHandlingSticker(): Sticker? {
+        if (this.sticker == null) return null
         if (isInStickerArea(this.sticker!!, this.mTouchX, this.mTouchY)) {
             return this.sticker
         }
@@ -498,18 +500,7 @@ class BlurView : AppCompatImageView {
         return !this.mRedoPaths.empty()
     }
 
-    fun getSoftwareBitmap(src: Bitmap): Bitmap {
-        // Nếu bitmap đã là software, trả luôn
-        if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                src.config != Bitmap.Config.HARDWARE
-            } else {
-                return src
-            }
-        ) return src
 
-        val bmp = src.copy(Bitmap.Config.ARGB_8888, true) // copy sang software
-        return bmp
-    }
 
     fun getBitmap(bitmap2: Bitmap): Bitmap {
         val bitmap1 = getSoftwareBitmap(this.bitmap!!)
@@ -587,4 +578,17 @@ object SystemUtil {
         val tag = "lg"
         logs(tag, log)
     }
+}
+
+fun getSoftwareBitmap(src: Bitmap): Bitmap {
+    // Nếu bitmap đã là software, trả luôn
+    if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            src.config != Bitmap.Config.HARDWARE
+        } else {
+            return src
+        }
+    ) return src
+
+    val bmp = src.copy(Bitmap.Config.ARGB_8888, true) // copy sang software
+    return bmp
 }
