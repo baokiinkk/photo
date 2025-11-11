@@ -1,21 +1,11 @@
 package com.amb.photo.ui.activities.editor.sticker
 
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
 import androidx.annotation.IntRange
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
 import kotlin.math.atan2
 import kotlin.math.pow
 import kotlin.math.sqrt

@@ -108,9 +108,6 @@ class EditorActivity : BaseActivity() {
         CGENativeLibrary.setLoadImageCallback(this.mLoadImageCallback, null)
         blurView = BlurView(this)
         blurView.tabShape()
-//        blurView.addSticker(
-//            getShapes()[0].item
-//        )
         viewmodel.setPathBitmap(screenInput?.pathBitmap, screenInput?.pathBitmap.toBitmap(this))
         enableEdgeToEdge()
         setContent {
