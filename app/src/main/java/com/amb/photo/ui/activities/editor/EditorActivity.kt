@@ -10,10 +10,12 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.ImageView
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -45,6 +47,9 @@ import com.amb.photo.ui.activities.collage.components.FeatureBottomTools
 import com.amb.photo.ui.activities.collage.components.FeaturePhotoHeader
 import com.amb.photo.ui.activities.editor.adjust.AdjustActivity
 import com.amb.photo.ui.activities.editor.blur.BlurActivity
+import com.amb.photo.ui.activities.editor.blur.BlurView
+import com.amb.photo.ui.activities.editor.blur.getShapes
+import com.amb.photo.ui.activities.editor.blur.tabShape
 import com.amb.photo.ui.activities.editor.crop.CropActivity
 import com.amb.photo.ui.activities.editor.crop.ToolInput
 import com.amb.photo.ui.activities.editor.filter.FilterActivity
@@ -90,6 +95,8 @@ class EditorActivity : BaseActivity() {
         }
     }
 
+    private lateinit var blurView: BlurView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
@@ -99,8 +106,11 @@ class EditorActivity : BaseActivity() {
         }
 
         CGENativeLibrary.setLoadImageCallback(this.mLoadImageCallback, null)
-
-
+        blurView = BlurView(this)
+        blurView.tabShape()
+//        blurView.addSticker(
+//            getShapes()[0].item
+//        )
         viewmodel.setPathBitmap(screenInput?.pathBitmap, screenInput?.pathBitmap.toBitmap(this))
         enableEdgeToEdge()
         setContent {
@@ -109,6 +119,7 @@ class EditorActivity : BaseActivity() {
                 containerColor = Color(0xFFF2F4F8)
             ) { inner ->
                 EditorScreen(
+                    blurView = blurView,
                     viewmodel = viewmodel,
                     modifier = Modifier
                         .fillMaxSize()
@@ -148,7 +159,8 @@ class EditorActivity : BaseActivity() {
                                     input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
                                     callback = { result ->
                                         if (result.resultCode == RESULT_OK) {
-                                            val pathBitmap = result.data?.getStringExtra("pathBitmap")
+                                            val pathBitmap =
+                                                result.data?.getStringExtra("pathBitmap")
                                             Log.d("aaaa", "asdasdasd $pathBitmap")
                                             viewmodel.updateBitmap(
                                                 pathBitmap,
@@ -165,7 +177,8 @@ class EditorActivity : BaseActivity() {
                                     input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
                                     callback = { result ->
                                         if (result.resultCode == RESULT_OK) {
-                                            val pathBitmap = result.data?.getStringExtra("pathBitmap")
+                                            val pathBitmap =
+                                                result.data?.getStringExtra("pathBitmap")
                                             viewmodel.updateBitmap(
                                                 pathBitmap,
                                                 pathBitmap.toBitmap(this)
@@ -181,7 +194,8 @@ class EditorActivity : BaseActivity() {
                                     input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
                                     callback = { result ->
                                         if (result.resultCode == RESULT_OK) {
-                                            val pathBitmap = result.data?.getStringExtra("pathBitmap")
+                                            val pathBitmap =
+                                                result.data?.getStringExtra("pathBitmap")
                                             viewmodel.updateBitmap(
                                                 pathBitmap,
                                                 pathBitmap.toBitmap(this)
@@ -232,10 +246,10 @@ fun EditorScreen(
     modifier: Modifier = Modifier,
     viewmodel: EditorViewModel,
     onBack: () -> Unit,
-    onToolClick: (CollageTool) -> Unit
+    onToolClick: (CollageTool) -> Unit,
+    blurView: BlurView
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
-    var boxSize by remember { mutableStateOf(IntSize.Zero) }
 
     Column(modifier) {
         FeaturePhotoHeader(
@@ -306,15 +320,23 @@ fun EditorScreen(
 //                                viewmodel.scaleBitmapToBox(newSize.toSize())
 //                            }
                         }
+                        .background(Color.Red)
                 ) {
                     uiState.originBitmap?.let {
                         Image(
                             bitmap = it.asImageBitmap(),
                             contentDescription = null,
-                            contentScale = ContentScale.None,
-                            alignment = Alignment.Center,
+                            contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxSize()
+                        )
+                        BlurView(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            blurView = blurView,
+                            bitmap = it,
+                            intensity = 30f,
+                            scaleType = ImageView.ScaleType.CENTER_CROP
                         )
                     }
                     uiState.bitmap?.let {

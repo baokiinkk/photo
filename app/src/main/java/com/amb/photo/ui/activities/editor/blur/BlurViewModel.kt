@@ -10,39 +10,11 @@ import org.koin.android.annotation.KoinViewModel
 @KoinViewModel
 class BlurViewModel : BaseViewModel() {
 
-    fun getShapes(): List<Shape> {
-        val mutableList = mutableListOf<Shape>()
-        for (index in 1..27) {
-            mutableList.add(
-                Shape(
-                    id = "$index",
-                    text = getNameShapeByIndex(index),
-                    item = SplashSticker(
-                        paramBitmapXor1Path = "pip/pipstyle_$index/mask.webp",
-                        paramBitmapOver2Path = "pip/pipstyle_$index/background.webp"
-                    ),
-                    iconUrl = "pip/pipstyle_$index/preview.webp"
-                )
-            )
-        }
-        return mutableList
-    }
-
 
     val uiState = MutableStateFlow(BlurUIState(getShapes()))
 
 
-    fun getNameShapeByIndex(index: Int): Int {
-        return when (index) {
-            1 -> R.string.selfie
-            2 -> R.string.memory
-            3 -> R.string.heart
-            4 -> R.string.fancy
-            else -> {
-                R.string.selfie
-            }
-        }
-    }
+
 
     fun selectedItem(item: Shape) {
         uiState.value = uiState.value.copy(shapeId = item.id)

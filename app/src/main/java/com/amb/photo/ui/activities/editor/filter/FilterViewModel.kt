@@ -16,26 +16,52 @@ class FilterViewModel : BaseViewModel() {
 
     fun getConfigFilter(bitmap: Bitmap?) {
         uiState.update {
-            it.copy(originBitmap = bitmap)
+            it.copy(
+                originBitmap = bitmap,
+                isLoading = true
+            )
         }
         viewModelScope.launch(Dispatchers.IO) {
             val filters = FilterUtils.initDataFilter(bitmap)
             uiState.update {
-                it.copy(filters = filters)
+                it.copy(
+                    filters = filters,
+                    isLoading = false
+                )
             }
         }
     }
 
     fun onItemClick(item: FilterBean) {
         uiState.update {
-            it.copy(filterId = item.name.orEmpty())
+            it.copy(
+                filterId = item.name.orEmpty(),
+                currentConfig = item.config
+            )
         }
     }
 
+    fun showLoading() {
+        uiState.update {
+            it.copy(
+                isLoading = true
+            )
+        }
+    }
+
+    fun hideLoading() {
+        uiState.update {
+            it.copy(
+                isLoading = false
+            )
+        }
+    }
 }
 
 data class FilterUIState(
     val filters: List<FilterBean> = emptyList(),
-    val filterId: String = "Fresh 01",
+    val filterId: String = "Original",
     val originBitmap: Bitmap? = null,
+    val isLoading: Boolean = false,
+    val currentConfig: String = ""
 )

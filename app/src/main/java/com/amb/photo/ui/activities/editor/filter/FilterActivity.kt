@@ -1,6 +1,10 @@
 package com.amb.photo.ui.activities.editor.filter
 
+import android.content.Intent
+import android.graphics.Bitmap
+import android.opengl.GLSurfaceView
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
@@ -22,7 +26,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,17 +36,22 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.amb.photo.R
+import com.amb.photo.ui.activities.editor.adjust.AdjustUIState
+import com.amb.photo.ui.activities.editor.adjust.getNewConfig
 import com.amb.photo.ui.activities.editor.crop.FooterEditor
 import com.amb.photo.ui.activities.editor.crop.ToolInput
+import com.amb.photo.ui.activities.editor.crop.saveImage
 import com.amb.photo.ui.theme.AppColor
-import com.amb.photo.ui.theme.AppStyle
+import com.amb.photo.ui.theme.LoadingScreen
 import com.amb.photo.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.clickableWithAlphaEffect
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.wysaid.view.ImageGLSurfaceView
 
 class FilterActivity : BaseActivity() {
 
@@ -53,8 +61,11 @@ class FilterActivity : BaseActivity() {
         intent.getInput()
     }
 
+    private lateinit var glView: ImageGLSurfaceView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        glView = ImageGLSurfaceView(this, null)
         viewmodel.getConfigFilter(screenInput?.getBitmap(this))
         enableEdgeToEdge()
 
@@ -86,11 +97,12 @@ class FilterActivity : BaseActivity() {
                                     .align(Alignment.Center)
 
                             ) {
-                                Image(
-                                    bitmap = it.asImageBitmap(),
-                                    contentDescription = null,
+                                GpuImageFilterView(
+                                    bitmap = it,
                                     modifier = Modifier
-                                        .fillMaxSize()
+                                        .fillMaxSize(),
+                                    config = uiState.currentConfig,
+                                    glView = glView
                                 )
                             }
                         }
@@ -106,9 +118,26 @@ class FilterActivity : BaseActivity() {
                             finish()
                         },
                         onApply = {
-//                            viewmodel.onApply()
+                            viewmodel.showLoading()
+                            glView.getResultBitmap {
+                                saveImage(
+                                    context = this@FilterActivity,
+                                    bitmap = it,
+                                    onImageSaved = { pathBitmap ->
+                                        viewmodel.hideLoading()
+                                        val intent = Intent()
+                                        intent.putExtra("pathBitmap", "$pathBitmap")
+                                        setResult(RESULT_OK, intent)
+                                        finish()
+                                    }
+                                )
+                            }
                         }
                     )
+                }
+
+                if (uiState.isLoading) {
+                    LoadingScreen()
                 }
             }
         }
@@ -152,7 +181,6 @@ fun FilterToolPanel(
             onCancel = onCancel,
             onApply = onApply
         )
-        Spacer(modifier = Modifier.height(26.dp))
     }
 }
 
@@ -184,13 +212,31 @@ private fun FilterItem(
                 contentScale = ContentScale.Crop,
             )
         }
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = item.name.orEmpty(),
-            style = if (isSelected) AppStyle.caption2().medium()
-                .primary500() else AppStyle.caption2().medium().gray800()
-        )
     }
+}
+
+@Composable
+fun GpuImageFilterView(
+    bitmap: Bitmap,
+    modifier: Modifier = Modifier,
+    config: String,
+    glView: ImageGLSurfaceView
+) {
+    AndroidView(
+        modifier = modifier,
+        factory = { context ->
+            glView.displayMode = ImageGLSurfaceView.DisplayMode.DISPLAY_ASPECT_FIT
+            glView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+            glView.setSurfaceCreatedCallback {
+                glView.setImageBitmap(bitmap)
+                glView.setFilterWithConfig(config)
+            }
+            glView
+        },
+        update = { view ->
+            view.queueEvent {
+                view.setFilterWithConfig(config)
+            }
+        }
+    )
 }

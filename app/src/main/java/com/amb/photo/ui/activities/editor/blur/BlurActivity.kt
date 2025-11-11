@@ -78,7 +78,7 @@ class BlurActivity : BaseActivity() {
         blurView = BlurView(this)
         blurView.tabShape()
         blurView.addSticker(
-            viewmodel.getShapes()[0].item
+            getShapes()[0].item
         )
         viewmodel.initBitmap(screenInput?.getBitmap(this))
 

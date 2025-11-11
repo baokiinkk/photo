@@ -1,6 +1,5 @@
 package com.amb.photo.ui.activities.editor.blur
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -9,9 +8,39 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.drawable.Drawable
 import androidx.annotation.IntRange
 import com.amb.photo.BaseApplication
+import com.amb.photo.R
 import com.amb.photo.ui.activities.editor.sticker.Sticker
 import com.amb.photo.ui.activities.editor.sticker.StickerAsset
 
+fun getShapes(): List<Shape> {
+    val mutableList = mutableListOf<Shape>()
+    for (index in 1..27) {
+        mutableList.add(
+            Shape(
+                id = "$index",
+                text = getNameShapeByIndex(index),
+                item = SplashSticker(
+                    paramBitmapXor1Path = "pip/pipstyle_$index/mask.webp",
+                    paramBitmapOver2Path = "pip/pipstyle_$index/background.webp"
+                ),
+                iconUrl = "pip/pipstyle_$index/preview.webp"
+            )
+        )
+    }
+    return mutableList
+}
+
+fun getNameShapeByIndex(index: Int): Int {
+    return when (index) {
+        1 -> R.string.selfie
+        2 -> R.string.memory
+        3 -> R.string.heart
+        4 -> R.string.fancy
+        else -> {
+            R.string.selfie
+        }
+    }
+}
 
 class SplashSticker(
     paramBitmapXor1Path: String?,

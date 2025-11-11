@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import org.wysaid.common.SharedContext
 import org.wysaid.nativePort.CGEImageHandler
 
-class FilterBean(var config: String?, var name: String?, val bitmap: Bitmap? = null)
+class FilterBean(var config: String, var name: String?, val bitmap: Bitmap? = null)
 
 object FilterUtils {
 

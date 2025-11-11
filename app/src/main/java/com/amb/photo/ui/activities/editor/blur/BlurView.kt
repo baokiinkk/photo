@@ -17,6 +17,7 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,14 +33,14 @@ import java.util.Random
 import java.util.Stack
 import kotlin.math.atan2
 import kotlin.math.sqrt
-import androidx.core.graphics.createBitmap
 
 @Composable
 fun BlurView(
     modifier: Modifier,
     blurView: BlurView,
     bitmap: Bitmap,
-    intensity: Float
+    intensity: Float,
+    scaleType: ImageView.ScaleType = ImageView.ScaleType.FIT_CENTER
 ) {
     AndroidView(
         modifier = modifier,
@@ -47,12 +48,12 @@ fun BlurView(
             blurView.setImageBitmap(
                 getBlurImageFromBitmap(bitmap, 3.0f)
             )
+            blurView.scaleType = scaleType
             blurView
         },
         update = { view ->
             val bitmap = getBlurImageFromBitmap(bitmap, intensity / 10)
             view.setImageBitmap(bitmap)
-
         }
     )
 }
@@ -426,6 +427,7 @@ class BlurView : AppCompatImageView {
 
 
     fun findHandlingSticker(): Sticker? {
+        if (this.sticker == null) return null
         if (isInStickerArea(this.sticker!!, this.mTouchX, this.mTouchY)) {
             return this.sticker
         }
