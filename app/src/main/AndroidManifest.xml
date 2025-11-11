@@ -65,6 +65,7 @@
         <activity android:name=".ui.activities.editor.blur.BlurActivity" />
         <activity android:name=".ui.activities.editor.filter.FilterActivity" />
         <activity android:name=".ui.activities.editor.sticker.StickerActivity" />
+        <activity android:name=".ui.activities.editor.text_sticker.TextStickerActivity" />
     </application>
 
 </manifest>

@@ -5,7 +5,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
@@ -26,11 +25,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import com.amb.photo.R
 import com.amb.photo.ui.activities.editor.blur.SystemUtil
-import com.amb.photo.ui.activities.editor.text_sticker.TextSticker
+import com.amb.photo.ui.activities.editor.text_sticker.lib.TextSticker
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Arrays

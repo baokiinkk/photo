@@ -2,6 +2,7 @@ package com.amb.photo.ui.activities.editor.sticker
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -56,6 +57,7 @@ class StickerActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewmodel.getConfigSticker(screenInput?.getBitmap(this))
+        enableEdgeToEdge()
         setContent {
             Scaffold(
                 containerColor = Color(0xFFF2F4F8)

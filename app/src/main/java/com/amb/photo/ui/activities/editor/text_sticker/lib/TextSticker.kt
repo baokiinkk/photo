@@ -1,4 +1,4 @@
-package com.amb.photo.ui.activities.editor.text_sticker
+package com.amb.photo.ui.activities.editor.text_sticker.lib
 
 import android.content.Context
 import android.graphics.BitmapShader
