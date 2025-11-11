@@ -9,8 +9,8 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.IntRange
 import com.amb.photo.BaseApplication
 import com.amb.photo.R
-import com.amb.photo.ui.activities.editor.sticker.Sticker
-import com.amb.photo.ui.activities.editor.sticker.StickerAsset
+import com.amb.photo.ui.activities.editor.sticker.lib.Sticker
+import com.amb.photo.ui.activities.editor.sticker.lib.StickerAsset
 
 fun getShapes(): List<Shape> {
     val mutableList = mutableListOf<Shape>()

@@ -1,4 +1,4 @@
-package com.amb.photo.ui.activities.editor.sticker
+package com.amb.photo.ui.activities.editor.sticker.lib
 
 import android.graphics.Canvas
 import android.graphics.Matrix
@@ -9,7 +9,6 @@ import androidx.annotation.IntRange
 import kotlin.math.atan2
 import kotlin.math.pow
 import kotlin.math.sqrt
-
 
 abstract class Sticker {
     private val boundPoints = FloatArray(8)
@@ -247,4 +246,3 @@ abstract class Sticker {
         ).toFloat()
     }
 }
-

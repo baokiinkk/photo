@@ -1,4 +1,4 @@
-package com.amb.photo.ui.activities.editor.sticker
+package com.amb.photo.ui.activities.editor.sticker.lib
 
 import android.content.Context
 import android.content.Intent

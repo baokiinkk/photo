@@ -25,7 +25,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.view.MotionEventCompat
 import androidx.core.view.ViewCompat
-import com.amb.photo.ui.activities.editor.sticker.Sticker
+import com.amb.photo.ui.activities.editor.sticker.lib.Sticker
 import org.wysaid.common.SharedContext
 import org.wysaid.nativePort.CGEImageHandler
 import java.text.MessageFormat
