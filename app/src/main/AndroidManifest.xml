@@ -65,7 +65,12 @@
         <activity android:name=".ui.activities.editor.blur.BlurActivity" />
         <activity android:name=".ui.activities.editor.filter.FilterActivity" />
         <activity android:name=".ui.activities.editor.sticker.StickerActivity" />
-        <activity android:name=".ui.activities.editor.text_sticker.TextStickerActivity" />
+        <activity
+            android:name=".ui.activities.editor.text_sticker.TextStickerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing"
+            android:theme="@style/Theme.Emoji"/>
     </application>
 
 </manifest>

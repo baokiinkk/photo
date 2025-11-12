@@ -18,6 +18,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
 import com.amb.photo.ui.activities.editor.blur.SystemUtil
 import com.amb.photo.ui.activities.editor.sticker.lib.Sticker
+import kotlin.text.toFloat
 
 class TextSticker(private val context: Context, paramAddTextProperties: AddTextProperties) :
     Sticker() {
