@@ -78,7 +78,7 @@ class AddTextProperties {
                 addTextProperties.textColor = -1
                 addTextProperties.textAlpha = 255
                 addTextProperties.backgroundAlpha = 255
-                addTextProperties.paddingWidth = 12
+                addTextProperties.paddingWidth = 16
                 addTextProperties.textShaderIndex = 7
                 addTextProperties.backgroundColorIndex = 21
                 addTextProperties.textColorIndex = 16

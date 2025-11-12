@@ -41,7 +41,8 @@ class TextStickerViewModel : BaseViewModel() {
         uiState.update {
             it.copy(
                 addTextProperties = addTextProperties,
-                editTextProperties = addTextProperties
+                editTextProperties = addTextProperties,
+                textIndex = index
             )
         }
     }
@@ -86,5 +87,6 @@ data class TextStickerUIState(
     val items: List<FontItem> = emptyList(),
     val addTextProperties: AddTextProperties? = null,
     val editTextProperties: AddTextProperties? = null,
-    val isShowEditText: Boolean = false
+    val isShowEditText: Boolean = false,
+    val textIndex: Int = 0
 )

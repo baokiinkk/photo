@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -19,8 +17,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -69,12 +66,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.amb.photo.R
-import com.amb.photo.databinding.ActivityAirplaneBinding
 import com.amb.photo.ui.activities.editor.crop.FooterEditor
 import com.amb.photo.ui.activities.editor.crop.ToolInput
-import com.amb.photo.ui.activities.editor.sticker.lib.Sticker
 import com.amb.photo.ui.activities.editor.sticker.lib.StickerView
-import com.amb.photo.ui.activities.editor.text_sticker.lib.AddTextProperties
 import com.amb.photo.ui.activities.editor.text_sticker.lib.FontAsset
 import com.amb.photo.ui.activities.editor.text_sticker.lib.FontItem
 import com.amb.photo.ui.activities.editor.text_sticker.lib.TextSticker
@@ -93,6 +87,8 @@ class TextStickerActivity : BaseActivity() {
     private val screenInput: ToolInput? by lazy {
         intent.getInput()
     }
+
+    private var stickerView: StickerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,12 +126,12 @@ class TextStickerActivity : BaseActivity() {
                                 addTextProperties.text = textFieldValue.text
                                 addTextProperties.textWidth = editTextFieldSize.width
                                 addTextProperties.textHeight = editTextFieldSize.height
-//                                stickerView.replace(
-//                                    TextSticker(
-//                                        context,
-//                                        addTextProperties
-//                                    )
-//                                )
+                                stickerView?.replace(
+                                    TextSticker(
+                                        context,
+                                        addTextProperties
+                                    )
+                                )
                             }
                         }
                 ) {
@@ -165,8 +161,10 @@ class TextStickerActivity : BaseActivity() {
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp)
+                                        .wrapContentWidth()
+                                        .align(Alignment.Center)
+//                                        .fillMaxWidth()
+//                                        .padding(horizontal = 16.dp)
                                         .onGloballyPositioned { layoutCoordinates ->
                                             textFieldSize = layoutCoordinates.size
                                             if (!viewmodel.textMeasured) {
@@ -175,11 +173,20 @@ class TextStickerActivity : BaseActivity() {
                                             }
                                         }
                                 ) {
-                                    TextField(
-                                        value = "Click to Edit",
-                                        onValueChange = { char ->
+                                    val typeface = Typeface.createFromAsset(
+                                        context.assets,
+                                        FontAsset.listFonts.first().fontPath
+                                    )
 
-                                        },
+                                    Text(
+                                        text = "Click to Edit",
+                                        modifier = Modifier.padding(16.dp),
+                                        style = TextStyle(
+                                            fontSize = 18.sp,
+                                            lineHeight = 24.sp,
+                                            fontFamily = FontFamily(typeface),
+                                            color = Color.Black,
+                                        )
                                     )
                                 }
                                 Image(
@@ -264,7 +271,7 @@ class TextStickerActivity : BaseActivity() {
                                         }
                                     },
                                     onResultStickerView = { view ->
-//                                        stickerView = view
+                                        stickerView = view
                                     }
                                 )
 
@@ -285,7 +292,8 @@ class TextStickerActivity : BaseActivity() {
                         },
                         addTextSticker = { index, item ->
                             viewmodel.addTextSticker(index = index, item = item, textFieldSize)
-                        }
+                        },
+                        uiState = uiState
                     )
                 }
             }
@@ -350,7 +358,8 @@ fun TextStickerToolPanel(
     items: List<FontItem>,
     onCancel: () -> Unit,
     onApply: () -> Unit,
-    addTextSticker: (Int, FontItem) -> Unit
+    addTextSticker: (Int, FontItem) -> Unit,
+    uiState: TextStickerUIState
 ) {
     val tabs = listOf(
         stringResource(TEXT_TAB.FONT.res),
@@ -369,7 +378,7 @@ fun TextStickerToolPanel(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp, top = 16.dp)
+                .padding(top = 16.dp)
         ) {
             tabs.forEachIndexed { index, tab ->
                 val isSelected = selectedTab == index
@@ -401,7 +410,8 @@ fun TextStickerToolPanel(
                                 .clickableWithAlphaEffect {
                                     addTextSticker.invoke(index, item)
                                 },
-                            itemFont = item
+                            itemFont = item,
+                            isSelected = uiState.textIndex == index
                         )
                     }
                 }

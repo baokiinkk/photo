@@ -20,7 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -33,6 +35,7 @@ import com.amb.photo.ui.activities.editor.text_sticker.lib.FontItem
 import com.amb.photo.ui.activities.editor.text_sticker.lib.TextSticker
 import com.amb.photo.ui.theme.AppColor
 import com.amb.photo.ui.theme.AppStyle
+import com.amb.photo.ui.theme.fontFamily
 
 
 @Composable
@@ -166,18 +169,18 @@ fun rememberFontFromAssets(context: Context, fontPath: String): FontFamily {
 @Composable
 fun CustomFontText(
     modifier: Modifier,
-    isSelected: Boolean = false,
+    isSelected: Boolean ,
     itemFont: FontItem
 ) {
     val context = LocalContext.current
     val customFont = rememberFontFromAssets(context, itemFont.fontPath)
     Box(
         modifier = modifier
-            .background(AppColor.Gray100, RoundedCornerShape(12.dp))
+            .background(AppColor.Gray100, RoundedCornerShape(16.dp))
             .border(
-                width = if (isSelected) 2.dp else 0.dp,
+                width = if (isSelected) 1.dp else 0.dp,
                 color = if (isSelected) AppColor.Primary500 else Color.Transparent,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(16.dp)
             )
     ) {
         Column(
@@ -190,22 +193,32 @@ fun CustomFontText(
                 modifier = Modifier.fillMaxWidth(),
                 text = "Collage",
                 fontFamily = customFont,
-                fontSize = 18.sp,
-                color = Color.Black,
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                color = if (isSelected) AppColor.Primary500 else Color.Black,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = itemFont.fontName,
-                style = AppStyle.caption2().semibold().gray500(),
+                fontFamily = fontFamily,
+                fontSize = 8.sp,
+                fontWeight = FontWeight.SemiBold,
+                lineHeight = 10.sp,
+                color = if (isSelected) AppColor.Primary500 else AppColor.Gray500,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
             )
         }
     }
-
 }
+
+var textStickerStyle = TextStyle(
+    fontSize = 14.sp,
+    lineHeight = 20.sp,
+    fontFamily = fontFamily,
+)
