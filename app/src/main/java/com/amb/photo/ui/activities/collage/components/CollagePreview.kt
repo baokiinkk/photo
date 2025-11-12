@@ -15,7 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -30,12 +33,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.amb.photo.R
-import com.amb.photo.data.model.collage.CellSpec
 import com.amb.photo.data.model.collage.CollageTemplate
 import com.amb.photo.data.model.collage.FreePolygonShape
 import com.amb.photo.ui.theme.BackgroundWhite
 import com.amb.photo.ui.theme.Primary500
 import androidx.core.graphics.toColorInt
+import com.amb.photo.data.model.collage.CellSpec
+import com.amb.photo.ui.activities.collage.components.CollagePreviewDataProcessor
+import com.amb.photo.ui.activities.collage.components.ProcessedCellData
 
 @Composable
 fun CollagePreview(
@@ -69,64 +74,78 @@ fun CollagePreview(
                 .background(bgColor)
         )
 
-        template.cells.forEachIndexed { index, cell ->
-            val img = images.getOrNull(index % images.size) ?: Uri.EMPTY
+        // Xử lý template bằng CollagePreviewDataProcessor
+        val processedCells = remember(template, images, w, h) {
+            CollagePreviewDataProcessor.processTemplate(
+                template = template,
+                images = images,
+                canvasWidth = w,
+                canvasHeight = h
+            )
+        }
 
-            require(cell.points.size == 8) { "Cell must have 8 points (x0,y0,x1,y1,x2,y2,x3,y3)" }
-
-            // Tính bounding box từ points (absolute coordinates 0..1)
-            val absPoints = cell.points.mapIndexed { i, v ->
-                if (i % 2 == 0) v * w else v * h
-            }
-            val minX = absPoints.filterIndexed { i, _ -> i % 2 == 0 }.minOrNull() ?: 0f
-            val maxX = absPoints.filterIndexed { i, _ -> i % 2 == 0 }.maxOrNull() ?: 0f
-            val minY = absPoints.filterIndexed { i, _ -> i % 2 == 1 }.minOrNull() ?: 0f
-            val maxY = absPoints.filterIndexed { i, _ -> i % 2 == 1 }.maxOrNull() ?: 0f
-
-            val left = minX
-            val top = minY
-            val cw = maxX - minX
-            val ch = maxY - minY
-
-            // Normalize points to 0..1 relative to bounding box
-            val normalizedPoints = cell.points.mapIndexed { i, v ->
-                if (i % 2 == 0) {
-                    // x coordinate: (v - minX/w) / (cw/w) = (v*w - minX) / cw
-                    if (cw > 0f) (v * w - minX) / cw else 0f
-                } else {
-                    // y coordinate: (v - minY/h) / (ch/h) = (v*h - minY) / ch
-                    if (ch > 0f) (v * h - minY) / ch else 0f
-                }
-            }
-
-            val shape = FreePolygonShape(normalizedPoints)
+        processedCells.forEach { cellData ->
             val borderWidthPx = with(density) { borderWidth.toPx() }
             val cornerRadiusPx = with(density) { corner.toPx() }
-
-            // Box chứa image (có padding để tạo gap)
+            val gapPx = with(density) { gap.toPx() }
+            
+            // Shape được vẽ trong box có size = actualWidth x actualHeight
+            val shape = FreePolygonShape(cellData.normalizedPoints)
+            
             val imageBox = with(density) {
                 Modifier
-                    .offset(x = left.toDp(), y = top.toDp())
-                    .size(cw.toDp(), ch.toDp())
+                    .offset(x = cellData.left.toDp(), y = cellData.top.toDp())
+                    .size(cellData.width.toDp(), cellData.height.toDp())
                     .padding(gap / 2)
-                    .background(bgColor)
                     .clip(shape)
             }
 
             // Image box với border overlay
             Box(imageBox) {
                 AsyncImage(
-                    model = img,
+                    model = cellData.imageUri,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(corner)),
+                        .clip(RoundedCornerShape(corner))
+                        .then(
+                            // Vẽ clear area nếu có (khoét lỗ)
+                            cellData.clearAreaPoints?.let { clearPoints ->
+                                if (clearPoints.size >= 6 && clearPoints.size % 2 == 0) {
+                                    Modifier.drawWithContent {
+                                        drawContent()
+                                        // Vẽ clear area với background color để tạo hiệu ứng khoét lỗ
+                                        val clearPath = Path().apply {
+                                            val actualWidth = cellData.width - gapPx
+                                            val actualHeight = cellData.height - gapPx
+                                            val x0 = clearPoints[0] * actualWidth
+                                            val y0 = clearPoints[1] * actualHeight
+                                            moveTo(x0, y0)
+                                            for (i in 2 until clearPoints.size step 2) {
+                                                val x = clearPoints[i] * actualWidth
+                                                val y = clearPoints[i + 1] * actualHeight
+                                                lineTo(x, y)
+                                            }
+                                            close()
+                                        }
+                                        // Vẽ clear area với background color để khoét lỗ
+                                        drawPath(
+                                            path = clearPath,
+                                            color = bgColor,
+                                            blendMode = BlendMode.SrcOver
+                                        )
+                                    }
+                                } else {
+                                    Modifier
+                                }
+                            } ?: Modifier
+                        ),
                     error = painterResource(R.drawable.ic_empty_image)
                 )
 
                 // Vẽ border trực tiếp trên edge của shape (sau padding)
-                if (img.toString().contains("true")) {
+                if (cellData.imageUri.toString().contains("true")) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -166,7 +185,7 @@ class TemplatePreviewProvider : PreviewParameterProvider<CollageTemplate> {
             )
         ),
         CollageTemplate(
-            "2-vertical", listOf(
+            "2-0", listOf(
                 CellSpec(points = listOf(0f, 0f, 0.5f, 0f, 0.5f, 1f, 0f, 1f)),
                 CellSpec(points = listOf(0.5f, 0f, 1f, 0f, 1f, 1f, 0.5f, 1f))
             )
