@@ -23,17 +23,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -50,6 +53,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
@@ -64,17 +68,22 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.amb.photo.R
 import com.amb.photo.ui.activities.editor.crop.FooterEditor
 import com.amb.photo.ui.activities.editor.crop.ToolInput
+import com.amb.photo.ui.activities.editor.sticker.lib.Sticker
 import com.amb.photo.ui.activities.editor.sticker.lib.StickerView
 import com.amb.photo.ui.activities.editor.text_sticker.lib.FontAsset
 import com.amb.photo.ui.activities.editor.text_sticker.lib.FontItem
 import com.amb.photo.ui.activities.editor.text_sticker.lib.TextSticker
+import com.amb.photo.ui.theme.AppColor
+import com.amb.photo.ui.theme.MainTheme
 import com.amb.photo.ui.theme.fontFamily
 import com.amb.photo.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import kotlinx.coroutines.delay
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -90,261 +99,266 @@ class TextStickerActivity : BaseActivity() {
 
     private var stickerView: StickerView? = null
 
+    var textSticker: TextSticker? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewmodel.getConfigTextSticker(screenInput?.getBitmap(this))
 
         setContent {
-            Scaffold(
-                containerColor = Color(0xFFF2F4F8)
-            ) { inner ->
-                val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
-                var boxBounds by remember { mutableStateOf<Rect?>(null) }
+            MainTheme {
+                Scaffold(
+                    containerColor = Color(0xFFF2F4F8)
+                ) { inner ->
+                    val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+                    var boxBounds by remember { mutableStateOf<Rect?>(null) }
 //                var text by remember { mutableStateOf("Click to Edit") }
-                var textFieldValue by remember {
-                    mutableStateOf(TextFieldValue(text = "Click to Edit"))
-                }
-                var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
-                var isVisibleTextField by remember { mutableStateOf(false) }
-                val focusRequester = remember { FocusRequester() }
-                val keyboardController = LocalSoftwareKeyboardController.current
-                val context = LocalContext.current
-                val focusManager = LocalFocusManager.current
-                var editTextFieldSize by remember { mutableStateOf(IntSize.Zero) }
+                    var textFieldValue by remember {
+                        mutableStateOf(TextFieldValue(text = "Click to Edit"))
+                    }
+                    var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
+                    var isVisibleTextField by remember { mutableStateOf(false) }
+                    val focusRequester = remember { FocusRequester() }
+                    val keyboardController = LocalSoftwareKeyboardController.current
+                    val context = LocalContext.current
+                    val focusManager = LocalFocusManager.current
+                    var editTextFieldSize by remember { mutableStateOf(IntSize.Zero) }
+                    var opacityColor by remember { mutableStateOf(0f) }
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .statusBarsPadding()
-                        .background(Color(0xFFF2F4F8))
-                        .clickableWithAlphaEffect {
-                            if (isVisibleTextField) {
-                                isVisibleTextField = false
-                                focusManager.clearFocus()
-                                keyboardController?.hide()
-                                val addTextProperties = uiState.addTextProperties!!
-                                addTextProperties.text = textFieldValue.text
-                                addTextProperties.textWidth = editTextFieldSize.width
-                                addTextProperties.textHeight = editTextFieldSize.height
-                                stickerView?.replace(
-                                    TextSticker(
-                                        context,
-                                        addTextProperties
-                                    )
-                                )
-                            }
-                        }
-                ) {
-                    uiState.originBitmap?.let {
-                        Box(
-                            Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .aspectRatio(it.width / it.height.toFloat())
-                                    .align(Alignment.Center)
-                                    .graphicsLayer()
-                                    .clipToBounds()
-                                    .onGloballyPositioned { coords ->
-                                        val position = coords.positionInRoot()
-                                        val size = coords.size
-                                        boxBounds = Rect(
-                                            position.x.roundToInt(),
-                                            position.y.roundToInt(),
-                                            (position.x + size.width).roundToInt(),
-                                            (position.y + size.height).roundToInt()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .statusBarsPadding()
+                            .background(Color(0xFFF2F4F8))
+                            .clickableWithAlphaEffect {
+                                if (isVisibleTextField) {
+                                    isVisibleTextField = false
+                                    focusManager.clearFocus()
+                                    keyboardController?.hide()
+                                    val addTextProperties = uiState.addTextProperties!!
+                                    addTextProperties.text = textFieldValue.text
+                                    addTextProperties.textWidth = editTextFieldSize.width
+                                    addTextProperties.textHeight = editTextFieldSize.height
+                                    stickerView?.replace(
+                                        TextSticker(
+                                            context,
+                                            addTextProperties
                                         )
-                                    }
+                                    )
+                                }
+                            }
+                    ) {
+                        uiState.originBitmap?.let {
+                            Box(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .wrapContentWidth()
+                                        .fillMaxHeight()
+                                        .aspectRatio(it.width / it.height.toFloat())
                                         .align(Alignment.Center)
-//                                        .fillMaxWidth()
-//                                        .padding(horizontal = 16.dp)
-                                        .onGloballyPositioned { layoutCoordinates ->
-                                            textFieldSize = layoutCoordinates.size
-                                            if (!viewmodel.textMeasured) {
-                                                viewmodel.addFirstTextSticker(textFieldSize)
-                                                viewmodel.textMeasured = true
-                                            }
+                                        .graphicsLayer()
+                                        .clipToBounds()
+                                        .onGloballyPositioned { coords ->
+                                            val position = coords.positionInRoot()
+                                            val size = coords.size
+                                            boxBounds = Rect(
+                                                position.x.roundToInt(),
+                                                position.y.roundToInt(),
+                                                (position.x + size.width).roundToInt(),
+                                                (position.y + size.height).roundToInt()
+                                            )
                                         }
                                 ) {
-                                    val typeface = Typeface.createFromAsset(
-                                        context.assets,
-                                        FontAsset.listFonts.first().fontPath
-                                    )
-
-                                    Text(
-                                        text = "Click to Edit",
-                                        modifier = Modifier.padding(16.dp),
-                                        style = TextStyle(
-                                            fontSize = 18.sp,
-                                            lineHeight = 24.sp,
-                                            fontFamily = FontFamily(typeface),
-                                            color = Color.Black,
-                                        )
-                                    )
-                                }
-                                Image(
-                                    bitmap = it.asImageBitmap(),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                )
-
-                                if (isVisibleTextField) {
-                                    uiState.editTextProperties?.let {
+                                    Box(
+                                        modifier = Modifier
+                                            .wrapContentWidth()
+                                            .align(Alignment.Center)
+//                                        .fillMaxWidth()
+//                                        .padding(horizontal = 16.dp)
+                                            .onGloballyPositioned { layoutCoordinates ->
+                                                textFieldSize = layoutCoordinates.size
+                                                if (!viewmodel.textMeasured) {
+                                                    viewmodel.addFirstTextSticker(textFieldSize)
+                                                    viewmodel.textMeasured = true
+                                                }
+                                            }
+                                    ) {
                                         val typeface = Typeface.createFromAsset(
                                             context.assets,
-                                            uiState.editTextProperties?.fontName!!
+                                            FontAsset.listFonts.first().fontPath
                                         )
 
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 16.dp)
-                                                .align(Alignment.Center)
-                                                .onGloballyPositioned { layoutCoordinates ->
-                                                    editTextFieldSize = layoutCoordinates.size
-                                                }
-                                        ) {
-                                            BasicTextField(
-                                                value = textFieldValue,
-                                                onValueChange = { char ->
-                                                    textFieldValue = char
-                                                },
-                                                textStyle = TextStyle(
-                                                    fontFamily = FontFamily(typeface),
-                                                    color = Color(uiState.editTextProperties?.textColor!!)
-                                                ),
-                                                decorationBox = { innerTextField ->
-                                                    innerTextField()
-                                                },
+                                        Text(
+                                            text = "Click to Edit",
+                                            modifier = Modifier.padding(16.dp),
+                                            style = TextStyle(
+                                                fontSize = 18.sp,
+                                                lineHeight = 24.sp,
+                                                fontFamily = FontFamily(typeface),
+                                                color = Color.Black,
+                                            )
+                                        )
+                                    }
+                                    Image(
+                                        bitmap = it.asImageBitmap(),
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                    )
+
+                                    if (isVisibleTextField) {
+                                        uiState.editTextProperties?.let {
+                                            val typeface = Typeface.createFromAsset(
+                                                context.assets,
+                                                uiState.editTextProperties?.fontName!!
+                                            )
+
+                                            Box(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
-                                                    .padding(16.dp)
-                                                    .focusRequester(focusRequester)
-                                            )
-                                        }
+                                                    .padding(horizontal = 16.dp)
+                                                    .align(Alignment.Center)
+                                                    .onGloballyPositioned { layoutCoordinates ->
+                                                        editTextFieldSize = layoutCoordinates.size
+                                                    }
+                                            ) {
+                                                BasicTextField(
+                                                    value = textFieldValue,
+                                                    onValueChange = { char ->
+                                                        textFieldValue = char
+                                                    },
+                                                    textStyle = TextStyle(
+                                                        fontFamily = FontFamily(typeface),
+                                                        color = Color(uiState.editTextProperties?.textColor!!)
+                                                    ),
+                                                    decorationBox = { innerTextField ->
+                                                        innerTextField()
+                                                    },
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(16.dp)
+                                                        .focusRequester(focusRequester)
+                                                )
+                                            }
 
 
-                                        LaunchedEffect(focusRequester) {
-                                            if (isVisibleTextField) {
-                                                focusRequester.requestFocus()
-                                                delay(100) // Make sure you have delay here
-                                                keyboardController?.show()
+                                            LaunchedEffect(focusRequester) {
+                                                if (isVisibleTextField) {
+                                                    focusRequester.requestFocus()
+                                                    delay(100) // Make sure you have delay here
+                                                    keyboardController?.show()
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                TextStickerComposeView(
-                                    modifier = Modifier.fillMaxSize(),
-                                    input = uiState.addTextProperties,
-                                    onTextStickerEdit = { textSticker ->
-                                        isVisibleTextField = true
-                                        textFieldValue = textFieldValue.copy(
-                                            text = textSticker.getAddTextProperties()?.text.orEmpty(),
-                                            selection = TextRange(textSticker.getAddTextProperties()?.text.orEmpty().length)
-                                        )
-                                        viewmodel.editTextSticker(textSticker)
-                                    },
-                                    onStickerTouchOutside = { stickerView ->
-                                        if (isVisibleTextField) {
-                                            isVisibleTextField = false
-                                            focusManager.clearFocus()
-                                            keyboardController?.hide()
-                                            val addTextProperties = uiState.addTextProperties!!
-                                            addTextProperties.text = textFieldValue.text
-                                            addTextProperties.textWidth = editTextFieldSize.width
-                                            addTextProperties.textHeight = editTextFieldSize.height
-                                            stickerView.replace(
-                                                TextSticker(
-                                                    context,
-                                                    addTextProperties
-                                                )
+                                    TextStickerComposeView(
+                                        modifier = Modifier.fillMaxSize(),
+                                        input = uiState.addTextProperties,
+                                        onTextStickerEdit = { textSticker ->
+                                            this@TextStickerActivity.textSticker = textSticker
+                                            isVisibleTextField = true
+                                            textFieldValue = textFieldValue.copy(
+                                                text = textSticker.getAddTextProperties()?.text.orEmpty(),
+                                                selection = TextRange(textSticker.getAddTextProperties()?.text.orEmpty().length)
                                             )
-                                            textFieldValue = textFieldValue.copy(text = "")
+                                            viewmodel.editTextSticker(textSticker)
+                                        },
+                                        onStickerTouchOutside = { stickerView ->
+                                            if (isVisibleTextField) {
+                                                isVisibleTextField = false
+                                                focusManager.clearFocus()
+                                                keyboardController?.hide()
+                                                val addTextProperties = uiState.addTextProperties!!
+                                                addTextProperties.text = textFieldValue.text
+                                                addTextProperties.textWidth =
+                                                    editTextFieldSize.width
+                                                addTextProperties.textHeight =
+                                                    editTextFieldSize.height
+                                                stickerView.replace(
+                                                    TextSticker(
+                                                        context,
+                                                        addTextProperties
+                                                    )
+                                                )
+                                                textFieldValue = textFieldValue.copy(text = "")
+                                            }
+                                        },
+                                        onResultStickerView = { view ->
+                                            stickerView = view
                                         }
-                                    },
-                                    onResultStickerView = { view ->
-                                        stickerView = view
-                                    }
-                                )
+                                    )
 
+                                }
                             }
                         }
-                    }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                    TextStickerToolPanel(
-                        modifier = Modifier.fillMaxWidth(),
-                        items = uiState.items,
-                        onCancel = {
-                            finish()
-                        },
-                        onApply = {
+                        TextStickerToolPanel(
+                            modifier = Modifier.fillMaxWidth(),
+                            items = uiState.items,
+                            onCancel = {
+                                finish()
+                            },
+                            onApply = {
 //                            viewmodel.addTextSticker()
-                        },
-                        addTextSticker = { index, item ->
-                            viewmodel.addTextSticker(index = index, item = item, textFieldSize)
-                        },
-                        uiState = uiState
-                    )
+                            },
+                            addTextSticker = { index, item ->
+                                viewmodel.addTextSticker(index = index, item = item, textFieldSize)
+                            },
+                            uiState = uiState,
+                            onSelectedColor = { color ->
+                                stickerView?.getCurrentTextSticker()
+                                    ?.getAddTextProperties()?.textColor = color.toArgb()
+                                stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
+                                    stickerView?.replace(
+                                        TextSticker(
+                                            this@TextStickerActivity,
+                                            it
+                                        )
+                                    )
+                                }
+                            },
+                            opacityColorValue = opacityColor,
+                            onOpacityColor = {
+                                opacityColor = it
+                                stickerView?.getCurrentTextSticker()
+                                    ?.getAddTextProperties()?.textAlpha = (255 - it).toInt()
+                                stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
+                                    stickerView?.replace(
+                                        TextSticker(
+                                            this@TextStickerActivity,
+                                            it
+                                        )
+                                    )
+                                }
+                            },
+                            onAlign = {
+                                when (it) {
+                                    TEXT_ALIGN.START -> {
+                                        stickerView?.setStickerHorizontalPosition(Sticker.Position.LEFT)
+                                    }
+
+                                    TEXT_ALIGN.CENTER -> {
+                                        stickerView?.setStickerHorizontalPosition(Sticker.Position.CENTER)
+                                    }
+
+                                    TEXT_ALIGN.END -> {
+                                        stickerView?.setStickerHorizontalPosition(Sticker.Position.RIGHT)
+                                    }
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-
-@Composable
-fun CustomTextField(
-    fontPath: String,
-    textColor: Int,
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    focusRequester: FocusRequester
-) {
-    val context = LocalContext.current
-    val customFont = rememberFontFromAssets(context, fontPath)
-
-//    val keyboardController = LocalSoftwareKeyboardController.current
-//
-//    LaunchedEffect(Unit) {
-//        focusRequester.requestFocus()
-//        delay(100)
-//        keyboardController?.show()
-//    }
-
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.CenterStart
-    ) {
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = true,
-            textStyle = TextStyle(
-                fontFamily = customFont,
-                color = Color(textColor)
-            ),
-            decorationBox = { innerTextField ->
-                innerTextField()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 12.dp)
-                .focusRequester(focusRequester)
-                .focusable()
-        )
-    }
-}
 
 enum class TEXT_TAB(val index: Int, val res: Int) {
     FONT(0, R.string.font),
@@ -359,7 +373,11 @@ fun TextStickerToolPanel(
     onCancel: () -> Unit,
     onApply: () -> Unit,
     addTextSticker: (Int, FontItem) -> Unit,
-    uiState: TextStickerUIState
+    uiState: TextStickerUIState,
+    onSelectedColor: (Color) -> Unit,
+    opacityColorValue: Float,
+    onOpacityColor: (Float) -> Unit,
+    onAlign: (TEXT_ALIGN) -> Unit,
 ) {
     val tabs = listOf(
         stringResource(TEXT_TAB.FONT.res),
@@ -423,7 +441,13 @@ fun TextStickerToolPanel(
                         .fillMaxWidth()
                         .height(200.dp)
                 ) {
-
+                    TabColor(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        onSelectedColor = onSelectedColor,
+                        opacityColorValue = opacityColorValue,
+                        onOpacityColor = onOpacityColor
+                    )
                 }
             }
 
@@ -433,7 +457,7 @@ fun TextStickerToolPanel(
                         .fillMaxWidth()
                         .height(200.dp)
                 ) {
-
+                    TabAlign(onAlign)
                 }
             }
         }
@@ -448,6 +472,108 @@ fun TextStickerToolPanel(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
+    }
+}
+
+enum class TEXT_ALIGN(val index: Int) {
+    START(0), CENTER(1), END(2)
+}
+
+@Composable
+fun TabAlign(
+    onAlign: (TEXT_ALIGN) -> Unit,
+) {
+    var selectedTab by remember { mutableStateOf(TEXT_ALIGN.START) }
+    val items = listOf(
+        R.drawable.ic_align_start,
+        R.drawable.ic_align_center,
+        R.drawable.ic_align_end
+    )
+    Row {
+        items.forEachIndexed { index, item ->
+            ItemAlign(
+                isSelected = selectedTab.index == index,
+                onSelectedTab = {
+                    selectedTab = TEXT_ALIGN.entries.toTypedArray()[index]
+                    onAlign.invoke(selectedTab)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun ItemAlign(
+    isSelected: Boolean,
+    onSelectedTab: () -> Unit,
+) {
+    ImageWidget(
+        resId = R.drawable.ic_align_start,
+        tintColor = if (isSelected) AppColor.Primary500 else AppColor.Gray300,
+        modifier = Modifier.clickableWithAlphaEffect(onClick = onSelectedTab)
+    )
+    Spacer(modifier = Modifier.width(24.dp))
+}
+
+@Composable
+fun TabColor(
+    modifier: Modifier = Modifier,
+    onSelectedColor: (Color) -> Unit,
+    opacityColorValue: Float,
+    onOpacityColor: (Float) -> Unit
+) {
+    val colors: List<Color> = listOf(
+        Color(0xFFF7F8F3),
+        Color(0xFFFFF7EC),
+        Color(0xFFFAEDE7),
+        Color(0xFFA9E2F5),
+        Color(0xFFFFBBBE),
+        Color(0xFFFF8B0D),
+    )
+    Column {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(top = 30.dp, start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            colors.forEach { item ->
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .background(item, CircleShape)
+                        .clickableWithAlphaEffect {
+                            onSelectedColor.invoke(item)
+                        }
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp, start = 16.dp, end = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ImageWidget(
+                resId = R.drawable.ic_opacity
+            )
+            Slider(
+                value = opacityColorValue,
+                onValueChange = onOpacityColor,
+                valueRange = 0f..255f,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(2.dp)
+                    .padding(start = 20.dp),
+                colors = SliderDefaults.colors(
+                    thumbColor = AppColor.Gray800,
+                    activeTrackColor = AppColor.Gray800,
+                    inactiveTrackColor = AppColor.Gray200
+                )
+            )
+        }
     }
 }
 

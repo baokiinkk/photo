@@ -167,7 +167,8 @@ class StickerView : RelativeLayout {
 
         val typedArray: TypedArray
         try {
-            typedArray = paramContext.obtainStyledAttributes(paramAttributeSet, R.styleable.StickerView)
+            typedArray =
+                paramContext.obtainStyledAttributes(paramAttributeSet, R.styleable.StickerView)
 
             showIcons = typedArray.getBoolean(R.styleable.StickerView_showIcons, true)
             showBorder = typedArray.getBoolean(R.styleable.StickerView_showBorder, true)
@@ -566,6 +567,10 @@ class StickerView : RelativeLayout {
         return this.lastHandlingSticker
     }
 
+    fun getCurrentTextSticker(): TextSticker? {
+        return currentSticker as? TextSticker
+    }
+
     val stickerCount: Int
         get() = this.stickers.size
 
@@ -887,7 +892,7 @@ class StickerView : RelativeLayout {
                 matrix.postScale(f3, f3, f1 / 2.0f, f2 / 2.0f)
             }
             val i = this.stickers.indexOf(this.handlingSticker)
-            this.stickers.set(i, paramSticker)
+            this.stickers[i] = paramSticker
             this.handlingSticker = paramSticker
             invalidate()
             return true
