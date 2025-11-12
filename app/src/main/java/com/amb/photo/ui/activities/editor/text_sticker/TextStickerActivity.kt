@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.compose.setContent
@@ -191,8 +192,9 @@ class TextStickerActivity : BaseActivity() {
                                             FontAsset.listFonts.first().fontPath
                                         )
 
+                                        Log.d("aaa", "ssss ${textFieldValue.text}")
                                         Text(
-                                            text = "Click to Edit",
+                                            text = textFieldValue.text,
                                             modifier = Modifier.padding(16.dp),
                                             style = TextStyle(
                                                 fontSize = 18.sp,
@@ -221,9 +223,9 @@ class TextStickerActivity : BaseActivity() {
                                                     .fillMaxWidth()
                                                     .padding(horizontal = 16.dp)
                                                     .align(Alignment.Center)
-                                                    .onGloballyPositioned { layoutCoordinates ->
-                                                        editTextFieldSize = layoutCoordinates.size
-                                                    }
+//                                                    .onGloballyPositioned { layoutCoordinates ->
+//                                                        editTextFieldSize = layoutCoordinates.size
+//                                                    }
                                             ) {
                                                 BasicTextField(
                                                     value = textFieldValue,
@@ -273,10 +275,8 @@ class TextStickerActivity : BaseActivity() {
                                                 keyboardController?.hide()
                                                 val addTextProperties = uiState.addTextProperties!!
                                                 addTextProperties.text = textFieldValue.text
-                                                addTextProperties.textWidth =
-                                                    editTextFieldSize.width
-                                                addTextProperties.textHeight =
-                                                    editTextFieldSize.height
+                                                addTextProperties.textWidth = textFieldSize.width
+                                                addTextProperties.textHeight = textFieldSize.height
                                                 stickerView.replace(
                                                     TextSticker(
                                                         context,
