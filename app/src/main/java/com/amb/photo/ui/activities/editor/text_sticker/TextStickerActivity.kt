@@ -19,12 +19,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -94,7 +97,6 @@ class TextStickerActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewmodel.getConfigTextSticker(screenInput?.getBitmap(this))
-        enableEdgeToEdge()
 
         setContent {
             Scaffold(
@@ -117,10 +119,7 @@ class TextStickerActivity : BaseActivity() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(
-                            top = inner.calculateTopPadding(),
-                            bottom = inner.calculateBottomPadding()
-                        )
+                        .statusBarsPadding()
                         .background(Color(0xFFF2F4F8))
                         .clickableWithAlphaEffect {
                             if (isVisibleTextField) {
@@ -140,8 +139,6 @@ class TextStickerActivity : BaseActivity() {
                             }
                         }
                 ) {
-                    Spacer(modifier = Modifier.height(24.dp))
-
                     uiState.originBitmap?.let {
                         Box(
                             Modifier
