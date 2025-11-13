@@ -85,6 +85,7 @@ import com.amb.photo.ui.activities.editor.text_sticker.lib.FontAsset
 import com.amb.photo.ui.activities.editor.text_sticker.lib.FontItem
 import com.amb.photo.ui.activities.editor.text_sticker.lib.TextSticker
 import com.amb.photo.ui.theme.AppColor
+import com.amb.photo.ui.theme.LoadingScreen
 import com.amb.photo.ui.theme.MainTheme
 import com.amb.photo.ui.theme.fontFamily
 import com.amb.photo.utils.getInput
@@ -303,32 +304,35 @@ class TextStickerActivity : BaseActivity() {
                                 finish()
                             },
                             onApply = {
+                                stickerView?.setShowFocus(false)
                                 viewmodel.showLoading()
-                                captureView(
-                                    localView,
-                                    callback = { bitmap ->
-                                        bitmap ?: return@captureView
-                                        val bounds = boxBounds ?: return@captureView
-                                        val captured = Bitmap.createBitmap(
-                                            bitmap,
-                                            bounds.left,
-                                            bounds.top,
-                                            bounds.width(),
-                                            bounds.height()
-                                        )
-                                        saveImage(
-                                            context = this@TextStickerActivity,
-                                            bitmap = captured,
-                                            onImageSaved = { pathBitmap ->
-                                                viewmodel.hideLoading()
-                                                val intent = Intent()
-                                                intent.putExtra("pathBitmap", "$pathBitmap")
-                                                setResult(RESULT_OK, intent)
-                                                finish()
-                                            }
-                                        )
-                                    }
-                                )
+                                stickerView?.post {
+                                    captureView(
+                                        localView,
+                                        callback = { bitmap ->
+                                            bitmap ?: return@captureView
+                                            val bounds = boxBounds ?: return@captureView
+                                            val captured = Bitmap.createBitmap(
+                                                bitmap,
+                                                bounds.left,
+                                                bounds.top,
+                                                bounds.width(),
+                                                bounds.height()
+                                            )
+                                            saveImage(
+                                                context = this@TextStickerActivity,
+                                                bitmap = captured,
+                                                onImageSaved = { pathBitmap ->
+                                                    viewmodel.hideLoading()
+                                                    val intent = Intent()
+                                                    intent.putExtra("pathBitmap", "$pathBitmap")
+                                                    setResult(RESULT_OK, intent)
+                                                    finish()
+                                                }
+                                            )
+                                        }
+                                    )
+                                }
                             },
                             addTextSticker = { index, item ->
                                 viewmodel.addTextSticker(
@@ -379,6 +383,10 @@ class TextStickerActivity : BaseActivity() {
                                 }
                             }
                         )
+                    }
+
+                    if (uiState.isLoading) {
+                        LoadingScreen()
                     }
                 }
             }
