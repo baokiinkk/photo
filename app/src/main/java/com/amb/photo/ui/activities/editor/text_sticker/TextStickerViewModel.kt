@@ -66,18 +66,18 @@ class TextStickerViewModel : BaseViewModel() {
         }
     }
 
-    fun showEditText() {
+    fun showLoading() {
         uiState.update {
             it.copy(
-                isShowEditText = true
+                isLoading = true
             )
         }
     }
 
-    fun hideEditText() {
+    fun hideLoading() {
         uiState.update {
             it.copy(
-                isShowEditText = false
+                isLoading = false
             )
         }
     }
@@ -89,5 +89,6 @@ data class TextStickerUIState(
     val addTextProperties: AddTextProperties? = null,
     val editTextProperties: AddTextProperties? = null,
     val isShowEditText: Boolean = false,
-    val textIndex: Int = 0
+    val textIndex: Int = 0,
+    val isLoading: Boolean = false,
 )

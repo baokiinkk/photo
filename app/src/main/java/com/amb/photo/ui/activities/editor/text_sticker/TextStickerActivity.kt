@@ -2,6 +2,8 @@ package com.amb.photo.ui.activities.editor.text_sticker
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.os.Bundle
@@ -60,6 +62,7 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -74,6 +77,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.amb.photo.R
 import com.amb.photo.ui.activities.editor.crop.FooterEditor
 import com.amb.photo.ui.activities.editor.crop.ToolInput
+import com.amb.photo.ui.activities.editor.crop.saveImage
+import com.amb.photo.ui.activities.editor.sticker.captureView
 import com.amb.photo.ui.activities.editor.sticker.lib.Sticker
 import com.amb.photo.ui.activities.editor.sticker.lib.StickerView
 import com.amb.photo.ui.activities.editor.text_sticker.lib.FontAsset
@@ -113,7 +118,6 @@ class TextStickerActivity : BaseActivity() {
                 ) { inner ->
                     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
                     var boxBounds by remember { mutableStateOf<Rect?>(null) }
-//                var text by remember { mutableStateOf("Click to Edit") }
                     var textFieldValue by remember {
                         mutableStateOf(TextFieldValue(text = "Click to Edit"))
                     }
@@ -125,6 +129,7 @@ class TextStickerActivity : BaseActivity() {
                     val focusManager = LocalFocusManager.current
                     var editTextFieldSize by remember { mutableStateOf(IntSize.Zero) }
                     var opacityColor by remember { mutableStateOf(0f) }
+                    val localView = LocalView.current
 
                     Column(
                         modifier = Modifier
@@ -136,16 +141,17 @@ class TextStickerActivity : BaseActivity() {
                                     isVisibleTextField = false
                                     focusManager.clearFocus()
                                     keyboardController?.hide()
-                                    val addTextProperties = uiState.addTextProperties!!
+                                    val addTextProperties = uiState.editTextProperties!!
                                     addTextProperties.text = textFieldValue.text
-                                    addTextProperties.textWidth = editTextFieldSize.width
-                                    addTextProperties.textHeight = editTextFieldSize.height
+                                    addTextProperties.textWidth = textFieldSize.width
+                                    addTextProperties.textHeight = textFieldSize.height
                                     stickerView?.replace(
                                         TextSticker(
                                             context,
                                             addTextProperties
                                         )
                                     )
+                                    textFieldValue = textFieldValue.copy(text = "")
                                 }
                             }
                     ) {
@@ -177,8 +183,6 @@ class TextStickerActivity : BaseActivity() {
                                         modifier = Modifier
                                             .wrapContentWidth()
                                             .align(Alignment.Center)
-//                                        .fillMaxWidth()
-//                                        .padding(horizontal = 16.dp)
                                             .onGloballyPositioned { layoutCoordinates ->
                                                 textFieldSize = layoutCoordinates.size
                                                 if (!viewmodel.textMeasured) {
@@ -217,15 +221,11 @@ class TextStickerActivity : BaseActivity() {
                                                 context.assets,
                                                 uiState.editTextProperties?.fontName!!
                                             )
-
                                             Box(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .padding(horizontal = 16.dp)
                                                     .align(Alignment.Center)
-//                                                    .onGloballyPositioned { layoutCoordinates ->
-//                                                        editTextFieldSize = layoutCoordinates.size
-//                                                    }
                                             ) {
                                                 BasicTextField(
                                                     value = textFieldValue,
@@ -303,7 +303,32 @@ class TextStickerActivity : BaseActivity() {
                                 finish()
                             },
                             onApply = {
-//                            viewmodel.addTextSticker()
+                                viewmodel.showLoading()
+                                captureView(
+                                    localView,
+                                    callback = { bitmap ->
+                                        bitmap ?: return@captureView
+                                        val bounds = boxBounds ?: return@captureView
+                                        val captured = Bitmap.createBitmap(
+                                            bitmap,
+                                            bounds.left,
+                                            bounds.top,
+                                            bounds.width(),
+                                            bounds.height()
+                                        )
+                                        saveImage(
+                                            context = this@TextStickerActivity,
+                                            bitmap = captured,
+                                            onImageSaved = { pathBitmap ->
+                                                viewmodel.hideLoading()
+                                                val intent = Intent()
+                                                intent.putExtra("pathBitmap", "$pathBitmap")
+                                                setResult(RESULT_OK, intent)
+                                                finish()
+                                            }
+                                        )
+                                    }
+                                )
                             },
                             addTextSticker = { index, item ->
                                 viewmodel.addTextSticker(
