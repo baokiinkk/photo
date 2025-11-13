@@ -1,0 +1,76 @@
+package com.amb.photo.ui.activities.editor.remove_object
+
+import android.content.Context
+import android.graphics.Bitmap
+import android.util.AttributeSet
+import android.util.Log
+import android.widget.FrameLayout
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidView
+import com.amb.photo.ui.activities.editor.remove_object.lib.DrawingView
+import com.amb.photo.ui.activities.editor.remove_object.lib.ObjAuto
+import com.amb.photo.ui.activities.editor.remove_object.lib.Type
+
+
+@Composable
+fun RemoveObjectComposeView(
+    modifier: Modifier = Modifier,
+    bitmapOrigin: Bitmap?,
+    currTypeManual: Type = Type.BRUSH,
+    onDrawView: () -> Unit,
+    onFinishDrawView: (Boolean) -> Unit,
+    eventViewClickObj: (ObjAuto) -> Unit
+) {
+
+    AndroidView(
+        modifier = modifier,
+        factory = { context ->
+            Log.d("aaa", "AndroidView")
+            val view = RemoveObjectCustomView(context)
+            bitmapOrigin?.let {
+                view.registerView(bitmapOrigin)
+            }
+            view
+        },
+        update = {view->
+            Log.d("aaa", "update")
+
+        }
+    )
+}
+
+class RemoveObjectCustomView @JvmOverloads constructor(
+    private val context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
+
+
+    fun registerView(mBitmap: Bitmap) {
+        if (width == 0 || height == 0) {
+            // View chưa layout xong → chờ
+            post { registerView(mBitmap) }
+            return
+        }
+
+
+        removeAllViews()
+
+        val drawingView = DrawingView(context, mBitmap).apply {
+            onDraw = {
+            }
+            onFinishDraw = { isBrush ->
+
+            }
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+
+            eventClickObj = { item ->
+            }
+        }
+        addView(drawingView)
+    }
+}

@@ -50,7 +50,7 @@ abstract class BaseActivity : ComponentActivity() {
         }
     }
 
-    private fun setupFullScreen() {
+    open fun setupFullScreen() {
         // Enable edge-to-edge display
         WindowCompat.setDecorFitsSystemWindows(window, false)
 

@@ -94,6 +94,7 @@ object FontAsset {
                 val name = path
                     .substringAfterLast("/")  // lấy phần sau dấu "/"
                     .substringBeforeLast(".") // bỏ phần mở rộng (.ttf/.otf)
+                    .substringBeforeLast("-")
                 FontItem(
                     fontName = name,
                     fontPath = path

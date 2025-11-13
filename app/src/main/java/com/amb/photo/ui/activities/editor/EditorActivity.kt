@@ -46,6 +46,8 @@ import com.amb.photo.ui.activities.collage.components.CollageTool
 import com.amb.photo.ui.activities.collage.components.FeatureBottomTools
 import com.amb.photo.ui.activities.collage.components.FeaturePhotoHeader
 import com.amb.photo.ui.activities.editor.adjust.AdjustActivity
+import com.amb.photo.ui.activities.editor.background.BackgroundActivity
+import com.amb.photo.ui.activities.editor.background.BackgroundResult
 import com.amb.photo.ui.activities.editor.blur.BlurActivity
 import com.amb.photo.ui.activities.editor.blur.BlurView
 import com.amb.photo.ui.activities.editor.blur.getShapes
@@ -53,11 +55,13 @@ import com.amb.photo.ui.activities.editor.blur.tabShape
 import com.amb.photo.ui.activities.editor.crop.CropActivity
 import com.amb.photo.ui.activities.editor.crop.ToolInput
 import com.amb.photo.ui.activities.editor.filter.FilterActivity
+import com.amb.photo.ui.activities.editor.remove_object.RemoveObjectActivity
 import com.amb.photo.ui.activities.editor.sticker.StickerActivity
 import com.amb.photo.ui.activities.editor.text_sticker.TextStickerActivity
 import com.amb.photo.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
+import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.launchActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.wysaid.nativePort.CGENativeLibrary
@@ -117,6 +121,10 @@ class EditorActivity : BaseActivity() {
             Scaffold(
                 containerColor = Color(0xFFF2F4F8)
             ) { inner ->
+
+                val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+
+
                 EditorScreen(
                     blurView = blurView,
                     viewmodel = viewmodel,
@@ -125,7 +133,8 @@ class EditorActivity : BaseActivity() {
                         .padding(
                             top = inner.calculateTopPadding(),
                             bottom = inner.calculateBottomPadding()
-                        ),
+                        )
+                        .background(uiState.backgroundColor),
                     onBack = {
 
                     },
@@ -232,6 +241,39 @@ class EditorActivity : BaseActivity() {
                                             viewmodel.updateBitmap(
                                                 pathBitmap,
                                                 pathBitmap.toBitmap(this)
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+
+                            CollageTool.REMOVE -> {
+                                launchActivity(
+                                    toActivity = RemoveObjectActivity::class.java,
+                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                    callback = { result ->
+                                        if (result.resultCode == RESULT_OK) {
+                                            val pathBitmap =
+                                                result.data?.getStringExtra("pathBitmap")
+                                            viewmodel.updateBitmap(
+                                                pathBitmap,
+                                                pathBitmap.toBitmap(this)
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+
+                            CollageTool.BACKGROUND -> {
+                                launchActivity(
+                                    toActivity = BackgroundActivity::class.java,
+                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                    callback = { result ->
+                                        if (result.resultCode == RESULT_OK) {
+                                            val output = result.data?.getStringExtra("pathBitmap")
+                                                ?.fromJson<BackgroundResult>()
+                                            viewmodel.updateBackgroundColor(
+                                                output?.color ?: Color(0xFFF2F4F8)
                                             )
                                         }
                                     }

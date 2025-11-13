@@ -18,6 +18,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
 import com.amb.photo.ui.activities.editor.blur.SystemUtil
 import com.amb.photo.ui.activities.editor.sticker.lib.Sticker
+import kotlin.text.toFloat
 
 class TextSticker(private val context: Context, paramAddTextProperties: AddTextProperties) :
     Sticker() {
@@ -77,9 +78,9 @@ class TextSticker(private val context: Context, paramAddTextProperties: AddTextP
         this.lineSpacingExtra = 0.0f
         minTextSize = false
         this.minTextSizePixels = convertSpToPx(2.0f)
-        this.maxTextSizePixels = convertSpToPx(32.0f)
+        this.maxTextSizePixels = convertSpToPx(18.0f)
         this.textAlign = Layout.Alignment.ALIGN_CENTER
-        this.textPaint.setTextSize(this.maxTextSizePixels)
+        this.textPaint.textSize = this.maxTextSizePixels
         val textSticker =
             setTextSize(paramAddTextProperties.textSize)
                 .setTextWidth(paramAddTextProperties.textWidth)
