@@ -14,8 +14,19 @@ data class ProcessedCellData(
     val top: Float,            // Pixel
     val width: Float,          // Pixel
     val height: Float,         // Pixel
-    val normalizedPoints: List<Float>,  // Points đã normalize về 0..1
+    val normalizedPoints: List<Float>?,  // Points đã normalize về 0..1 (optional nếu có path)
     val clearAreaPoints: List<Float>? = null,  // Clear area points đã normalize về 0..1
+    val shrinkMap: Map<String, List<Float>>? = null,  // Shrink map để tạo đường cong
+    val pathType: String? = null,  // Path type: "CIRCLE", "RECT", "POLYGON", "HEXAGON"
+    val pathRatioBound: List<Float>? = null,  // Path ratio bound
+    val pathInCenterHorizontal: Boolean? = null,
+    val pathInCenterVertical: Boolean? = null,
+    val clearPathType: String? = null,  // Clear path type
+    val clearPathRatioBound: List<Float>? = null,  // Clear path ratio bound
+    val clearPathInCenterHorizontal: Boolean? = null,
+    val clearPathInCenterVertical: Boolean? = null,
+    val fitBound: Boolean? = null,  // Fit bound
+    val pathAlignParentRight: Boolean? = null,  // Path align parent right
     val imageUri: Uri
 )
 
@@ -61,8 +72,11 @@ object CollagePreviewDataProcessor {
         canvasWidth: Float,
         canvasHeight: Float
     ): ProcessedCellData {
-        require(cell.points.size >= 6 && cell.points.size % 2 == 0) {
-            "Cell must have at least 6 points (3 vertices) and be even (x0,y0,x1,y1,...)"
+        // Points là optional nếu có path hoặc clearPath
+        if (cell.points != null) {
+            require(cell.points.size >= 6 && cell.points.size % 2 == 0) {
+                "Cell must have at least 6 points (3 vertices) and be even (x0,y0,x1,y1,...)"
+            }
         }
         
         // Logic mới: Ưu tiên dùng bound (x, y, width, height) nếu có
@@ -104,15 +118,42 @@ object CollagePreviewDataProcessor {
             }
             
             // Points đã là tương đối trong bound (0..1), chỉ cần đảm bảo trong range
-            val points = cell.points.map { it.coerceIn(0f, 1f) }
+            // Nếu không có points (có path hoặc clearPath), dùng empty list
+            val points = cell.points?.map { it.coerceIn(0f, 1f) } ?: emptyList()
             
             // Clear area points cũng là relative trong bound (0..1)
             val clearAreaPoints = cell.clearAreaPoints?.map { it.coerceIn(0f, 1f) }
             
-            ProcessedCellData(leftPx, topPx, widthPx, heightPx, points, clearAreaPoints, imageUri)
+            // Shrink map giữ nguyên
+            val shrinkMap = cell.shrinkMap
+            
+            ProcessedCellData(
+                leftPx, topPx, widthPx, heightPx, 
+                points, clearAreaPoints, shrinkMap,
+                cell.pathType, cell.pathRatioBound, 
+                cell.pathInCenterHorizontal, cell.pathInCenterVertical,
+                cell.clearPathType, cell.clearPathRatioBound,
+                cell.clearPathInCenterHorizontal, cell.clearPathInCenterVertical,
+                cell.fitBound, cell.pathAlignParentRight,
+                imageUri
+            )
         } else {
             // Không có bound: tính từ points (absolute coordinates 0..1)
             // Fallback cho các template cũ không có bound
+            // Nếu không có points, không thể tính bound - trả về default
+            if (cell.points == null || cell.points.isEmpty()) {
+                return ProcessedCellData(
+                    0f, 0f, 0f, 0f, 
+                    null, null, null,
+                    cell.pathType, cell.pathRatioBound,
+                    cell.pathInCenterHorizontal, cell.pathInCenterVertical,
+                    cell.clearPathType, cell.clearPathRatioBound,
+                    cell.clearPathInCenterHorizontal, cell.clearPathInCenterVertical,
+                    cell.fitBound, cell.pathAlignParentRight,
+                    imageUri
+                )
+            }
+            
             val xCoords = cell.points.filterIndexed { i, _ -> i % 2 == 0 }
             val yCoords = cell.points.filterIndexed { i, _ -> i % 2 == 1 }
             
@@ -146,7 +187,16 @@ object CollagePreviewDataProcessor {
                 }
             }
             
-            ProcessedCellData(leftPx, topPx, widthPx, heightPx, points, null, imageUri)
+            ProcessedCellData(
+                leftPx, topPx, widthPx, heightPx, 
+                points, null, null,
+                cell.pathType, cell.pathRatioBound,
+                cell.pathInCenterHorizontal, cell.pathInCenterVertical,
+                cell.clearPathType, cell.clearPathRatioBound,
+                cell.clearPathInCenterHorizontal, cell.clearPathInCenterVertical,
+                cell.fitBound, cell.pathAlignParentRight,
+                imageUri
+            )
         }
         
         return result
