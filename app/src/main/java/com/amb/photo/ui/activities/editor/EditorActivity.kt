@@ -53,6 +53,7 @@ import com.amb.photo.ui.activities.editor.blur.tabShape
 import com.amb.photo.ui.activities.editor.crop.CropActivity
 import com.amb.photo.ui.activities.editor.crop.ToolInput
 import com.amb.photo.ui.activities.editor.filter.FilterActivity
+import com.amb.photo.ui.activities.editor.remove_object.RemoveObjectActivity
 import com.amb.photo.ui.activities.editor.sticker.StickerActivity
 import com.amb.photo.ui.activities.editor.text_sticker.TextStickerActivity
 import com.amb.photo.utils.getInput
@@ -224,6 +225,23 @@ class EditorActivity : BaseActivity() {
                             CollageTool.TEXT -> {
                                 launchActivity(
                                     toActivity = TextStickerActivity::class.java,
+                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                    callback = { result ->
+                                        if (result.resultCode == RESULT_OK) {
+                                            val pathBitmap =
+                                                result.data?.getStringExtra("pathBitmap")
+                                            viewmodel.updateBitmap(
+                                                pathBitmap,
+                                                pathBitmap.toBitmap(this)
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+
+                            CollageTool.REMOVE -> {
+                                launchActivity(
+                                    toActivity = RemoveObjectActivity::class.java,
                                     input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
                                     callback = { result ->
                                         if (result.resultCode == RESULT_OK) {

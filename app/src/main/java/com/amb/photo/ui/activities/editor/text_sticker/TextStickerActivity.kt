@@ -85,10 +85,12 @@ import com.amb.photo.ui.activities.editor.text_sticker.lib.FontAsset
 import com.amb.photo.ui.activities.editor.text_sticker.lib.FontItem
 import com.amb.photo.ui.activities.editor.text_sticker.lib.TextSticker
 import com.amb.photo.ui.theme.AppColor
+import com.amb.photo.ui.theme.AppStyle
 import com.amb.photo.ui.theme.LoadingScreen
 import com.amb.photo.ui.theme.MainTheme
 import com.amb.photo.ui.theme.fontFamily
 import com.amb.photo.utils.getInput
+import com.basesource.base.components.ColorPickerDialog
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
@@ -105,8 +107,6 @@ class TextStickerActivity : BaseActivity() {
     }
 
     private var stickerView: StickerView? = null
-
-    var textSticker: TextSticker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,6 +131,14 @@ class TextStickerActivity : BaseActivity() {
                     var editTextFieldSize by remember { mutableStateOf(IntSize.Zero) }
                     var opacityColor by remember { mutableStateOf(0f) }
                     val localView = LocalView.current
+
+                    var showColorWheel by remember { mutableStateOf(false) }
+                    var currentSelectedColor by remember {
+                        mutableStateOf(
+                            Color.White
+                        )
+                    }
+
 
                     Column(
                         modifier = Modifier
@@ -381,12 +389,39 @@ class TextStickerActivity : BaseActivity() {
                                         stickerView?.setStickerHorizontalPosition(Sticker.Position.RIGHT)
                                     }
                                 }
+                            },
+                            onShowSystemColor = {
+                                showColorWheel = true
                             }
                         )
                     }
 
                     if (uiState.isLoading) {
                         LoadingScreen()
+                    }
+
+                    if (showColorWheel) {
+                        ColorPickerDialog(
+                            selectedColor = currentSelectedColor,
+                            onColorSelected = { color ->
+                                currentSelectedColor = color
+                                stickerView?.getCurrentTextSticker()
+                                    ?.getAddTextProperties()?.textColor = color.toArgb()
+                                stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
+                                    stickerView?.replace(
+                                        TextSticker(
+                                            this@TextStickerActivity,
+                                            it
+                                        )
+                                    )
+                                }
+                                showColorWheel = false
+                            },
+                            onDismiss = { showColorWheel = false },
+                            textStyle = AppStyle.body1().medium().gray900(),
+                            confirmText = R.string.confirm,
+                            cancelText = R.string.cancel
+                        )
                     }
                 }
             }
@@ -413,6 +448,7 @@ fun TextStickerToolPanel(
     opacityColorValue: Float,
     onOpacityColor: (Float) -> Unit,
     onAlign: (TEXT_ALIGN) -> Unit,
+    onShowSystemColor: () -> Unit
 ) {
     val tabs = listOf(
         stringResource(TEXT_TAB.FONT.res),
@@ -474,26 +510,36 @@ fun TextStickerToolPanel(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
                 ) {
                     TabColor(
                         modifier = Modifier
                             .fillMaxWidth(),
                         onSelectedColor = onSelectedColor,
                         opacityColorValue = opacityColorValue,
-                        onOpacityColor = onOpacityColor
+                        onOpacityColor = onOpacityColor,
+                        onShowSystemColor = onShowSystemColor
                     )
                 }
+                Spacer(modifier = Modifier.height(26.dp))
             }
 
             TEXT_TAB.ALIGN.index -> {
+                Spacer(modifier = Modifier.height(28.dp))
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    TabAlign(onAlign)
+                    Box(
+                        modifier = Modifier
+                            .background(color = AppColor.Gray100, RoundedCornerShape(10.dp))
+                            .padding(horizontal = 12.dp, 8.dp)
+                            .align(Alignment.Center),
+                    ) {
+                        TabAlign(onAlign)
+                    }
                 }
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
 
@@ -518,13 +564,17 @@ enum class TEXT_ALIGN(val index: Int) {
 fun TabAlign(
     onAlign: (TEXT_ALIGN) -> Unit,
 ) {
-    var selectedTab by remember { mutableStateOf(TEXT_ALIGN.START) }
+    var selectedTab by remember { mutableStateOf(TEXT_ALIGN.CENTER) }
     val items = listOf(
         R.drawable.ic_align_start,
         R.drawable.ic_align_center,
         R.drawable.ic_align_end
     )
-    Row {
+    Row(
+        modifier = Modifier,
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         items.forEachIndexed { index, item ->
             ItemAlign(
                 isSelected = selectedTab.index == index,
@@ -547,7 +597,6 @@ fun ItemAlign(
         tintColor = if (isSelected) AppColor.Primary500 else AppColor.Gray300,
         modifier = Modifier.clickableWithAlphaEffect(onClick = onSelectedTab)
     )
-    Spacer(modifier = Modifier.width(24.dp))
 }
 
 @Composable
@@ -555,7 +604,8 @@ fun TabColor(
     modifier: Modifier = Modifier,
     onSelectedColor: (Color) -> Unit,
     opacityColorValue: Float,
-    onOpacityColor: (Float) -> Unit
+    onOpacityColor: (Float) -> Unit,
+    onShowSystemColor: () -> Unit
 ) {
     val colors: List<Color> = listOf(
         Color(0xFFF7F8F3),
@@ -573,6 +623,12 @@ fun TabColor(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            ImageWidget(
+                resId = R.drawable.ic_color,
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickableWithAlphaEffect(onClick = onShowSystemColor)
+            )
             colors.forEach { item ->
                 Box(
                     modifier = Modifier
