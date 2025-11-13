@@ -260,7 +260,6 @@ class TextStickerActivity : BaseActivity() {
                                         modifier = Modifier.fillMaxSize(),
                                         input = uiState.addTextProperties,
                                         onTextStickerEdit = { textSticker ->
-                                            this@TextStickerActivity.textSticker = textSticker
                                             isVisibleTextField = true
                                             textFieldValue = textFieldValue.copy(
                                                 text = textSticker.getAddTextProperties()?.text.orEmpty(),
@@ -273,7 +272,7 @@ class TextStickerActivity : BaseActivity() {
                                                 isVisibleTextField = false
                                                 focusManager.clearFocus()
                                                 keyboardController?.hide()
-                                                val addTextProperties = uiState.addTextProperties!!
+                                                val addTextProperties = uiState.editTextProperties!!
                                                 addTextProperties.text = textFieldValue.text
                                                 addTextProperties.textWidth = textFieldSize.width
                                                 addTextProperties.textHeight = textFieldSize.height
@@ -307,7 +306,10 @@ class TextStickerActivity : BaseActivity() {
 //                            viewmodel.addTextSticker()
                             },
                             addTextSticker = { index, item ->
-                                viewmodel.addTextSticker(index = index, item = item, textFieldSize)
+                                viewmodel.addTextSticker(
+                                    index = index,
+                                    item = item,
+                                )
                             },
                             uiState = uiState,
                             onSelectedColor = { color ->

@@ -30,14 +30,13 @@ class TextStickerViewModel : BaseViewModel() {
     fun addTextSticker(
         index: Int,
         item: FontItem,
-        textFieldSize: IntSize
     ) {
         val addTextProperties = AddTextProperties.defaultProperties
         addTextProperties.fontName = item.fontPath
         addTextProperties.fontIndex = index
         addTextProperties.text = "Click to Edit"
-        addTextProperties.textWidth = textFieldSize.width
-        addTextProperties.textHeight = textFieldSize.height
+        addTextProperties.textWidth = originTextFieldSize.width
+        addTextProperties.textHeight = originTextFieldSize.height
         uiState.update {
             it.copy(
                 addTextProperties = addTextProperties,
@@ -47,13 +46,15 @@ class TextStickerViewModel : BaseViewModel() {
         }
     }
 
+    var originTextFieldSize: IntSize = IntSize.Zero
+
     fun addFirstTextSticker(
         textFieldSize: IntSize
     ) {
+        originTextFieldSize = textFieldSize
         addTextSticker(
             index = 0,
             item = FontAsset.listFonts.first(),
-            textFieldSize = textFieldSize
         )
     }
 
