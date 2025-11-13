@@ -2,6 +2,7 @@ package com.amb.photo.ui.activities.editor
 
 import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.core.graphics.scale
 import androidx.lifecycle.viewModelScope
@@ -116,11 +117,20 @@ class EditorViewModel : BaseViewModel() {
 
     }
 
+    fun updateBackgroundColor(color: Color) {
+        uiState.update {
+            it.copy(
+                backgroundColor = color,
+            )
+        }
+    }
+
 }
 
 data class EditorUIState(
     val items: List<ToolItem>,
     val bitmap: Bitmap? = null,
     val originBitmap: Bitmap? = null,
-    val isOriginal: Boolean = false
+    val isOriginal: Boolean = false,
+    val backgroundColor: Color = Color(0xFFF2F4F8),
 )

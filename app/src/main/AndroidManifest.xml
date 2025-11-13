@@ -73,6 +73,8 @@
         <activity
             android:name=".ui.activities.editor.remove_object.RemoveObjectActivity"
             android:hardwareAccelerated="false" />
+
+        <activity android:name=".ui.activities.editor.background.BackgroundActivity"/>
     </application>
 
 </manifest>
