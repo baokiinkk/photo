@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Lớp shadow -->
+    <item
+        android:left="0dp"
+        android:top="2dp"> <!-- Y offset -->
+        <shape android:shape="rectangle">
+            <solid android:color="#666425F3"/> <!-- 40% opacity -->
+            <corners android:radius="100dp" />
+            <size android:height="56dp"/> <!-- cần đặt gần bằng chiều cao ghost -->
+        </shape>
+    </item>
+
+    <!-- Lớp button chính -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#6425F3"/>
+            <corners android:radius="100dp"/>
+        </shape>
+    </item>
+
+</layer-list>

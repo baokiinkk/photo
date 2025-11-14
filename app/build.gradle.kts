@@ -84,6 +84,9 @@ dependencies {
 
     implementation("org.wysaid:gpuimage-plus:3.1.0-16k")
 
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
+
 }
 
 private fun DependencyHandlerScope.coreAndroid() {
