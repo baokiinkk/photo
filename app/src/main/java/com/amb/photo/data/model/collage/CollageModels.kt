@@ -124,15 +124,15 @@ class FreePolygonShape(
             }
         } else {
             // Không có shrinkMap, dùng đường thẳng như cũ
-            val x0 = points[0] * size.width
-            val y0 = points[1] * size.height
-            path.moveTo(x0, y0)
+        val x0 = points[0] * size.width
+        val y0 = points[1] * size.height
+        path.moveTo(x0, y0)
             
             for (i in 2 until points.size step 2) {
-                val x = points[i] * size.width
-                val y = points[i + 1] * size.height
-                path.lineTo(x, y)
-            }
+            val x = points[i] * size.width
+            val y = points[i + 1] * size.height
+            path.lineTo(x, y)
+        }
         }
         
         path.close()

@@ -214,7 +214,7 @@ fun CollagePreview(
                                 val centerY = size.height / 2f
                                 finalLeft = left
                                 finalTop = centerY - pathHeight / 2f
-                            } else {
+                } else {
                                 // Không căn giữa
                                 finalLeft = left
                                 finalTop = top
@@ -225,8 +225,8 @@ fun CollagePreview(
                             val translatedPath = Path()
                             translatedPath.addPath(heartPath, Offset(finalLeft, finalTop))
                             return Outline.Generic(translatedPath)
-                        }
-                    }
+                }
+            }
                 }
 
                 cellData.pathType == "CIRCLE" -> CircleShape

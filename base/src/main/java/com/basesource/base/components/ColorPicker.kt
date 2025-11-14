@@ -1,9 +1,12 @@
 package com.basesource.base.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,13 +28,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,8 +50,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.basesource.base.R
 import com.basesource.base.utils.clickableWithAlphaEffect
-import com.github.skydoves.colorpicker.compose.HsvColorPicker
-import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 @Composable
 fun ColorPicker(
@@ -148,6 +160,21 @@ fun PresetColorCircle(color: Color, isSelected: Boolean, onClick: () -> Unit) {
     )
 }
 
+// Helper functions for color conversion
+private fun Color.toHsv(): FloatArray {
+    val hsv = FloatArray(3)
+    android.graphics.Color.colorToHSV(this.toArgb(), hsv)
+    return hsv
+}
+
+private fun hsvToColor(h: Float, s: Float, v: Float, alpha: Float = 1f): Color {
+    val argb = android.graphics.Color.HSVToColor(
+        (alpha * 255).roundToInt(),
+        floatArrayOf(h, s, v)
+    )
+    return Color(argb)
+}
+
 @Composable
 fun ColorPickerDialog(
     selectedColor: Color? = null,
@@ -157,30 +184,29 @@ fun ColorPickerDialog(
     @StringRes confirmText: Int,
     @StringRes cancelText: Int,
 ) {
-    val controller = rememberColorPickerController()
-    var currentSelectedColor by remember { mutableStateOf(selectedColor ?: Color(0xFF8F82FF)) }
-
-    // Initialize color picker with selected color
-    LaunchedEffect(selectedColor) {
-        selectedColor?.let { color ->
-            currentSelectedColor = color
-        }
+    val initialColor = selectedColor ?: Color(0xFF8F82FF)
+    val initialHsv = remember { initialColor.toHsv() }
+    
+    var hue by remember { mutableFloatStateOf(initialHsv[0]) }
+    var saturation by remember { mutableFloatStateOf(initialHsv[1]) }
+    var brightness by remember { mutableFloatStateOf(initialHsv[2]) }
+    var alpha by remember { mutableFloatStateOf(initialColor.alpha) }
+    
+    // Calculate current color from HSV
+    val currentColor = remember(hue, saturation, brightness, alpha) {
+        hsvToColor(hue, saturation, brightness, alpha)
     }
 
-    // Preset colors matching the design
-    val presetColors = listOf(
-        Color.Black,
-        Color(0xFF2196F3), // Bright Blue
-        Color(0xFF4CAF50), // Green
-        Color(0xFFFFEB3B), // Yellow
-        Color(0xFFF44336), // Red
-        Color(0xFF03DAC6), // Light Blue
-        Color(0xFF9C27B0), // Purple
-        Color(0xFF1976D2), // Dark Blue
-        Color(0xFFE91E63),  // Pink/Red
-        Color(0xFFD004F5),
-
-    )
+    // Initialize with selected color
+    LaunchedEffect(selectedColor) {
+        selectedColor?.let { color ->
+            val hsv = color.toHsv()
+            hue = hsv[0]
+            saturation = hsv[1]
+            brightness = hsv[2]
+            alpha = color.alpha
+        }
+    }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -190,123 +216,231 @@ fun ColorPickerDialog(
                 .fillMaxWidth()
                 .background(
                     color = Color.White,
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(16.dp)
                 )
-                .padding(24.dp)
+                .padding(20.dp)
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Color Wheel Section
-                Box(
-                    modifier = Modifier
-                        .size(248.dp)
-                        .border(
-                            1.dp,
-                            color = Color(0xFF9BC9FF),
-                            shape = RoundedCornerShape(900.dp)
-                        )
-                        .align(Alignment.CenterHorizontally)
-                        .padding(4.dp),
-                    contentAlignment = Alignment.Center
+                // Header with X and Checkmark
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    HsvColorPicker(
+                    // X button - using text for now, can be replaced with icon if available
+                    Text(
+                        text = "✕",
+                        style = textStyle,
                         modifier = Modifier
-                            .fillMaxSize(),
-                        controller = controller,
-                        initialColor = selectedColor,
-                        onColorChanged = { colorEnvelope ->
-                            currentSelectedColor = colorEnvelope.color
-                        }
+                            .size(24.dp)
+                            .clickableWithAlphaEffect(onClick = onDismiss)
+                    )
+                    Text(
+                        text = "Color",
+                        style = textStyle
+                    )
+                    // Checkmark button - using text for now, can be replaced with icon if available
+                    Text(
+                        text = "✓",
+                        style = textStyle,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickableWithAlphaEffect(onClick = {
+                                onColorSelected(currentColor)
+                            })
                     )
                 }
 
-                // Selected Color Display and Preset Colors
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // Selected Color Display
-                    Box(
-                        modifier = Modifier
-                            .size(78.dp)
-                            .background(
-                                color = currentSelectedColor,
-                                shape = RoundedCornerShape(8.dp)
+                // Color Field (Saturation and Brightness)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .pointerInput(Unit) {
+                            detectDragGestures(
+                                onDragEnd = {},
+                                onDrag = { change, _ ->
+                                    val size = this.size
+                                    val x = (change.position.x / size.width).coerceIn(0f, 1f)
+                                    val y = (change.position.y / size.height).coerceIn(0f, 1f)
+                                    saturation = x
+                                    brightness = 1f - y
+                                }
                             )
-                    )
-
-                    // Preset Colors Grid
-                    Column(
-                        modifier = Modifier.padding(start = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        // First row
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            presetColors.take(5).forEach { color ->
-                                PresetColorCircle(
-                                    color = color,
-                                    isSelected = currentSelectedColor == color,
-                                    onClick = {
-                                        currentSelectedColor = color
-                                    }
-                                )
+                        }
+                        .pointerInput(Unit) {
+                            detectTapGestures { tapOffset ->
+                                val size = this.size
+                                val x = (tapOffset.x / size.width).coerceIn(0f, 1f)
+                                val y = (tapOffset.y / size.height).coerceIn(0f, 1f)
+                                saturation = x
+                                brightness = 1f - y
                             }
                         }
-
-                        // Second row
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            presetColors.drop(5).forEach { color ->
-                                PresetColorCircle(
-                                    color = color,
-                                    isSelected = currentSelectedColor == color,
-                                    onClick = {
-                                        currentSelectedColor = color
-                                    }
-                                )
-                            }
+                ) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        val width = size.width
+                        val height = size.height
+                        
+                        // Draw color field: horizontal = saturation, vertical = brightness
+                        // Draw saturation gradient (left to right)
+                        val steps = 20
+                        for (i in 0 until steps) {
+                            val x1 = (i.toFloat() / steps) * width
+                            val x2 = ((i + 1).toFloat() / steps) * width
+                            val sat = (i + 0.5f) / steps
+                            val colorAtSat = hsvToColor(hue, sat, 1f)
+                            drawRect(
+                                color = colorAtSat,
+                                topLeft = Offset(x1, 0f),
+                                size = Size(x2 - x1, height)
+                            )
                         }
+                        
+                        // Draw brightness gradient overlay (top = transparent, bottom = black)
+                        drawRect(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(Color.Transparent, Color.Black)
+                            )
+                        )
+                        
+                        // Draw selector circle
+                        val selectorX = saturation * width
+                        val selectorY = (1f - brightness) * height
+                        drawCircle(
+                            color = Color.White,
+                            radius = 12.dp.toPx(),
+                            center = Offset(selectorX, selectorY),
+                            style = Stroke(width = 3.dp.toPx())
+                        )
+                        drawCircle(
+                            color = Color.Black,
+                            radius = 10.dp.toPx(),
+                            center = Offset(selectorX, selectorY),
+                            style = Stroke(width = 1.dp.toPx())
+                        )
                     }
                 }
 
-                // Action Buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                // Hue Slider (Rainbow)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .pointerInput(Unit) {
+                            detectDragGestures(
+                                onDragEnd = {},
+                                onDrag = { change, _ ->
+                                    val size = this.size
+                                    val x = (change.position.x / size.width).coerceIn(0f, 1f)
+                                    hue = x * 360f
+                                }
+                            )
+                        }
+                        .pointerInput(Unit) {
+                            detectTapGestures { tapOffset ->
+                                val size = this.size
+                                val x = (tapOffset.x / size.width).coerceIn(0f, 1f)
+                                hue = x * 360f
+                            }
+                        }
                 ) {
-                    // Close Button
-                    CustomButton(
-                        text = stringResource(cancelText),
-                        onClick = {
-                            onDismiss()
-                        },
-                        modifier = Modifier
-                            .weight(1f)
-                            .border(
-                                width = 1.dp,
-                                color = Color(0xFFA59BFF),
-                                RoundedCornerShape(16.dp)
-                            ),
-                        colors = listOf(Color.White,Color.White),
-                        textStyle = textStyle.copy(
-                            color = Color(0xFFA59BFF)
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        val width = size.width
+                        val height = size.height
+                        
+                        // Draw rainbow gradient
+                        val steps = 20
+                        for (i in 0 until steps) {
+                            val x1 = (i.toFloat() / steps) * width
+                            val x2 = ((i + 1).toFloat() / steps) * width
+                            val h = ((i + 0.5f) / steps) * 360f
+                            val color = hsvToColor(h, 1f, 1f)
+                            drawRect(
+                                color = color,
+                                topLeft = Offset(x1, 0f),
+                                size = Size(x2 - x1, height)
+                            )
+                        }
+                        
+                        // Draw selector
+                        val selectorX = (hue / 360f) * width
+                        drawCircle(
+                            color = Color.White,
+                            radius = 8.dp.toPx(),
+                            center = Offset(selectorX, height / 2f),
+                            style = Stroke(width = 2.dp.toPx())
                         )
-                    )
-                    // Save Button
-                    CustomButton(
-                        text = stringResource(confirmText),
-                        onClick = {
-                            onColorSelected(currentSelectedColor)
-                        },
-                        modifier = Modifier.weight(1f),
-                        textStyle = textStyle
-                    )
+                    }
+                }
+
+                // Alpha/Opacity Slider (Custom with checkered background)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .pointerInput(Unit) {
+                            detectDragGestures(
+                                onDragEnd = {},
+                                onDrag = { change, _ ->
+                                    val size = this.size
+                                    val x = (change.position.x / size.width).coerceIn(0f, 1f)
+                                    alpha = x
+                                }
+                            )
+                        }
+                        .pointerInput(Unit) {
+                            detectTapGestures { tapOffset ->
+                                val size = this.size
+                                val x = (tapOffset.x / size.width).coerceIn(0f, 1f)
+                                alpha = x
+                            }
+                        }
+                ) {
+                    // Checkered background and alpha gradient
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        val tileSize = 8.dp.toPx()
+                        val width = size.width
+                        val height = size.height
+                        
+                        // Draw checkered pattern
+                        for (x in 0..(width / tileSize).toInt()) {
+                            for (y in 0..(height / tileSize).toInt()) {
+                                val isEven = (x + y) % 2 == 0
+                                drawRect(
+                                    color = if (isEven) Color.LightGray else Color.White,
+                                    topLeft = Offset(x * tileSize, y * tileSize),
+                                    size = Size(tileSize, tileSize)
+                                )
+                            }
+                        }
+                        
+                        // Draw alpha gradient overlay (transparent to opaque)
+                        val baseColor = hsvToColor(hue, saturation, brightness, 1f)
+                        drawRect(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(
+                                    baseColor.copy(alpha = 0f),
+                                    baseColor.copy(alpha = 1f)
+                                )
+                            )
+                        )
+                        
+                        // Draw selector
+                        val selectorX = alpha * width
+                        drawCircle(
+                            color = Color.White,
+                            radius = 8.dp.toPx(),
+                            center = Offset(selectorX, height / 2f),
+                            style = Stroke(width = 2.dp.toPx())
+                        )
+                    }
                 }
             }
         }
