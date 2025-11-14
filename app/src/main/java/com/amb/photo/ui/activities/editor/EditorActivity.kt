@@ -58,6 +58,7 @@ import com.amb.photo.ui.activities.editor.filter.FilterActivity
 import com.amb.photo.ui.activities.editor.remove_object.RemoveObjectActivity
 import com.amb.photo.ui.activities.editor.sticker.StickerActivity
 import com.amb.photo.ui.activities.editor.text_sticker.TextStickerActivity
+import com.amb.photo.ui.theme.AppColor
 import com.amb.photo.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
@@ -119,7 +120,7 @@ class EditorActivity : BaseActivity() {
         setContent {
 
             Scaffold(
-                containerColor = Color(0xFFF2F4F8)
+                containerColor = AppColor.backgroundAppColor
             ) { inner ->
 
                 val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
@@ -152,9 +153,9 @@ class EditorActivity : BaseActivity() {
                                         if (result.resultCode == RESULT_OK) {
                                             val pathBitmap =
                                                 result.data?.getStringExtra("pathBitmap")
-                                            viewmodel.setPathBitmap(
-                                                pathBitmap,
-                                                pathBitmap.toBitmap(this)
+                                            viewmodel.updateBitmap(
+                                                pathBitmap = pathBitmap,
+                                               bitmap =  pathBitmap.toBitmap(this)
                                             )
                                         }
                                     }
@@ -171,8 +172,8 @@ class EditorActivity : BaseActivity() {
                                                 result.data?.getStringExtra("pathBitmap")
                                             Log.d("aaaa", "asdasdasd $pathBitmap")
                                             viewmodel.updateBitmap(
-                                                pathBitmap,
-                                                pathBitmap.toBitmap(this)
+                                                pathBitmap = pathBitmap,
+                                                bitmap = pathBitmap.toBitmap(this)
                                             )
                                         }
                                     }
@@ -188,8 +189,8 @@ class EditorActivity : BaseActivity() {
                                             val pathBitmap =
                                                 result.data?.getStringExtra("pathBitmap")
                                             viewmodel.updateBitmap(
-                                                pathBitmap,
-                                                pathBitmap.toBitmap(this)
+                                                pathBitmap = pathBitmap,
+                                                bitmap = pathBitmap.toBitmap(this)
                                             )
                                         }
                                     }
@@ -205,8 +206,8 @@ class EditorActivity : BaseActivity() {
                                             val pathBitmap =
                                                 result.data?.getStringExtra("pathBitmap")
                                             viewmodel.updateBitmap(
-                                                pathBitmap,
-                                                pathBitmap.toBitmap(this)
+                                                pathBitmap = pathBitmap,
+                                                bitmap = pathBitmap.toBitmap(this)
                                             )
                                         }
                                     }
@@ -222,8 +223,8 @@ class EditorActivity : BaseActivity() {
                                             val pathBitmap =
                                                 result.data?.getStringExtra("pathBitmap")
                                             viewmodel.updateBitmap(
-                                                pathBitmap,
-                                                pathBitmap.toBitmap(this)
+                                                pathBitmap = pathBitmap,
+                                                bitmap = pathBitmap.toBitmap(this)
                                             )
                                         }
                                     }
@@ -239,8 +240,8 @@ class EditorActivity : BaseActivity() {
                                             val pathBitmap =
                                                 result.data?.getStringExtra("pathBitmap")
                                             viewmodel.updateBitmap(
-                                                pathBitmap,
-                                                pathBitmap.toBitmap(this)
+                                                pathBitmap = pathBitmap,
+                                                bitmap = pathBitmap.toBitmap(this)
                                             )
                                         }
                                     }
@@ -256,8 +257,8 @@ class EditorActivity : BaseActivity() {
                                             val pathBitmap =
                                                 result.data?.getStringExtra("pathBitmap")
                                             viewmodel.updateBitmap(
-                                                pathBitmap,
-                                                pathBitmap.toBitmap(this)
+                                                pathBitmap = pathBitmap,
+                                                bitmap = pathBitmap.toBitmap(this)
                                             )
                                         }
                                     }
@@ -272,6 +273,12 @@ class EditorActivity : BaseActivity() {
                                         if (result.resultCode == RESULT_OK) {
                                             val output = result.data?.getStringExtra("pathBitmap")
                                                 ?.fromJson<BackgroundResult>()
+                                            output?.color?.let { color ->
+                                                viewmodel.push(
+                                                    StackData.Background(color)
+                                                )
+                                            }
+
                                             viewmodel.updateBackgroundColor(
                                                 output?.color ?: Color(0xFFF2F4F8)
                                             )
@@ -329,11 +336,15 @@ fun EditorScreen(
     Column(modifier) {
         FeaturePhotoHeader(
             onBack = onBack,
-            onUndo = { /* TODO */ },
-            onRedo = { /* TODO */ },
+            onUndo = {
+                viewmodel.undo()
+            },
+            onRedo = {
+                viewmodel.redo()
+            },
             onSave = { /* TODO */ },
-            canUndo = false,
-            canRedo = false
+            canUndo = uiState.canUndo,
+            canRedo = uiState.canRedo
         )
         if (uiState.isOriginal) {
             Box(

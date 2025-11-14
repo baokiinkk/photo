@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.amb.photo.R
 import com.amb.photo.ui.activities.collage.components.CollageTool
 import com.amb.photo.ui.activities.collage.components.ToolItem
+import com.amb.photo.ui.theme.AppColor
 import com.basesource.base.viewmodel.BaseViewModel
 import com.tanishranjan.cropkit.util.MathUtils
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import java.util.Stack
 
 @KoinViewModel
 class EditorViewModel : BaseViewModel() {
@@ -46,6 +48,7 @@ class EditorViewModel : BaseViewModel() {
     var pathBitmapResult: String? = null
 
     var canvasSize: Size? = null
+
     fun setPathBitmap(pathBitmap: String?, bitmap: Bitmap?) {
         pathBitmapResult = pathBitmap
         uiState.update {
@@ -56,7 +59,7 @@ class EditorViewModel : BaseViewModel() {
         }
     }
 
-    fun updateBitmap(pathBitmap: String?, bitmap: Bitmap?) {
+    fun updateBitmap(tool: CollageTool = CollageTool.NONE, pathBitmap: String?, bitmap: Bitmap?) {
         if (bitmap == null || canvasSize == null) return
         pathBitmapResult = pathBitmap
         viewModelScope.launch(Dispatchers.Default) {
@@ -78,8 +81,18 @@ class EditorViewModel : BaseViewModel() {
                     originBitmap = bitmap
                 )
             }
+            push(
+                stackData = StackData.EditorBitmap(
+                    bitmap = newBitmap,
+                    backgroundColor = uiState.value.backgroundColor,
+                    pathBitmapResult = pathBitmap,
+                    originBitmap = bitmap
+                )
+            )
         }
     }
+
+    var isFirstInit: Boolean = true
 
     fun scaleBitmapToBox(canvasSize: Size) {
         val bitmap = uiState.value.originBitmap ?: return
@@ -97,6 +110,11 @@ class EditorViewModel : BaseViewModel() {
 
             val newBitmap = bitmap.scale(scaledSize.width.toInt(), scaledSize.height.toInt())
             uiState.update { it.copy(bitmap = newBitmap) }
+
+            if (isFirstInit) {
+                pushFirstData(newBitmap)
+                isFirstInit = false
+            }
         }
     }
 
@@ -125,12 +143,159 @@ class EditorViewModel : BaseViewModel() {
         }
     }
 
+
+    private val undoStack = Stack<StackData>()
+    private val redoStack = Stack<StackData>()
+
+    var firstBitmap: Bitmap? = null
+    fun pushFirstData(bitmap: Bitmap?) {
+        bitmap?.let { newBitmap ->
+            firstBitmap = newBitmap
+            undoStack.push(
+                StackData.EditorBitmap(
+                    bitmap = newBitmap,
+                    backgroundColor = AppColor.backgroundAppColor,
+                    originBitmap = uiState.value.originBitmap,
+                    pathBitmapResult = pathBitmapResult
+                )
+            )
+            redoStack.push(
+                StackData.EditorBitmap(
+                    bitmap = newBitmap,
+                    backgroundColor = AppColor.backgroundAppColor,
+                    originBitmap = uiState.value.originBitmap,
+                    pathBitmapResult = pathBitmapResult
+                )
+            )
+        }
+    }
+
+    fun push(stackData: StackData) {
+        undoStack.push(stackData)
+        uiState.update {
+            it.copy(
+                canUndo = true,
+                canRedo = false
+            )
+        }
+        redoStack.clear()
+        firstBitmap?.let {
+            redoStack.push(
+                StackData.EditorBitmap(
+                    bitmap = it,
+                    AppColor.backgroundAppColor,
+                    pathBitmapResult = pathBitmapResult,
+                    uiState.value.originBitmap
+                )
+            )
+        }
+    }
+
+    fun undo() {
+        if (undoStack.size < 2) {
+            uiState.update {
+                it.copy(
+                    canUndo = false,
+                    canRedo = false,
+                    backgroundColor = Color(0xFFF2F4F8)
+                )
+            }
+        } else {
+            val stack = undoStack.pop()
+            val previous = undoStack.peek()
+            when (previous) {
+                is StackData.EditorBitmap -> {
+                    uiState.update {
+                        it.copy(
+                            bitmap = previous.bitmap,
+                            canUndo = undoStack.size >= 2,
+                            canRedo = undoStack.size >= 2,
+                            backgroundColor = previous.backgroundColor,
+                            originBitmap = previous.originBitmap
+                        )
+                    }
+                    pathBitmapResult = previous.pathBitmapResult
+                }
+
+                is StackData.Background -> {
+                    uiState.update {
+                        it.copy(
+                            backgroundColor = previous.backgroundColor,
+                            canUndo = undoStack.size >= 2,
+                            canRedo = undoStack.size >= 2
+                        )
+                    }
+                }
+
+                else -> {
+
+                }
+            }
+            redoStack.push(stack)
+        }
+    }
+
+    fun redo() {
+        if (redoStack.size < 2) {
+            uiState.update {
+                it.copy(
+                    canRedo = false
+                )
+            }
+        } else {
+            val stack = redoStack.pop()
+            when (stack) {
+                is StackData.EditorBitmap -> {
+                    uiState.update {
+                        it.copy(
+                            bitmap = stack.bitmap,
+                            canUndo = true,
+                            canRedo = redoStack.size >= 2,
+                            originBitmap = stack.originBitmap
+                        )
+                    }
+                    pathBitmapResult = stack.pathBitmapResult
+                }
+
+                is StackData.Background -> {
+                    uiState.update {
+                        it.copy(
+                            backgroundColor = stack.backgroundColor,
+                            canUndo = true,
+                            canRedo = redoStack.size >= 2,
+                        )
+                    }
+                }
+
+                else -> {
+
+                }
+            }
+
+            undoStack.push(stack)
+        }
+    }
 }
+
+sealed class StackData {
+    data class EditorBitmap(
+        val bitmap: Bitmap,
+        val backgroundColor: Color,
+        val pathBitmapResult: String?,
+        val originBitmap: Bitmap?
+    ) : StackData()
+
+    data class Background(val backgroundColor: Color) : StackData()
+    data object NONE : StackData()
+}
+
 
 data class EditorUIState(
     val items: List<ToolItem>,
     val bitmap: Bitmap? = null,
     val originBitmap: Bitmap? = null,
     val isOriginal: Boolean = false,
-    val backgroundColor: Color = Color(0xFFF2F4F8),
+    val backgroundColor: Color = AppColor.backgroundAppColor,
+    val canUndo: Boolean = false,
+    val canRedo: Boolean = false
 )
