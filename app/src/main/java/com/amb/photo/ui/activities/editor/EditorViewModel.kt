@@ -1,10 +1,14 @@
 package com.amb.photo.ui.activities.editor
 
+import android.app.Application
+import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.core.graphics.scale
+import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.amb.photo.R
 import com.amb.photo.ui.activities.collage.components.CollageTool
@@ -17,10 +21,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import java.io.File
+import java.io.FileOutputStream
 import java.util.Stack
 
 @KoinViewModel
-class EditorViewModel : BaseViewModel() {
+class EditorViewModel(
+    private val context: Application
+) : BaseViewModel() {
 
     val items = listOf(
         ToolItem(
@@ -49,15 +57,45 @@ class EditorViewModel : BaseViewModel() {
 
     var canvasSize: Size? = null
 
+    var isApply: Boolean = false
+
     fun setPathBitmap(pathBitmap: String?, bitmap: Bitmap?) {
-        pathBitmapResult = pathBitmap
-        uiState.update {
-            it.copy(
-                bitmap = bitmap,
-                originBitmap = bitmap
-            )
+        viewModelScope.launch {
+            pathBitmapResult = copyImageToAppStorage(context, pathBitmap?.toUri())
+            uiState.update {
+                it.copy(
+                    bitmap = bitmap,
+                    originBitmap = bitmap
+                )
+            }
+        }
+
+    }
+
+    suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {
+        try {
+            if (sourceUri == null) return null
+            val inputStream =
+                context.contentResolver.openInputStream(sourceUri) ?: return null
+            val file = File(
+                context.filesDir,
+                "theme_image_${System.currentTimeMillis()}.png"
+            ) // có thể đổi tên nếu muốn
+            val outputStream = FileOutputStream(file)
+
+            inputStream.use { input ->
+                outputStream.use { output ->
+                    input.copyTo(output)
+                }
+            }
+            // Trả về Uri nội bộ
+            return file.absolutePath
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
         }
     }
+
 
     fun updateBitmap(tool: CollageTool = CollageTool.NONE, pathBitmap: String?, bitmap: Bitmap?) {
         if (bitmap == null || canvasSize == null) return

@@ -73,6 +73,13 @@ data class EditorInput(
     val pathBitmap: String? = null
 ) : IScreenData
 
+fun String?.toBitmap(context: Context): Bitmap? {
+//    val imageUri = this?.toUri()
+//    val bitmap = imageUri?.toBitmap(context)
+    val bitmap = BitmapFactory.decodeFile(this)
+    return bitmap
+}
+
 class EditorActivity : BaseActivity() {
 
     private val viewmodel: EditorViewModel by viewModel()
@@ -81,7 +88,7 @@ class EditorActivity : BaseActivity() {
         intent.getInput()
     }
 
-    fun String?.toBitmap(context: Context): Bitmap? {
+    fun String?.uriToBitmap(context: Context): Bitmap? {
         val imageUri = this?.toUri()
         val bitmap = imageUri?.toBitmap(context)
         return bitmap
@@ -115,7 +122,7 @@ class EditorActivity : BaseActivity() {
         CGENativeLibrary.setLoadImageCallback(this.mLoadImageCallback, null)
         blurView = BlurView(this)
         blurView.tabShape()
-        viewmodel.setPathBitmap(screenInput?.pathBitmap, screenInput?.pathBitmap.toBitmap(this))
+        viewmodel.setPathBitmap(screenInput?.pathBitmap, screenInput?.pathBitmap.uriToBitmap(this))
         enableEdgeToEdge()
         setContent {
 

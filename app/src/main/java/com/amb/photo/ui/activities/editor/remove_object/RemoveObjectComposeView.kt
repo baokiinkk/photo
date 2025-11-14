@@ -33,7 +33,7 @@ fun RemoveObjectComposeView(
             }
             view
         },
-        update = {view->
+        update = { view ->
             Log.d("aaa", "update")
 
         }
@@ -46,26 +46,19 @@ class RemoveObjectCustomView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
+    private var drawingView: DrawingView? = null
+
 
     fun registerView(mBitmap: Bitmap) {
-        if (width == 0 || height == 0) {
-            // View chưa layout xong → chờ
-            post { registerView(mBitmap) }
-            return
-        }
-
-
-        removeAllViews()
-
-        val drawingView = DrawingView(context, mBitmap).apply {
+        drawingView = DrawingView(context, mBitmap).apply {
             onDraw = {
             }
             onFinishDraw = { isBrush ->
 
             }
-            layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
+            layoutParams = LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT
             )
 
             eventClickObj = { item ->

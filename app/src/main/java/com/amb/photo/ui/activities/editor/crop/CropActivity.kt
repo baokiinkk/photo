@@ -80,9 +80,9 @@ data class ToolInput(
 ) : IScreenData {
 
     fun getBitmap(context: Context): Bitmap? {
-        val imageUri = pathBitmap?.toUri()
-        val bitmap = imageUri?.toBitmap(context)
-        return bitmap
+//        val imageUri = pathBitmap?.toUri()
+//        val bitmap = imageUri?.toBitmap(context)
+        return pathBitmap.toBitmap(context)
     }
 }
 
@@ -127,9 +127,10 @@ class CropActivity : BaseActivity() {
                             onApply = {
                                 val intent = Intent()
                                 intent.putExtra("pathBitmap", it)
-                                setResult(RESULT_OK,intent)
+                                setResult(RESULT_OK, intent)
                                 finish()
-                                Toast.makeText(this@CropActivity, "Image Saved", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@CropActivity, "Image Saved", Toast.LENGTH_SHORT)
+                                    .show()
                             }
                         )
                     }
@@ -592,34 +593,43 @@ fun FooterEditor(
         }
     }
 }
- fun saveImage(context: Context, bitmap: Bitmap, onImageSaved: (String) -> Unit) {
+
+fun saveImage(context: Context, bitmap: Bitmap, onImageSaved: (String) -> Unit) {
     val filename = "${System.currentTimeMillis()}.jpg"
     var fos: OutputStream? = null
     var imagePath: String? = null
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        val resolver = context.contentResolver
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-        }
+//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//        val resolver = context.contentResolver
+//        val contentValues = ContentValues().apply {
+//            put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+//            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+//            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+//        }
+//
+//        val imageUri: Uri? = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+//        fos = imageUri?.let { uri ->
+//            resolver.openOutputStream(uri)
+//        }
+//
+//        // ✅ lấy path thực tế từ MediaStore
+//        imageUri?.let { uri ->
+//            imagePath = uri.toString() // hoặc bạn có thể query path vật lý nếu cần
+//        }
+//    } else {
+//        val imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+//        val imageFile = File(imagesDir, filename)
+//        fos = FileOutputStream(imageFile)
+//        imagePath = imageFile.absolutePath // ✅ trả về path thật
+//    }
 
-        val imageUri: Uri? = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-        fos = imageUri?.let { uri ->
-            resolver.openOutputStream(uri)
-        }
-
-        // ✅ lấy path thực tế từ MediaStore
-        imageUri?.let { uri ->
-            imagePath = uri.toString() // hoặc bạn có thể query path vật lý nếu cần
-        }
-    } else {
-        val imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-        val imageFile = File(imagesDir, filename)
-        fos = FileOutputStream(imageFile)
-        imagePath = imageFile.absolutePath // ✅ trả về path thật
+    val imagesDir = context.getExternalFilesDir("share_image_success")
+    if (imagesDir?.exists() == false) {
+        imagesDir.mkdirs()
     }
+    val imageFile = File(imagesDir, filename)
+    fos = FileOutputStream(imageFile)
+    imagePath = imageFile.absolutePath // ✅ trả về path thật
 
     fos?.use { stream ->
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
