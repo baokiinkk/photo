@@ -72,7 +72,8 @@
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name=".ui.activities.editor.remove_object.RemoveObjectActivity"
-            android:hardwareAccelerated="false" />
+            android:hardwareAccelerated="false"
+            android:theme="@style/Theme.MyApp.Material"/>
 
         <activity android:name=".ui.activities.editor.background.BackgroundActivity"/>
     </application>

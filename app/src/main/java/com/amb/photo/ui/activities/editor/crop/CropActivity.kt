@@ -623,7 +623,7 @@ fun saveImage(context: Context, bitmap: Bitmap, onImageSaved: (String) -> Unit) 
 //        imagePath = imageFile.absolutePath // ✅ trả về path thật
 //    }
 
-    val imagesDir = context.getExternalFilesDir("share_image_success")
+    val imagesDir = context.getExternalFilesDir("editor_image_success")
     if (imagesDir?.exists() == false) {
         imagesDir.mkdirs()
     }

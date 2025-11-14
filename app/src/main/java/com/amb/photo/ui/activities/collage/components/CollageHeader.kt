@@ -1,6 +1,7 @@
 package com.amb.photo.ui.activities.collage.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,9 +12,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,11 +26,13 @@ import com.amb.photo.ui.theme.AppStyle
 import com.amb.photo.ui.theme.Gray300
 import com.amb.photo.ui.theme.Gray900
 import com.amb.photo.ui.theme.Primary500
+import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 
 @Composable
 fun FeaturePhotoHeader(
-    onBack: () -> Unit,
+    onBack: (() -> Unit)? = null,
     onUndo: () -> Unit,
     onRedo: () -> Unit,
     onSave: () -> Unit,
@@ -35,6 +40,7 @@ fun FeaturePhotoHeader(
     canRedo: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -45,13 +51,15 @@ fun FeaturePhotoHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onBack) {
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_left),
-                contentDescription = "Back",
-                tint = Color.Black
-            )
-        }
+        ImageWidget(
+            modifier = Modifier
+                .clickableWithAlphaEffect {
+                    if (onBack != null) onBack.invoke() else {
+                        (context as? BaseActivity)?.onBackPressedDispatcher?.onBackPressed()
+                    }
+                },
+            resId = R.drawable.ic_arrow_left
+        )
 
         Row(
             verticalAlignment = Alignment.CenterVertically

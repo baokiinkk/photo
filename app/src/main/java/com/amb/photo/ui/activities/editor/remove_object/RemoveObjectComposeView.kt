@@ -50,6 +50,7 @@ class RemoveObjectCustomView @JvmOverloads constructor(
 
 
     fun registerView(mBitmap: Bitmap) {
+        removeAllViews()
         drawingView = DrawingView(context, mBitmap).apply {
             onDraw = {
             }
@@ -65,5 +66,13 @@ class RemoveObjectCustomView @JvmOverloads constructor(
             }
         }
         addView(drawingView)
+    }
+
+    fun setType(type: Type) {
+        drawingView?.setType(type)
+    }
+
+    fun setStrokeWidth(strokeWidth: Float, isDrawTouchSize: Boolean) {
+        drawingView?.setStrokeWidth(strokeWidth, isDrawTouchSize)
     }
 }

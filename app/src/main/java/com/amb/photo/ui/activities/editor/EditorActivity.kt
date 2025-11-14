@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.amb.photo.BaseApplication
 import com.amb.photo.ui.activities.collage.components.CollageTool
 import com.amb.photo.ui.activities.collage.components.FeatureBottomTools
 import com.amb.photo.ui.activities.collage.components.FeaturePhotoHeader
@@ -64,9 +65,13 @@ import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.launchActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.wysaid.nativePort.CGENativeLibrary
 import org.wysaid.nativePort.CGENativeLibrary.LoadImageCallback
+import java.io.File
 import java.io.IOException
 
 data class EditorInput(
@@ -144,7 +149,7 @@ class EditorActivity : BaseActivity() {
                         )
                         .background(uiState.backgroundColor),
                     onBack = {
-
+                        finish()
                     },
                     onToolClick = {
                         when (it) {
@@ -162,7 +167,7 @@ class EditorActivity : BaseActivity() {
                                                 result.data?.getStringExtra("pathBitmap")
                                             viewmodel.updateBitmap(
                                                 pathBitmap = pathBitmap,
-                                               bitmap =  pathBitmap.toBitmap(this)
+                                                bitmap = pathBitmap.toBitmap(this)
                                             )
                                         }
                                     }
@@ -327,6 +332,13 @@ class EditorActivity : BaseActivity() {
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        CoroutineScope(Dispatchers.IO).launch {
+            deleteShareImageFolder(BaseApplication.getInstanceApp())
+        }
+    }
 }
 
 
@@ -470,3 +482,18 @@ fun Uri.toBitmap(context: Context): Bitmap? {
     return bitmap
 }
 
+fun deleteShareImageFolder(context: Context) {
+    val folder = context.getExternalFilesDir("editor_image_success")
+    folder?.let {
+        deleteDirectoryRecursively(it)
+    }
+}
+
+fun deleteDirectoryRecursively(dir: File): Boolean {
+    if (dir.isDirectory) {
+        dir.listFiles()?.forEach { file ->
+            deleteDirectoryRecursively(file)
+        }
+    }
+    return dir.delete()  // xóa file hoặc folder rỗng
+}

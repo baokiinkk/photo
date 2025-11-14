@@ -96,6 +96,7 @@ object AppStyle {
         )
         return BaseStyle(style)
     }
+
     fun caption2(): BaseStyle {
         val style = TextStyle(
             fontSize = 10.sp,
@@ -114,6 +115,7 @@ object AppStyle {
             )
         return BaseStyle(style)
     }
+
     fun titleL(): BaseStyle {
         val style = TextStyle(
             fontSize = 38.sp,
@@ -133,6 +135,7 @@ object AppStyle {
             )
         return BaseStyle(style)
     }
+
     fun h5(): BaseStyle {
         val style = TextStyle(
             fontSize = 20.sp,
@@ -229,7 +232,7 @@ class AppColor(private val textStyle: TextStyle) {
 
         val Primary500 = Color(0xFF6425F3)
 
-        val backgroundAppColor =  Color(0xFFF2F4F8)
+        val backgroundAppColor = Color(0xFFF2F4F8)
     }
 
     fun gray950(): TextStyle {
@@ -255,6 +258,7 @@ class AppColor(private val textStyle: TextStyle) {
             color = Color(0xFF484653)
         )
     }
+
     fun grayScale04(): TextStyle {
         return textStyle.copy(
             color = Color(0xFF9490A2)
@@ -272,6 +276,7 @@ class AppColor(private val textStyle: TextStyle) {
             color = Color(0xFF1D2939)
         )
     }
+
     fun gray900(): TextStyle {
         return textStyle.copy(
             color = Color(0xFF101828)
@@ -471,5 +476,10 @@ class AppColor(private val textStyle: TextStyle) {
         )
     }
 
+    fun Color_1D2939(): TextStyle {
+        return textStyle.copy(
+            color = Color(0xFF1D2939)
+        )
+    }
 
 }
