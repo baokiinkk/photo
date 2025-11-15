@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android.amg.AMGUtil
 import com.avnsoft.photoeditor.photocollage.BaseApplication
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
@@ -45,6 +46,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.tabShape
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.DrawActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity
@@ -296,6 +298,23 @@ class EditorActivity : BaseActivity() {
                                             }
 
                                             viewmodel.updateBackgroundColor(bgColor)
+                                        }
+                                    }
+                                )
+                            }
+
+                            CollageTool.DRAW -> {
+                                launchActivity(
+                                    toActivity = DrawActivity::class.java,
+                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                    callback = { result ->
+                                        if (result.resultCode == RESULT_OK) {
+                                            val pathBitmap =
+                                                result.data?.getStringExtra("pathBitmap")
+                                            viewmodel.updateBitmap(
+                                                pathBitmap = pathBitmap,
+                                                bitmap = pathBitmap.toBitmap(this)
+                                            )
                                         }
                                     }
                                 )

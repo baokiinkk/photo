@@ -73,9 +73,11 @@
         <activity
             android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity"
             android:hardwareAccelerated="false"
-            android:theme="@style/Theme.MyApp.Material"/>
+            android:theme="@style/Theme.MyApp.Material" />
 
-        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity"/>
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity" />
+
+        <activity android:name=".ui.activities.editor.draw.DrawActivity" />
     </application>
 
 </manifest>

@@ -3,6 +3,7 @@ package com.basesource.base.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.basesource.base.result.Result
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -113,7 +114,7 @@ abstract class BaseViewModel : ViewModel() {
         onTask: suspend () -> Result<T>,
         onSuccess: (T) -> Unit,
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 setLoading(true)
                 val response = onTask.invoke()

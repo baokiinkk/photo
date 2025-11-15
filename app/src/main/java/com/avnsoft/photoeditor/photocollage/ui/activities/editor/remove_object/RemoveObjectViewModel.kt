@@ -141,7 +141,6 @@ class RemoveObjectViewModel(
     val removeObjState = _removeObjState.asStateFlow()
     private var currIndexImg = 0
 
-
     @SuppressLint("StringFormatMatches")
     fun getObjDetectedAuto(
         context: Context,
@@ -287,6 +286,20 @@ class RemoveObjectViewModel(
             }
 
         }
+    }
+
+    fun refreshTokenFirebase() {
+        viewModelScope.launch(Dispatchers.IO) {
+            removeObjectRepoImpl.getTokenFirebase()
+        }
+//        executeTask(
+//            onTask = {
+//                removeObjectRepoImpl.getTokenFirebase()
+//            },
+//            onSuccess = {
+//                Log.i("TAG", "refeshTokenFirebase: $it")
+//            }
+//        )
     }
 }
 

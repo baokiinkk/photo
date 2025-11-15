@@ -65,7 +65,7 @@ class RemoveObjectActivity : BaseActivity() {
             newPathBitmap = cacheDir.absolutePath + "/BitmapOriginal_For_remove_obj.jpeg"
         )
         setContentView(binding.root)
-
+        viewmodel.refreshTokenFirebase()
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewmodel.uiState.collect {

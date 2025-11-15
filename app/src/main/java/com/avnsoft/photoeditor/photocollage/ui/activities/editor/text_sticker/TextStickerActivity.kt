@@ -513,9 +513,10 @@ fun TextStickerToolPanel(
                         modifier = Modifier
                             .fillMaxWidth(),
                         onSelectedColor = onSelectedColor,
-                        opacityColorValue = opacityColorValue,
-                        onOpacityColor = onOpacityColor,
-                        onShowSystemColor = onShowSystemColor
+                        sliderValue = opacityColorValue,
+                        onSliderChange = onOpacityColor,
+                        onShowSystemColor = onShowSystemColor,
+                        sliderValueRange = 0f..255f
                     )
                 }
                 Spacer(modifier = Modifier.height(26.dp))
@@ -601,9 +602,10 @@ fun ItemAlign(
 fun TabColor(
     modifier: Modifier = Modifier,
     onSelectedColor: (Color) -> Unit,
-    opacityColorValue: Float,
-    onOpacityColor: (Float) -> Unit,
-    onShowSystemColor: () -> Unit
+    sliderValue: Float,
+    onSliderChange: (Float) -> Unit,
+    onShowSystemColor: () -> Unit,
+    sliderValueRange: ClosedFloatingPointRange<Float> = 0f..100f
 ) {
     val colors: List<Color> = listOf(
         Color(0xFFF7F8F3),
@@ -649,9 +651,9 @@ fun TabColor(
                 resId = R.drawable.ic_opacity
             )
             Slider(
-                value = opacityColorValue,
-                onValueChange = onOpacityColor,
-                valueRange = 0f..255f,
+                value = sliderValue,
+                onValueChange = onSliderChange,
+                valueRange = sliderValueRange,
                 modifier = Modifier
                     .weight(1f)
                     .height(2.dp)
