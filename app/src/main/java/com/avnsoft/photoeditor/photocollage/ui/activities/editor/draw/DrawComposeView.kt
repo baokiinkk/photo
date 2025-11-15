@@ -7,21 +7,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.viewinterop.AndroidView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.BrushDrawingView
 
-sealed class DrawInput {
-
-    data class DrawColor(
-        val color: Color,
-        val mode: Int = 1,
-        val size: Float
-    ) : DrawInput()
-
-    data class DrawPattern(
-        val color: Color,
-        val mode: Int = 1,
-        val size: Float
-    ) : DrawInput()
-
-}
+interface DrawInput
 
 @Composable
 fun DrawComposeView(
@@ -37,13 +23,25 @@ fun DrawComposeView(
         },
         update = { view ->
             when (drawInput) {
-                is DrawInput.DrawColor -> {
+                is DrawColor -> {
                     view.setDrawMode(drawInput.mode)
                     view.brushColor = drawInput.color.toArgb()
                     view.brushSize = drawInput.size + 10
                 }
 
-                is DrawInput.DrawPattern -> {
+                is DrawPattern -> {
+                    view.setDrawMode(drawInput.mode)
+                    view.brushColor = drawInput.color.toArgb()
+                    view.brushSize = drawInput.size + 10
+                }
+
+                is DrawNeon -> {
+                    view.setDrawMode(drawInput.mode)
+                    view.brushColor = drawInput.color.toArgb()
+                    view.brushSize = drawInput.size + 10
+                }
+
+                else -> {
 
                 }
             }

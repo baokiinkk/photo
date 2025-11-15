@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,9 +36,6 @@ import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BrushShapeSlider
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectTab
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TabColor
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
@@ -122,7 +116,7 @@ class DrawActivity : BaseActivity() {
                                 DrawComposeView(
                                     modifier = Modifier
                                         .fillMaxSize(),
-                                    drawInput = uiState.currentTab.drawInput
+                                    drawInput = uiState.drawInput
                                 )
                             }
                         }
@@ -136,10 +130,7 @@ class DrawActivity : BaseActivity() {
                             viewmodel.onTabSelected(it)
                         },
                         onSizeColorChange = {
-                            viewmodel.onSizeColorChange(it)
-                        },
-                        onSizePatternChange = {
-
+                            viewmodel.onSizeChange(it)
                         },
                         onSelectedColor = {
                             viewmodel.onSelectedColor(it)
@@ -177,7 +168,6 @@ fun DrawFooter(
     uiState: DrawUIState,
     onTabSelected: (DrawTabData) -> Unit,
     onSizeColorChange: (Float) -> Unit,
-    onSizePatternChange: (Float) -> Unit,
     onSelectedColor: (Color) -> Unit,
     onShowSystemColor: () -> Unit,
 ) {
@@ -197,7 +187,7 @@ fun DrawFooter(
                 uiState.tabs.forEach { item ->
                     DrawTabView(
                         item = item,
-                        isSelected = item.drawInput == uiState.currentTab,
+                        isSelected = item.tab == uiState.currentTab,
                         onClick = {
                             onTabSelected.invoke(item)
                         }
@@ -205,32 +195,116 @@ fun DrawFooter(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        when (uiState.currentTab.drawInput) {
-            is DrawInput.DrawColor -> {
-                TabColor(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    onSelectedColor = onSelectedColor,
-                    sliderValue = uiState.currentTab.drawInput.size,
+        when (uiState.currentTab) {
+            DrawTabData.TAB.Solid -> {
+                val solid = uiState.drawColor
+                Spacer(modifier = Modifier.height(20.dp))
+                TabDrawColor(
+                    sliderValue = solid.size,
                     onSliderChange = onSizeColorChange,
-                    onShowSystemColor = onShowSystemColor
+                    onSelectedColor = onSelectedColor,
+                    onShowSystemColor = onShowSystemColor,
+                    selectedColor = solid.color
                 )
             }
 
-            is DrawInput.DrawPattern -> {
+            DrawTabData.TAB.Pattern -> {
+                val pattern = uiState.drawPattern
                 BrushShapeSlider(
-                    value = uiState.currentTab.drawInput.size,
-                    onValueChange = onSizePatternChange,
+                    value = pattern.size,
+                    onValueChange = onSizeColorChange,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 )
             }
+
+            DrawTabData.TAB.Neon -> {
+                val solid = uiState.drawNeon
+                Spacer(modifier = Modifier.height(20.dp))
+                TabDrawColor(
+                    sliderValue = solid.size,
+                    onSliderChange = onSizeColorChange,
+                    onSelectedColor = onSelectedColor,
+                    onShowSystemColor = onShowSystemColor,
+                    selectedColor = solid.color
+                )
+            }
         }
 
     }
+}
+
+@Composable
+fun TabDrawColor(
+    modifier: Modifier = Modifier,
+    sliderValue: Float,
+    selectedColor: Color,
+    onSliderChange: (Float) -> Unit,
+    onSelectedColor: (Color) -> Unit,
+    onShowSystemColor: () -> Unit
+) {
+    val colors: List<Color> = listOf(
+        Color(0xFFF7F8F3),
+        Color(0xFFFFF7EC),
+        Color(0xFFFAEDE7),
+        Color(0xFFA9E2F5),
+        Color(0xFFFFBBBE),
+        Color(0xFFFF8B0D),
+        Color(0xFFAADE87)
+    )
+    Column {
+        BrushShapeSlider(
+            value = sliderValue,
+            onValueChange = onSliderChange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ImageWidget(
+                resId = R.drawable.ic_color,
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickableWithAlphaEffect(onClick = onShowSystemColor)
+            )
+            colors.forEach { item ->
+                val selected = item == selectedColor
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(item, CircleShape)
+                            .clickableWithAlphaEffect {
+                                onSelectedColor.invoke(item)
+                            }
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(4.dp)
+                            .background(
+                                if (selected) AppColor.Primary500 else Color.Transparent,
+                                CircleShape
+                            )
+                    )
+                }
+
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+
 }
 
 
