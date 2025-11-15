@@ -13,4 +13,8 @@
         <!-- Status bar content color - dark content on light background -->
         <item name="android:windowLightStatusBar">true</item>
     </style>
+
+    <style name="Theme.MyApp.Material" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- ... -->
+    </style>
 </resources>

@@ -24,7 +24,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "photo"
+rootProject.name = "photocollage"
 include(":app")
 include(":base")
 include(":cropkit")
