@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <com.amb.photo.ui.activities.editor.remove_object.RemoveObjectCustomView
+    <com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectCustomView
         android:id="@+id/viewRemoveObject"
         android:layout_width="match_parent"
         android:layout_height="0dp"

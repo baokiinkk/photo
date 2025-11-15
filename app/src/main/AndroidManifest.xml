@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.amb.photo">
+    package="com.avnsoft.photoeditor.photocollage">
 
     <!-- Media/Gallery permissions -->
     <uses-feature
@@ -23,7 +23,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name="com.amb.photo.BaseApplication"
+        android:name="com.avnsoft.photoeditor.photocollage.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -31,7 +31,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Emoji">
         <activity
-            android:name=".ui.activities.editor.EditorActivity"
+            android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity"
             android:exported="true">
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
@@ -41,16 +41,16 @@
         </activity>
 
         <activity
-            android:name=".ui.activities.editor.crop.CropActivity"
+            android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropActivity"
             android:exported="false" />
 
         <activity
-            android:name=".ui.activities.editor.crop.CropActivity_phase_1"
+            android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropActivity_phase_1"
             android:exported="false" />
 
 
         <activity
-            android:name=".ui.activities.main.MainActivity"
+            android:name="com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,24 +58,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.imagepicker.ImagePickerActivity" />
-        <activity android:name=".ui.activities.collage.CollageActivity" />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity" />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageActivity" />
 
-        <activity android:name=".ui.activities.editor.adjust.AdjustActivity" />
-        <activity android:name=".ui.activities.editor.blur.BlurActivity" />
-        <activity android:name=".ui.activities.editor.filter.FilterActivity" />
-        <activity android:name=".ui.activities.editor.sticker.StickerActivity" />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.adjust.AdjustActivity" />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurActivity" />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity" />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity" />
         <activity
-            android:name=".ui.activities.editor.text_sticker.TextStickerActivity"
+            android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
-            android:name=".ui.activities.editor.remove_object.RemoveObjectActivity"
+            android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity"
             android:hardwareAccelerated="false"
             android:theme="@style/Theme.MyApp.Material"/>
 
-        <activity android:name=".ui.activities.editor.background.BackgroundActivity"/>
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity"/>
     </application>
 
 </manifest>
