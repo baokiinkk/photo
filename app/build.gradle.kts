@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "com.amb.photo"
+    namespace = "com.avnsoft.photoeditor.photocollage"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.amb.photo"
+        applicationId = "com.avnsoft.photoeditor.photocollage"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
