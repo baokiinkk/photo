@@ -36,9 +36,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray100
+import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray500
+import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.basesource.base.components.ColorPickerDialog
+import com.basesource.base.components.ColorPickerUI
 import com.basesource.base.utils.clickableWithAlphaEffect
 import kotlin.math.roundToInt
 
