@@ -175,6 +175,7 @@ fun ColorPickerDialog(
     ) {
         ColorPickerUI(
             modifier = modifier,
+            selectedColor = selectedColor,
             onColorSelected = onColorSelected,
             onDismiss = onDismiss,
             textStyle = textStyle,
@@ -188,20 +189,38 @@ fun ColorPickerDialog(
 @Composable
 fun ColorPickerUI(
     modifier: Modifier = Modifier,
+    selectedColor: Color? = null,
     onColorSelected: (Color) -> Unit,
     onDismiss: () -> Unit,
     textStyle: TextStyle = LocalTextStyle.current,
     @StringRes confirmText: Int,
     @StringRes cancelText: Int,
 ) {
-
-    val initialColor = Color(0xFF8F82FF)
+    // Initialize color only once when UI opens - use a flag to ensure single initialization
+    var initialized by remember { mutableStateOf(false) }
+    val initialColor = remember {
+        selectedColor ?: Color(0xFF8F82FF)
+    }
     val initialHsv = remember { initialColor.toHsv() }
 
     var hue by remember { mutableFloatStateOf(initialHsv[0]) }
     var saturation by remember { mutableFloatStateOf(initialHsv[1]) }
     var brightness by remember { mutableFloatStateOf(initialHsv[2]) }
     var alpha by remember { mutableFloatStateOf(initialColor.alpha) }
+    
+    // Initialize only once when UI first opens
+    LaunchedEffect(Unit) {
+        if (!initialized && selectedColor != null) {
+            val hsv = selectedColor.toHsv()
+            hue = hsv[0]
+            saturation = hsv[1]
+            brightness = hsv[2]
+            alpha = selectedColor.alpha
+            initialized = true
+        } else if (!initialized) {
+            initialized = true
+        }
+    }
 
     // Call onColorSelected whenever color changes
     // Calculate current color directly in LaunchedEffect to ensure it's always up-to-date

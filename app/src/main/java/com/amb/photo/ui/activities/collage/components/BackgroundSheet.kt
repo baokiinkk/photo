@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
 import com.amb.photo.R
 import com.amb.photo.ui.theme.AppStyle
 import com.amb.photo.ui.theme.Gray100
@@ -62,11 +63,22 @@ fun BackgroundSheet(
 ) {
     var currentTab by remember(selectedTab) { mutableStateOf(selectedTab) }
     var showColorWheel by remember { mutableStateOf(false) }
+    var initSelectColor by remember {
+        mutableStateOf(
+            selectedColor?.let {
+                try {
+                    Color((if (it.startsWith("#")) it else "#$it").toColorInt())
+                } catch (e: Exception) {
+                    Color.White
+                }
+            } ?: Color.White
+        )
+    }
     var currentSelectedColor by remember {
         mutableStateOf(
             selectedColor?.let {
                 try {
-                    Color(android.graphics.Color.parseColor(if (it.startsWith("#")) it else "#$it"))
+                    Color((if (it.startsWith("#")) it else "#$it").toColorInt())
                 } catch (e: Exception) {
                     Color.White
                 }
@@ -78,7 +90,8 @@ fun BackgroundSheet(
     LaunchedEffect(selectedColor) {
         selectedColor?.let {
             try {
-                currentSelectedColor = Color(android.graphics.Color.parseColor(if (it.startsWith("#")) it else "#$it"))
+                initSelectColor =  Color((if (it.startsWith("#")) it else "#$it").toColorInt())
+                currentSelectedColor = Color((if (it.startsWith("#")) it else "#$it").toColorInt())
             } catch (e: Exception) {
                 // Keep current color if parsing fails
             }
@@ -97,6 +110,7 @@ fun BackgroundSheet(
                     currentSelectedColor = color
                     onColorSelect(currentSelectedColor.colorToHex())
                 },
+                selectedColor = initSelectColor,
                 onDismiss = { showColorWheel = false },
                 textStyle = AppStyle.body1().medium().gray900(),
                 confirmText = R.string.confirm,
