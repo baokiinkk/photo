@@ -310,7 +310,8 @@ class CollageViewModel(
                     columnMargin = last.columnMargin,
                     cornerRadius = last.cornerRadius,
                     ratio = last.ratio,
-                    backgroundSelection = last.backgroundSelection,
+                    // Lưu backgroundSelection từ currentState (đã chọn mới), không phải từ last
+                    backgroundSelection = currentState.backgroundSelection,
                     frameStyle = last.frameStyle,
                     frameWidth = last.frameWidth,
                     frameColor = last.frameColor,

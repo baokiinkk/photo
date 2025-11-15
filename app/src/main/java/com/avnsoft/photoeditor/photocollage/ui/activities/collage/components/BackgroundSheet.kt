@@ -50,7 +50,10 @@ import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternGroup
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternItem
+import com.avnsoft.photoeditor.photocollage.data.model.gradient.GradientGroup
+import com.avnsoft.photoeditor.photocollage.data.model.gradient.GradientItem
 import com.avnsoft.photoeditor.photocollage.data.repository.PatternRepository
+import com.avnsoft.photoeditor.photocollage.data.repository.GradientRepository
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray100
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray500
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
@@ -71,7 +74,7 @@ enum class BackgroundTab {
 sealed class BackgroundSelection {
     data class Solid(val color: String) : BackgroundSelection()
     data class Pattern(val item: PatternItem, val group: PatternGroup, val urlRoot: String) : BackgroundSelection()
-    data class Gradient(val gradientId: String) : BackgroundSelection() // TODO: implement gradient
+    data class Gradient(val item: GradientItem, val group: GradientGroup, val urlRoot: String) : BackgroundSelection()
 }
 
 @Composable
@@ -202,7 +205,14 @@ fun BackgroundSheet(
                 }
 
                 BackgroundTab.GRADIENT -> {
-                    GradientBackgroundTab()
+                    GradientBackgroundTab(
+                        onGradientSelect = { item, group, urlRoot ->
+                            onBackgroundSelect(
+                                BackgroundTab.GRADIENT,
+                                BackgroundSelection.Gradient(item, group, urlRoot)
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -593,16 +603,171 @@ private fun PatternItemCard(
 }
 
 @Composable
-private fun GradientBackgroundTab() {
+private fun GradientBackgroundTab(
+    onGradientSelect: ((GradientItem, GradientGroup, String) -> Unit)? = null
+) {
+    val context = LocalContext.current
+    val gradientRepository: GradientRepository = koinInject()
+
+    var gradients by remember { mutableStateOf<List<GradientGroup>>(emptyList()) }
+    var urlRoot by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        isLoading = true
+        error = null
+        when (val result = gradientRepository.getGradients()) {
+            is com.basesource.base.result.Result.Success -> {
+                gradients = result.data.groups
+                urlRoot = result.data.urlRoot
+                isLoading = false
+            }
+
+            is com.basesource.base.result.Result.Error -> {
+                error = result.exception?.message
+                isLoading = false
+            }
+
+            else -> {
+                isLoading = false
+            }
+        }
+    }
+    
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 40.dp),
-        contentAlignment = Alignment.Center
+            .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
+        when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Loading gradients...",
+                        style = AppStyle.body1().medium().gray500()
+                    )
+                }
+            }
+
+            error != null -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Error: $error",
+                        style = AppStyle.body1().medium().gray500()
+                    )
+                }
+            }
+
+            gradients.isEmpty() -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No gradients available",
+                        style = AppStyle.body1().medium().gray500()
+                    )
+                }
+            }
+
+            else -> {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp)
+                ) {
+                    gradients.forEach { group ->
+                        items(group.content) { item ->
+                            GradientItemCard(
+                                gradientItem = item,
+                                gradientGroup = group,
+                                urlRoot = urlRoot,
+                                onGradientSelect = { gradientItem, gradientGroup ->
+                                    onGradientSelect?.invoke(gradientItem, gradientGroup, urlRoot)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GradientItemCard(
+    gradientItem: GradientItem,
+    gradientGroup: GradientGroup,
+    urlRoot: String,
+    onGradientSelect: ((GradientItem, GradientGroup) -> Unit)? = null
+) {
+    // Parse colors from hex strings
+    val colors = remember(gradientItem.colors) {
+        gradientItem.colors.mapNotNull { colorHex ->
+            try {
+                Color(colorHex.toColorInt())
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .width(100.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(64.dp)
+                .background(
+                    brush = if (colors.size >= 2) {
+                        androidx.compose.ui.graphics.Brush.verticalGradient(colors)
+                    } else {
+                        androidx.compose.ui.graphics.Brush.verticalGradient(
+                            listOf(Color.White, Color.Gray)
+                        )
+                    },
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .clickableWithAlphaEffect {
+                    onGradientSelect?.invoke(gradientItem, gradientGroup)
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            // Show PRO badge if needed
+            if (gradientGroup.isPro || gradientItem.isPro == true) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(4.dp)
+                        .background(
+                            color = Color(0xFF9747FF),
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = "PRO",
+                        style = AppStyle.title1().medium().white(),
+                    )
+                }
+            }
+        }
+
+        // Gradient title below
         Text(
-            text = "Gradient options coming soon",
-            style = AppStyle.body1().medium().gray600()
+            text = gradientItem.title,
+            style = AppStyle.body2().medium().gray900(),
+            modifier = Modifier.padding(top = 8.dp)
         )
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -69,7 +70,32 @@ fun BackgroundLayer(
                 )
             }
             is BackgroundSelection.Gradient -> {
-                // TODO: Implement gradient background
+                // Render gradient from colors
+                val gradientColors = remember(selection.item.colors) {
+                    selection.item.colors.mapNotNull { colorHex ->
+                        try {
+                            Color(colorHex.toColorInt())
+                        } catch (e: Exception) {
+                            null
+                        }
+                    }
+                }
+                
+                if (gradientColors.size >= 2) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                brush = Brush.verticalGradient(gradientColors)
+                            )
+                    )
+                } else if (gradientColors.size == 1) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(gradientColors[0])
+                    )
+                }
             }
             else -> {
                 // Solid color or null - already handled by bgColor background

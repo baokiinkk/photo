@@ -17,6 +17,9 @@ interface CollageApiService {
     @GET("mock/patterns")
     suspend fun getPatterns(): Response<ResponseBody>
 
+    @GET("mock/gradients")
+    suspend fun getGradients(): Response<ResponseBody>
+
     @Multipart
     @POST("v3/tools/remove-object-auto-detect")
     fun genAutoDetect(
