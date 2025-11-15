@@ -47,7 +47,7 @@ class EditorViewModel(
         ToolItem(CollageTool.REMOVE, R.string.remove, R.drawable.ic_remove),
         ToolItem(CollageTool.ENHANCE, R.string.enhance, R.drawable.ic_ai_enhance),
         ToolItem(CollageTool.REMOVE_BG, R.string.remove_bg, R.drawable.ic_removebg),
-        ToolItem(CollageTool.REMOVE_BG, R.string.draw, R.drawable.ic_draw),
+        ToolItem(CollageTool.DRAW, R.string.draw, R.drawable.ic_draw),
     )
 
 

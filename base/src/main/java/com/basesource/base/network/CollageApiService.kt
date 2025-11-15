@@ -1,8 +1,10 @@
 package com.basesource.base.network
 
+import com.basesource.base.network.model.DataEncrypt
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -27,6 +29,9 @@ interface CollageApiService {
         @Path("id") id: String?,
         @Header("Authorization") token: String?
     ): Response<ResponseBody>
+
+    @POST("v4/account/get-token")
+    fun getTokenFirebase(@Body requestBody: DataEncrypt): Response<ResponseBody>
 }
 
 

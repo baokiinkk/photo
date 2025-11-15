@@ -68,4 +68,6 @@
     <string name="align">Align</string>
     <string name="auto">Auto</string>
     <string name="lasso">Lasso</string>
+    <string name="solid">Solid</string>
+    <string name="pattern">Pattern</string>
 </resources>

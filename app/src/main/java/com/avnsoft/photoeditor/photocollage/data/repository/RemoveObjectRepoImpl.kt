@@ -3,11 +3,16 @@ package com.avnsoft.photoeditor.photocollage.data.repository
 import android.content.Context
 import android.util.Log
 import com.android.amg.AMGUtil
+import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplatesResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GenAutoDetectResponse
+import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GetTokenFirebaseResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.RemoveObjRequestBody
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.ResponseObjAuto
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.TierUtil
 import com.basesource.base.network.CollageApiService
+import com.basesource.base.network.model.DataEncrypt
+import com.basesource.base.network.safeApiCall
+import com.basesource.base.result.Result
 import com.basesource.base.utils.gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -63,5 +68,20 @@ class RemoveObjectRepoImpl(
             result = emptyList(),
             status_code = 200
         )
+    }
+
+    suspend fun getTokenFirebase() {
+        Log.e("getAccessToken", "before encrypt: ----------------- ")
+        val token = AMGUtil.getToken(context, "firebaseToken")
+        Log.e("getAccessToken", "after encrypt: $token")
+        val dataEncrypt = DataEncrypt(
+            data = token
+        )
+//        val response = safeApiCall<GetTokenFirebaseResponse>(
+//            context = context,
+//            apiCallMock = { api.getTokenFirebase(dataEncrypt) },
+//            apiCall = { api.getTokenFirebase(dataEncrypt) }
+//        )
+//        return response
     }
 }
