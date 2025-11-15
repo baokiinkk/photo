@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -17,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -31,18 +32,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.amb.photo.R
 import com.amb.photo.ui.theme.AppStyle
-import com.basesource.base.components.ColorPickerDialog
+import com.amb.photo.ui.theme.Gray100
+import com.amb.photo.ui.theme.Gray500
+import com.amb.photo.ui.theme.Gray900
+import com.basesource.base.components.ColorPickerUI
 import com.basesource.base.utils.clickableWithAlphaEffect
+import kotlin.math.roundToInt
 
 enum class BackgroundTab {
     SOLID,
     PATTERN,
-    GRADIENT
+    GRADIENT,
 }
 
 @Composable
@@ -85,63 +91,78 @@ fun BackgroundSheet(
             .wrapContentHeight()
             .background(Color.White, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
     ) {
-        // Tabs
-        Row(
-            modifier = Modifier
-                .padding(vertical = 16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            listOf(BackgroundTab.SOLID, BackgroundTab.PATTERN, BackgroundTab.GRADIENT).forEach { tab ->
-                val tabText = when (tab) {
-                    BackgroundTab.SOLID -> "Solid"
-                    BackgroundTab.PATTERN -> "Pattern"
-                    BackgroundTab.GRADIENT -> "Gradient"
+        if (showColorWheel) {
+            ColorPickerUI(
+                onColorSelected = { color ->
+                    currentSelectedColor = color
+                    onColorSelect(currentSelectedColor.colorToHex())
+                },
+                onDismiss = { showColorWheel = false },
+                textStyle = AppStyle.body1().medium().gray900(),
+                confirmText = R.string.confirm,
+                cancelText = R.string.cancel
+            )
+        } else {
+            // Tabs
+            Row(
+                modifier = Modifier
+                    .padding(vertical = 16.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                listOf(BackgroundTab.SOLID, BackgroundTab.PATTERN, BackgroundTab.GRADIENT).forEach { tab ->
+                    val tabText = when (tab) {
+                        BackgroundTab.SOLID -> "Solid"
+                        BackgroundTab.PATTERN -> "Pattern"
+                        BackgroundTab.GRADIENT -> "Gradient"
+                    }
+                    Text(
+                        text = tabText,
+                        style = AppStyle.body2().medium().let {
+                            if (currentTab == tab) it.white() else it.gray900()
+                        },
+                        modifier = Modifier
+                            .background(
+                                if (currentTab == tab) Color(0xFF9747FF) else Color(0xFFF3F4F6),
+                                RoundedCornerShape(24.dp)
+                            )
+                            .padding(horizontal = 12.dp, vertical = 4.dp)
+                            .clickableWithAlphaEffect {
+                                currentTab = tab
+                            }
+                    )
+                    if (tab != BackgroundTab.GRADIENT) {
+                        androidx.compose.foundation.layout.Spacer(modifier = Modifier.size(12.dp))
+                    }
                 }
-                Text(
-                    text = tabText,
-                    style = AppStyle.body2().medium().let {
-                        if (currentTab == tab) it.white() else it.gray900()
-                    },
-                    modifier = Modifier
-                        .background(
-                            if (currentTab == tab) Color(0xFF9747FF) else Color(0xFFF3F4F6),
-                            RoundedCornerShape(24.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 4.dp)
-                        .clickableWithAlphaEffect {
-                            currentTab = tab
-                        }
-                )
-                if (tab != BackgroundTab.GRADIENT) {
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.size(12.dp))
+            }
+            when (currentTab) {
+                BackgroundTab.SOLID -> {
+                    SolidBackgroundTab(
+                        selectedColor = currentSelectedColor,
+                        onColorSelect = { color ->
+                            currentSelectedColor = color
+                            onColorSelect(currentSelectedColor.colorToHex())
+                        },
+                        onColorPickerClick = { showColorWheel = true },
+                        onColorWheelClick = { showColorWheel = true }
+                    )
+                }
+
+                BackgroundTab.PATTERN -> {
+                    PatternBackgroundTab()
+                }
+
+                BackgroundTab.GRADIENT -> {
+                    GradientBackgroundTab()
                 }
             }
         }
-
-        // Content based on selected tab
-        when (currentTab) {
-            BackgroundTab.SOLID -> {
-                SolidBackgroundTab(
-                    selectedColor = currentSelectedColor,
-                    onColorSelect = { color ->
-                        currentSelectedColor = color
-                        val hexColor = String.format("#%06X", 0xFFFFFF and color.toArgb())
-                        onColorSelect(hexColor)
-                    },
-                    onColorPickerClick = { showColorWheel = true },
-                    onColorWheelClick = { showColorWheel = true }
-                )
-            }
-            BackgroundTab.PATTERN -> {
-                PatternBackgroundTab()
-            }
-            BackgroundTab.GRADIENT -> {
-                GradientBackgroundTab()
-            }
-        }
-
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(Gray100))
         // Bottom Action Bar
         Row(
             modifier = Modifier
@@ -152,41 +173,27 @@ fun BackgroundSheet(
         ) {
             IconButton(onClick = onClose) {
                 Icon(
-                    imageVector = Icons.Default.Close,
+                    modifier = Modifier.size(28.dp),
+                    painter = painterResource(R.drawable.ic_close),
                     contentDescription = "Close",
-                    tint = Color.Black
+                    tint = Gray500
                 )
             }
 
             Text(
-                text = "Background",
-                style = AppStyle.title2().medium().gray900()
+                text = stringResource(R.string.color),
+                style = AppStyle.title2().semibold().gray900()
             )
 
             IconButton(onClick = onConfirm) {
                 Icon(
-                    imageVector = Icons.Default.Check,
+                    modifier = Modifier.size(28.dp),
+                    painter = painterResource(R.drawable.ic_confirm),
                     contentDescription = "Confirm",
-                    tint = Color(0xFF9747FF)
+                    tint = Gray900
                 )
             }
         }
-    }
-    // Color Wheel Dialog
-    if (showColorWheel) {
-        ColorPickerDialog(
-            selectedColor = currentSelectedColor,
-            onColorSelected = { color ->
-                currentSelectedColor = color
-                val hexColor = String.format("#%06X", 0xFFFFFF and color.toArgb())
-                onColorSelect(hexColor)
-                showColorWheel = false
-            },
-            onDismiss = { showColorWheel = false },
-            textStyle = AppStyle.body1().medium().gray900(),
-            confirmText = R.string.confirm,
-            cancelText = R.string.cancel
-        )
     }
 }
 
@@ -325,6 +332,19 @@ private fun SolidColorSwatch(
                 modifier = Modifier.size(20.dp)
             )
         }
+    }
+}
+
+fun Color.colorToHex(includeAlpha: Boolean = true): String {
+    val a = (alpha * 255).roundToInt().coerceIn(0, 255)
+    val r = (red * 255).roundToInt().coerceIn(0, 255)
+    val g = (green * 255).roundToInt().coerceIn(0, 255)
+    val b = (blue * 255).roundToInt().coerceIn(0, 255)
+
+    return if (includeAlpha) {
+        String.format("#%02X%02X%02X%02X", a, r, g, b)  // #AARRGGBB
+    } else {
+        String.format("#%02X%02X%02X", r, g, b)         // #RRGGBB
     }
 }
 
