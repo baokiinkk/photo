@@ -56,6 +56,7 @@ import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.fromJson
+import androidx.core.graphics.toColorInt
 import com.basesource.base.utils.launchActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -277,15 +278,26 @@ class EditorActivity : BaseActivity() {
                                         if (result.resultCode == RESULT_OK) {
                                             val output = result.data?.getStringExtra("pathBitmap")
                                                 ?.fromJson<BackgroundResult>()
-                                            output?.color?.let { color ->
+                                            
+                                            // Extract color from backgroundSelection
+                                            val bgColor = when (val selection = output?.backgroundSelection) {
+                                                is com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection.Solid -> {
+                                                    try {
+                                                        Color(selection.color.toColorInt())
+                                                    } catch (e: Exception) {
+                                                        Color(0xFFF2F4F8)
+                                                    }
+                                                }
+                                                else -> Color(0xFFF2F4F8)
+                                            }
+                                            
+                                            bgColor.let { color ->
                                                 viewmodel.push(
                                                     StackData.Background(color)
                                                 )
                                             }
 
-                                            viewmodel.updateBackgroundColor(
-                                                output?.color ?: Color(0xFFF2F4F8)
-                                            )
+                                            viewmodel.updateBackgroundColor(bgColor)
                                         }
                                     }
                                 )

@@ -226,7 +226,6 @@ fun ColorPickerUI(
     // Calculate current color directly in LaunchedEffect to ensure it's always up-to-date
     LaunchedEffect(hue, saturation, brightness, alpha) {
         val currentColor = hsvToColor(hue, saturation, brightness, alpha)
-        Log.d("quocbao",alpha.toString() +"- color:"+ currentColor.toString())
         onColorSelected(currentColor)
     }
 

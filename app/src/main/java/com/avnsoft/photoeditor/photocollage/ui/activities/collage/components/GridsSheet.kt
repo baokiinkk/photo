@@ -15,9 +15,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
@@ -33,19 +30,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CellSpec
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
+import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray500
+import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.basesource.base.utils.clickableWithAlphaEffect
 
 enum class GridsTab {
-    LAYOUT,
-    MARGIN
+    LAYOUT, MARGIN
 }
+
 @Composable
 fun GridsSheet(
     templates: List<CollageTemplate> = emptyList(),
@@ -82,12 +82,13 @@ fun GridsSheet(
                     if (selectedTab == GridsTab.LAYOUT) it.white() else it.gray900()
                 },
                 modifier = Modifier
-                    .background(if (selectedTab == GridsTab.LAYOUT) Color(0xFF9747FF) else Color(0xFFF3F4F6), RoundedCornerShape(24.dp))
+                    .background(
+                        if (selectedTab == GridsTab.LAYOUT) Color(0xFF9747FF) else Color(0xFFF3F4F6), RoundedCornerShape(24.dp)
+                    )
                     .padding(horizontal = 12.dp, vertical = 4.dp)
                     .clickableWithAlphaEffect {
                         selectedTab = GridsTab.LAYOUT
-                    }
-            )
+                    })
 
             Text(
                 text = "Margin",
@@ -95,12 +96,13 @@ fun GridsSheet(
                     if (selectedTab == GridsTab.MARGIN) it.white() else it.gray900()
                 },
                 modifier = Modifier
-                    .background(if (selectedTab == GridsTab.MARGIN) Color(0xFF9747FF) else Color(0xFFF3F4F6), RoundedCornerShape(24.dp))
+                    .background(
+                        if (selectedTab == GridsTab.MARGIN) Color(0xFF9747FF) else Color(0xFFF3F4F6), RoundedCornerShape(24.dp)
+                    )
                     .padding(horizontal = 12.dp, vertical = 4.dp)
                     .clickableWithAlphaEffect {
                         selectedTab = GridsTab.MARGIN
-                    }
-            )
+                    })
         }
 
         // Grid Layout Selection
@@ -115,39 +117,7 @@ fun GridsSheet(
             ) {
                 items(templates) { template ->
                     GridItem(
-                        template = template,
-                        isSelected = template.id == selectedTemplate?.id,
-                        onClick = { onTemplateSelect(template) }
-                    )
-                }
-            }
-            // Bottom Action Bar
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onClose) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
-                        tint = Color.Black
-                    )
-                }
-
-                Text(
-                    text = "Grids",
-                    style = AppStyle.title2().medium().gray900()
-                )
-
-                IconButton(onClick = { onConfirm(selectedTab) }) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "Confirm",
-                        tint = Color(0xFF9747FF)
-                    )
+                        template = template, isSelected = template.id == selectedTemplate?.id, onClick = { onTemplateSelect(template) })
                 }
             }
 
@@ -156,31 +126,23 @@ fun GridsSheet(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
+                    .padding(horizontal = 16.dp, vertical = 20.dp), verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 // Top Margin Slider
                 MarginSlider(
-                    icon = R.drawable.ic_margin_tool,
-                    value = topMargin,
-                    onValueChange = onTopMarginChange
+                    icon = R.drawable.ic_margin_tool, value = topMargin, onValueChange = onTopMarginChange
                 )
 
                 // Column Margin Slider
                 MarginSlider(
-                    icon = R.drawable.ic_padding_tool,
-                    value = columnMargin,
-                    onValueChange = onColumnMarginChange
+                    icon = R.drawable.ic_padding_tool, value = columnMargin, onValueChange = onColumnMarginChange
                 )
 
                 // Corner Radius Slider
                 MarginSlider(
-                    icon = R.drawable.ic_border_tool,
-                    value = cornerRadius,
-                    onValueChange = onCornerRadiusChange
+                    icon = R.drawable.ic_border_tool, value = cornerRadius, onValueChange = onCornerRadiusChange
                 )
             }
-
             // Bottom Action Bar
             Row(
                 modifier = Modifier
@@ -191,22 +153,22 @@ fun GridsSheet(
             ) {
                 IconButton(onClick = onClose) {
                     Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
-                        tint = Color.Black
+                        modifier = Modifier.size(28.dp), painter = painterResource(R.drawable.ic_close), contentDescription = "Close", tint = Gray500
                     )
                 }
 
                 Text(
-                    text = "Grids",
-                    style = AppStyle.title2().medium().gray900()
+                    text = stringResource(R.string.grids), style = AppStyle.title2().semibold().gray900()
                 )
 
-                IconButton(onClick = { onConfirm(selectedTab) }) {
+                IconButton(onClick = {
+                    onConfirm.invoke(selectedTab)
+                }) {
                     Icon(
-                        imageVector = Icons.Default.Check,
+                        modifier = Modifier.size(28.dp),
+                        painter = painterResource(R.drawable.ic_confirm),
                         contentDescription = "Confirm",
-                        tint = Color(0xFF9747FF)
+                        tint = Gray900
                     )
                 }
             }
@@ -216,9 +178,7 @@ fun GridsSheet(
 
 @Composable
 private fun GridItem(
-    template: CollageTemplate,
-    isSelected: Boolean,
-    onClick: () -> Unit
+    template: CollageTemplate, isSelected: Boolean, onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -228,44 +188,30 @@ private fun GridItem(
         CollagePreview(
             images = template.cells.map {
                 "$isSelected".toUri()
-            },
-            template = template,
-            gap = 2.2.dp,
-            corner = 4.dp,
-            modifier = Modifier.fillMaxSize()
+            }, template = template, gap = 2.2.dp, corner = 4.dp, modifier = Modifier.fillMaxSize()
         )
     }
 }
 
 @Composable
 private fun MarginSlider(
-    @DrawableRes icon: Int,
-    value: Float,
-    onValueChange: (Float) -> Unit,
-    modifier: Modifier = Modifier
+    @DrawableRes icon: Int, value: Float, onValueChange: (Float) -> Unit, modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 32.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp),
         horizontalArrangement = Arrangement.spacedBy(20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(icon),
-            contentDescription = "",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.size(24.dp)
+            painter = painterResource(icon), contentDescription = "", contentScale = ContentScale.Crop, modifier = Modifier.size(24.dp)
         )
 
         // Slider
         Slider(
-            value = value,
-            onValueChange = onValueChange,
-            valueRange = 0f..1f,
-            modifier = Modifier.weight(1f),
-            colors = SliderDefaults.colors(
-                thumbColor = Color(0xFF1F2937),
-                activeTrackColor = Color(0xFF1F2937),
-                inactiveTrackColor = Color(0xFFE5E7EB)
+            value = value, onValueChange = onValueChange, valueRange = 0f..1f, modifier = Modifier.weight(1f), colors = SliderDefaults.colors(
+                thumbColor = Color(0xFF1F2937), activeTrackColor = Color(0xFF1F2937), inactiveTrackColor = Color(0xFFE5E7EB)
             )
         )
     }
@@ -277,65 +223,48 @@ private fun GridsSheetPreview() {
     val mockTemplates = listOf(
         CollageTemplate(
             "left-big-right-2", listOf(
-                CellSpec(points = listOf(0f,0f, 0.63f,0f, 0.63f,1f, 0f,1f)),
-                CellSpec(points = listOf(0.66f,0f, 1f,0f, 1f,0.48f, 0.66f,0.48f)),
-                CellSpec(points = listOf(0.66f,0.52f, 1f,0.52f, 1f,1f, 0.66f,1f))
+                CellSpec(points = listOf(0f, 0f, 0.63f, 0f, 0.63f, 1f, 0f, 1f)),
+                CellSpec(points = listOf(0.66f, 0f, 1f, 0f, 1f, 0.48f, 0.66f, 0.48f)),
+                CellSpec(points = listOf(0.66f, 0.52f, 1f, 0.52f, 1f, 1f, 0.66f, 1f))
             )
-        ),
-        CollageTemplate(
+        ), CollageTemplate(
             "2-horizontal", listOf(
-                CellSpec(points = listOf(0f,0f, 1f,0f, 1f,0.5f, 0f,0.5f)),
-                CellSpec(points = listOf(0f,0.5f, 1f,0.5f, 1f,1f, 0f,1f))
+                CellSpec(points = listOf(0f, 0f, 1f, 0f, 1f, 0.5f, 0f, 0.5f)), CellSpec(points = listOf(0f, 0.5f, 1f, 0.5f, 1f, 1f, 0f, 1f))
             )
-        ),
-        CollageTemplate(
+        ), CollageTemplate(
             "3-horizontal", listOf(
-                CellSpec(points = listOf(0f,0f, 1f,0f, 1f,0.33f, 0f,0.33f)),
-                CellSpec(points = listOf(0f,0.33f, 1f,0.33f, 1f,0.66f, 0f,0.66f)),
-                CellSpec(points = listOf(0f,0.66f, 1f,0.66f, 1f,1f, 0f,1f))
+                CellSpec(points = listOf(0f, 0f, 1f, 0f, 1f, 0.33f, 0f, 0.33f)),
+                CellSpec(points = listOf(0f, 0.33f, 1f, 0.33f, 1f, 0.66f, 0f, 0.66f)),
+                CellSpec(points = listOf(0f, 0.66f, 1f, 0.66f, 1f, 1f, 0f, 1f))
             )
-        ),
-        CollageTemplate("1-full", listOf(
-            CellSpec(points = listOf(0f,0f, 1f,0f, 1f,1f, 0f,1f))
-        )),
-        CollageTemplate(
+        ), CollageTemplate(
+            "1-full", listOf(
+                CellSpec(points = listOf(0f, 0f, 1f, 0f, 1f, 1f, 0f, 1f))
+            )
+        ), CollageTemplate(
             "2-vertical", listOf(
-                CellSpec(points = listOf(0f,0f, 0.5f,0f, 0.5f,1f, 0f,1f)),
-                CellSpec(points = listOf(0.5f,0f, 1f,0f, 1f,1f, 0.5f,1f))
+                CellSpec(points = listOf(0f, 0f, 0.5f, 0f, 0.5f, 1f, 0f, 1f)), CellSpec(points = listOf(0.5f, 0f, 1f, 0f, 1f, 1f, 0.5f, 1f))
             )
-        ),
-        CollageTemplate(
+        ), CollageTemplate(
             "4-equal", listOf(
-                CellSpec(points = listOf(0f,0f, 0.5f,0f, 0.5f,0.5f, 0f,0.5f)),
-                CellSpec(points = listOf(0.5f,0f, 1f,0f, 1f,0.5f, 0.5f,0.5f)),
-                CellSpec(points = listOf(0f,0.5f, 0.5f,0.5f, 0.5f,1f, 0f,1f)),
-                CellSpec(points = listOf(0.5f,0.5f, 1f,0.5f, 1f,1f, 0.5f,1f))
+                CellSpec(points = listOf(0f, 0f, 0.5f, 0f, 0.5f, 0.5f, 0f, 0.5f)),
+                CellSpec(points = listOf(0.5f, 0f, 1f, 0f, 1f, 0.5f, 0.5f, 0.5f)),
+                CellSpec(points = listOf(0f, 0.5f, 0.5f, 0.5f, 0.5f, 1f, 0f, 1f)),
+                CellSpec(points = listOf(0.5f, 0.5f, 1f, 0.5f, 1f, 1f, 0.5f, 1f))
             )
-        ),
-        CollageTemplate(
+        ), CollageTemplate(
             "3-vertical", listOf(
-                CellSpec(points = listOf(0f,0f, 0.33f,0f, 0.33f,1f, 0f,1f)),
-                CellSpec(points = listOf(0.33f,0f, 0.66f,0f, 0.66f,1f, 0.33f,1f)),
-                CellSpec(points = listOf(0.66f,0f, 1f,0f, 1f,1f, 0.66f,1f))
+                CellSpec(points = listOf(0f, 0f, 0.33f, 0f, 0.33f, 1f, 0f, 1f)),
+                CellSpec(points = listOf(0.33f, 0f, 0.66f, 0f, 0.66f, 1f, 0.33f, 1f)),
+                CellSpec(points = listOf(0.66f, 0f, 1f, 0f, 1f, 1f, 0.66f, 1f))
             )
         )
     )
-    GridsSheet(
-        templates = mockTemplates,
-        selectedTemplate = mockTemplates.first(),
-        onTemplateSelect = {},
-        onClose = {},
-        onConfirm = { _ -> }
-    )
+    GridsSheet(templates = mockTemplates, selectedTemplate = mockTemplates.first(), onTemplateSelect = {}, onClose = {}, onConfirm = { _ -> })
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun GridsSheetMarginPreview() {
-    GridsSheet(
-        selectedType = GridsTab.MARGIN,
-        onTemplateSelect = {},
-        onClose = {},
-        onConfirm = { _ -> }
-    )
+    GridsSheet(selectedType = GridsTab.MARGIN, onTemplateSelect = {}, onClose = {}, onConfirm = { _ -> })
 }

@@ -31,6 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropAspect
+import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray500
+import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.basesource.base.utils.clickableWithAlphaEffect
 
@@ -75,31 +77,35 @@ fun RatioSheet(
         }
 
         // Bottom Action Bar
+        // Bottom Action Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
-        ) {
+        )
+        {
             IconButton(onClick = onClose) {
                 Icon(
-                    imageVector = Icons.Default.Close,
+                    modifier = Modifier.size(28.dp),
+                    painter = painterResource(R.drawable.ic_close),
                     contentDescription = "Close",
-                    tint = Color.Black
+                    tint = Gray500
                 )
             }
 
             Text(
                 text = stringResource(R.string.ratio_tool),
-                style = AppStyle.title2().medium().gray900()
+                style = AppStyle.title2().semibold().gray900()
             )
 
             IconButton(onClick = onConfirm) {
                 Icon(
-                    imageVector = Icons.Default.Check,
+                    modifier = Modifier.size(28.dp),
+                    painter = painterResource(R.drawable.ic_confirm),
                     contentDescription = "Confirm",
-                    tint = Color(0xFF9747FF)
+                    tint = Gray900
                 )
             }
         }

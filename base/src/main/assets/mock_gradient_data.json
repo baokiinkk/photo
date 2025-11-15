@@ -1,0 +1,79 @@
+{
+  "version": "v1",
+  "lastModified": "2021-06-05",
+  "data": [
+    {
+      "eventName": "Gradient",
+      "eventId": 2001,
+      "content": [
+        {
+          "title": "Sunset",
+          "name": "gradient_sunset.jpg",
+          "urlThumb": "202105collagemaker/gradient/sunset/thumb.jpg",
+          "colors": ["#FFB347", "#FF6B9D"]
+        },
+        {
+          "title": "Sky",
+          "name": "gradient_sky.jpg",
+          "urlThumb": "202105collagemaker/gradient/sky/thumb.jpg",
+          "colors": ["#87CEEB", "#4682B4"]
+        },
+        {
+          "title": "Lavender",
+          "name": "gradient_lavender.jpg",
+          "urlThumb": "202105collagemaker/gradient/lavender/thumb.jpg",
+          "colors": ["#E6E6FA", "#9370DB"],
+          "isPro": true
+        },
+        {
+          "title": "Leaf",
+          "name": "gradient_leaf.jpg",
+          "urlThumb": "202105collagemaker/gradient/leaf/thumb.jpg",
+          "colors": ["#90EE90", "#228B22"]
+        },
+        {
+          "title": "Flam",
+          "name": "gradient_flam.jpg",
+          "urlThumb": "202105collagemaker/gradient/flam/thumb.jpg",
+          "colors": ["#FF4500", "#FF8C00"]
+        },
+        {
+          "title": "Ocean",
+          "name": "gradient_ocean.jpg",
+          "urlThumb": "202105collagemaker/gradient/ocean/thumb.jpg",
+          "colors": ["#00CED1", "#00008B"]
+        },
+        {
+          "title": "Rose",
+          "name": "gradient_rose.jpg",
+          "urlThumb": "202105collagemaker/gradient/rose/thumb.jpg",
+          "colors": ["#FFB6C1", "#DC143C"],
+          "isPro": true
+        },
+        {
+          "title": "Purple",
+          "name": "gradient_purple.jpg",
+          "urlThumb": "202105collagemaker/gradient/purple/thumb.jpg",
+          "colors": ["#DDA0DD", "#8B008B"]
+        },
+        {
+          "title": "Forest",
+          "name": "gradient_forest.jpg",
+          "urlThumb": "202105collagemaker/gradient/forest/thumb.jpg",
+          "colors": ["#9ACD32", "#2F4F2F"]
+        },
+        {
+          "title": "Peach",
+          "name": "gradient_peach.jpg",
+          "urlThumb": "202105collagemaker/gradient/peach/thumb.jpg",
+          "colors": ["#FFDAB9", "#FF6347"]
+        }
+      ],
+      "urlZip": "202105collagemaker/gradient/Archive.zip",
+      "isPro": false,
+      "isReward": true,
+      "isFree": false
+    }
+  ],
+  "urlRoot": "https://photo.footballtv.info/"
+}

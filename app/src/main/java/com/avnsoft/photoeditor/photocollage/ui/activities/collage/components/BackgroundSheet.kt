@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -7,14 +8,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,21 +35,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternGroup
+import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternItem
+import com.avnsoft.photoeditor.photocollage.data.model.gradient.GradientGroup
+import com.avnsoft.photoeditor.photocollage.data.model.gradient.GradientItem
+import com.avnsoft.photoeditor.photocollage.data.repository.PatternRepository
+import com.avnsoft.photoeditor.photocollage.data.repository.GradientRepository
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray100
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray500
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
-import com.basesource.base.components.ColorPickerDialog
+import com.avnsoft.photoeditor.photocollage.utils.getPatternImageUri
+import com.avnsoft.photoeditor.photocollage.utils.loadPatternAssetPainter
 import com.basesource.base.components.ColorPickerUI
 import com.basesource.base.utils.clickableWithAlphaEffect
+import org.koin.compose.koinInject
 import kotlin.math.roundToInt
 
 enum class BackgroundTab {
@@ -53,20 +71,28 @@ enum class BackgroundTab {
     GRADIENT,
 }
 
+sealed class BackgroundSelection {
+    data class Solid(val color: String) : BackgroundSelection()
+    data class Pattern(val item: PatternItem, val group: PatternGroup, val urlRoot: String) : BackgroundSelection()
+    data class Gradient(val item: GradientItem, val group: GradientGroup, val urlRoot: String) : BackgroundSelection()
+}
+
 @Composable
 fun BackgroundSheet(
     selectedTab: BackgroundTab = BackgroundTab.SOLID,
-    selectedColor: String? = null,
-    onColorSelect: (String) -> Unit,
+    selectedBackgroundSelection: BackgroundSelection? = null,
+    onBackgroundSelect: (BackgroundTab, BackgroundSelection) -> Unit,
     onClose: () -> Unit,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var currentTab by remember(selectedTab) { mutableStateOf(selectedTab) }
     var showColorWheel by remember { mutableStateOf(false) }
+    
+    // Extract color from selectedBackgroundSelection for color picker
     var initSelectColor by remember {
         mutableStateOf(
-            selectedColor?.let {
+            (selectedBackgroundSelection as? BackgroundSelection.Solid)?.color?.let {
                 try {
                     Color((if (it.startsWith("#")) it else "#$it").toColorInt())
                 } catch (e: Exception) {
@@ -77,7 +103,7 @@ fun BackgroundSheet(
     }
     var currentSelectedColor by remember {
         mutableStateOf(
-            selectedColor?.let {
+            (selectedBackgroundSelection as? BackgroundSelection.Solid)?.color?.let {
                 try {
                     Color((if (it.startsWith("#")) it else "#$it").toColorInt())
                 } catch (e: Exception) {
@@ -87,11 +113,11 @@ fun BackgroundSheet(
         )
     }
 
-    // Update currentSelectedColor when selectedColor changes externally
-    LaunchedEffect(selectedColor) {
-        selectedColor?.let {
+    // Update currentSelectedColor when selectedBackgroundSelection changes externally
+    LaunchedEffect(selectedBackgroundSelection) {
+        (selectedBackgroundSelection as? BackgroundSelection.Solid)?.color?.let {
             try {
-                initSelectColor =  Color((if (it.startsWith("#")) it else "#$it").toColorInt())
+                initSelectColor = Color((if (it.startsWith("#")) it else "#$it").toColorInt())
                 currentSelectedColor = Color((if (it.startsWith("#")) it else "#$it").toColorInt())
             } catch (e: Exception) {
                 // Keep current color if parsing fails
@@ -109,9 +135,10 @@ fun BackgroundSheet(
             ColorPickerUI(
                 onColorSelected = { color ->
                     currentSelectedColor = color
-                    onColorSelect(currentSelectedColor.colorToHex())
+                    val colorHex = currentSelectedColor.colorToHex()
+                    onBackgroundSelect(BackgroundTab.SOLID, BackgroundSelection.Solid(colorHex))
                 },
-                selectedColor = initSelectColor,
+                selectedColor = initSelectColor ?: Color.White,
                 onDismiss = { showColorWheel = false },
                 textStyle = AppStyle.body1().medium().gray900(),
                 confirmText = R.string.confirm,
@@ -158,7 +185,8 @@ fun BackgroundSheet(
                         selectedColor = currentSelectedColor,
                         onColorSelect = { color ->
                             currentSelectedColor = color
-                            onColorSelect(currentSelectedColor.colorToHex())
+                            val colorHex = currentSelectedColor.colorToHex()
+                            onBackgroundSelect(BackgroundTab.SOLID, BackgroundSelection.Solid(colorHex))
                         },
                         onColorPickerClick = { showColorWheel = true },
                         onColorWheelClick = { showColorWheel = true }
@@ -166,11 +194,25 @@ fun BackgroundSheet(
                 }
 
                 BackgroundTab.PATTERN -> {
-                    PatternBackgroundTab()
+                    PatternBackgroundTab(
+                        onPatternSelect = { item, group, urlRoot ->
+                            onBackgroundSelect(
+                                BackgroundTab.PATTERN,
+                                BackgroundSelection.Pattern(item, group, urlRoot)
+                            )
+                        }
+                    )
                 }
 
                 BackgroundTab.GRADIENT -> {
-                    GradientBackgroundTab()
+                    GradientBackgroundTab(
+                        onGradientSelect = { item, group, urlRoot ->
+                            onBackgroundSelect(
+                                BackgroundTab.GRADIENT,
+                                BackgroundSelection.Gradient(item, group, urlRoot)
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -185,7 +227,8 @@ fun BackgroundSheet(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
-        ) {
+        )
+        {
             IconButton(onClick = onClose) {
                 Icon(
                     modifier = Modifier.size(28.dp),
@@ -364,31 +407,368 @@ fun Color.colorToHex(includeAlpha: Boolean = true): String {
 }
 
 @Composable
-private fun PatternBackgroundTab() {
+private fun PatternBackgroundTab(
+    onPatternSelect: ((PatternItem, PatternGroup, String) -> Unit)? = null
+) {
+    val context = LocalContext.current
+    val patternRepository: PatternRepository = koinInject()
+
+    var patterns by remember { mutableStateOf<List<PatternGroup>>(emptyList()) }
+    var urlRoot by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        isLoading = true
+        error = null
+        when (val result = patternRepository.getPatterns()) {
+            is com.basesource.base.result.Result.Success -> {
+                patterns = result.data.groups
+                urlRoot = result.data.urlRoot
+                isLoading = false
+            }
+
+            is com.basesource.base.result.Result.Error -> {
+                error = result.exception?.message
+                isLoading = false
+            }
+
+            else -> {
+                isLoading = false
+            }
+        }
+    }
+    
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 40.dp),
-        contentAlignment = Alignment.Center
+            .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
+        when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Loading patterns...",
+                        style = AppStyle.body1().medium().gray600()
+                    )
+                }
+            }
+
+            error != null -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Error: $error",
+                        style = AppStyle.body1().medium().gray600()
+                    )
+                }
+            }
+
+            patterns.isEmpty() -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No patterns available",
+                        style = AppStyle.body1().medium().gray600()
+                    )
+                }
+            }
+
+            else -> {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp)
+                ) {
+                    patterns.forEach { group ->
+                        items(group.content) { item ->
+                            PatternItemCard(
+                                patternItem = item,
+                                patternGroup = group,
+                                urlRoot = urlRoot,
+                                onPatternSelect = { patternItem, patternGroup ->
+                                    onPatternSelect?.invoke(patternItem, patternGroup, urlRoot)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PatternItemCard(
+    patternItem: PatternItem,
+    patternGroup: PatternGroup,
+    urlRoot: String,
+    onPatternSelect: ((PatternItem, PatternGroup) -> Unit)? = null
+) {
+    val context = LocalContext.current
+    val imageUri = remember(patternItem.urlThumb, urlRoot) {
+        getPatternImageUri(urlRoot, patternItem.urlThumb)
+    }
+    // Load fallback from assets using patternItem.name (e.g., "item_1.jpg")
+    val fallbackPainter = remember(patternItem.name) {
+        loadPatternAssetPainter(context, patternItem.name)
+    }
+
+    // Track if URL load failed to show fallback
+    var urlLoadFailed by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .width(100.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(64.dp)
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .clickableWithAlphaEffect {
+                    onPatternSelect?.invoke(patternItem, patternGroup)
+                }
+            ,
+            contentAlignment = Alignment.Center
+        ) {
+            if (urlLoadFailed && fallbackPainter != null) {
+                // Show fallback from assets
+                Image(
+                    painter = fallbackPainter,
+                    contentDescription = patternItem.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(12.dp))
+                )
+            } else {
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(imageUri)
+                        .build(),
+                    contentDescription = patternItem.title,
+                    contentScale = ContentScale.Crop,
+                    error = fallbackPainter,
+                    placeholder = fallbackPainter,
+                    onError = {
+                        urlLoadFailed = true
+                    },
+                    onSuccess = {
+                        urlLoadFailed = false
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(12.dp))
+                )
+            }
+
+            // Show PRO badge if needed
+            if (patternGroup.isPro) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(4.dp)
+                        .background(
+                            color = Color(0xFF9747FF),
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = "PRO",
+                        style = AppStyle.title1().medium().white(),
+                    )
+                }
+            }
+        }
+
+        // Pattern title below image
         Text(
-            text = "Pattern options coming soon",
-            style = AppStyle.body1().medium().gray600()
+            text = patternItem.title,
+            style = AppStyle.body2().medium().gray900(),
+            modifier = Modifier.padding(top = 8.dp)
         )
     }
 }
 
 @Composable
-private fun GradientBackgroundTab() {
+private fun GradientBackgroundTab(
+    onGradientSelect: ((GradientItem, GradientGroup, String) -> Unit)? = null
+) {
+    val context = LocalContext.current
+    val gradientRepository: GradientRepository = koinInject()
+
+    var gradients by remember { mutableStateOf<List<GradientGroup>>(emptyList()) }
+    var urlRoot by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        isLoading = true
+        error = null
+        when (val result = gradientRepository.getGradients()) {
+            is com.basesource.base.result.Result.Success -> {
+                gradients = result.data.groups
+                urlRoot = result.data.urlRoot
+                isLoading = false
+            }
+
+            is com.basesource.base.result.Result.Error -> {
+                error = result.exception?.message
+                isLoading = false
+            }
+
+            else -> {
+                isLoading = false
+            }
+        }
+    }
+    
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 40.dp),
-        contentAlignment = Alignment.Center
+            .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
+        when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Loading gradients...",
+                        style = AppStyle.body1().medium().gray500()
+                    )
+                }
+            }
+
+            error != null -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Error: $error",
+                        style = AppStyle.body1().medium().gray500()
+                    )
+                }
+            }
+
+            gradients.isEmpty() -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No gradients available",
+                        style = AppStyle.body1().medium().gray500()
+                    )
+                }
+            }
+
+            else -> {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp)
+                ) {
+                    gradients.forEach { group ->
+                        items(group.content) { item ->
+                            GradientItemCard(
+                                gradientItem = item,
+                                gradientGroup = group,
+                                urlRoot = urlRoot,
+                                onGradientSelect = { gradientItem, gradientGroup ->
+                                    onGradientSelect?.invoke(gradientItem, gradientGroup, urlRoot)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GradientItemCard(
+    gradientItem: GradientItem,
+    gradientGroup: GradientGroup,
+    urlRoot: String,
+    onGradientSelect: ((GradientItem, GradientGroup) -> Unit)? = null
+) {
+    // Parse colors from hex strings
+    val colors = remember(gradientItem.colors) {
+        gradientItem.colors.mapNotNull { colorHex ->
+            try {
+                Color(colorHex.toColorInt())
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .width(100.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(64.dp)
+                .background(
+                    brush = if (colors.size >= 2) {
+                        androidx.compose.ui.graphics.Brush.verticalGradient(colors)
+                    } else {
+                        androidx.compose.ui.graphics.Brush.verticalGradient(
+                            listOf(Color.White, Color.Gray)
+                        )
+                    },
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .clickableWithAlphaEffect {
+                    onGradientSelect?.invoke(gradientItem, gradientGroup)
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            // Show PRO badge if needed
+            if (gradientGroup.isPro || gradientItem.isPro == true) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(4.dp)
+                        .background(
+                            color = Color(0xFF9747FF),
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = "PRO",
+                        style = AppStyle.title1().medium().white(),
+                    )
+                }
+            }
+        }
+
+        // Gradient title below
         Text(
-            text = "Gradient options coming soon",
-            style = AppStyle.body1().medium().gray600()
+            text = gradientItem.title,
+            style = AppStyle.body2().medium().gray900(),
+            modifier = Modifier.padding(top = 8.dp)
         )
     }
 }
@@ -399,8 +779,7 @@ private fun GradientBackgroundTab() {
 private fun BackgroundSheetPreview() {
     BackgroundSheet(
         selectedTab = BackgroundTab.SOLID,
-        selectedColor = "#3B82F6",
-        onColorSelect = {},
+        onBackgroundSelect = { _, _ -> },
         onClose = {},
         onConfirm = {}
     )

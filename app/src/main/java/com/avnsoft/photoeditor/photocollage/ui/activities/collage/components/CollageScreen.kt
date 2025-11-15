@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 
@@ -39,6 +40,7 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
     var showGridsSheet by remember { mutableStateOf(false) }
     var showRatioSheet by remember { mutableStateOf(false) }
     var showBackgroundSheet by remember { mutableStateOf(false) }
+    var showFrameSheet by remember { mutableStateOf(false) }
 
     // Extract values from state
     val topMargin = collageState.topMargin
@@ -102,7 +104,7 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                     template = templateToUse,
                     gap = gapValue,
                     corner = cornerValue,
-                    backgroundColor = collageState.backgroundColor
+                    backgroundSelection = collageState.backgroundSelection
                 )
             }
             // Bottom tools
@@ -124,11 +126,19 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                             showBackgroundSheet = true
                             showGridsSheet = false
                             showRatioSheet = false
+                            showFrameSheet = false
+                        }
+                        CollageTool.FRAME -> {
+                            showFrameSheet = true
+                            showGridsSheet = false
+                            showRatioSheet = false
+                            showBackgroundSheet = false
                         }
                         else -> {
                             showGridsSheet = false
                             showRatioSheet = false
                             showBackgroundSheet = false
+                            showFrameSheet = false
                         }
                     }
                 }
@@ -184,10 +194,10 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
         }
 
         if (showBackgroundSheet) {
-            BackgroundSheet(
-                selectedColor = collageState.backgroundColor,
-                onColorSelect = { color ->
-                    vm.updateBackgroundColor(color)
+              BackgroundSheet(
+                selectedBackgroundSelection = collageState.backgroundSelection,
+                onBackgroundSelect = { _, selection ->
+                    vm.updateBackground(selection)
                 },
                 onClose = {
                     vm.cancelBackgroundChanges()
@@ -196,6 +206,27 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                 onConfirm = {
                     vm.confirmBackgroundChanges()
                     showBackgroundSheet = false
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.BottomCenter)
+            )
+        }
+
+        if (showFrameSheet) {
+            FrameSheet(
+                selectedFrameSelection = collageState.frameSelection,
+                onFrameSelect = { selection ->
+                    vm.updateFrame(selection)
+                },
+                onClose = {
+                    vm.cancelFrameChanges()
+                    showFrameSheet = false
+                },
+                onConfirm = {
+                    vm.confirmFrameChanges()
+                    showFrameSheet = false
                 },
                 modifier = Modifier
                     .fillMaxWidth()

@@ -1,5 +1,8 @@
 package com.avnsoft.photoeditor.photocollage.data.model.collage
 
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
+
 /**
  * State object chứa toàn bộ state của collage editor
  * Sử dụng cho undo/redo functionality
@@ -15,13 +18,10 @@ data class CollageState(
     val ratio: String? = null,        // e.g., "1:1", "4:3", "16:9"
 
     // Background tool
-    val backgroundColor: String? = null,  // hex color
-    val backgroundImage: String? = null,  // URI
+    val backgroundSelection: BackgroundSelection? = null,  // Current background selection (SOLID, PATTERN, GRADIENT)
 
     // Frame tool
-    val frameStyle: String? = null,
-    val frameWidth: Float = 0f,
-    val frameColor: String? = null,
+    val frameSelection: FrameSelection? = null,
 
     // Text tool
     val texts: List<TextState> = emptyList(),

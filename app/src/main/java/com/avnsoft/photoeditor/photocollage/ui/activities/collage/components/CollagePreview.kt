@@ -44,6 +44,7 @@ import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CellSpec
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.data.model.collage.FreePolygonShape
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
 
@@ -54,29 +55,18 @@ fun CollagePreview(
     gap: Dp = 6.dp,
     corner: Dp = 1.dp,
     borderWidth: Dp = 5.dp,
-    backgroundColor: String? = null,
+    backgroundSelection: BackgroundSelection? = null,
     modifier: Modifier = Modifier
 ) {
-    // Parse background color from hex string
-    val bgColor = remember(backgroundColor) {
-        backgroundColor?.let {
-            try {
-                Color(it.toColorInt())
-            } catch (e: Exception) {
-                BackgroundWhite
-            }
-        } ?: BackgroundWhite
-    }
-
-    BoxWithConstraints(modifier = modifier.background(bgColor)) {
+    BoxWithConstraints(modifier = modifier) {
         val density = LocalDensity.current
         val w = constraints.maxWidth.toFloat()
         val h = constraints.maxHeight.toFloat()
 
-        Box(
-            Modifier
-                .fillMaxSize()
-                .background(bgColor)
+        // Background layer
+        BackgroundLayer(
+            backgroundSelection = backgroundSelection,
+            modifier = Modifier.fillMaxSize()
         )
 
         // Xử lý template bằng CollagePreviewDataProcessor
@@ -330,7 +320,7 @@ fun CollagePreview(
                                         clearPath?.let {
                                             drawPath(
                                                 path = it,
-                                                color = bgColor,
+                                                color = Color.Transparent,
                                                 blendMode = BlendMode.SrcOver
                                             )
                                         }
@@ -359,7 +349,7 @@ fun CollagePreview(
                                             // Vẽ clear area với background color để khoét lỗ
                                             drawPath(
                                                 path = clearPath,
-                                                color = bgColor,
+                                                color = Color.Transparent,
                                                 blendMode = BlendMode.SrcOver
                                             )
                                         }

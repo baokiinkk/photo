@@ -1,0 +1,577 @@
+{
+  "version": "v1",
+  "lastModified": "2021-06-05",
+  "data": [
+    {
+      "eventName": "Cloud",
+      "eventId": 1001,
+      "content": [
+        {
+          "title": "C1",
+          "name": "item_1.jpg",
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_1.jpg"
+        },
+        {
+          "title": "C2",
+          "name": "item_2.jpg",
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_2.jpg"
+        },
+        {
+          "title": "C3",
+          "name": "item_3.jpg",
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_3.jpg"
+        },
+        {
+          "title": "C4",
+          "name": "item_4.jpg",
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_4.jpg"
+        },
+        {
+          "title": "C5",
+          "name": "item_5.jpg",
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_5.jpg"
+        },
+        {
+          "title": "C6",
+          "name": "item_6.jpg",
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_6.jpg"
+        },
+        {
+          "title": "C7",
+          "name": "item_7.jpg",
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_7.jpg"
+        },
+        {
+          "title": "C8",
+          "name": "item_8.jpg",
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_8.jpg"
+        },
+        {
+          "title": "C9",
+          "name": "item_9.jpg",
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_9.jpg"
+        },
+        {
+          "title": "C10",
+          "name": "item_10.jpg",
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_10.jpg"
+        }
+      ],
+      "urlZip": "202105collagemaker/pattern/cloud/Archive.zip",
+      "isPro": false,
+      "isReward": true,
+      "isFree": false
+    },
+    {
+      "eventName": "Glitter",
+      "eventId": 1002,
+      "content": [
+        {
+          "title": "G1",
+          "name": "item_1.jpg",
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_1.jpg"
+        },
+        {
+          "title": "G2",
+          "name": "item_2.jpg",
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_2.jpg"
+        },
+        {
+          "title": "G3",
+          "name": "item_3.jpg",
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_3.jpg"
+        },
+        {
+          "title": "G4",
+          "name": "item_4.jpg",
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_4.jpg"
+        },
+        {
+          "title": "G5",
+          "name": "item_5.jpg",
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_5.jpg"
+        },
+        {
+          "title": "G6",
+          "name": "item_6.jpg",
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_6.jpg"
+        },
+        {
+          "title": "G7",
+          "name": "item_7.jpg",
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_7.jpg"
+        },
+        {
+          "title": "G8",
+          "name": "item_8.jpg",
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_8.jpg"
+        },
+        {
+          "title": "G9",
+          "name": "item_9.jpg",
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_9.jpg"
+        },
+        {
+          "title": "G10",
+          "name": "item_10.jpg",
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_10.jpg"
+        }
+      ],
+      "urlZip": "202105collagemaker/pattern/glitter/Archive.zip",
+      "isPro": false,
+      "isReward": true,
+      "isFree": false
+    },
+    {
+      "eventName": "Holo",
+      "eventId": 1003,
+      "content": [
+        {
+          "title": "H1",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_1.png"
+        },
+        {
+          "title": "H2",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_2.png"
+        },
+        {
+          "title": "H3",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_3.png"
+        },
+        {
+          "title": "H4",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_4.png"
+        },
+        {
+          "title": "H5",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_5.png"
+        },
+        {
+          "title": "H6",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_6.png"
+        },
+        {
+          "title": "H7",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_7.png"
+        },
+        {
+          "title": "H8",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_8.png"
+        },
+        {
+          "title": "H9",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_9.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/pattern/holo/Archive.zip",
+      "isPro": false,
+      "isReward": true,
+      "isFree": false
+    },
+    {
+      "eventName": "Love",
+      "eventId": 1004,
+      "content": [
+        {
+          "title": "L1",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/pattern/love/thumb_1.png"
+        },
+        {
+          "title": "L2",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/pattern/love/thumb_2.png"
+        },
+        {
+          "title": "L3",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/pattern/love/thumb_3.png"
+        },
+        {
+          "title": "L4",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/pattern/love/thumb_4.png"
+        },
+        {
+          "title": "L5",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/pattern/love/thumb_5.png"
+        },
+        {
+          "title": "L6",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/pattern/love/thumb_6.png"
+        },
+        {
+          "title": "L7",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/pattern/love/thumb_7.png"
+        },
+        {
+          "title": "L8",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/pattern/love/thumb_8.png"
+        },
+        {
+          "title": "L9",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/pattern/love/thumb_9.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/pattern/love/Archive.zip",
+      "isPro": false,
+      "isReward": true,
+      "isFree": false
+    },
+    {
+      "eventName": "Paper",
+      "eventId": 1005,
+      "content": [
+        {
+          "title": "P1",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_1.png"
+        },
+        {
+          "title": "P2",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_2.png"
+        },
+        {
+          "title": "P3",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_3.png"
+        },
+        {
+          "title": "P4",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_4.png"
+        },
+        {
+          "title": "P5",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_5.png"
+        },
+        {
+          "title": "P6",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_6.png"
+        },
+        {
+          "title": "P7",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_7.png"
+        },
+        {
+          "title": "P8",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_8.png"
+        },
+        {
+          "title": "P9",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_9.png"
+        },
+        {
+          "title": "P10",
+          "name": "item_10.png",
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_10.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/pattern/paper/Archive.zip",
+      "isPro": false,
+      "isReward": true,
+      "isFree": false
+    },
+    {
+      "eventName": "Rose Gold",
+      "eventId": 1006,
+      "content": [
+        {
+          "title": "R1",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_1.png"
+        },
+        {
+          "title": "R2",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_2.png"
+        },
+        {
+          "title": "R3",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_3.png"
+        },
+        {
+          "title": "R4",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_4.png"
+        },
+        {
+          "title": "R5",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_5.png"
+        },
+        {
+          "title": "R6",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_6.png"
+        },
+        {
+          "title": "R7",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_7.png"
+        },
+        {
+          "title": "R8",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_8.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/pattern/rose_gold/Archive.zip",
+      "isPro": false,
+      "isReward": true,
+      "isFree": false
+    },
+    {
+      "eventName": "Stars",
+      "eventId": 1007,
+      "content": [
+        {
+          "title": "S1",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_1.png"
+        },
+        {
+          "title": "S2",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_2.png"
+        },
+        {
+          "title": "S3",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_3.png"
+        },
+        {
+          "title": "S4",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_4.png"
+        },
+        {
+          "title": "S5",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_5.png"
+        },
+        {
+          "title": "S6",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_6.png"
+        },
+        {
+          "title": "S7",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_7.png"
+        },
+        {
+          "title": "S8",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_8.png"
+        },
+        {
+          "title": "S9",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_9.png"
+        },
+        {
+          "title": "S10",
+          "name": "item_10.png",
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_10.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/pattern/stars/Archive.zip",
+      "isPro": false,
+      "isReward": true,
+      "isFree": false
+    },
+    {
+      "eventName": "Summer",
+      "eventId": 1008,
+      "content": [
+        {
+          "title": "S1",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_1.png"
+        },
+        {
+          "title": "S2",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_2.png"
+        },
+        {
+          "title": "S3",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_3.png"
+        },
+        {
+          "title": "S4",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_4.png"
+        },
+        {
+          "title": "S5",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_5.png"
+        },
+        {
+          "title": "S6",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_6.png"
+        },
+        {
+          "title": "S7",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_7.png"
+        },
+        {
+          "title": "S8",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_8.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/pattern/summer/Archive.zip",
+      "isPro": false,
+      "isReward": true,
+      "isFree": false
+    },
+    {
+      "eventName": "Texture",
+      "eventId": 1009,
+      "content": [
+        {
+          "title": "T1",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_1.png"
+        },
+        {
+          "title": "T2",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_2.png"
+        },
+        {
+          "title": "T3",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_3.png"
+        },
+        {
+          "title": "T4",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_4.png"
+        },
+        {
+          "title": "T5",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_5.png"
+        },
+        {
+          "title": "T6",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_6.png"
+        },
+        {
+          "title": "T7",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_7.png"
+        },
+        {
+          "title": "T8",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_8.png"
+        },
+        {
+          "title": "T9",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_9.png"
+        },
+        {
+          "title": "T10",
+          "name": "item_10.png",
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_10.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/pattern/texture/Archive.zip",
+      "isPro": false,
+      "isReward": true,
+      "isFree": false
+    },
+    {
+      "eventName": "Water",
+      "eventId": 1010,
+      "content": [
+        {
+          "title": "W1",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/pattern/water/thumb_1.png"
+        },
+        {
+          "title": "W2",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/pattern/water/thumb_2.png"
+        },
+        {
+          "title": "W3",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/pattern/water/thumb_3.png"
+        },
+        {
+          "title": "W4",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/pattern/water/thumb_4.png"
+        },
+        {
+          "title": "W5",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/pattern/water/thumb_5.png"
+        },
+        {
+          "title": "W6",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/pattern/water/thumb_6.png"
+        },
+        {
+          "title": "W7",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/pattern/water/thumb_7.png"
+        },
+        {
+          "title": "W8",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/pattern/water/thumb_8.png"
+        },
+        {
+          "title": "W9",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/pattern/water/thumb_9.png"
+        },
+        {
+          "title": "W10",
+          "name": "item_10.png",
+          "urlThumb": "202105collagemaker/pattern/water/thumb_10.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/pattern/water/Archive.zip",
+      "isPro": false,
+      "isReward": true,
+      "isFree": false
+    }
+  ],
+  "urlRoot": "https://photo.footballtv.info/"
+}
