@@ -15,8 +15,9 @@ val Neutral01 =  Color(0xFF1A1B1D)
 val Neutral03 = Color(0xFF505050)
 
 val Gray900 = Color(0xFF101828)
-val Gray500 = Color(0xFF7C7E83)
+val Gray500 = Color(0xFF667085)
 val Gray300 = Color(0xFFD0D5DD)
+val Gray100 = Color(0xFFF2F4F7)
 // Primary Colors
 val Purple40 = Color(0xFF354CC4)
 val Purple200 = Color(0xFFCBC6FF)
