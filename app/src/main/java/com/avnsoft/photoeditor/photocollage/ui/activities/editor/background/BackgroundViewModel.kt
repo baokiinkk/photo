@@ -1,6 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.background
 
 import android.graphics.Bitmap
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -19,16 +20,24 @@ class BackgroundViewModel : BaseViewModel() {
         }
     }
 
-    fun updateBackgroundColor(color: String?) {
+    fun updateBackground(selection: BackgroundSelection) {
         uiState.update {
             it.copy(
-                backgroundColor = color,
+                backgroundSelection = selection
             )
+        }
+    }
+    
+    // Deprecated: Use updateBackground instead
+    @Deprecated("Use updateBackground instead", ReplaceWith("updateBackground(BackgroundSelection.Solid(color))"))
+    fun updateBackgroundColor(color: String?) {
+        color?.let {
+            updateBackground(BackgroundSelection.Solid(it))
         }
     }
 }
 
 data class BackgroundUIState(
     val originBitmap: Bitmap? = null,
-    val backgroundColor: String? = null,  // hex color
+    val backgroundSelection: BackgroundSelection? = null,  // Current background selection
 )

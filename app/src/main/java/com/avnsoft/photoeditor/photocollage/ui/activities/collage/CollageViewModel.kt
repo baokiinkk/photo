@@ -51,8 +51,8 @@ class CollageViewModel(
     // Lưu ratio tạm thời khi đang chọn (chưa confirm)
     private var tempRatio: String? = null
 
-    // Lưu background color tạm thời khi đang chọn (chưa confirm)
-    private var tempBackgroundColor: String? = null
+    // Lưu background selection tạm thời khi đang chọn (chưa confirm)
+    private var tempBackgroundSelection: com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection? = null
 
     fun load(count: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -139,8 +139,7 @@ class CollageViewModel(
                     topMargin = last.topMargin,
                     columnMargin = last.columnMargin,
                     cornerRadius = last.cornerRadius,
-                    backgroundColor = last.backgroundColor,
-                    backgroundImage = last.backgroundImage,
+                    backgroundSelection = last.backgroundSelection,
                     frameStyle = last.frameStyle,
                     frameWidth = last.frameWidth,
                     frameColor = last.frameColor,
@@ -207,8 +206,7 @@ class CollageViewModel(
                         cornerRadius = last.cornerRadius,
                         // Giữ ratio và các giá trị khác
                         ratio = last.ratio,
-                        backgroundColor = last.backgroundColor,
-                        backgroundImage = last.backgroundImage,
+                        backgroundSelection = last.backgroundSelection,
                         frameStyle = last.frameStyle,
                         frameWidth = last.frameWidth,
                         frameColor = last.frameColor,
@@ -225,8 +223,7 @@ class CollageViewModel(
                         templateId = last.templateId,
                         // Giữ ratio và các giá trị khác
                         ratio = last.ratio,
-                        backgroundColor = last.backgroundColor,
-                        backgroundImage = last.backgroundImage,
+                        backgroundSelection = last.backgroundSelection,
                         frameStyle = last.frameStyle,
                         frameWidth = last.frameWidth,
                         frameColor = last.frameColor,
@@ -265,20 +262,32 @@ class CollageViewModel(
         }
     }
 
-    fun updateBackgroundColor(color: String?) {
+    fun updateBackground(selection: com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection) {
         viewModelScope.launch(Dispatchers.IO) {
-            tempBackgroundColor = color
-            _collageState.value = _collageState.value.copy(backgroundColor = color)
+            tempBackgroundSelection = selection
+            _collageState.value = _collageState.value.copy(
+                backgroundSelection = selection
+            )
+        }
+    }
+    
+    // Deprecated: Use updateBackground instead
+    @Deprecated("Use updateBackground instead", ReplaceWith("updateBackground(BackgroundSelection.Solid(color))"))
+    fun updateBackgroundColor(color: String?) {
+        color?.let {
+            updateBackground(com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection.Solid(it))
         }
     }
 
     fun cancelBackgroundChanges() {
         viewModelScope.launch(Dispatchers.IO) {
-            // Khôi phục background color về state đã lưu cuối cùng
+            // Khôi phục background về state đã lưu cuối cùng
             val lastSavedState = undoRedoManager.getLastState()
-            val backgroundColorToRestore = lastSavedState?.backgroundColor ?: initialState?.backgroundColor
-            tempBackgroundColor = null
-            _collageState.value = _collageState.value.copy(backgroundColor = backgroundColorToRestore)
+            val backgroundSelectionToRestore = lastSavedState?.backgroundSelection ?: initialState?.backgroundSelection
+            tempBackgroundSelection = null
+            _collageState.value = _collageState.value.copy(
+                backgroundSelection = backgroundSelectionToRestore
+            )
         }
     }
 
@@ -287,9 +296,9 @@ class CollageViewModel(
             val currentState = _collageState.value
             val lastSavedState = undoRedoManager.getLastState()
             
-            // Tạo state mới với background color đã chọn
+            // Tạo state mới với background đã chọn
             val newState = currentState.copy(
-                backgroundColor = currentState.backgroundColor
+                backgroundSelection = currentState.backgroundSelection
             )
             
             // Merge với lastSavedState để giữ nguyên các giá trị không thay đổi
@@ -301,7 +310,7 @@ class CollageViewModel(
                     columnMargin = last.columnMargin,
                     cornerRadius = last.cornerRadius,
                     ratio = last.ratio,
-                    backgroundImage = last.backgroundImage,
+                    backgroundSelection = last.backgroundSelection,
                     frameStyle = last.frameStyle,
                     frameWidth = last.frameWidth,
                     frameColor = last.frameColor,
@@ -319,7 +328,7 @@ class CollageViewModel(
             if (!undoRedoManager.canUndo() && initialState != null) {
                 val initial = initialState!!
                 // Kiểm tra xem có thay đổi so với initial state không
-                val hasChanges = initial.backgroundColor != stateToSave.backgroundColor
+                val hasChanges = initial.backgroundSelection != stateToSave.backgroundSelection
                 
                 if (hasChanges) {
                     // Lưu initial state vào redo stack trước (để có thể undo về ban đầu)
@@ -330,7 +339,7 @@ class CollageViewModel(
             // Lưu state vào redo stack
             undoRedoManager.saveState(stateToSave)
             _collageState.value = stateToSave
-            tempBackgroundColor = null // Clear temp background color sau khi confirm
+            tempBackgroundSelection = null // Clear temp background sau khi confirm
             updateUndoRedoState()
         }
     }

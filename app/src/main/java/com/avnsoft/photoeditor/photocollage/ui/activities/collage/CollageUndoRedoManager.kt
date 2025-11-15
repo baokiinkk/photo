@@ -44,8 +44,7 @@ class CollageUndoRedoManager(
                 state1.columnMargin == state2.columnMargin &&
                 state1.cornerRadius == state2.cornerRadius &&
                 state1.ratio == state2.ratio &&
-                state1.backgroundColor == state2.backgroundColor &&
-                state1.backgroundImage == state2.backgroundImage &&
+                state1.backgroundSelection == state2.backgroundSelection &&
                 state1.frameStyle == state2.frameStyle &&
                 state1.frameWidth == state2.frameWidth &&
                 state1.frameColor == state2.frameColor &&

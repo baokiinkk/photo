@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 
@@ -102,7 +103,7 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                     template = templateToUse,
                     gap = gapValue,
                     corner = cornerValue,
-                    backgroundColor = collageState.backgroundColor
+                    backgroundSelection = collageState.backgroundSelection
                 )
             }
             // Bottom tools
@@ -184,10 +185,10 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
         }
 
         if (showBackgroundSheet) {
-            BackgroundSheet(
-                selectedColor = collageState.backgroundColor,
-                onColorSelect = { color ->
-                    vm.updateBackgroundColor(color)
+              BackgroundSheet(
+                selectedBackgroundSelection = collageState.backgroundSelection,
+                onBackgroundSelect = { _, selection ->
+                    vm.updateBackground(selection)
                 },
                 onClose = {
                     vm.cancelBackgroundChanges()

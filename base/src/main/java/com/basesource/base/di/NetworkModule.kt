@@ -57,7 +57,7 @@ val networkModule = module {
 
     single<Retrofit> {
         Retrofit.Builder()
-            .baseUrl("https://openai.amobear.com/") // Replace with your base URL
+            .baseUrl("https://photo.footballtv.info/202105collagemaker/data/") // Replace with your base URL
             .client(get())
             .addConverterFactory(GsonConverterFactory.create(get()))
             .build()
