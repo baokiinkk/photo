@@ -54,6 +54,9 @@ class CollageViewModel(
     // Lưu background selection tạm thời khi đang chọn (chưa confirm)
     private var tempBackgroundSelection: com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection? = null
 
+    // Lưu frame selection tạm thời khi đang chọn (chưa confirm)
+    private var tempFrameSelection: com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection? = null
+
     fun load(count: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             when (val res = repository.getTemplates()) {
@@ -140,9 +143,7 @@ class CollageViewModel(
                     columnMargin = last.columnMargin,
                     cornerRadius = last.cornerRadius,
                     backgroundSelection = last.backgroundSelection,
-                    frameStyle = last.frameStyle,
-                    frameWidth = last.frameWidth,
-                    frameColor = last.frameColor,
+                    frameSelection = last.frameSelection,
                     texts = last.texts,
                     stickers = last.stickers,
                     filter = last.filter,
@@ -207,9 +208,7 @@ class CollageViewModel(
                         // Giữ ratio và các giá trị khác
                         ratio = last.ratio,
                         backgroundSelection = last.backgroundSelection,
-                        frameStyle = last.frameStyle,
-                        frameWidth = last.frameWidth,
-                        frameColor = last.frameColor,
+                        frameSelection = last.frameSelection,
                         texts = last.texts,
                         stickers = last.stickers,
                         filter = last.filter,
@@ -224,9 +223,7 @@ class CollageViewModel(
                         // Giữ ratio và các giá trị khác
                         ratio = last.ratio,
                         backgroundSelection = last.backgroundSelection,
-                        frameStyle = last.frameStyle,
-                        frameWidth = last.frameWidth,
-                        frameColor = last.frameColor,
+                        frameSelection = last.frameSelection,
                         texts = last.texts,
                         stickers = last.stickers,
                         filter = last.filter,
@@ -312,9 +309,7 @@ class CollageViewModel(
                     ratio = last.ratio,
                     // Lưu backgroundSelection từ currentState (đã chọn mới), không phải từ last
                     backgroundSelection = currentState.backgroundSelection,
-                    frameStyle = last.frameStyle,
-                    frameWidth = last.frameWidth,
-                    frameColor = last.frameColor,
+                    frameSelection = last.frameSelection,
                     texts = last.texts,
                     stickers = last.stickers,
                     filter = last.filter,
@@ -381,6 +376,80 @@ class CollageViewModel(
     private fun updateUndoRedoState() {
         _canUndo.value = undoRedoManager.canUndo()
         _canRedo.value = undoRedoManager.canRedo()
+    }
+
+    // Helper để update state từ các tools khác (mở rộng sau)
+    fun updateFrame(selection: com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tempFrameSelection = selection
+            _collageState.value = _collageState.value.copy(
+                frameSelection = selection
+            )
+        }
+    }
+
+    fun cancelFrameChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            // Khôi phục frame về state đã lưu cuối cùng
+            val lastSavedState = undoRedoManager.getLastState()
+            val frameSelectionToRestore = lastSavedState?.frameSelection ?: initialState?.frameSelection
+            tempFrameSelection = null
+            _collageState.value = _collageState.value.copy(
+                frameSelection = frameSelectionToRestore
+            )
+        }
+    }
+
+    fun confirmFrameChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            val lastSavedState = undoRedoManager.getLastState()
+            
+            // Tạo state mới với frame đã chọn
+            val newState = currentState.copy(
+                frameSelection = currentState.frameSelection
+            )
+            
+            // Merge với lastSavedState để giữ nguyên các giá trị không thay đổi
+            val stateToSave = lastSavedState?.let { last ->
+                newState.copy(
+                    // Giữ các giá trị khác từ last saved state
+                    templateId = last.templateId,
+                    topMargin = last.topMargin,
+                    columnMargin = last.columnMargin,
+                    cornerRadius = last.cornerRadius,
+                    ratio = last.ratio,
+                    backgroundSelection = last.backgroundSelection,
+                    // Lưu frameSelection từ currentState (đã chọn mới), không phải từ last
+                    frameSelection = currentState.frameSelection,
+                    texts = last.texts,
+                    stickers = last.stickers,
+                    filter = last.filter,
+                    blur = last.blur,
+                    brightness = last.brightness,
+                    contrast = last.contrast,
+                    saturation = last.saturation
+                )
+            } ?: newState
+            
+            // Nếu đây là lần đầu confirm (redo stack rỗng) và có initial state, lưu initial state trước
+            if (!undoRedoManager.canUndo() && initialState != null) {
+                val initial = initialState!!
+                // Kiểm tra xem có thay đổi so với initial state không
+                val hasChanges = initial.frameSelection != stateToSave.frameSelection
+                
+                if (hasChanges) {
+                    // Lưu initial state vào redo stack trước (để có thể undo về ban đầu)
+                    undoRedoManager.saveState(initial.copy())
+                }
+            }
+            
+            // Lưu state vào redo stack
+            undoRedoManager.saveState(stateToSave)
+            _collageState.value = stateToSave
+            tempFrameSelection = null // Clear temp frame sau khi confirm
+            updateUndoRedoState()
+        }
     }
 
     // Helper để update state từ các tools khác (mở rộng sau)

@@ -40,6 +40,7 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
     var showGridsSheet by remember { mutableStateOf(false) }
     var showRatioSheet by remember { mutableStateOf(false) }
     var showBackgroundSheet by remember { mutableStateOf(false) }
+    var showFrameSheet by remember { mutableStateOf(false) }
 
     // Extract values from state
     val topMargin = collageState.topMargin
@@ -125,11 +126,19 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                             showBackgroundSheet = true
                             showGridsSheet = false
                             showRatioSheet = false
+                            showFrameSheet = false
+                        }
+                        CollageTool.FRAME -> {
+                            showFrameSheet = true
+                            showGridsSheet = false
+                            showRatioSheet = false
+                            showBackgroundSheet = false
                         }
                         else -> {
                             showGridsSheet = false
                             showRatioSheet = false
                             showBackgroundSheet = false
+                            showFrameSheet = false
                         }
                     }
                 }
@@ -197,6 +206,27 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                 onConfirm = {
                     vm.confirmBackgroundChanges()
                     showBackgroundSheet = false
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.BottomCenter)
+            )
+        }
+
+        if (showFrameSheet) {
+            FrameSheet(
+                selectedFrameSelection = collageState.frameSelection,
+                onFrameSelect = { selection ->
+                    vm.updateFrame(selection)
+                },
+                onClose = {
+                    vm.cancelFrameChanges()
+                    showFrameSheet = false
+                },
+                onConfirm = {
+                    vm.confirmFrameChanges()
+                    showFrameSheet = false
                 },
                 modifier = Modifier
                     .fillMaxWidth()

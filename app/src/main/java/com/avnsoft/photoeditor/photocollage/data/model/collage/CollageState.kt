@@ -1,6 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.data.model.collage
 
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
 
 /**
  * State object chứa toàn bộ state của collage editor
@@ -20,9 +21,7 @@ data class CollageState(
     val backgroundSelection: BackgroundSelection? = null,  // Current background selection (SOLID, PATTERN, GRADIENT)
 
     // Frame tool
-    val frameStyle: String? = null,
-    val frameWidth: Float = 0f,
-    val frameColor: String? = null,
+    val frameSelection: FrameSelection? = null,
 
     // Text tool
     val texts: List<TextState> = emptyList(),

@@ -227,7 +227,8 @@ fun BackgroundSheet(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
-        ) {
+        )
+        {
             IconButton(onClick = onClose) {
                 Icon(
                     modifier = Modifier.size(28.dp),

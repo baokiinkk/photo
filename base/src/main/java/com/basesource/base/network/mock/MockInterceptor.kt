@@ -29,6 +29,10 @@ class MockInterceptor(private val context: Context) : Interceptor {
                 println("DEBUG: Matched MOCK_GRADIENTS_API")
                 getJsonStringFromFile(context.assets, GRADIENTS_FILE)
             }
+            uri.contains(MOCK_FRAMES_API) -> {
+                println("DEBUG: Matched MOCK_FRAMES_API")
+                getJsonStringFromFile(context.assets, FRAMES_FILE)
+            }
             else -> {
                 println("DEBUG: No match found for URI: $uri")
                 ""
@@ -59,6 +63,8 @@ class MockInterceptor(private val context: Context) : Interceptor {
         const val PATTERNS_FILE = "mock_pattern_data.json"
         const val MOCK_GRADIENTS_API = "mock/gradients"
         const val GRADIENTS_FILE = "mock_gradient_data.json"
+        const val MOCK_FRAMES_API = "mock/frames"
+        const val FRAMES_FILE = "mock_frame_data.json"
     }
 
 }
