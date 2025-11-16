@@ -6,8 +6,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.viewinterop.AndroidView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.BrushDrawingView
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.DrawAsset
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.DrawBitmapModel
 
 interface DrawInput
+
+
+data class DrawColor(
+    val color: Color = Color.White,
+    val mode: Int = 1,
+    val size: Float = 20f
+) : DrawInput
+
+data class DrawPattern(
+    val drawBitmapModel: DrawBitmapModel = DrawAsset.lstDrawBitmapModel().first(),
+    val mode: Int = 3,
+    val size: Float = 20f
+) : DrawInput
+
+data class DrawNeon(
+    val color: Color = Color.White,
+    val mode: Int = 2,
+    val size: Float = 20f
+) : DrawInput
+
+data object Undo : DrawInput
+
+data object Redo : DrawInput
 
 @Composable
 fun DrawComposeView(
@@ -31,7 +56,7 @@ fun DrawComposeView(
 
                 is DrawPattern -> {
                     view.setDrawMode(drawInput.mode)
-                    view.brushColor = drawInput.color.toArgb()
+                    view.setCurrentMagicBrush(drawInput.drawBitmapModel)
                     view.brushSize = drawInput.size + 10
                 }
 
@@ -39,6 +64,14 @@ fun DrawComposeView(
                     view.setDrawMode(drawInput.mode)
                     view.brushColor = drawInput.color.toArgb()
                     view.brushSize = drawInput.size + 10
+                }
+
+                is Undo -> {
+                    view.undo()
+                }
+
+                is Redo -> {
+                    view.redo()
                 }
 
                 else -> {

@@ -16,6 +16,7 @@ sealed class StickerData {
         val pathSticker: String,
         val timestamp: Long = System.currentTimeMillis()
     ) : StickerData()
+
     data class StickerFromGallery(
         val pathSticker: String,
         val timestamp: Long = System.currentTimeMillis()
@@ -26,6 +27,7 @@ sealed class StickerData {
 fun StickerViewCompose(
     modifier: Modifier,
     input: StickerData,
+    onReturnView: (StickerView) -> Unit
 ) {
     AndroidView(
         modifier = modifier,
@@ -91,7 +93,7 @@ fun StickerViewCompose(
                 ) {
                 }
             })
-
+            onReturnView.invoke(stickerView)
             stickerView
         },
         update = { view ->
