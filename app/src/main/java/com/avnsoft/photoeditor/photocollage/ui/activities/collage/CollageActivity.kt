@@ -18,7 +18,12 @@ class CollageActivity : BaseActivity() {
         val list = intent.getParcelableArrayListExtra<Uri>(EXTRA_URIS) ?: arrayListOf()
         setContent {
             MainTheme {
-                CollageScreen(list, vm, onBack = { finish() })
+                CollageScreen(
+                    list,
+                    vm,
+                    onBack = { finish() },
+
+                    )
             }
         }
     }

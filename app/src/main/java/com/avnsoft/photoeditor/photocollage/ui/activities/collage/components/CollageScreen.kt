@@ -1,6 +1,17 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 
+import android.app.Activity
+import android.content.ContextWrapper
+import android.graphics.Bitmap
+import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.view.PixelCopy
+import android.view.View
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,16 +31,30 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.createBitmap
+import androidx.core.view.drawToBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerData
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerToolPanel
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerUIState
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerViewCompose
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerAsset
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
+import kotlin.math.roundToInt
 
 @Composable
-fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
+fun CollageScreen(
+    uris: List<Uri>,
+    vm: CollageViewModel,
+    onBack: () -> Unit,
+) {
     // Observe state from ViewModel
     val templates by vm.templates.collectAsState()
     val selected by vm.selected.collectAsState()
@@ -37,19 +62,37 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
     val canUndo by vm.canUndo.collectAsState()
     val canRedo by vm.canRedo.collectAsState()
 
+    var boxBounds by remember { mutableStateOf<Rect?>(null) }
+
     var showGridsSheet by remember { mutableStateOf(false) }
     var showRatioSheet by remember { mutableStateOf(false) }
     var showBackgroundSheet by remember { mutableStateOf(false) }
     var showFrameSheet by remember { mutableStateOf(false) }
+    var showStickerSheet by remember { mutableStateOf(false) }
+
+    // Sticker state
+    var stickerUIState by remember { mutableStateOf(StickerUIState()) }
+    var currentStickerData by remember { mutableStateOf<StickerData?>(null) }
 
     // Extract values from state
     val topMargin = collageState.topMargin
     val columnMargin = collageState.columnMargin
     val cornerRadius = collageState.cornerRadius
     val ratio = collageState.ratio
-
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            currentStickerData = StickerData.StickerFromGallery(
+                pathSticker = it.toString()
+            )
+        }
+    }
     LaunchedEffect(Unit) {
         vm.load(uris.size.coerceAtLeast(1))
+        currentStickerData = StickerData.StickerFromAsset(
+            pathSticker = collageState.stickerBitmapPath.toString()
+        )
     }
 
     Box(
@@ -84,6 +127,16 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                     .weight(1f)
                     .padding(horizontal = 16.dp)
                     .padding(top = 80.dp, bottom = 175.dp)
+                    .onGloballyPositioned { coords ->
+                        val position = coords.positionInRoot()
+                        val size = coords.size
+                        boxBounds = Rect(
+                            position.x.roundToInt(),
+                            position.y.roundToInt(),
+                            (position.x + size.width).roundToInt(),
+                            (position.y + size.height).roundToInt()
+                        )
+                    }
                     .then(
                         if (aspectRatioValue != null) {
                             Modifier.aspectRatio(aspectRatioValue)
@@ -106,6 +159,12 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                     corner = cornerValue,
                     backgroundSelection = collageState.backgroundSelection
                 )
+                currentStickerData?.let {
+                    StickerViewCompose(
+                        modifier = Modifier.fillMaxSize(),
+                        input = it,
+                    )
+                }
             }
             // Bottom tools
             FeatureBottomTools(
@@ -133,12 +192,22 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                             showGridsSheet = false
                             showRatioSheet = false
                             showBackgroundSheet = false
+                            showStickerSheet = false
+                        }
+
+                        CollageTool.STICKER -> {
+                            showStickerSheet = true
+                            showGridsSheet = false
+                            showRatioSheet = false
+                            showBackgroundSheet = false
+                            showFrameSheet = false
                         }
                         else -> {
                             showGridsSheet = false
                             showRatioSheet = false
                             showBackgroundSheet = false
                             showFrameSheet = false
+                            showStickerSheet = false
                         }
                     }
                 }
@@ -234,7 +303,87 @@ fun CollageScreen(uris: List<Uri>, vm: CollageViewModel, onBack: () -> Unit) {
                     .align(Alignment.BottomCenter)
             )
         }
+
+        if (showStickerSheet) {
+            StickerToolPanel(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.BottomCenter),
+                uiState = stickerUIState,
+                onTabSelected = { tab ->
+                    stickerUIState = stickerUIState.copy(currentTab = tab)
+                },
+                onCancel = {
+                    vm.cancelStickerChanges()
+                    showStickerSheet = false
+                    currentStickerData = null
+                },
+                onApply = {
+                    showStickerSheet = false
+                    vm.updateStickerBitmapPath(
+                        when (currentStickerData) {
+                            is StickerData.StickerFromAsset -> (currentStickerData as StickerData.StickerFromAsset).pathSticker
+                            is StickerData.StickerFromGallery -> (currentStickerData as StickerData.StickerFromGallery).pathSticker
+                            null -> ""
+                        }
+                    )
+                },
+                onStickerSelected = { path ->
+                    currentStickerData = StickerData.StickerFromAsset(path)
+                },
+                onAddStickerFromGallery = {
+                    launcher.launch("image/*")
+                }
+            )
+        }
     }
+
+    // Initialize sticker emoji tabs when sticker sheet is shown
+    LaunchedEffect(showStickerSheet) {
+        if (showStickerSheet && stickerUIState.emojiTabs.isEmpty()) {
+            val emojiTabs = StickerAsset.initStickerPager()
+            stickerUIState = stickerUIState.copy(emojiTabs = emojiTabs)
+        }
+    }
+}
+
+fun captureView(view: View, callback: (Bitmap?) -> Unit) {
+    if (view.width == 0 || view.height == 0) {
+        callback(null)
+        return
+    }
+
+    val bmp = createBitmap(view.width, view.height)
+    val window = view.context.findActivity()?.window ?: return callback(null)
+
+    val location = IntArray(2)
+    view.getLocationInWindow(location)
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        PixelCopy.request(
+            window,
+            Rect(location[0], location[1], location[0] + view.width, location[1] + view.height),
+            bmp,
+            { result ->
+                if (result == PixelCopy.SUCCESS) callback(bmp)
+                else callback(null)
+            },
+            Handler(Looper.getMainLooper())
+        )
+    } else {
+        val bitmap = view.drawToBitmap()
+        callback(bitmap)
+    }
+}
+
+private fun android.content.Context.findActivity(): Activity? {
+    var ctx = this
+    while (ctx is ContextWrapper) {
+        if (ctx is Activity) return ctx
+        ctx = ctx.baseContext
+    }
+    return null
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
@@ -267,6 +416,7 @@ private fun CollageScreenPreview() {
                     .padding(16.dp)
                     .background(Color.White, RoundedCornerShape(12.dp))
                     .padding(16.dp)
+
             ) {
                 val templateToUse = CollageTemplates.LEFT_BIG_RIGHT_2
                 CollagePreview(

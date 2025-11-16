@@ -28,6 +28,7 @@ data class CollageState(
 
     // Sticker tool
     val stickers: List<StickerState> = emptyList(),
+    val stickerBitmapPath: String? = null,  // Path của bitmap sau khi apply sticker
 
     // Other tools (mở rộng trong tương lai)
     val filter: String? = null,

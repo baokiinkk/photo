@@ -57,6 +57,9 @@ class CollageViewModel(
     // Lưu frame selection tạm thời khi đang chọn (chưa confirm)
     private var tempFrameSelection: com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection? = null
 
+    // Lưu sticker bitmap path tạm thời khi đang chọn (chưa confirm)
+    private var tempStickerBitmapPath: String? = null
+
     fun load(count: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             when (val res = repository.getTemplates()) {
@@ -453,6 +456,80 @@ class CollageViewModel(
     }
 
     // Helper để update state từ các tools khác (mở rộng sau)
+    fun updateStickerBitmapPath(path: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tempStickerBitmapPath = path
+            _collageState.value = _collageState.value.copy(
+                stickerBitmapPath = path
+            )
+        }
+    }
+
+    fun cancelStickerChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            // Khôi phục sticker bitmap path về state đã lưu cuối cùng
+            val lastSavedState = undoRedoManager.getLastState()
+            val stickerBitmapPathToRestore = lastSavedState?.stickerBitmapPath ?: initialState?.stickerBitmapPath
+            tempStickerBitmapPath = null
+            _collageState.value = _collageState.value.copy(
+                stickerBitmapPath = stickerBitmapPathToRestore
+            )
+        }
+    }
+
+    fun confirmStickerChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            val lastSavedState = undoRedoManager.getLastState()
+            
+            // Tạo state mới với sticker bitmap path đã chọn
+            val newState = currentState.copy(
+                stickerBitmapPath = currentState.stickerBitmapPath
+            )
+            
+            // Merge với lastSavedState để giữ nguyên các giá trị không thay đổi
+            val stateToSave = lastSavedState?.let { last ->
+                newState.copy(
+                    // Giữ các giá trị khác từ last saved state
+                    templateId = last.templateId,
+                    topMargin = last.topMargin,
+                    columnMargin = last.columnMargin,
+                    cornerRadius = last.cornerRadius,
+                    ratio = last.ratio,
+                    backgroundSelection = last.backgroundSelection,
+                    frameSelection = last.frameSelection,
+                    texts = last.texts,
+                    stickers = last.stickers,
+                    // Lưu stickerBitmapPath từ currentState (đã chọn mới), không phải từ last
+                    stickerBitmapPath = currentState.stickerBitmapPath,
+                    filter = last.filter,
+                    blur = last.blur,
+                    brightness = last.brightness,
+                    contrast = last.contrast,
+                    saturation = last.saturation
+                )
+            } ?: newState
+            
+            // Nếu đây là lần đầu confirm (redo stack rỗng) và có initial state, lưu initial state trước
+            if (!undoRedoManager.canUndo() && initialState != null) {
+                val initial = initialState!!
+                // Kiểm tra xem có thay đổi so với initial state không
+                val hasChanges = initial.stickerBitmapPath != stateToSave.stickerBitmapPath
+                
+                if (hasChanges) {
+                    // Lưu initial state vào redo stack trước (để có thể undo về ban đầu)
+                    undoRedoManager.saveState(initial.copy())
+                }
+            }
+            
+            // Lưu state vào redo stack
+            undoRedoManager.saveState(stateToSave)
+            _collageState.value = stateToSave
+            tempStickerBitmapPath = null // Clear temp sticker path sau khi confirm
+            updateUndoRedoState()
+        }
+    }
+
     fun updateState(update: (CollageState) -> CollageState) {
         viewModelScope.launch(Dispatchers.IO) {
             _collageState.value = update(_collageState.value)
