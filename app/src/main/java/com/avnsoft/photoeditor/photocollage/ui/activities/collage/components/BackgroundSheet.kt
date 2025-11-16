@@ -62,6 +62,7 @@ import com.avnsoft.photoeditor.photocollage.utils.getPatternImageUri
 import com.avnsoft.photoeditor.photocollage.utils.loadPatternAssetPainter
 import com.basesource.base.components.ColorPickerUI
 import com.basesource.base.utils.clickableWithAlphaEffect
+import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 import kotlin.math.roundToInt
 
@@ -71,9 +72,13 @@ enum class BackgroundTab {
     GRADIENT,
 }
 
+@Serializable
 sealed class BackgroundSelection {
+    @Serializable
     data class Solid(val color: String) : BackgroundSelection()
+    @Serializable
     data class Pattern(val item: PatternItem, val group: PatternGroup, val urlRoot: String) : BackgroundSelection()
+    @Serializable
     data class Gradient(val item: GradientItem, val group: GradientGroup, val urlRoot: String) : BackgroundSelection()
 }
 

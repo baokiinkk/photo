@@ -33,14 +33,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android.amg.AMGUtil
 import com.avnsoft.photoeditor.photocollage.BaseApplication
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundLayer
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.adjust.AdjustActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundResult
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.tabShape
@@ -55,10 +55,6 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
-import com.basesource.base.utils.fromJson
-import androidx.core.graphics.toColorInt
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundLayer
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.gsonBackground
 import com.basesource.base.utils.launchActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -289,14 +285,12 @@ class EditorActivity : BaseActivity() {
                                         input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
                                         callback = { result ->
                                             if (result.resultCode == RESULT_OK) {
-//                                                val output =
-//                                                    result.data?.getStringExtra("pathBitmap")
-//                                                        ?.fromJson<BackgroundResult>()
-                                                val output = gsonBackground.fromJson( result.data?.getStringExtra("pathBitmap"), BackgroundResult::class.java)
+                                                val json = result.data?.getStringExtra("pathBitmap") ?: return@launchActivity
+                                                val data = Json.decodeFromString<BackgroundSelection>(json)
                                                 viewmodel.push(
-                                                    StackData.Background(output?.backgroundSelection)
+                                                    StackData.Background(data)
                                                 )
-                                                viewmodel.updateBackgroundColor(output?.backgroundSelection)
+                                                viewmodel.updateBackgroundColor(data)
                                             }
                                         }
                                     )

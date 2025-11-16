@@ -1,6 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.data.model.gradient
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
 data class GradientResponse(
     @SerializedName("version") val version: String,
@@ -9,6 +10,7 @@ data class GradientResponse(
     @SerializedName("urlRoot") val urlRoot: String
 )
 
+@Serializable
 data class GradientGroup(
     @SerializedName("eventName") val eventName: String,
     @SerializedName("eventId") val eventId: Int,
@@ -19,6 +21,7 @@ data class GradientGroup(
     @SerializedName("isFree") val isFree: Boolean
 )
 
+@Serializable
 data class GradientItem(
     @SerializedName("title") val title: String,
     @SerializedName("name") val name: String, // File name like "gradient_sunset.jpg"

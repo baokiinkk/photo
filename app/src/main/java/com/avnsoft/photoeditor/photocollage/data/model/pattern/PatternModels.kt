@@ -1,6 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.data.model.pattern
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
 data class PatternResponse(
     @SerializedName("version") val version: String,
@@ -9,6 +10,7 @@ data class PatternResponse(
     @SerializedName("urlRoot") val urlRoot: String
 )
 
+@Serializable
 data class PatternGroup(
     @SerializedName("eventName") val eventName: String,
     @SerializedName("eventId") val eventId: Int,
@@ -19,6 +21,7 @@ data class PatternGroup(
     @SerializedName("isFree") val isFree: Boolean
 )
 
+@Serializable
 data class PatternItem(
     @SerializedName("title") val title: String,
     @SerializedName("name") val name: String, // File name like "item_1.jpg", "item_2.png"

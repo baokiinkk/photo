@@ -48,6 +48,8 @@ import com.google.gson.TypeAdapterFactory
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.roundToInt
 
@@ -134,11 +136,8 @@ class BackgroundActivity : BaseActivity() {
                                 finish()
                             },
                             onConfirm = {
-                                val output = BackgroundResult(
-                                    backgroundSelection = uiState.backgroundSelection
-                                )
                                 val intent = Intent()
-                                intent.putExtra("pathBitmap", gsonBackground.toJson(output))
+                                intent.putExtra("pathBitmap", Json.encodeToString(uiState.backgroundSelection))
                                 setResult(RESULT_OK, intent)
                                 finish()
                             },
@@ -153,17 +152,6 @@ class BackgroundActivity : BaseActivity() {
     }
 }
 
-val adapter = RuntimeTypeAdapterFactory(
-    BackgroundSelection::class.java,
-    "type"
-)
-    .registerSubtype(BackgroundSelection.Solid::class.java, "Solid")
-    .registerSubtype(BackgroundSelection.Pattern::class.java, "Pattern")
-    .registerSubtype(BackgroundSelection.Gradient::class.java, "Gradient")
-
-val gsonBackground = GsonBuilder()
-    .registerTypeAdapterFactory(adapter)
-    .create()
 data class BackgroundResult(
     val backgroundSelection: BackgroundSelection? = null,  // Current background selection
     val bgIcon: Int? = null
