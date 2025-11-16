@@ -67,6 +67,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.FooterEdit
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.saveImage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.EmojiTab
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.utils.getInput
@@ -84,6 +85,8 @@ class StickerActivity : BaseActivity() {
     private val screenInput: ToolInput? by lazy {
         intent.getInput()
     }
+
+    private var stickerView: StickerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -149,7 +152,10 @@ class StickerActivity : BaseActivity() {
                                 )
                                 StickerViewCompose(
                                     modifier = Modifier.fillMaxSize(),
-                                    input = uiState.pathSticker
+                                    input = uiState.pathSticker,
+                                    onReturnView = {view->
+                                        stickerView = view
+                                    }
                                 )
                             }
                         }
@@ -169,31 +175,34 @@ class StickerActivity : BaseActivity() {
                         },
                         onApply = {
                             viewmodel.showLoading()
-                            captureView(
-                                localView,
-                                callback = { bitmap ->
-                                    bitmap ?: return@captureView
-                                    val bounds = boxBounds ?: return@captureView
-                                    val captured = Bitmap.createBitmap(
-                                        bitmap,
-                                        bounds.left,
-                                        bounds.top,
-                                        bounds.width(),
-                                        bounds.height()
-                                    )
-                                    saveImage(
-                                        context = this@StickerActivity,
-                                        bitmap = captured,
-                                        onImageSaved = { pathBitmap ->
-                                            viewmodel.hideLoading()
-                                            val intent = Intent()
-                                            intent.putExtra("pathBitmap", "$pathBitmap")
-                                            setResult(RESULT_OK, intent)
-                                            finish()
-                                        }
-                                    )
-                                }
-                            )
+                            stickerView?.setShowFocus(false)
+                            stickerView?.post {
+                                captureView(
+                                    localView,
+                                    callback = { bitmap ->
+                                        bitmap ?: return@captureView
+                                        val bounds = boxBounds ?: return@captureView
+                                        val captured = Bitmap.createBitmap(
+                                            bitmap,
+                                            bounds.left,
+                                            bounds.top,
+                                            bounds.width(),
+                                            bounds.height()
+                                        )
+                                        saveImage(
+                                            context = this@StickerActivity,
+                                            bitmap = captured,
+                                            onImageSaved = { pathBitmap ->
+                                                viewmodel.hideLoading()
+                                                val intent = Intent()
+                                                intent.putExtra("pathBitmap", "$pathBitmap")
+                                                setResult(RESULT_OK, intent)
+                                                finish()
+                                            }
+                                        )
+                                    }
+                                )
+                            }
                         },
                         onAddStickerFromGallery = {
                             launcher.launch("image/*")
