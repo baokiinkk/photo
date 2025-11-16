@@ -11,6 +11,7 @@ import androidx.core.graphics.scale
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
@@ -173,7 +174,7 @@ class EditorViewModel(
 
     }
 
-    fun updateBackgroundColor(color: Color) {
+    fun updateBackgroundColor(color: BackgroundSelection?) {
         uiState.update {
             it.copy(
                 backgroundColor = color,
@@ -192,7 +193,7 @@ class EditorViewModel(
             undoStack.push(
                 StackData.EditorBitmap(
                     bitmap = newBitmap,
-                    backgroundColor = AppColor.backgroundAppColor,
+                    backgroundColor = null,
                     originBitmap = uiState.value.originBitmap,
                     pathBitmapResult = pathBitmapResult
                 )
@@ -200,7 +201,7 @@ class EditorViewModel(
             redoStack.push(
                 StackData.EditorBitmap(
                     bitmap = newBitmap,
-                    backgroundColor = AppColor.backgroundAppColor,
+                    backgroundColor = null,
                     originBitmap = uiState.value.originBitmap,
                     pathBitmapResult = pathBitmapResult
                 )
@@ -221,7 +222,7 @@ class EditorViewModel(
             redoStack.push(
                 StackData.EditorBitmap(
                     bitmap = it,
-                    AppColor.backgroundAppColor,
+                    backgroundColor = null,
                     pathBitmapResult = pathBitmapResult,
                     uiState.value.originBitmap
                 )
@@ -235,7 +236,7 @@ class EditorViewModel(
                 it.copy(
                     canUndo = false,
                     canRedo = false,
-                    backgroundColor = Color(0xFFF2F4F8)
+                    backgroundColor = null
                 )
             }
         } else {
@@ -318,12 +319,12 @@ class EditorViewModel(
 sealed class StackData {
     data class EditorBitmap(
         val bitmap: Bitmap,
-        val backgroundColor: Color,
+        val backgroundColor: BackgroundSelection?,
         val pathBitmapResult: String?,
         val originBitmap: Bitmap?
     ) : StackData()
 
-    data class Background(val backgroundColor: Color) : StackData()
+    data class Background(val backgroundColor: BackgroundSelection?) : StackData()
     data object NONE : StackData()
 }
 
@@ -333,7 +334,7 @@ data class EditorUIState(
     val bitmap: Bitmap? = null,
     val originBitmap: Bitmap? = null,
     val isOriginal: Boolean = false,
-    val backgroundColor: Color = AppColor.backgroundAppColor,
+    val backgroundColor: BackgroundSelection? = null,
     val canUndo: Boolean = false,
     val canRedo: Boolean = false
 )

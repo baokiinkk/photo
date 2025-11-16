@@ -32,13 +32,22 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSheet
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundLayer
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.toJson
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
+import com.google.gson.TypeAdapter
+import com.google.gson.TypeAdapterFactory
+import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.roundToInt
 
@@ -77,7 +86,7 @@ class BackgroundActivity : BaseActivity() {
                         backgroundSelection = uiState.backgroundSelection,
                         modifier = Modifier.fillMaxSize()
                     )
-                    
+
                     Column(
                         modifier = Modifier.fillMaxSize()
                     ) {
@@ -129,7 +138,7 @@ class BackgroundActivity : BaseActivity() {
                                     backgroundSelection = uiState.backgroundSelection
                                 )
                                 val intent = Intent()
-                                intent.putExtra("pathBitmap", output.toJson())
+                                intent.putExtra("pathBitmap", gsonBackground.toJson(output))
                                 setResult(RESULT_OK, intent)
                                 finish()
                             },
@@ -144,7 +153,63 @@ class BackgroundActivity : BaseActivity() {
     }
 }
 
+val adapter = RuntimeTypeAdapterFactory(
+    BackgroundSelection::class.java,
+    "type"
+)
+    .registerSubtype(BackgroundSelection.Solid::class.java, "Solid")
+    .registerSubtype(BackgroundSelection.Pattern::class.java, "Pattern")
+    .registerSubtype(BackgroundSelection.Gradient::class.java, "Gradient")
+
+val gsonBackground = GsonBuilder()
+    .registerTypeAdapterFactory(adapter)
+    .create()
 data class BackgroundResult(
     val backgroundSelection: BackgroundSelection? = null,  // Current background selection
     val bgIcon: Int? = null
 )
+
+class RuntimeTypeAdapterFactory<T>(
+    private val baseType: Class<T>,
+    private val typeFieldName: String
+) : TypeAdapterFactory {
+
+    private val labelToSubtype = mutableMapOf<String, Class<out T>>()
+    private val subtypeToLabel = mutableMapOf<Class<out T>, String>()
+
+    fun registerSubtype(subtype: Class<out T>, label: String): RuntimeTypeAdapterFactory<T> {
+        labelToSubtype[label] = subtype
+        subtypeToLabel[subtype] = label
+        return this
+    }
+
+    override fun <R : Any> create(gson: Gson, type: TypeToken<R>): TypeAdapter<R>? {
+        if (type.rawType != baseType) return null
+
+        val jsonElementAdapter = gson.getAdapter(JsonElement::class.java)
+
+        return object : TypeAdapter<R>() {
+            override fun write(out: JsonWriter, value: R) {
+                val srcType = value!!::class.java as Class<out T>
+                val label = subtypeToLabel[srcType]
+                    ?: throw JsonParseException("Subtype not registered for $srcType")
+
+                val delegate = gson.getDelegateAdapter(this@RuntimeTypeAdapterFactory, TypeToken.get(srcType)) as TypeAdapter<R>
+                val element = delegate.toJsonTree(value)
+                val obj = element.asJsonObject
+                obj.addProperty(typeFieldName, label)
+                jsonElementAdapter.write(out, obj)
+            }
+
+            override fun read(reader: JsonReader): R {
+                val json = jsonElementAdapter.read(reader).asJsonObject
+                val label = json.remove(typeFieldName).asString
+                val subtype = labelToSubtype[label]
+                    ?: throw JsonParseException("Subtype not registered for label $label")
+                val delegate = gson.getDelegateAdapter(this@RuntimeTypeAdapterFactory, TypeToken.get(subtype))
+                @Suppress("UNCHECKED_CAST")
+                return delegate.fromJsonTree(json) as R
+            }
+        }
+    }
+}

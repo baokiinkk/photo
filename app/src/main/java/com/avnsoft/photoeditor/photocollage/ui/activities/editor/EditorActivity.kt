@@ -57,10 +57,13 @@ import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.fromJson
 import androidx.core.graphics.toColorInt
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundLayer
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.gsonBackground
 import com.basesource.base.utils.launchActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.wysaid.nativePort.CGENativeLibrary
 import org.wysaid.nativePort.CGENativeLibrary.LoadImageCallback
@@ -71,7 +74,7 @@ data class EditorInput(
     val pathBitmap: String? = null
 ) : IScreenData
 
-fun String?.toBitmap(context: Context): Bitmap? {
+fun String?.toBitmap(context: Context? = null): Bitmap? {
 //    val imageUri = this?.toUri()
 //    val bitmap = imageUri?.toBitmap(context)
     val bitmap = BitmapFactory.decodeFile(this)
@@ -125,231 +128,204 @@ class EditorActivity : BaseActivity() {
         setContent {
 
             Scaffold(
-                containerColor = AppColor.backgroundAppColor
+                containerColor = AppColor.White
             ) { inner ->
 
                 val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
 
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    BackgroundLayer(
+                        backgroundSelection = uiState.backgroundColor,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(
+                                top = inner.calculateTopPadding(),
+                                bottom = inner.calculateBottomPadding()
+                            )
+                    )
+                    EditorScreen(
+                        blurView = blurView,
+                        viewmodel = viewmodel,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(
+                                top = inner.calculateTopPadding(),
+                                bottom = inner.calculateBottomPadding()
+                            ),
+                        onBack = {
+                            finish()
+                        },
+                        onToolClick = {
+                            when (it) {
+                                CollageTool.SQUARE_OR_ORIGINAL -> {
+                                    viewmodel.toggleOriginal()
+                                }
 
-                EditorScreen(
-                    blurView = blurView,
-                    viewmodel = viewmodel,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            top = inner.calculateTopPadding(),
-                            bottom = inner.calculateBottomPadding()
-                        )
-                        .background(uiState.backgroundColor),
-                    onBack = {
-                        finish()
-                    },
-                    onToolClick = {
-                        when (it) {
-                            CollageTool.SQUARE_OR_ORIGINAL -> {
-                                viewmodel.toggleOriginal()
-                            }
-
-                            CollageTool.CROP -> {
-                                launchActivity(
-                                    toActivity = CropActivity::class.java,
-                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-                                    callback = { result ->
-                                        if (result.resultCode == RESULT_OK) {
-                                            val pathBitmap =
-                                                result.data?.getStringExtra("pathBitmap")
-                                            viewmodel.updateBitmap(
-                                                pathBitmap = pathBitmap,
-                                                bitmap = pathBitmap.toBitmap(this)
-                                            )
-                                        }
-                                    }
-                                )
-                            }
-
-                            CollageTool.ADJUST -> {
-                                launchActivity(
-                                    toActivity = AdjustActivity::class.java,
-                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-                                    callback = { result ->
-                                        if (result.resultCode == RESULT_OK) {
-                                            val pathBitmap =
-                                                result.data?.getStringExtra("pathBitmap")
-                                            Log.d("aaaa", "asdasdasd $pathBitmap")
-                                            viewmodel.updateBitmap(
-                                                pathBitmap = pathBitmap,
-                                                bitmap = pathBitmap.toBitmap(this)
-                                            )
-                                        }
-                                    }
-                                )
-                            }
-
-                            CollageTool.BLUR -> {
-                                launchActivity(
-                                    toActivity = BlurActivity::class.java,
-                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-                                    callback = { result ->
-                                        if (result.resultCode == RESULT_OK) {
-                                            val pathBitmap =
-                                                result.data?.getStringExtra("pathBitmap")
-                                            viewmodel.updateBitmap(
-                                                pathBitmap = pathBitmap,
-                                                bitmap = pathBitmap.toBitmap(this)
-                                            )
-                                        }
-                                    }
-                                )
-                            }
-
-                            CollageTool.FILTER -> {
-                                launchActivity(
-                                    toActivity = FilterActivity::class.java,
-                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-                                    callback = { result ->
-                                        if (result.resultCode == RESULT_OK) {
-                                            val pathBitmap =
-                                                result.data?.getStringExtra("pathBitmap")
-                                            viewmodel.updateBitmap(
-                                                pathBitmap = pathBitmap,
-                                                bitmap = pathBitmap.toBitmap(this)
-                                            )
-                                        }
-                                    }
-                                )
-                            }
-
-                            CollageTool.STICKER -> {
-                                launchActivity(
-                                    toActivity = StickerActivity::class.java,
-                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-                                    callback = { result ->
-                                        if (result.resultCode == RESULT_OK) {
-                                            val pathBitmap =
-                                                result.data?.getStringExtra("pathBitmap")
-                                            viewmodel.updateBitmap(
-                                                pathBitmap = pathBitmap,
-                                                bitmap = pathBitmap.toBitmap(this)
-                                            )
-                                        }
-                                    }
-                                )
-                            }
-
-                            CollageTool.TEXT -> {
-                                launchActivity(
-                                    toActivity = TextStickerActivity::class.java,
-                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-                                    callback = { result ->
-                                        if (result.resultCode == RESULT_OK) {
-                                            val pathBitmap =
-                                                result.data?.getStringExtra("pathBitmap")
-                                            viewmodel.updateBitmap(
-                                                pathBitmap = pathBitmap,
-                                                bitmap = pathBitmap.toBitmap(this)
-                                            )
-                                        }
-                                    }
-                                )
-                            }
-
-                            CollageTool.REMOVE -> {
-                                launchActivity(
-                                    toActivity = RemoveObjectActivity::class.java,
-                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-                                    callback = { result ->
-                                        if (result.resultCode == RESULT_OK) {
-                                            val pathBitmap =
-                                                result.data?.getStringExtra("pathBitmap")
-                                            viewmodel.updateBitmap(
-                                                pathBitmap = pathBitmap,
-                                                bitmap = pathBitmap.toBitmap(this)
-                                            )
-                                        }
-                                    }
-                                )
-                            }
-
-                            CollageTool.BACKGROUND -> {
-                                launchActivity(
-                                    toActivity = BackgroundActivity::class.java,
-                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-                                    callback = { result ->
-                                        if (result.resultCode == RESULT_OK) {
-                                            val output = result.data?.getStringExtra("pathBitmap")
-                                                ?.fromJson<BackgroundResult>()
-                                            
-                                            // Extract color from backgroundSelection
-                                            val bgColor = when (val selection = output?.backgroundSelection) {
-                                                is com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection.Solid -> {
-                                                    try {
-                                                        Color(selection.color.toColorInt())
-                                                    } catch (e: Exception) {
-                                                        Color(0xFFF2F4F8)
-                                                    }
-                                                }
-                                                else -> Color(0xFFF2F4F8)
-                                            }
-                                            
-                                            bgColor.let { color ->
-                                                viewmodel.push(
-                                                    StackData.Background(color)
+                                CollageTool.CROP -> {
+                                    launchActivity(
+                                        toActivity = CropActivity::class.java,
+                                        input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                        callback = { result ->
+                                            if (result.resultCode == RESULT_OK) {
+                                                val pathBitmap =
+                                                    result.data?.getStringExtra("pathBitmap")
+                                                viewmodel.updateBitmap(
+                                                    pathBitmap = pathBitmap,
+                                                    bitmap = pathBitmap.toBitmap()
                                                 )
                                             }
-
-                                            viewmodel.updateBackgroundColor(bgColor)
                                         }
-                                    }
-                                )
-                            }
+                                    )
+                                }
 
-                            CollageTool.DRAW -> {
-                                launchActivity(
-                                    toActivity = DrawActivity::class.java,
-                                    input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-                                    callback = { result ->
-                                        if (result.resultCode == RESULT_OK) {
-                                            val pathBitmap =
-                                                result.data?.getStringExtra("pathBitmap")
-                                            viewmodel.updateBitmap(
-                                                pathBitmap = pathBitmap,
-                                                bitmap = pathBitmap.toBitmap(this)
-                                            )
+                                CollageTool.ADJUST -> {
+                                    launchActivity(
+                                        toActivity = AdjustActivity::class.java,
+                                        input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                        callback = { result ->
+                                            if (result.resultCode == RESULT_OK) {
+                                                val pathBitmap =
+                                                    result.data?.getStringExtra("pathBitmap")
+                                                Log.d("aaaa", "asdasdasd $pathBitmap")
+                                                viewmodel.updateBitmap(
+                                                    pathBitmap = pathBitmap,
+                                                    bitmap = pathBitmap.toBitmap()
+                                                )
+                                            }
                                         }
-                                    }
-                                )
-                            }
+                                    )
+                                }
 
-                            else -> {
+                                CollageTool.BLUR -> {
+                                    launchActivity(
+                                        toActivity = BlurActivity::class.java,
+                                        input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                        callback = { result ->
+                                            if (result.resultCode == RESULT_OK) {
+                                                val pathBitmap =
+                                                    result.data?.getStringExtra("pathBitmap")
+                                                viewmodel.updateBitmap(
+                                                    pathBitmap = pathBitmap,
+                                                    bitmap = pathBitmap.toBitmap()
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
 
+                                CollageTool.FILTER -> {
+                                    launchActivity(
+                                        toActivity = FilterActivity::class.java,
+                                        input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                        callback = { result ->
+                                            if (result.resultCode == RESULT_OK) {
+                                                val pathBitmap =
+                                                    result.data?.getStringExtra("pathBitmap")
+                                                viewmodel.updateBitmap(
+                                                    pathBitmap = pathBitmap,
+                                                    bitmap = pathBitmap.toBitmap()
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
+
+                                CollageTool.STICKER -> {
+                                    launchActivity(
+                                        toActivity = StickerActivity::class.java,
+                                        input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                        callback = { result ->
+                                            if (result.resultCode == RESULT_OK) {
+                                                val pathBitmap =
+                                                    result.data?.getStringExtra("pathBitmap")
+                                                viewmodel.updateBitmap(
+                                                    pathBitmap = pathBitmap,
+                                                    bitmap = pathBitmap.toBitmap()
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
+
+                                CollageTool.TEXT -> {
+                                    launchActivity(
+                                        toActivity = TextStickerActivity::class.java,
+                                        input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                        callback = { result ->
+                                            if (result.resultCode == RESULT_OK) {
+                                                val pathBitmap =
+                                                    result.data?.getStringExtra("pathBitmap")
+                                                viewmodel.updateBitmap(
+                                                    pathBitmap = pathBitmap,
+                                                    bitmap = pathBitmap.toBitmap()
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
+
+                                CollageTool.REMOVE -> {
+                                    launchActivity(
+                                        toActivity = RemoveObjectActivity::class.java,
+                                        input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                        callback = { result ->
+                                            if (result.resultCode == RESULT_OK) {
+                                                val pathBitmap =
+                                                    result.data?.getStringExtra("pathBitmap")
+                                                viewmodel.updateBitmap(
+                                                    pathBitmap = pathBitmap,
+                                                    bitmap = pathBitmap.toBitmap()
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
+
+                                CollageTool.BACKGROUND -> {
+                                    launchActivity(
+                                        toActivity = BackgroundActivity::class.java,
+                                        input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                        callback = { result ->
+                                            if (result.resultCode == RESULT_OK) {
+//                                                val output =
+//                                                    result.data?.getStringExtra("pathBitmap")
+//                                                        ?.fromJson<BackgroundResult>()
+                                                val output = gsonBackground.fromJson( result.data?.getStringExtra("pathBitmap"), BackgroundResult::class.java)
+                                                viewmodel.push(
+                                                    StackData.Background(output?.backgroundSelection)
+                                                )
+                                                viewmodel.updateBackgroundColor(output?.backgroundSelection)
+                                            }
+                                        }
+                                    )
+                                }
+
+                                CollageTool.DRAW -> {
+                                    launchActivity(
+                                        toActivity = DrawActivity::class.java,
+                                        input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                        callback = { result ->
+                                            if (result.resultCode == RESULT_OK) {
+                                                val pathBitmap =
+                                                    result.data?.getStringExtra("pathBitmap")
+                                                viewmodel.updateBitmap(
+                                                    pathBitmap = pathBitmap,
+                                                    bitmap = pathBitmap.toBitmap()
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
+
+                                else -> {
+
+                                }
                             }
                         }
-                    }
-                )
-//                Column(
-//                    modifier = Modifier.padding(inner),
-//                    verticalArrangement = Arrangement.Center
-//                ) {
-//                    CustomButton("crop") {
-//                        launchActivity(
-//                            toActivity = CropActivity::class.java,
-//                            input = CropInput(pathBitmap = pathBitmapResult),
-//                            callback = { result ->
-//                                if (result.resultCode == Activity.RESULT_OK) {
-//                                    val pathBitmap = result.data?.getStringExtra("pathBitmap")
-//                                    pathBitmapResult = pathBitmap
-//                                }
-//                            }
-//                        )
-//                    }
-//
-//                    Spacer(modifier = Modifier.height(40.dp))
-//
-//                    pathBitmapResult?.let {
-//                        val uri = it.toUri()
-//                        LoadImage(model = uri)
-//                    }
-//                }
+                    )
+                }
             }
         }
     }
