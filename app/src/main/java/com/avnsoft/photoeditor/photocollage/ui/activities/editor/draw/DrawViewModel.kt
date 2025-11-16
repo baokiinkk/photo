@@ -3,6 +3,8 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw
 import android.graphics.Bitmap
 import androidx.compose.ui.graphics.Color
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.DrawAsset
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.DrawBitmapModel
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -32,6 +34,7 @@ class DrawViewModel : BaseViewModel() {
         DrawUIState(
             currentTab = tabs[0].tab,
             tabs = tabs,
+            patterns = DrawAsset.lstDrawBitmapModel()
         )
     )
 
@@ -140,6 +143,35 @@ class DrawViewModel : BaseViewModel() {
             }
         }
     }
+
+    fun onPatternSelected(item: DrawBitmapModel) {
+        uiState.update {
+            val drawPattern = it.drawPattern.copy(
+                drawBitmapModel = item
+            )
+            it.copy(
+                patternSelected = item.mainIcon,
+                drawPattern = drawPattern,
+                drawInput = drawPattern
+            )
+        }
+    }
+
+    fun undo() {
+        uiState.update {
+            it.copy(
+                drawInput = Undo
+            )
+        }
+    }
+
+    fun redo() {
+        uiState.update {
+            it.copy(
+                drawInput = Redo
+            )
+        }
+    }
 }
 
 data class DrawUIState(
@@ -150,26 +182,10 @@ data class DrawUIState(
     val drawColor: DrawColor = DrawColor(),
     val drawPattern: DrawPattern = DrawPattern(),
     val drawNeon: DrawNeon = DrawNeon(),
-    val drawInput: DrawInput = drawColor
+    val drawInput: DrawInput = drawColor,
+    val patterns: List<DrawBitmapModel> = emptyList(),
+    val patternSelected: Int = DrawAsset.lstDrawBitmapModel().first().mainIcon
 )
-
-data class DrawColor(
-    val color: Color = Color.White,
-    val mode: Int = 1,
-    val size: Float = 20f
-) : DrawInput
-
-data class DrawPattern(
-    val color: Color = Color.White,
-    val mode: Int = 3,
-    val size: Float = 20f
-) : DrawInput
-
-data class DrawNeon(
-    val color: Color = Color.White,
-    val mode: Int = 2,
-    val size: Float = 20f
-) : DrawInput
 
 data class DrawTabData(
     val stringResId: Int,
