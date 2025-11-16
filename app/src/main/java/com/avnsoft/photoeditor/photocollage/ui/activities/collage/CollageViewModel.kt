@@ -6,6 +6,8 @@ import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageState
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.data.repository.CollageTemplateRepository
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.GridsTab
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.FontAsset
 import com.basesource.base.result.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,6 +64,7 @@ class CollageViewModel(
 
     fun load(count: Int) {
         viewModelScope.launch(Dispatchers.IO) {
+            getConfigTextSticker()
             when (val res = repository.getTemplates()) {
                 is Result.Success -> {
                     val all = res.data
@@ -124,6 +127,17 @@ class CollageViewModel(
             val ratioToRestore = lastSavedState?.ratio ?: initialState?.ratio
             tempRatio = null
             _collageState.value = _collageState.value.copy(ratio = ratioToRestore)
+        }
+    }
+
+    fun getConfigTextSticker() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _collageState.value = _collageState.value.copy(
+                textState = TextStickerUIState().copy(
+                    originBitmap = null,
+                    items = FontAsset.listFonts
+                )
+            )
         }
     }
 

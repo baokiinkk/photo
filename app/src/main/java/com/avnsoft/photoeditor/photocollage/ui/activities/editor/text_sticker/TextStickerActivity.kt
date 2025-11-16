@@ -161,7 +161,8 @@ class TextStickerActivity : BaseActivity() {
                                     textFieldValue = textFieldValue.copy(text = "")
                                 }
                             }
-                    ) {
+                    )
+                    {
                         uiState.originBitmap?.let {
                             Box(
                                 Modifier

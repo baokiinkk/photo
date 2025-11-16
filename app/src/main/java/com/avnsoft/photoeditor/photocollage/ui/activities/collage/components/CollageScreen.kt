@@ -31,8 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.createBitmap
@@ -45,14 +43,17 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerViewCompose
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerAsset
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
-import kotlin.math.roundToInt
 
 @Composable
 fun CollageScreen(
     uris: List<Uri>,
     vm: CollageViewModel,
+    sticker: StickerView? = null,
+    stickerView: ((StickerView) -> Unit)? = null,
     onBack: () -> Unit,
 ) {
     // Observe state from ViewModel
@@ -62,17 +63,17 @@ fun CollageScreen(
     val canUndo by vm.canUndo.collectAsState()
     val canRedo by vm.canRedo.collectAsState()
 
-    var boxBounds by remember { mutableStateOf<Rect?>(null) }
-
     var showGridsSheet by remember { mutableStateOf(false) }
     var showRatioSheet by remember { mutableStateOf(false) }
     var showBackgroundSheet by remember { mutableStateOf(false) }
     var showFrameSheet by remember { mutableStateOf(false) }
     var showStickerSheet by remember { mutableStateOf(false) }
+    var showTextSheet by remember { mutableStateOf(false) }
 
     // Sticker state
     var stickerUIState by remember { mutableStateOf(StickerUIState()) }
     var currentStickerData by remember { mutableStateOf<StickerData?>(null) }
+    var currentTextData by remember { mutableStateOf<AddTextProperties?>(null) }
 
     // Extract values from state
     val topMargin = collageState.topMargin
@@ -89,6 +90,7 @@ fun CollageScreen(
         }
     }
     LaunchedEffect(Unit) {
+
         vm.load(uris.size.coerceAtLeast(1))
         currentStickerData = StickerData.StickerFromAsset(
             pathSticker = collageState.stickerBitmapPath.toString()
@@ -127,16 +129,6 @@ fun CollageScreen(
                     .weight(1f)
                     .padding(horizontal = 16.dp)
                     .padding(top = 80.dp, bottom = 175.dp)
-                    .onGloballyPositioned { coords ->
-                        val position = coords.positionInRoot()
-                        val size = coords.size
-                        boxBounds = Rect(
-                            position.x.roundToInt(),
-                            position.y.roundToInt(),
-                            (position.x + size.width).roundToInt(),
-                            (position.y + size.height).roundToInt()
-                        )
-                    }
                     .then(
                         if (aspectRatioValue != null) {
                             Modifier.aspectRatio(aspectRatioValue)
@@ -173,19 +165,26 @@ fun CollageScreen(
                     when (tool) {
                         CollageTool.GRIDS -> {
                             showGridsSheet = true
+                            showGridsSheet = false
                             showRatioSheet = false
-                            showBackgroundSheet = false
+                            showFrameSheet = false
+                            showTextSheet = false
                         }
                         CollageTool.RATIO -> {
                             showRatioSheet = true
                             showGridsSheet = false
-                            showBackgroundSheet = false
+                            showRatioSheet = false
+                            showFrameSheet = false
+                            showTextSheet = false
+
                         }
                         CollageTool.BACKGROUND -> {
                             showBackgroundSheet = true
                             showGridsSheet = false
                             showRatioSheet = false
                             showFrameSheet = false
+                            showTextSheet = false
+
                         }
                         CollageTool.FRAME -> {
                             showFrameSheet = true
@@ -193,6 +192,8 @@ fun CollageScreen(
                             showRatioSheet = false
                             showBackgroundSheet = false
                             showStickerSheet = false
+                            showTextSheet = false
+
                         }
 
                         CollageTool.STICKER -> {
@@ -201,8 +202,18 @@ fun CollageScreen(
                             showRatioSheet = false
                             showBackgroundSheet = false
                             showFrameSheet = false
+                            showTextSheet = false
+                        }
+                        CollageTool.TEXT -> {
+                            showTextSheet = true
+                            showStickerSheet = false
+                            showGridsSheet = false
+                            showRatioSheet = false
+                            showBackgroundSheet = false
+                            showFrameSheet = false
                         }
                         else -> {
+                            showTextSheet = false
                             showGridsSheet = false
                             showRatioSheet = false
                             showBackgroundSheet = false
@@ -214,6 +225,11 @@ fun CollageScreen(
             )
         }
 
+        if(showTextSheet) {
+                TextUI(sticker, stickerView = {
+                    stickerView?.invoke(it)
+                }, state = collageState.textState ?: TextStickerUIState())
+        }
         // Grids Sheet (hiện khi click Grids tool)
         if (showGridsSheet) {
             GridsSheet(
@@ -345,35 +361,6 @@ fun CollageScreen(
             val emojiTabs = StickerAsset.initStickerPager()
             stickerUIState = stickerUIState.copy(emojiTabs = emojiTabs)
         }
-    }
-}
-
-fun captureView(view: View, callback: (Bitmap?) -> Unit) {
-    if (view.width == 0 || view.height == 0) {
-        callback(null)
-        return
-    }
-
-    val bmp = createBitmap(view.width, view.height)
-    val window = view.context.findActivity()?.window ?: return callback(null)
-
-    val location = IntArray(2)
-    view.getLocationInWindow(location)
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        PixelCopy.request(
-            window,
-            Rect(location[0], location[1], location[0] + view.width, location[1] + view.height),
-            bmp,
-            { result ->
-                if (result == PixelCopy.SUCCESS) callback(bmp)
-                else callback(null)
-            },
-            Handler(Looper.getMainLooper())
-        )
-    } else {
-        val bitmap = view.drawToBitmap()
-        callback(bitmap)
     }
 }
 
