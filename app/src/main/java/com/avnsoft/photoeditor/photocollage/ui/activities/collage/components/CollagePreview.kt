@@ -2,6 +2,8 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,13 +13,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
@@ -48,6 +59,11 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Bac
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
 
+data class ImageTransformState(
+    val offset: Offset = Offset.Zero,
+    val scale: Float = 1f
+)
+
 @Composable
 fun CollagePreview(
     images: List<Uri>,
@@ -56,6 +72,7 @@ fun CollagePreview(
     corner: Dp = 1.dp,
     borderWidth: Dp = 5.dp,
     backgroundSelection: BackgroundSelection? = null,
+    onImageClick: ((Uri) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -79,10 +96,18 @@ fun CollagePreview(
             )
         }
 
-        processedCells.forEach { cellData ->
+        // Lưu state transform cho tất cả images - sử dụng mutableStateMapOf để tối ưu performance
+        val imageStates = remember { mutableStateMapOf<Int, Pair<ImageTransformState, Boolean>>() }
+        
+        processedCells.forEachIndexed { index, cellData ->
             val borderWidthPx = with(density) { borderWidth.toPx() }
             val cornerRadiusPx = with(density) { corner.toPx() }
             val gapPx = with(density) { gap.toPx() }
+            
+            // Lấy hoặc tạo state cho image này
+            val (transformState, isSelected) = imageStates.getOrElse(index) {
+                ImageTransformState() to false
+            }
 
             // Tính toán path bounds nếu có pathRatioBound (lưu ratioBound để dùng trong Shape)
             val pathRatioBound = cellData.pathRatioBound
@@ -231,18 +256,105 @@ fun CollagePreview(
                     .offset(x = cellData.left.toDp(), y = cellData.top.toDp())
                     .size(cellData.width.toDp(), cellData.height.toDp())
                     .padding(gap / 2)
-                    .clip(shape)
             }
 
             // Image box với border overlay
-            Box(imageBox) {
+            // Bỏ clip hoàn toàn để ảnh có thể tràn ra khi zoom
+            Box(
+                modifier = imageBox.then(
+                    // Chỉ clip khi không selected hoặc scale = 1
+                    if (!isSelected || transformState.scale <= 1f) {
+                        Modifier.clip(shape)
+                    } else {
+                        // Không clip khi zoom để ảnh có thể tràn ra
+                        Modifier // Box mặc định không clip, để ảnh tràn ra khi zoom
+                    }
+                )
+            ) {
                 AsyncImage(
                     model = cellData.imageUri,
                     contentDescription = null,
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.FillBounds,
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(corner))
+                        .then(
+                            if (isSelected) {
+                                Modifier
+                                    .graphicsLayer {
+                                        translationX = transformState.offset.x
+                                        translationY = transformState.offset.y
+                                        scaleX = transformState.scale
+                                        scaleY = transformState.scale
+                                        transformOrigin = TransformOrigin.Center
+                                        clip = false // Không clip khi zoom để ảnh có thể tràn ra
+                                    }
+                                    .pointerInput(index, cellData.width, cellData.height) {
+                                        // Cache các giá trị không đổi
+                                        val imageCenterX = cellData.width / 2f
+                                        val imageCenterY = cellData.height / 2f
+                                        
+                                        // Local state để track transform trong gesture (tránh đọc imageStates mỗi lần)
+                                        var localScale = transformState.scale
+                                        var localOffset = transformState.offset
+                                        
+                                        // Detect transform (zoom + pan) khi đã selected
+                                        detectTransformGestures(
+                                            panZoomLock = false
+                                        ) { centroid, pan, zoom, _ ->
+                                            // Tính toán scale mới
+                                            localScale = (localScale * zoom).coerceIn(0.5f, 3f)
+                                            
+                                            // Chuyển centroid về local coordinates (relative to image center)
+                                            val localCentroidX = centroid.x - imageCenterX
+                                            val localCentroidY = centroid.y - imageCenterY
+                                            
+                                            // Tính scale change
+                                            val scaleChange = zoom
+                                            
+                                            // Tính offset mới: pan + điều chỉnh cho zoom
+                                            localOffset = Offset(
+                                                localOffset.x + pan.x - (localCentroidX * (scaleChange - 1f)),
+                                                localOffset.y + pan.y - (localCentroidY * (scaleChange - 1f))
+                                            )
+                                            
+                                            // Giới hạn offset dựa trên scale
+                                            val maxOffsetX = (cellData.width * (localScale - 1f) / 2f).coerceAtLeast(0f)
+                                            val maxOffsetY = (cellData.height * (localScale - 1f) / 2f).coerceAtLeast(0f)
+                                            
+                                            localOffset = Offset(
+                                                localOffset.x.coerceIn(-maxOffsetX, maxOffsetX),
+                                                localOffset.y.coerceIn(-maxOffsetY, maxOffsetY)
+                                            )
+                                            
+                                            // Update state ngay lập tức để UI responsive - dùng mutableStateMapOf để tránh tạo Map mới
+                                            imageStates[index] = ImageTransformState(
+                                                localOffset,
+                                                localScale
+                                            ) to true
+                                        }
+                                        
+                                        // Detect tap để deselect
+                                        detectTapGestures { _ ->
+                                            imageStates[index] = ImageTransformState() to false
+                                        }
+                                    }
+                            } else {
+                                Modifier
+                                    .pointerInput(index) {
+                                        detectTapGestures {
+                                            // Deselect tất cả images khác và select image này
+                                            imageStates.keys.forEach { key ->
+                                                if (key != index) {
+                                                    imageStates[key] = ImageTransformState() to false
+                                                }
+                                            }
+                                            // Select image này
+                                            imageStates[index] = ImageTransformState() to true
+                                            onImageClick?.invoke(cellData.imageUri)
+                                        }
+                                    }
+                            }
+                        )
                         .then(
                             // Vẽ clear area nếu có (khoét lỗ)
                             when {
@@ -365,7 +477,8 @@ fun CollagePreview(
                 )
 
                 // Vẽ border trực tiếp trên edge của shape (sau padding)
-                if (cellData.imageUri.toString().contains("true")) {
+                // Border active khi image được chọn
+                if (isSelected || cellData.imageUri.toString().contains("true")) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -377,11 +490,13 @@ fun CollagePreview(
                                     density = this@drawBehind
                                 )
                                 if (outline is Outline.Generic) {
+                                    val borderColor = if (isSelected) Primary500 else Primary500
+                                    val borderWidth = if (isSelected) borderWidthPx * 1.5f else borderWidthPx
                                     drawPath(
                                         path = outline.path,
-                                        color = Primary500,
+                                        color = borderColor,
                                         style = Stroke(
-                                            width = borderWidthPx,
+                                            width = borderWidth,
                                             cap = StrokeCap.Round,
                                             pathEffect = PathEffect.cornerPathEffect(cornerRadiusPx * 1.5f)
                                         )

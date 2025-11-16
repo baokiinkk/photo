@@ -149,7 +149,11 @@ fun CollageScreen(
                     template = templateToUse,
                     gap = gapValue,
                     corner = cornerValue,
-                    backgroundSelection = collageState.backgroundSelection
+                    backgroundSelection = collageState.backgroundSelection,
+                    onImageClick = { uri ->
+                        // Callback về path của image khi click
+                        // TODO: Xử lý callback này (ví dụ: mở editor cho image này)
+                    }
                 )
                 currentStickerData?.let {
                     StickerViewCompose(
@@ -158,6 +162,7 @@ fun CollageScreen(
                     )
                 }
             }
+            
             // Bottom tools
             FeatureBottomTools(
                 tools = toolsCollage,
@@ -165,7 +170,6 @@ fun CollageScreen(
                     when (tool) {
                         CollageTool.GRIDS -> {
                             showGridsSheet = true
-                            showGridsSheet = false
                             showRatioSheet = false
                             showFrameSheet = false
                             showTextSheet = false
@@ -173,10 +177,8 @@ fun CollageScreen(
                         CollageTool.RATIO -> {
                             showRatioSheet = true
                             showGridsSheet = false
-                            showRatioSheet = false
                             showFrameSheet = false
                             showTextSheet = false
-
                         }
                         CollageTool.BACKGROUND -> {
                             showBackgroundSheet = true
@@ -230,7 +232,6 @@ fun CollageScreen(
                     stickerView?.invoke(it)
                 }, state = collageState.textState ?: TextStickerUIState())
         }
-        // Grids Sheet (hiện khi click Grids tool)
         if (showGridsSheet) {
             GridsSheet(
                 templates = templates,

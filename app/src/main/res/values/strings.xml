@@ -70,4 +70,6 @@
     <string name="lasso">Lasso</string>
     <string name="solid">Solid</string>
     <string name="pattern">Pattern</string>
+    <string name="replace">replace</string>
+    <string name="swap">swap</string>
 </resources>
