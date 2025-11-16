@@ -86,7 +86,6 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
-
 }
 
 private fun DependencyHandlerScope.coreAndroid() {
