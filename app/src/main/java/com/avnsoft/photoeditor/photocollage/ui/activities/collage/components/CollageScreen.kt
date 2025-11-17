@@ -150,9 +150,15 @@ fun CollageScreen(
                     gap = gapValue,
                     corner = cornerValue,
                     backgroundSelection = collageState.backgroundSelection,
+                    imageTransforms = collageState.imageTransforms,
                     onImageClick = { uri ->
                         // Callback về path của image khi click
                         // TODO: Xử lý callback này (ví dụ: mở editor cho image này)
+                    },
+                    onImageTransformsChange = { transforms ->
+                        // Lưu transforms vào ViewModel và confirm vào undo stack
+                        vm.updateImageTransforms(transforms)
+                        vm.confirmImageTransformChanges()
                     }
                 )
                 currentStickerData?.let {

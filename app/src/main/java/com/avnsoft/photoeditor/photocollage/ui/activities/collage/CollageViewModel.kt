@@ -62,6 +62,9 @@ class CollageViewModel(
     // Lưu sticker bitmap path tạm thời khi đang chọn (chưa confirm)
     private var tempStickerBitmapPath: String? = null
 
+    // Lưu image transforms tạm thời khi đang chỉnh sửa (chưa confirm)
+    private var tempImageTransforms: Map<Int, com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState>? = null
+
     fun load(count: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             getConfigTextSticker()
@@ -547,6 +550,67 @@ class CollageViewModel(
     fun updateState(update: (CollageState) -> CollageState) {
         viewModelScope.launch(Dispatchers.IO) {
             _collageState.value = update(_collageState.value)
+        }
+    }
+
+    // Image Transform methods
+    fun updateImageTransforms(transforms: Map<Int, com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tempImageTransforms = transforms
+            _collageState.value = _collageState.value.copy(
+                imageTransforms = transforms
+            )
+        }
+    }
+
+    fun confirmImageTransformChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            val lastSavedState = undoRedoManager.getLastState()
+
+            val newState = currentState.copy(
+                imageTransforms = currentState.imageTransforms
+            )
+
+            val stateToSave = lastSavedState?.let { last ->
+                newState.copy(
+                    templateId = last.templateId,
+                    topMargin = last.topMargin,
+                    columnMargin = last.columnMargin,
+                    cornerRadius = last.cornerRadius,
+                    ratio = last.ratio,
+                    backgroundSelection = last.backgroundSelection,
+                    frameSelection = last.frameSelection,
+                    texts = last.texts,
+                    stickers = last.stickers,
+                    stickerBitmapPath = last.stickerBitmapPath,
+                    imageTransforms = currentState.imageTransforms,
+                    filter = last.filter,
+                    blur = last.blur,
+                    brightness = last.brightness,
+                    contrast = last.contrast,
+                    saturation = last.saturation,
+                    textState = last.textState
+                )
+            } ?: newState
+
+            // Nếu đây là lần đầu confirm (redo stack rỗng) và có initial state, lưu initial state trước
+            if (!undoRedoManager.canUndo() && initialState != null) {
+                val initial = initialState!!
+                // Kiểm tra xem có thay đổi so với initial state không
+                val hasChanges = initial.imageTransforms != stateToSave.imageTransforms
+
+                if (hasChanges) {
+                    // Lưu initial state vào redo stack trước (để có thể undo về ban đầu)
+                    undoRedoManager.saveState(initial.copy())
+                }
+            }
+
+            // Lưu state vào redo stack
+            undoRedoManager.saveState(stateToSave)
+            _collageState.value = stateToSave
+            tempImageTransforms = null // Clear temp transforms sau khi confirm
+            updateUndoRedoState()
         }
     }
 }
