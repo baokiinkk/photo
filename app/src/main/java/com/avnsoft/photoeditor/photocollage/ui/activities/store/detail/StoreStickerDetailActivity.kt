@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -95,37 +96,40 @@ class StoreStickerDetailActivity : BaseActivity() {
                                 .clip(RoundedCornerShape(20.dp))
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    color = Color(0xFFFFF1E5),
-                                    shape = RoundedCornerShape(20.dp)
-                                )
-                        ) {
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(4),
-                                verticalArrangement = Arrangement.spacedBy(2.dp),
-                                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                        Box {
+                            Box(
                                 modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(10.dp),
+                                    .background(
+                                        color = if (item.isUsed) Color(0xFFFFF1E5) else Color(0xFFF3F2F2),
+                                        shape = RoundedCornerShape(20.dp)
+                                    )
                             ) {
-                                items(item.content) { item ->
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                    ) {
-                                        LoadImage(
-                                            model = item.urlThumb,
+                                LazyVerticalGrid(
+                                    columns = GridCells.Fixed(4),
+                                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(10.dp)
+                                        .alpha(if (item.isUsed) 1f else 0.5f)
+                                    ,
+                                ) {
+                                    items(item.content) { item ->
+                                        Box(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .aspectRatio(1f),
-                                            contentScale = ContentScale.Fit
-                                        )
+                                        ) {
+                                            LoadImage(
+                                                model = item.urlThumb,
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .aspectRatio(1f),
+                                                contentScale = ContentScale.Fit
+                                            )
+                                        }
                                     }
                                 }
                             }
-
                             if (uiState.item?.isUsed == true) {
                                 ButtonUseStickerPack(
                                     modifier = Modifier
