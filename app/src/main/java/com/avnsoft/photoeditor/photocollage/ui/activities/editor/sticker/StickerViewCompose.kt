@@ -1,15 +1,23 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
+import coil.imageLoader
+import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerAsset.loadBitmapFromAssets
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 sealed class StickerData {
     data class StickerFromAsset(
@@ -100,13 +108,16 @@ fun StickerViewCompose(
             when (input) {
                 is StickerData.StickerFromAsset -> {
                     if (input.pathSticker.isNotEmpty()) {
-                        val drawable = loadBitmapFromAssets(
-                            view.context,
-                            input.pathSticker
-                        )
-                        view.addSticker(
-                            DrawableSticker(drawable?.toDrawable(view.resources))
-                        )
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val bitmap =loadBitmap(view.context,input.pathSticker)
+//                            val drawable = loadBitmapFromAssets(
+//                                view.context,
+//                                input.pathSticker
+//                            )
+                            view.addSticker(
+                                DrawableSticker(bitmap?.toDrawable(view.resources))
+                            )
+                        }
                     }
                 }
 
@@ -120,4 +131,15 @@ fun StickerViewCompose(
 
         }
     )
+}
+
+suspend fun loadBitmap(context: Context, url: String): Bitmap? {
+    val loader = context.imageLoader
+    val request = ImageRequest.Builder(context)
+        .data(url)
+        .allowHardware(false)
+        .build()
+
+    val result = loader.execute(request)
+    return (result.drawable as? BitmapDrawable)?.bitmap
 }

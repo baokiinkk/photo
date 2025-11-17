@@ -21,18 +21,26 @@ class MockInterceptor(private val context: Context) : Interceptor {
                 println("DEBUG: Matched MOCK_COLLAGE_TEMPLATES_API")
                 getJsonStringFromFile(context.assets, COLLAGE_TEMPLATES_FILE)
             }
+
             uri.contains(MOCK_PATTERNS_API) -> {
                 println("DEBUG: Matched MOCK_PATTERNS_API")
                 getJsonStringFromFile(context.assets, PATTERNS_FILE)
             }
+
             uri.contains(MOCK_GRADIENTS_API) -> {
                 println("DEBUG: Matched MOCK_GRADIENTS_API")
                 getJsonStringFromFile(context.assets, GRADIENTS_FILE)
             }
+
             uri.contains(MOCK_FRAMES_API) -> {
                 println("DEBUG: Matched MOCK_FRAMES_API")
                 getJsonStringFromFile(context.assets, FRAMES_FILE)
             }
+
+            uri.contains(MOCK_STICKER_DATA) -> {
+                getJsonStringFromFile(context.assets, FILE_STICKER_DATA)
+            }
+
             else -> {
                 println("DEBUG: No match found for URI: $uri")
                 ""
@@ -65,6 +73,9 @@ class MockInterceptor(private val context: Context) : Interceptor {
         const val GRADIENTS_FILE = "mock_gradient_data.json"
         const val MOCK_FRAMES_API = "mock/frames"
         const val FRAMES_FILE = "mock_frame_data.json"
+
+        const val MOCK_STICKER_DATA = "mock_sticker_data"
+        const val FILE_STICKER_DATA = "mock_sticker_data.json"
     }
 
 }

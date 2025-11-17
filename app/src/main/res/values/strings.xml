@@ -70,4 +70,7 @@
     <string name="lasso">Lasso</string>
     <string name="solid">Solid</string>
     <string name="pattern">Pattern</string>
+    <string name="store">Store</string>
+    <string name="use">Use</string>
+    <string name="sticker_pack">Sticker Pack</string>
 </resources>

@@ -11,6 +11,7 @@ import androidx.core.graphics.scale
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
@@ -28,8 +29,15 @@ import java.util.Stack
 
 @KoinViewModel
 class EditorViewModel(
-    private val context: Application
+    private val context: Application,
+    private val stickerRepo: StickerRepoImpl
 ) : BaseViewModel() {
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            stickerRepo.syncStickers()
+        }
+    }
 
     val items = listOf(
         ToolItem(

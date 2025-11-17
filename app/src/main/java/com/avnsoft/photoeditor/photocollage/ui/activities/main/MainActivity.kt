@@ -30,12 +30,13 @@ import java.security.NoSuchAlgorithmException
 import androidx.core.net.toUri
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
 
 class MainActivity : BaseActivity() {
     private val viewModel: MainViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //getSignature()
+        getSignature()
         observerData()
         setContent {
             val selectedTab by viewModel.selectedTab.collectAsState()
@@ -97,9 +98,13 @@ class MainActivity : BaseActivity() {
             val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
             result?.let {
                 launchActivity(
-                    toActivity = EditorActivity::class.java,
+                    toActivity = StoreActivity::class.java,
                     input = EditorInput(pathBitmap = it),
                 )
+//                launchActivity(
+//                    toActivity = EditorActivity::class.java,
+//                    input = EditorInput(pathBitmap = it),
+//                )
             }
         }
     }

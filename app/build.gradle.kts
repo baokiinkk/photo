@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.serialization)
+    id("kotlin-kapt")
 }
 android {
     namespace = "com.avnsoft.photoeditor.photocollage"
@@ -86,6 +87,8 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
+    implementation ("androidx.room:room-runtime:2.7.2")
+    kapt ("androidx.room:room-compiler:2.7.2")
 }
 
 private fun DependencyHandlerScope.coreAndroid() {

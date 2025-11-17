@@ -56,17 +56,16 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.createBitmap
 import androidx.core.view.drawToBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.FooterEditor
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.saveImage
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.EmojiTab
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
@@ -153,7 +152,7 @@ class StickerActivity : BaseActivity() {
                                 StickerViewCompose(
                                     modifier = Modifier.fillMaxSize(),
                                     input = uiState.pathSticker,
-                                    onReturnView = {view->
+                                    onReturnView = { view ->
                                         stickerView = view
                                     }
                                 )
@@ -174,7 +173,6 @@ class StickerActivity : BaseActivity() {
                             finish()
                         },
                         onApply = {
-                            viewmodel.showLoading()
                             stickerView?.setShowFocus(false)
                             stickerView?.post {
                                 captureView(
@@ -193,7 +191,6 @@ class StickerActivity : BaseActivity() {
                                             context = this@StickerActivity,
                                             bitmap = captured,
                                             onImageSaved = { pathBitmap ->
-                                                viewmodel.hideLoading()
                                                 val intent = Intent()
                                                 intent.putExtra("pathBitmap", "$pathBitmap")
                                                 setResult(RESULT_OK, intent)
@@ -259,7 +256,7 @@ private fun Context.findActivity(): Activity? {
 fun StickerToolPanel(
     modifier: Modifier = Modifier,
     uiState: StickerUIState,
-    onTabSelected: (EmojiTab) -> Unit,
+    onTabSelected: (StickerModel) -> Unit,
     onCancel: () -> Unit,
     onApply: () -> Unit,
     onStickerSelected: (String) -> Unit,
@@ -289,7 +286,7 @@ fun StickerToolPanel(
                         .padding(start = 16.dp, end = 4.dp)
                         .clickableWithAlphaEffect(onClick = onAddStickerFromGallery)
                 )
-                uiState.emojiTabs.forEach { tab ->
+                uiState.stickers.forEach { tab ->
                     CategoryButton(
                         selected = uiState.currentTab == tab,
                         item = tab,
@@ -308,9 +305,9 @@ fun StickerToolPanel(
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(uiState.currentTab.items) { emoji ->
+                items(uiState.currentTab?.content ?: emptyList()) { emoji ->
                     EmojiItem(
-                        url = emoji,
+                        url = emoji.urlThumb,
                         onStickerSelected = onStickerSelected
                     )
                 }
@@ -330,7 +327,7 @@ fun StickerToolPanel(
 @Composable
 fun CategoryButton(
     selected: Boolean,
-    item: EmojiTab,
+    item: StickerModel,
     onClick: () -> Unit
 ) {
     Box(
@@ -343,10 +340,11 @@ fun CategoryButton(
             .clickableWithAlphaEffect { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Image(
-            painter = painterResource(item.tabIcon),
+        LoadImage(
+            model = item.iconTabUrl,
             contentDescription = null,
-            modifier = Modifier.size(28.dp)
+            modifier = Modifier.size(28.dp),
+            contentScale = ContentScale.Crop,
         )
     }
 }
@@ -354,7 +352,7 @@ fun CategoryButton(
 @Composable
 fun EmojiItem(url: String, onStickerSelected: (String) -> Unit) {
     LoadImage(
-        model = "file:///android_asset/$url",
+        model = url,
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = Modifier
