@@ -56,7 +56,11 @@ import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.data.model.collage.FreePolygonShape
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import android.content.Context
+import android.graphics.BitmapFactory
+import androidx.compose.ui.platform.LocalContext
 
 data class ImageTransformState(
     val offset: Offset = Offset.Zero,
@@ -78,6 +82,7 @@ fun CollagePreview(
 ) {
     BoxWithConstraints(modifier = modifier) {
         val density = LocalDensity.current
+        val context = LocalContext.current
         val w = constraints.maxWidth.toFloat()
         val h = constraints.maxHeight.toFloat()
 
@@ -105,12 +110,67 @@ fun CollagePreview(
         // Khởi tạo từ imageTransforms từ CollageState, nhưng giữ nguyên isSelected state
         val imageStates = remember { mutableStateMapOf<Int, Pair<ImageTransformState, Boolean>>() }
         
+        // Tính toán initial transform để scale lớn nhất có thể khi vừa vào màn
+        LaunchedEffect(processedCells, imageTransforms) {
+            if (imageTransforms.isEmpty() && processedCells.isNotEmpty()) {
+                // Delay một chút để đảm bảo processedCells đã render xong
+                delay(100)
+                
+                // Tính toán trên IO thread để không block UI
+                val initialTransforms = withContext(Dispatchers.IO) {
+                    processedCells.mapIndexed { index, cellData ->
+                        // Lấy width và height của bound (pixel)
+                        val boundWidth = cellData.width
+                        val boundHeight = cellData.height
+                        
+                        // Load image size từ Uri (chỉ đọc metadata, không load full bitmap)
+                        val imageSize = getImageSizeFromUri(context, cellData.imageUri)
+                        
+                        if (imageSize != null) {
+                            // Tính tỷ lệ giữa bound và ảnh gốc
+                            val widthRatio = boundWidth / imageSize.width
+                            val heightRatio = boundHeight / imageSize.height
+                            
+                            // ContentScale.Fit sẽ scale ảnh với scale = min(widthRatio, heightRatio)
+                            // Để zoom hết mức có thể, cần scale thêm để đạt max(widthRatio, heightRatio)
+                            val fitScale = kotlin.math.min(widthRatio, heightRatio)
+                            val fillScale = kotlin.math.max(widthRatio, heightRatio)
+                            
+                            // Scale cần thêm để zoom hết mức = fillScale / fitScale (luôn >= 1)
+                            val scale = if (fitScale > 0f) {
+                                fillScale / fitScale
+                            } else {
+                                1f
+                            }
+                            
+                            index to ImageTransformState(offset = Offset.Zero, scale = scale)
+                        } else {
+                            // Nếu không load được image size, dùng scale mặc định
+                            index to ImageTransformState(offset = Offset.Zero, scale = 1f)
+                        }
+                    }.toMap()
+                }
+                
+                // Update imageStates với initial transforms
+                initialTransforms.forEach { (index, transform) ->
+                    imageStates[index] = transform to false
+                }
+                
+                // Gọi callback để update ViewModel (nếu có)
+                if (initialTransforms.isNotEmpty()) {
+                    onImageTransformsChange?.invoke(initialTransforms)
+                }
+            }
+        }
+        
         // Sync imageTransforms từ CollageState vào imageStates, nhưng giữ nguyên isSelected
         LaunchedEffect(imageTransforms) {
-            imageTransforms.forEach { (index, transform) ->
-                val currentState = imageStates[index]
-                // Chỉ update transform, giữ nguyên isSelected
-                imageStates[index] = transform to (currentState?.second ?: false)
+            if (imageTransforms.isNotEmpty()) {
+                imageTransforms.forEach { (index, transform) ->
+                    val currentState = imageStates[index]
+                    // Chỉ update transform, giữ nguyên isSelected
+                    imageStates[index] = transform to (currentState?.second ?: false)
+                }
             }
         }
 
@@ -683,6 +743,32 @@ private fun createBorderBox(
                 }
             }
     )
+}
+
+/**
+ * Load image size từ Uri (chỉ đọc metadata, không load toàn bộ bitmap)
+ */
+private suspend fun getImageSizeFromUri(context: Context, uri: Uri): Size? {
+    return try {
+        withContext(Dispatchers.IO) {
+            val options = BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
+            
+            val inputStream = context.contentResolver.openInputStream(uri)
+            inputStream?.use {
+                BitmapFactory.decodeStream(it, null, options)
+                if (options.outWidth > 0 && options.outHeight > 0) {
+                    Size(options.outWidth.toFloat(), options.outHeight.toFloat())
+                } else {
+                    null
+                }
+            } ?: null
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 // ==================== Preview ====================
