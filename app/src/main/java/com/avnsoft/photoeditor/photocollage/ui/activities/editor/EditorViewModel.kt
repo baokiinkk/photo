@@ -19,7 +19,9 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.basesource.base.viewmodel.BaseViewModel
 import com.tanishranjan.cropkit.util.MathUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
@@ -32,6 +34,10 @@ class EditorViewModel(
     private val context: Application,
     private val stickerRepo: StickerRepoImpl
 ) : BaseViewModel() {
+
+    private val _navigation = Channel<CollageTool>()
+
+    val navigation = _navigation.receiveAsFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -68,7 +74,11 @@ class EditorViewModel(
 
     var isApply: Boolean = false
 
-    fun setPathBitmap(pathBitmap: String?, bitmap: Bitmap?) {
+    fun setPathBitmap(
+        pathBitmap: String?,
+        bitmap: Bitmap?,
+        tool: CollageTool?
+    ) {
         viewModelScope.launch {
             pathBitmapResult = copyImageToAppStorage(context, pathBitmap?.toUri())
             uiState.update {
@@ -76,6 +86,9 @@ class EditorViewModel(
                     bitmap = bitmap,
                     originBitmap = bitmap
                 )
+            }
+            tool?.let {
+                onToolClick(tool)
             }
         }
 
@@ -320,6 +333,12 @@ class EditorViewModel(
             }
 
             undoStack.push(stack)
+        }
+    }
+
+    fun onToolClick(tool: CollageTool) {
+        viewModelScope.launch {
+            _navigation.send(tool)
         }
     }
 }

@@ -135,8 +135,9 @@ class StickerRepoImpl(
         return data
     }
 
-    suspend fun updateIsUsedById(eventId: Long, isUsed: Boolean) {
+    suspend fun updateIsUsedById(eventId: Long, isUsed: Boolean): Boolean {
         appDataDao.updateIsUsedById(eventId, isUsed)
+        return true
     }
 
 }

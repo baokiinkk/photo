@@ -28,6 +28,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import androidx.core.net.toUri
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
@@ -69,7 +70,10 @@ class MainActivity : BaseActivity() {
                             FeatureType.FREE_STYLE -> TODO()
                             FeatureType.REMOVE_BACKGROUND -> TODO()
                             FeatureType.AI_ENHANCE -> TODO()
-                            FeatureType.REMOVE_OBJECT -> TODO()
+                            FeatureType.REMOVE_OBJECT -> {
+                                gotoStorePhoto()
+                            }
+
                             FeatureType.EDIT_PHOTO -> {
                                 gotoEditPhoto()
                             }
@@ -101,12 +105,14 @@ class MainActivity : BaseActivity() {
                     toActivity = StoreActivity::class.java,
                     input = EditorInput(pathBitmap = it),
                 )
-//                launchActivity(
-//                    toActivity = EditorActivity::class.java,
-//                    input = EditorInput(pathBitmap = it),
-//                )
             }
         }
+    }
+
+    private fun gotoStorePhoto() {
+        launchActivity(
+            toActivity = StoreActivity::class.java,
+        )
     }
 
     private fun getSignature() {
