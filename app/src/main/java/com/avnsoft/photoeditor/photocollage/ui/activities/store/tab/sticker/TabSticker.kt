@@ -1,4 +1,4 @@
-package com.avnsoft.photoeditor.photocollage.ui.activities.store.tab
+package com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerModel
-import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreUIState
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.ImageWidget
@@ -34,8 +33,9 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 
 @Composable
 fun TabSticker(
-    uiState: StoreUIState,
-    onBannerClickable: (StickerModel) -> Unit
+    stickers: List<StickerModel>,
+    onBannerClickable: (StickerModel) -> Unit,
+    onUseClick: (StickerModel) -> Unit
 ) {
 
     LazyColumn(
@@ -47,7 +47,7 @@ fun TabSticker(
             .padding(horizontal = 16.dp)
     ) {
         itemsIndexed(
-            items = uiState.stickers,
+            items = stickers,
             key = { index, item ->
                 item.eventId
             }
@@ -87,7 +87,10 @@ fun TabSticker(
                                 .background(
                                     color = Color(0xFFEEECFE),
                                     shape = RoundedCornerShape(8.dp)
-                                ),
+                                )
+                                .clickableWithAlphaEffect {
+                                    onUseClick.invoke(item)
+                                },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -109,7 +112,10 @@ fun TabSticker(
                                         )
                                     ),
                                     shape = RoundedCornerShape(8.dp)
-                                ),
+                                )
+                                .clickableWithAlphaEffect {
+                                    onUseClick.invoke(item)
+                                },
                         ) {
                             Row(
                                 modifier = Modifier

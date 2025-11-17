@@ -32,18 +32,11 @@ import java.util.Stack
 @KoinViewModel
 class EditorViewModel(
     private val context: Application,
-    private val stickerRepo: StickerRepoImpl
 ) : BaseViewModel() {
 
     private val _navigation = Channel<CollageTool>()
 
     val navigation = _navigation.receiveAsFlow()
-
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            stickerRepo.syncStickers()
-        }
-    }
 
     val items = listOf(
         ToolItem(

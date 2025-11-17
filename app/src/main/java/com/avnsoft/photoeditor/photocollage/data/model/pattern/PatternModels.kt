@@ -13,12 +13,15 @@ data class PatternResponse(
 @Serializable
 data class PatternGroup(
     @SerializedName("eventName") val eventName: String,
-    @SerializedName("eventId") val eventId: Int,
+    @SerializedName("eventId") val eventId: Long,
     @SerializedName("content") val content: List<PatternItem>,
     @SerializedName("urlZip") val urlZip: String,
     @SerializedName("isPro") val isPro: Boolean,
     @SerializedName("isReward") val isReward: Boolean,
-    @SerializedName("isFree") val isFree: Boolean
+    @SerializedName("isFree") val isFree: Boolean,
+    @SerializedName("isUsed") val isUsed: Boolean,
+    @SerializedName("bannerUrl") val bannerUrl: String,
+    @SerializedName("urlThumb") val urlThumb: String
 )
 
 @Serializable

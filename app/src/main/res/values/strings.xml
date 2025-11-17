@@ -75,4 +75,5 @@
     <string name="sticker_pack">Sticker Pack</string>
     <string name="use_sticker_pack">Use Sticker Pack</string>
     <string name="unlock_sticker_pack">Unlock Sticker Pack</string>
+    <string name="background_pack">Background Pack</string>
 </resources>

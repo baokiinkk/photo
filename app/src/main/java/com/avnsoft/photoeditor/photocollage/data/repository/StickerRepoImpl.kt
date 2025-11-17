@@ -23,8 +23,8 @@ class StickerRepoImpl(
     private val editorSharedPref: EditorSharedPref
 ) {
 
-
     suspend fun syncStickers() {
+        if (editorSharedPref.getIsSyncSticker()) return
         val response = safeApiCall<StickerResponse>(
             context = context,
             apiCallMock = { api.getStickers() },
@@ -62,8 +62,8 @@ class StickerRepoImpl(
                     )
                 }
 
-                appDataDao.insertAll(data)
-                editorSharedPref.setIsSync(true)
+                appDataDao.insertAllSticker(data)
+                editorSharedPref.setIsSyncSticker(true)
             }
 
             else -> {
@@ -73,7 +73,7 @@ class StickerRepoImpl(
     }
 
     suspend fun getStickers(): Result<List<StickerModel>> {
-        if (!editorSharedPref.getIsSync()) {
+        if (!editorSharedPref.getIsSyncSticker()) {
             syncStickers()
         }
         val response = appDataDao.getStickers()
@@ -104,7 +104,7 @@ class StickerRepoImpl(
     }
 
     suspend fun getPreviewStickers(): Flow<List<StickerModel>> {
-        if (!editorSharedPref.getIsSync()) {
+        if (!editorSharedPref.getIsSyncSticker()) {
             syncStickers()
         }
         val response = appDataDao.getPreviewStickers()
@@ -136,7 +136,7 @@ class StickerRepoImpl(
     }
 
     suspend fun updateIsUsedById(eventId: Long, isUsed: Boolean): Boolean {
-        appDataDao.updateIsUsedById(eventId, isUsed)
+        appDataDao.updateIsUsedStickerById(eventId, isUsed)
         return true
     }
 

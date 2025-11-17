@@ -1,4 +1,4 @@
-package com.avnsoft.photoeditor.photocollage.ui.activities.store.detail
+package com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker.detail
 
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerModel

@@ -44,6 +44,9 @@ interface CollageApiService {
 
     @GET("mock_sticker_data")
     suspend fun getStickers(): Response<ResponseBody>
+
+    @GET("mock_background_data")
+    suspend fun getBackgrounds(): Response<ResponseBody>
 }
 
 

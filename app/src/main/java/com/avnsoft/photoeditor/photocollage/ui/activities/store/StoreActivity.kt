@@ -28,13 +28,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.ui.activities.store.detail.StoreStickerDetailActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.TabSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity.Companion.RESULT_URI
+import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImageRequest
+import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.TypeSelect
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker.detail.StoreStickerDetailActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.background.TabBackground
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.background.detail.StoreBackgroundDetailActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker.TabSticker
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.launchActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -59,7 +69,8 @@ class StoreActivity : BaseActivity() {
 
                 ) {
                     HeaderStore(
-                        title = stringResource(R.string.store)
+                        title = stringResource(R.string.store),
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
                     TabStore(
                         selectedTab = selectedTab,
@@ -75,24 +86,60 @@ class StoreActivity : BaseActivity() {
 
                         StoreTab.STICKER -> {
                             TabSticker(
-                                uiState = uiState,
+                                stickers = uiState.stickers,
                                 onBannerClickable = {
                                     launchActivity(
                                         toActivity = StoreStickerDetailActivity::class.java,
                                         input = it
                                     )
+                                },
+                                onUseClick = {
+                                    if (it.isUsed) {
+                                        gotoEditPhoto()
+                                    } else {
+                                        viewModel.updateIsUsedById(it.eventId)
+                                    }
                                 }
                             )
                         }
 
                         StoreTab.BACKGROUND -> {
+                            TabBackground(
+                                patterns = uiState.patterns,
+                                onBannerClickable = {
+                                    launchActivity(
+                                        toActivity = StoreBackgroundDetailActivity::class.java,
+                                        input = it
+                                    )
+                                },
+                                onUseClick = {
 
+                                }
+                            )
                         }
                     }
                 }
             }
         }
 
+    }
+
+    private fun gotoEditPhoto() {
+        launchActivity(
+            toActivity = ImagePickerActivity::class.java,
+            ImageRequest(TypeSelect.SINGLE)
+        ) { result ->
+            val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
+            result?.let {
+                launchActivity(
+                    toActivity = EditorActivity::class.java,
+                    input = EditorInput(
+                        pathBitmap = it,
+                        tool = CollageTool.STICKER
+                    ),
+                )
+            }
+        }
     }
 }
 
@@ -104,11 +151,12 @@ enum class StoreTab(val iconRes: Int) {
 
 @Composable
 fun HeaderStore(
+    modifier: Modifier = Modifier,
     title: String
 ) {
     val context = LocalContext.current
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
         contentAlignment = Alignment.Center
@@ -117,7 +165,6 @@ fun HeaderStore(
             resId = R.drawable.ic_arrow_left,
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(start = 16.dp)
                 .clickableWithAlphaEffect {
                     (context as? BaseActivity)?.finish()
                 }

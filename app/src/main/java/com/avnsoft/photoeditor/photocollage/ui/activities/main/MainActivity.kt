@@ -102,7 +102,7 @@ class MainActivity : BaseActivity() {
             val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
             result?.let {
                 launchActivity(
-                    toActivity = StoreActivity::class.java,
+                    toActivity = EditorActivity::class.java,
                     input = EditorInput(pathBitmap = it),
                 )
             }

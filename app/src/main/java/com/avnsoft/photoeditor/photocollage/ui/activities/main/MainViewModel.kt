@@ -4,7 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.repository.PatternRepository
+import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
 import com.basesource.base.viewmodel.BaseViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -16,11 +20,18 @@ import org.koin.android.annotation.KoinViewModel
 import org.koin.core.component.KoinComponent
 
 @KoinViewModel
-class MainViewModel() : BaseViewModel(), KoinComponent {
+class MainViewModel(
+    private val stickerRepo: StickerRepoImpl,
+    private val patternRepo: PatternRepository
+) : BaseViewModel(), KoinComponent {
     private val _selectedTab = MutableStateFlow(TabType.DISCOVER)
     val selectedTab: StateFlow<TabType> = _selectedTab.asStateFlow()
     private val _events = MutableSharedFlow<MainScreenEvent>()
     val events: SharedFlow<MainScreenEvent> = _events.asSharedFlow()
+
+    init {
+        initAppData()
+    }
 
     fun navigateFeature(type: FeatureType) {
         viewModelScope.launch {
@@ -55,6 +66,25 @@ class MainViewModel() : BaseViewModel(), KoinComponent {
             ),
         )
     }
+
+    fun initAppData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            async {
+                try {
+                    stickerRepo.syncStickers()
+                } catch (_: Exception) {
+
+                }
+            }
+            async {
+                try {
+                    patternRepo.syncPatterns()
+                } catch (_: Exception) {
+
+                }
+            }
+        }
+    }
 }
 
 sealed class MainScreenEvent {
@@ -66,6 +96,7 @@ sealed class MainScreenEvent {
 enum class TabType {
     DISCOVER, CUSTOMIZE
 }
+
 enum class FeatureType {
     COLLAGE, FREE_STYLE, REMOVE_BACKGROUND, AI_ENHANCE, REMOVE_OBJECT, EDIT_PHOTO
 }

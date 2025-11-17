@@ -1,4 +1,4 @@
-package com.avnsoft.photoeditor.photocollage.ui.activities.store.detail
+package com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker.detail
 
 import android.os.Bundle
 import androidx.activity.compose.setContent

@@ -3,8 +3,72 @@
   "lastModified": "2021-06-05",
   "data": [
     {
+      "eventName": "Default",
+      "eventId": 999,
+      "urlThumb": "",
+      "bannerUrl": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+      "content": [
+        {
+          "title": "D0",
+          "name": "item_0.webp",
+          "urlThumb": "pattern/Default/item_0.webp"
+        },
+        {
+          "title": "D1",
+          "name": "item_1.webp",
+          "urlThumb": "pattern/Default/item_1.webp"
+        },
+        {
+          "title": "D2",
+          "name": "item_2.webp",
+          "urlThumb": "pattern/Default/item_2.webp"
+        },
+        {
+          "title": "D3",
+          "name": "item_3.webp",
+          "urlThumb": "pattern/Default/item_3.webp"
+        },
+        {
+          "title": "D4",
+          "name": "item_4.webp",
+          "urlThumb": "pattern/Default/item_4.webp"
+        },
+        {
+          "title": "D5",
+          "name": "item_5.webp",
+          "urlThumb": "pattern/Default/item_5.webp"
+        },
+        {
+          "title": "D6",
+          "name": "item_6.webp",
+          "urlThumb": "pattern/Default/item_6.webp"
+        },
+        {
+          "title": "D7",
+          "name": "item_7.webp",
+          "urlThumb": "pattern/Default/item_7.webp"
+        },
+        {
+          "title": "D8",
+          "name": "item_8.webp",
+          "urlThumb": "pattern/Default/item_8.webp"
+        },
+        {
+          "title": "D9",
+          "name": "item_9.webp",
+          "urlThumb": "pattern/Default/item_9.webp"
+        }
+      ],
+      "isPro": false,
+      "isReward": true,
+      "isFree": false,
+      "isUsed": true
+    },
+    {
       "eventName": "Cloud",
       "eventId": 1001,
+      "urlThumb": "",
+      "bannerUrl": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
       "content": [
         {
           "title": "C1",
@@ -60,11 +124,14 @@
       "urlZip": "202105collagemaker/pattern/cloud/Archive.zip",
       "isPro": false,
       "isReward": true,
-      "isFree": false
+      "isFree": false,
+      "isUsed": false
     },
     {
       "eventName": "Glitter",
       "eventId": 1002,
+      "urlThumb": "",
+      "bannerUrl": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
       "content": [
         {
           "title": "G1",
@@ -120,11 +187,14 @@
       "urlZip": "202105collagemaker/pattern/glitter/Archive.zip",
       "isPro": false,
       "isReward": true,
-      "isFree": false
+      "isFree": false,
+      "isUsed": false
     },
     {
       "eventName": "Holo",
       "eventId": 1003,
+      "urlThumb": "",
+      "bannerUrl": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
       "content": [
         {
           "title": "H1",
@@ -175,11 +245,14 @@
       "urlZip": "202105collagemaker/pattern/holo/Archive.zip",
       "isPro": false,
       "isReward": true,
-      "isFree": false
+      "isFree": false,
+      "isUsed": false
     },
     {
       "eventName": "Love",
       "eventId": 1004,
+      "urlThumb": "",
+      "bannerUrl": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
       "content": [
         {
           "title": "L1",
@@ -230,11 +303,14 @@
       "urlZip": "202105collagemaker/pattern/love/Archive.zip",
       "isPro": false,
       "isReward": true,
-      "isFree": false
+      "isFree": false,
+      "isUsed": false
     },
     {
       "eventName": "Paper",
       "eventId": 1005,
+      "urlThumb": "",
+      "bannerUrl": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
       "content": [
         {
           "title": "P1",
@@ -290,11 +366,14 @@
       "urlZip": "202105collagemaker/pattern/paper/Archive.zip",
       "isPro": false,
       "isReward": true,
-      "isFree": false
+      "isFree": false,
+      "isUsed": false
     },
     {
       "eventName": "Rose Gold",
       "eventId": 1006,
+      "urlThumb": "",
+      "bannerUrl": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
       "content": [
         {
           "title": "R1",
@@ -340,11 +419,14 @@
       "urlZip": "202105collagemaker/pattern/rose_gold/Archive.zip",
       "isPro": false,
       "isReward": true,
-      "isFree": false
+      "isFree": false,
+      "isUsed": false
     },
     {
       "eventName": "Stars",
       "eventId": 1007,
+      "urlThumb": "",
+      "bannerUrl": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
       "content": [
         {
           "title": "S1",
@@ -400,11 +482,14 @@
       "urlZip": "202105collagemaker/pattern/stars/Archive.zip",
       "isPro": false,
       "isReward": true,
-      "isFree": false
+      "isFree": false,
+      "isUsed": false
     },
     {
       "eventName": "Summer",
       "eventId": 1008,
+      "urlThumb": "",
+      "bannerUrl": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
       "content": [
         {
           "title": "S1",
@@ -450,11 +535,14 @@
       "urlZip": "202105collagemaker/pattern/summer/Archive.zip",
       "isPro": false,
       "isReward": true,
-      "isFree": false
+      "isFree": false,
+      "isUsed": false
     },
     {
       "eventName": "Texture",
       "eventId": 1009,
+      "urlThumb": "",
+      "bannerUrl": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
       "content": [
         {
           "title": "T1",
@@ -510,11 +598,14 @@
       "urlZip": "202105collagemaker/pattern/texture/Archive.zip",
       "isPro": false,
       "isReward": true,
-      "isFree": false
+      "isFree": false,
+      "isUsed": false
     },
     {
       "eventName": "Water",
       "eventId": 1010,
+      "urlThumb": "",
+      "bannerUrl": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
       "content": [
         {
           "title": "W1",
@@ -570,7 +661,8 @@
       "urlZip": "202105collagemaker/pattern/water/Archive.zip",
       "isPro": false,
       "isReward": true,
-      "isFree": false
+      "isFree": false,
+      "isUsed": false
     }
   ],
   "urlRoot": "https://photo.footballtv.info/"

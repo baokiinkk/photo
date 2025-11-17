@@ -36,6 +36,14 @@ class StickerViewModel(
                     }
                 }
 
+                is com.basesource.base.result.Result.Error -> {
+                    uiState.update {
+                        it.copy(
+                            error = response.exception.message
+                        )
+                    }
+                }
+
                 else -> {
 
                 }
@@ -90,5 +98,6 @@ data class StickerUIState(
     val stickers: List<StickerModel> = emptyList(),
     val pathSticker: StickerData = StickerData.StickerFromAsset(""),
     val isLoading: Boolean = false,
+    val error: String? = null
 )
 
