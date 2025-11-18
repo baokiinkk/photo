@@ -83,7 +83,6 @@ class StoreActivity : BaseActivity() {
                     when (selectedTab) {
                         StoreTab.TEMPLATE -> {
                             TabTemplates(
-                                selectedTab = uiState.selectedTabTemplate,
                                 templates = uiState.templates,
                                 onBannerClickable = {
 

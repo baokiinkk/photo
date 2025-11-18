@@ -1,7 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.data.repository
 
 import android.content.Context
-import androidx.compose.runtime.mutableStateOf
 import com.avnsoft.photoeditor.photocollage.data.local.room.AppDataDao
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateContentModel
@@ -34,7 +33,7 @@ class TemplateRepoImpl(
             is Result.Success -> {
                 val data = response.data.data.mapIndexed { index, model ->
                     val contents = model.content.map { item ->
-                        val urlThumb = if (index == 0 || index == 1) {
+                        val urlThumb = if (index == 0) {
                             "file:///android_asset/${item.urlThumb}"
                         } else {
                             "${response.data.urlRoot}${item.urlThumb}"
@@ -101,10 +100,8 @@ class TemplateRepoImpl(
         }
         val response = appDataDao.getPreviewTemplates()
 
-//        var tabAll : TemplateModel
-//        val tabAllContents =
         val data = response.map { models ->
-            models.map { model ->
+            val res = models.map { model ->
                 val contents = model.content.map { item ->
                     TemplateContentModel(
                         title = item.title,
@@ -121,8 +118,20 @@ class TemplateRepoImpl(
                     total = contents.size.toString(),
                     bannerUrl = model.bannerUrl
                 )
-
             }
+                .toMutableList()
+            res.add(
+                0, TemplateModel(
+                    eventId = 0,
+                    urlThumb = null,
+                    content = emptyList(),
+                    isUsed = true,
+                    tabName = "All",
+                    total = "",
+                    bannerUrl = ""
+                )
+            )
+            res
         }
         return data
     }
