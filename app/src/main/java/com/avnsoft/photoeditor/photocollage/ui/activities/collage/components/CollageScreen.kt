@@ -27,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +51,9 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.li
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.basesource.base.result.Result
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 @Composable
@@ -80,6 +84,8 @@ fun CollageScreen(
     var stickerUIState by remember { mutableStateOf(StickerUIState()) }
     var currentStickerData by remember { mutableStateOf<StickerData?>(null) }
     var currentTextData by remember { mutableStateOf<AddTextProperties?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+
 
     // Extract values from state
     val topMargin = collageState.topMargin
@@ -377,14 +383,18 @@ fun CollageScreen(
     // Initialize sticker emoji tabs when sticker sheet is shown
     LaunchedEffect(showStickerSheet) {
         if (showStickerSheet && stickerUIState.stickers.isEmpty()) {
-            val emojiTabs = stickerRepo.getStickers()
-            when (emojiTabs) {
-                is Result.Success -> {
-                    stickerUIState = stickerUIState.copy(stickers = emojiTabs.data)
+            coroutineScope.launch {
+                val emojiTabs = withContext(Dispatchers.IO) {
+                    stickerRepo.getStickers()
                 }
+                when (emojiTabs) {
+                    is Result.Success -> {
+                        stickerUIState = stickerUIState.copy(stickers = emojiTabs.data)
+                    }
 
-                else -> {
+                    else -> {
 
+                    }
                 }
             }
         }
