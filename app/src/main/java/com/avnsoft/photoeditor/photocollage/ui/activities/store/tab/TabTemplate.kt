@@ -40,7 +40,7 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 @Composable
 fun TabTemplates(
     templates: List<TemplateModel>,
-    onBannerClickable: (TemplateModel) -> Unit
+    onItemClicked: (TemplateModel) -> Unit
 ) {
     var tabIndex by remember { mutableIntStateOf(0) }
     Column(
@@ -87,7 +87,7 @@ fun TabTemplates(
 
         if (tabIndex == 0) {
             val tabAll = templates.toMutableList()
-            if (tabAll.isNotEmpty()){
+            if (tabAll.isNotEmpty()) {
                 tabAll.removeAt(0)
             }
             LazyVerticalGrid(
@@ -107,6 +107,9 @@ fun TabTemplates(
                         modifier = Modifier
                             .aspectRatio(1f)
                             .clip(RoundedCornerShape(20.dp))
+                            .clickableWithAlphaEffect {
+                                onItemClicked.invoke(item)
+                            }
                     ) {
                         LoadImage(
                             model = item.urlThumb,
