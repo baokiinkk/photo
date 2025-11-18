@@ -2,6 +2,8 @@ package com.avnsoft.photoeditor.photocollage.data.model.collage
 
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
 
 /**
  * State object chứa toàn bộ state của collage editor
@@ -28,6 +30,10 @@ data class CollageState(
 
     // Sticker tool
     val stickers: List<StickerState> = emptyList(),
+    val stickerBitmapPath: String? = null,  // Path của bitmap sau khi apply sticker
+
+    // Image transform tool (zoom & pan)
+    val imageTransforms: Map<Int, ImageTransformState> = emptyMap(),  // Map<imageIndex, ImageTransformState>
 
     // Other tools (mở rộng trong tương lai)
     val filter: String? = null,
@@ -35,6 +41,7 @@ data class CollageState(
     val brightness: Float = 1f,
     val contrast: Float = 1f,
     val saturation: Float = 1f,
+    val textState: TextStickerUIState? = null,
 )
 
 data class TextState(

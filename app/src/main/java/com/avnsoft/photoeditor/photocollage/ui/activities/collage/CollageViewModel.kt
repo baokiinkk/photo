@@ -6,6 +6,8 @@ import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageState
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.data.repository.CollageTemplateRepository
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.GridsTab
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.FontAsset
 import com.basesource.base.result.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,8 +59,15 @@ class CollageViewModel(
     // Lưu frame selection tạm thời khi đang chọn (chưa confirm)
     private var tempFrameSelection: com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection? = null
 
+    // Lưu sticker bitmap path tạm thời khi đang chọn (chưa confirm)
+    private var tempStickerBitmapPath: String? = null
+
+    // Lưu image transforms tạm thời khi đang chỉnh sửa (chưa confirm)
+    private var tempImageTransforms: Map<Int, com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState>? = null
+
     fun load(count: Int) {
         viewModelScope.launch(Dispatchers.IO) {
+            getConfigTextSticker()
             when (val res = repository.getTemplates()) {
                 is Result.Success -> {
                     val all = res.data
@@ -121,6 +130,17 @@ class CollageViewModel(
             val ratioToRestore = lastSavedState?.ratio ?: initialState?.ratio
             tempRatio = null
             _collageState.value = _collageState.value.copy(ratio = ratioToRestore)
+        }
+    }
+
+    fun getConfigTextSticker() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _collageState.value = _collageState.value.copy(
+                textState = TextStickerUIState().copy(
+                    originBitmap = null,
+                    items = FontAsset.listFonts
+                )
+            )
         }
     }
 
@@ -453,9 +473,144 @@ class CollageViewModel(
     }
 
     // Helper để update state từ các tools khác (mở rộng sau)
+    fun updateStickerBitmapPath(path: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tempStickerBitmapPath = path
+            _collageState.value = _collageState.value.copy(
+                stickerBitmapPath = path
+            )
+        }
+    }
+
+    fun cancelStickerChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            // Khôi phục sticker bitmap path về state đã lưu cuối cùng
+            val lastSavedState = undoRedoManager.getLastState()
+            val stickerBitmapPathToRestore = lastSavedState?.stickerBitmapPath ?: initialState?.stickerBitmapPath
+            tempStickerBitmapPath = null
+            _collageState.value = _collageState.value.copy(
+                stickerBitmapPath = stickerBitmapPathToRestore
+            )
+        }
+    }
+
+    fun confirmStickerChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            val lastSavedState = undoRedoManager.getLastState()
+            
+            // Tạo state mới với sticker bitmap path đã chọn
+            val newState = currentState.copy(
+                stickerBitmapPath = currentState.stickerBitmapPath
+            )
+            
+            // Merge với lastSavedState để giữ nguyên các giá trị không thay đổi
+            val stateToSave = lastSavedState?.let { last ->
+                newState.copy(
+                    // Giữ các giá trị khác từ last saved state
+                    templateId = last.templateId,
+                    topMargin = last.topMargin,
+                    columnMargin = last.columnMargin,
+                    cornerRadius = last.cornerRadius,
+                    ratio = last.ratio,
+                    backgroundSelection = last.backgroundSelection,
+                    frameSelection = last.frameSelection,
+                    texts = last.texts,
+                    stickers = last.stickers,
+                    // Lưu stickerBitmapPath từ currentState (đã chọn mới), không phải từ last
+                    stickerBitmapPath = currentState.stickerBitmapPath,
+                    filter = last.filter,
+                    blur = last.blur,
+                    brightness = last.brightness,
+                    contrast = last.contrast,
+                    saturation = last.saturation
+                )
+            } ?: newState
+            
+            // Nếu đây là lần đầu confirm (redo stack rỗng) và có initial state, lưu initial state trước
+            if (!undoRedoManager.canUndo() && initialState != null) {
+                val initial = initialState!!
+                // Kiểm tra xem có thay đổi so với initial state không
+                val hasChanges = initial.stickerBitmapPath != stateToSave.stickerBitmapPath
+                
+                if (hasChanges) {
+                    // Lưu initial state vào redo stack trước (để có thể undo về ban đầu)
+                    undoRedoManager.saveState(initial.copy())
+                }
+            }
+            
+            // Lưu state vào redo stack
+            undoRedoManager.saveState(stateToSave)
+            _collageState.value = stateToSave
+            tempStickerBitmapPath = null // Clear temp sticker path sau khi confirm
+            updateUndoRedoState()
+        }
+    }
+
     fun updateState(update: (CollageState) -> CollageState) {
         viewModelScope.launch(Dispatchers.IO) {
             _collageState.value = update(_collageState.value)
+        }
+    }
+
+    // Image Transform methods
+    fun updateImageTransforms(transforms: Map<Int, com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tempImageTransforms = transforms
+            _collageState.value = _collageState.value.copy(
+                imageTransforms = transforms
+            )
+        }
+    }
+
+    fun confirmImageTransformChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            val lastSavedState = undoRedoManager.getLastState()
+
+            val newState = currentState.copy(
+                imageTransforms = currentState.imageTransforms
+            )
+
+            val stateToSave = lastSavedState?.let { last ->
+                newState.copy(
+                    templateId = last.templateId,
+                    topMargin = last.topMargin,
+                    columnMargin = last.columnMargin,
+                    cornerRadius = last.cornerRadius,
+                    ratio = last.ratio,
+                    backgroundSelection = last.backgroundSelection,
+                    frameSelection = last.frameSelection,
+                    texts = last.texts,
+                    stickers = last.stickers,
+                    stickerBitmapPath = last.stickerBitmapPath,
+                    imageTransforms = currentState.imageTransforms,
+                    filter = last.filter,
+                    blur = last.blur,
+                    brightness = last.brightness,
+                    contrast = last.contrast,
+                    saturation = last.saturation,
+                    textState = last.textState
+                )
+            } ?: newState
+
+            // Nếu đây là lần đầu confirm (redo stack rỗng) và có initial state, lưu initial state trước
+            if (!undoRedoManager.canUndo() && initialState != null) {
+                val initial = initialState!!
+                // Kiểm tra xem có thay đổi so với initial state không
+                val hasChanges = initial.imageTransforms != stateToSave.imageTransforms
+
+                if (hasChanges) {
+                    // Lưu initial state vào redo stack trước (để có thể undo về ban đầu)
+                    undoRedoManager.saveState(initial.copy())
+                }
+            }
+
+            // Lưu state vào redo stack
+            undoRedoManager.saveState(stateToSave)
+            _collageState.value = stateToSave
+            tempImageTransforms = null // Clear temp transforms sau khi confirm
+            updateUndoRedoState()
         }
     }
 }

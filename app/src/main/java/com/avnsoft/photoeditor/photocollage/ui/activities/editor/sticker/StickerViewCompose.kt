@@ -35,7 +35,7 @@ sealed class StickerData {
 fun StickerViewCompose(
     modifier: Modifier,
     input: StickerData,
-    onReturnView: (StickerView) -> Unit
+    onReturnView: ((StickerView) -> Unit)? = null
 ) {
     AndroidView(
         modifier = modifier,
@@ -101,7 +101,7 @@ fun StickerViewCompose(
                 ) {
                 }
             })
-            onReturnView.invoke(stickerView)
+            onReturnView?.invoke(stickerView)
             stickerView
         },
         update = { view ->

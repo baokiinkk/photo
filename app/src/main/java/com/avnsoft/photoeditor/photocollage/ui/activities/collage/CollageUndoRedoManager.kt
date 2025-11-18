@@ -48,6 +48,8 @@ class CollageUndoRedoManager(
                 state1.frameSelection == state2.frameSelection &&
                 state1.texts == state2.texts && // Data class list comparison
                 state1.stickers == state2.stickers && // Data class list comparison
+                state1.stickerBitmapPath == state2.stickerBitmapPath &&
+                state1.imageTransforms == state2.imageTransforms && // Map comparison
                 state1.filter == state2.filter &&
                 state1.blur == state2.blur &&
                 state1.brightness == state2.brightness &&
