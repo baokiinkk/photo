@@ -89,11 +89,13 @@ fun CollageScreen(
         }
     }
     LaunchedEffect(Unit) {
-
         vm.load(uris.size.coerceAtLeast(1))
-        currentStickerData = StickerData.StickerFromAsset(
-            pathSticker = collageState.stickerBitmapPath.toString()
-        )
+    }
+
+    LaunchedEffect(collageState.stickerBitmapPath) {
+        currentStickerData = collageState.stickerBitmapPath?.takeIf { it.isNotEmpty() }?.let { path ->
+            StickerData.StickerFromAsset(pathSticker = path)
+        }
     }
 
     Box(
@@ -345,7 +347,6 @@ fun CollageScreen(
                     stickerUIState = stickerUIState.copy(currentTab = tab)
                 },
                 onCancel = {
-                    vm.cancelStickerChanges()
                     showStickerSheet = false
                     currentStickerData = null
                 },
