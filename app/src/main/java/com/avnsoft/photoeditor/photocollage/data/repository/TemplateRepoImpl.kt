@@ -1,6 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.data.repository
 
 import android.content.Context
+import androidx.compose.runtime.mutableStateOf
 import com.avnsoft.photoeditor.photocollage.data.local.room.AppDataDao
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateContentModel
@@ -100,6 +101,8 @@ class TemplateRepoImpl(
         }
         val response = appDataDao.getPreviewTemplates()
 
+//        var tabAll : TemplateModel
+//        val tabAllContents =
         val data = response.map { models ->
             models.map { model ->
                 val contents = model.content.map { item ->
@@ -118,6 +121,7 @@ class TemplateRepoImpl(
                     total = contents.size.toString(),
                     bannerUrl = model.bannerUrl
                 )
+
             }
         }
         return data
