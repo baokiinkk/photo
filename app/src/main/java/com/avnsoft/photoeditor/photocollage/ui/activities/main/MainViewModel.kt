@@ -1,10 +1,16 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.main
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
+import com.android.amg.AMGUtil
+import com.avnsoft.photoeditor.photocollage.BaseApplication
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
 import com.avnsoft.photoeditor.photocollage.data.repository.PatternRepository
+import com.avnsoft.photoeditor.photocollage.data.repository.RemoveObjectRepoImpl
 import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +28,9 @@ import org.koin.core.component.KoinComponent
 @KoinViewModel
 class MainViewModel(
     private val stickerRepo: StickerRepoImpl,
-    private val patternRepo: PatternRepository
+    private val patternRepo: PatternRepository,
+    private val removeObjectRepoImpl: RemoveObjectRepoImpl,
+    private val editorSharedPref: EditorSharedPref
 ) : BaseViewModel(), KoinComponent {
     private val _selectedTab = MutableStateFlow(TabType.DISCOVER)
     val selectedTab: StateFlow<TabType> = _selectedTab.asStateFlow()
@@ -82,6 +90,14 @@ class MainViewModel(
                 } catch (_: Exception) {
 
                 }
+            }
+        }
+    }
+
+    fun getTokenFirebase() {
+        if (!editorSharedPref.isRequestedToken()) {
+            viewModelScope.launch(Dispatchers.IO) {
+                removeObjectRepoImpl.getTokenFirebase()
             }
         }
     }

@@ -41,6 +41,10 @@ class MockInterceptor(private val context: Context) : Interceptor {
                 getJsonStringFromFile(context.assets, FILE_STICKER_DATA)
             }
 
+            uri.contains(MOCK_TEMPLATE_DATA) -> {
+                getJsonStringFromFile(context.assets, FILE_TEMPLATE_DATA)
+            }
+
             else -> {
                 println("DEBUG: No match found for URI: $uri")
                 ""
@@ -76,6 +80,9 @@ class MockInterceptor(private val context: Context) : Interceptor {
 
         const val MOCK_STICKER_DATA = "mock_sticker_data"
         const val FILE_STICKER_DATA = "mock_sticker_data.json"
+
+        const val MOCK_TEMPLATE_DATA = "mock_template_data"
+        const val FILE_TEMPLATE_DATA = "mock_template_data.json"
     }
 
 }
