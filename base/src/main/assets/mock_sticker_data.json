@@ -1,0 +1,892 @@
+{
+  "version": "v1",
+  "lastModified": "2021-06-05",
+  "data": [
+    {
+      "eventName": "Food",
+      "eventId": 998,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_0.png",
+          "urlThumb": "sticker/food/item_0.webp"
+        },
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "sticker/food/item_1.webp"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "sticker/food/item_2.webp"
+        },
+        {
+          "title": "",
+          "name": "item_3.png",
+          "urlThumb": "sticker/food/item_3.webp"
+        },
+        {
+          "title": "",
+          "name": "item_4.png",
+          "urlThumb": "sticker/food/item_4.webp"
+        },
+        {
+          "title": "",
+          "name": "item_5.png",
+          "urlThumb": "sticker/food/item_5.webp"
+        }
+      ],
+      "isPro": false,
+      "isFree": true,
+      "isReward": false,
+      "isUsed": true
+    },
+    {
+      "eventName": "bear",
+      "eventId": 999,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_0.png",
+          "urlThumb": "sticker/bear/item_0.webp"
+        },
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "sticker/bear/item_1.webp"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "sticker/bear/item_2.webp"
+        },
+        {
+          "title": "",
+          "name": "item_3.png",
+          "urlThumb": "sticker/bear/item_3.webp"
+        },
+        {
+          "title": "",
+          "name": "item_4.png",
+          "urlThumb": "sticker/bear/item_4.webp"
+        },
+        {
+          "title": "",
+          "name": "item_5.png",
+          "urlThumb": "sticker/bear/item_5.webp"
+        },
+        {
+          "title": "",
+          "name": "item_6.png",
+          "urlThumb": "sticker/bear/item_6.webp"
+        },
+        {
+          "title": "",
+          "name": "item_7.png",
+          "urlThumb": "sticker/bear/item_7.webp"
+        },
+        {
+          "title": "",
+          "name": "item_8.png",
+          "urlThumb": "sticker/bear/item_8.webp"
+        },
+        {
+          "title": "",
+          "name": "item_9.png",
+          "urlThumb": "sticker/bear/item_9.webp"
+        }
+      ],
+      "isPro": false,
+      "isFree": true,
+      "isReward": false,
+      "isUsed": true
+    },
+    {
+      "eventName": "Birthday",
+      "eventId": 1000,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/sticker/birthday_png/item_1.png"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/sticker/birthday_png/item_2.png"
+        },
+        {
+          "title": "",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/sticker/birthday_png/item_3.png"
+        },
+        {
+          "title": "",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/sticker/birthday_png/item_4.png"
+        },
+        {
+          "title": "",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/sticker/birthday_png/item_5.png"
+        },
+        {
+          "title": "",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/sticker/birthday_png/item_6.png"
+        },
+        {
+          "title": "",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/sticker/birthday_png/item_7.png"
+        },
+        {
+          "title": "",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/sticker/birthday_png/item_8.png"
+        },
+        {
+          "title": "",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/sticker/birthday_png/item_9.png"
+        },
+        {
+          "title": "",
+          "name": "item_10.png",
+          "urlThumb": "202105collagemaker/sticker/birthday_png/item_10.png"
+        },
+        {
+          "title": "",
+          "name": "item_11.png",
+          "urlThumb": "202105collagemaker/sticker/birthday_png/item_11.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/sticker/birthday_png/Archive.zip",
+      "isPro": false,
+      "isFree": false,
+      "isReward": true,
+      "isUsed": false
+    },
+    {
+      "eventName": "Cat",
+      "eventId": 1001,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/sticker/cat_png/item_1.png"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/sticker/cat_png/item_2.png"
+        },
+        {
+          "title": "C3",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/sticker/cat_png/item_3.png"
+        },
+        {
+          "title": "C4",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/sticker/cat_png/item_4.png"
+        },
+        {
+          "title": "C5",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/sticker/cat_png/item_5.png"
+        },
+        {
+          "title": "C6",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/sticker/cat_png/item_6.png"
+        },
+        {
+          "title": "C7",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/sticker/cat_png/item_7.png"
+        },
+        {
+          "title": "C8",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/sticker/cat_png/item_8.png"
+        },
+        {
+          "title": "C9",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/sticker/cat_png/item_9.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/sticker/cat_png/Archive.zip",
+      "isPro": false,
+      "isFree": false,
+      "isReward": true,
+      "isUsed": false
+    },
+    {
+      "eventName": "Arrow",
+      "eventId": 1002,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_1.png"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_2.png"
+        },
+        {
+          "title": "",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_3.png"
+        },
+        {
+          "title": "",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_4.png"
+        },
+        {
+          "title": "",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_5.png"
+        },
+        {
+          "title": "",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_6.png"
+        },
+        {
+          "title": "",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_7.png"
+        },
+        {
+          "title": "",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_8.png"
+        },
+        {
+          "title": "",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_9.png"
+        },
+        {
+          "title": "",
+          "name": "item_10.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_10.png"
+        },
+        {
+          "title": "",
+          "name": "item_11.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_11.png"
+        },
+        {
+          "title": "",
+          "name": "item_12.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_12.png"
+        },
+        {
+          "title": "",
+          "name": "item_13.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_arrow/item_13.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/sticker/hanh_arrow/Archive.zip",
+      "isPro": false,
+      "isFree": false,
+      "isReward": true,
+      "isUsed": false
+    },
+    {
+      "eventName": "White",
+      "eventId": 1003,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_1.png"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_2.png"
+        },
+        {
+          "title": "",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_3.png"
+        },
+        {
+          "title": "",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_4.png"
+        },
+        {
+          "title": "",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_5.png"
+        },
+        {
+          "title": "",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_6.png"
+        },
+        {
+          "title": "",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_7.png"
+        },
+        {
+          "title": "",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_8.png"
+        },
+        {
+          "title": "",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_9.png"
+        },
+        {
+          "title": "",
+          "name": "item_10.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_10.png"
+        },
+        {
+          "title": "",
+          "name": "item_11.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_11.png"
+        },
+        {
+          "title": "",
+          "name": "item_12.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_12.png"
+        },
+        {
+          "title": "",
+          "name": "item_13.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_line_3/item_13.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/sticker/hanh_line_3/Archive.zip",
+      "isPro": false,
+      "isFree": true,
+      "isReward": false,
+      "isUsed": false
+    },
+    {
+      "eventName": "Mix",
+      "eventId": 1004,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_1.png"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_2.png"
+        },
+        {
+          "title": "",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_3.png"
+        },
+        {
+          "title": "",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_4.png"
+        },
+        {
+          "title": "",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_5.png"
+        },
+        {
+          "title": "",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_6.png"
+        },
+        {
+          "title": "",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_7.png"
+        },
+        {
+          "title": "",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_8.png"
+        },
+        {
+          "title": "",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_9.png"
+        },
+        {
+          "title": "",
+          "name": "item_10.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_10.png"
+        },
+        {
+          "title": "",
+          "name": "item_11.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_11.png"
+        },
+        {
+          "title": "",
+          "name": "item_12.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_12.png"
+        },
+        {
+          "title": "",
+          "name": "item_13.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_13.png"
+        },
+        {
+          "title": "",
+          "name": "item_14.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_14.png"
+        },
+        {
+          "title": "",
+          "name": "item_15.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_mix/item_15.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/sticker/hanh_mix/Archive.zip",
+      "isPro": false,
+      "isFree": true,
+      "isReward": false,
+      "isUsed": false
+    },
+    {
+      "eventName": "Today's Mood",
+      "eventId": 1005,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_today_mood/item_1.png"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_today_mood/item_2.png"
+        },
+        {
+          "title": "",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_today_mood/item_3.png"
+        },
+        {
+          "title": "",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_today_mood/item_4.png"
+        },
+        {
+          "title": "",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_today_mood/item_5.png"
+        },
+        {
+          "title": "",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_today_mood/item_6.png"
+        },
+        {
+          "title": "",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_today_mood/item_7.png"
+        },
+        {
+          "title": "",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_today_mood/item_8.png"
+        },
+        {
+          "title": "",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/sticker/hanh_today_mood/item_9.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/sticker/hanh_today_mood/Archive.zip",
+      "isPro": false,
+      "isFree": false,
+      "isReward": true,
+      "isUsed": false
+    },
+    {
+      "eventName": "Cute",
+      "eventId": 1006,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_1.png"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_2.png"
+        },
+        {
+          "title": "",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_3.png"
+        },
+        {
+          "title": "",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_4.png"
+        },
+        {
+          "title": "",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_5.png"
+        },
+        {
+          "title": "",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_6.png"
+        },
+        {
+          "title": "",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_7.png"
+        },
+        {
+          "title": "",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_8.png"
+        },
+        {
+          "title": "",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_9.png"
+        },
+        {
+          "title": "",
+          "name": "item_10.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_10.png"
+        },
+        {
+          "title": "",
+          "name": "item_11.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_11.png"
+        },
+        {
+          "title": "",
+          "name": "item_12.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_12.png"
+        },
+        {
+          "title": "",
+          "name": "item_13.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_13.png"
+        },
+        {
+          "title": "",
+          "name": "item_14.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_14.png"
+        },
+        {
+          "title": "",
+          "name": "item_15.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_cute/item_15.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/sticker/hoale_cute/Archive.zip",
+      "isPro": false,
+      "isFree": true,
+      "isReward": false,
+      "isUsed": false
+    },
+    {
+      "eventName": "Frame",
+      "eventId": 1007,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_frame/item_1.png"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_frame/item_2.png"
+        },
+        {
+          "title": "",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_frame/item_3.png"
+        },
+        {
+          "title": "",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_frame/item_4.png"
+        },
+        {
+          "title": "",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_frame/item_5.png"
+        },
+        {
+          "title": "",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_frame/item_6.png"
+        },
+        {
+          "title": "",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_frame/item_7.png"
+        },
+        {
+          "title": "",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_frame/item_8.png"
+        },
+        {
+          "title": "",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_frame/item_9.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/sticker/hoale_frame/Archive.zip",
+      "isPro": false,
+      "isFree": true,
+      "isReward": false,
+      "isUsed": false
+    },
+    {
+      "eventName": "Heart",
+      "eventId": 1008,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_heart/item_1.png"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_heart/item_2.png"
+        },
+        {
+          "title": "",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_heart/item_3.png"
+        },
+        {
+          "title": "",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_heart/item_4.png"
+        },
+        {
+          "title": "",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_heart/item_5.png"
+        },
+        {
+          "title": "",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_heart/item_6.png"
+        },
+        {
+          "title": "",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_heart/item_7.png"
+        },
+        {
+          "title": "",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/sticker/hoale_heart/item_8.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/sticker/hoale_heart/Archive.zip",
+      "isPro": false,
+      "isFree": true,
+      "isReward": false,
+      "isUsed": false
+    },
+    {
+      "eventName": "Flower",
+      "eventId": 1009,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/sticker/nature_png/item_1.png"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/sticker/nature_png/item_2.png"
+        },
+        {
+          "title": "",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/sticker/nature_png/item_3.png"
+        },
+        {
+          "title": "",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/sticker/nature_png/item_4.png"
+        },
+        {
+          "title": "",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/sticker/nature_png/item_5.png"
+        },
+        {
+          "title": "",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/sticker/nature_png/item_6.png"
+        },
+        {
+          "title": "",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/sticker/nature_png/item_7.png"
+        },
+        {
+          "title": "",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/sticker/nature_png/item_8.png"
+        },
+        {
+          "title": "",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/sticker/nature_png/item_9.png"
+        },
+        {
+          "title": "",
+          "name": "item_10.png",
+          "urlThumb": "202105collagemaker/sticker/nature_png/item_10.png"
+        },
+        {
+          "title": "",
+          "name": "item_11.png",
+          "urlThumb": "202105collagemaker/sticker/nature_png/item_11.png"
+        },
+        {
+          "title": "",
+          "name": "item_12.png",
+          "urlThumb": "202105collagemaker/sticker/nature_png/item_12.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/sticker/nature_png/Archive.zip",
+      "isPro": false,
+      "isFree": true,
+      "isReward": false,
+      "isUsed": false
+    },
+    {
+      "eventName": "Neon",
+      "eventId": 1010,
+      "description": "",
+      "urlThumb": "",
+      "bannerUrl": "https://images2.thanhnien.vn/Uploaded/chungntk/2022_01_04/t4-2027.jpg",
+      "content": [
+        {
+          "title": "",
+          "name": "item_1.png",
+          "urlThumb": "202105collagemaker/sticker/neon_png/item_1.png"
+        },
+        {
+          "title": "",
+          "name": "item_2.png",
+          "urlThumb": "202105collagemaker/sticker/neon_png/item_2.png"
+        },
+        {
+          "title": "",
+          "name": "item_3.png",
+          "urlThumb": "202105collagemaker/sticker/neon_png/item_3.png"
+        },
+        {
+          "title": "",
+          "name": "item_4.png",
+          "urlThumb": "202105collagemaker/sticker/neon_png/item_4.png"
+        },
+        {
+          "title": "",
+          "name": "item_5.png",
+          "urlThumb": "202105collagemaker/sticker/neon_png/item_5.png"
+        },
+        {
+          "title": "",
+          "name": "item_6.png",
+          "urlThumb": "202105collagemaker/sticker/neon_png/item_6.png"
+        },
+        {
+          "title": "",
+          "name": "item_7.png",
+          "urlThumb": "202105collagemaker/sticker/neon_png/item_7.png"
+        },
+        {
+          "title": "",
+          "name": "item_8.png",
+          "urlThumb": "202105collagemaker/sticker/neon_png/item_8.png"
+        },
+        {
+          "title": "",
+          "name": "item_9.png",
+          "urlThumb": "202105collagemaker/sticker/neon_png/item_9.png"
+        },
+        {
+          "title": "",
+          "name": "item_10.png",
+          "urlThumb": "202105collagemaker/sticker/neon_png/item_10.png"
+        },
+        {
+          "title": "",
+          "name": "item_11.png",
+          "urlThumb": "202105collagemaker/sticker/neon_png/item_11.png"
+        }
+      ],
+      "urlZip": "202105collagemaker/sticker/neon_png/Archive.zip",
+      "isPro": false,
+      "isFree": true,
+      "isReward": false,
+      "isUsed": false
+    }
+  ],
+  "urlRoot": "https://photo.footballtv.info/"
+}

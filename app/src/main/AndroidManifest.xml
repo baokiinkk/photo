@@ -78,6 +78,9 @@
         <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity" />
 
         <activity android:name=".ui.activities.editor.draw.DrawActivity" />
+        <activity android:name=".ui.activities.store.StoreActivity" />
+        <activity android:name=".ui.activities.store.tab.sticker.detail.StoreStickerDetailActivity" />
+        <activity android:name=".ui.activities.store.tab.background.detail.StoreBackgroundDetailActivity"/>
     </application>
 
 </manifest>

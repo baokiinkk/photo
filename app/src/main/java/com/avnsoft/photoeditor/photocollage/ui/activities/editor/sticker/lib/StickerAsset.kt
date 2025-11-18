@@ -8,7 +8,7 @@ import java.io.InputStream
 
 data class EmojiTab(
     val tabName: String,
-    val tabIcon: Int,
+    val tabIcon: Any,
     val items: List<String>,
 )
 
@@ -224,8 +224,8 @@ object StickerAsset {
 
     fun lstEmoj(): MutableList<String> {
         val arrayList: MutableList<String> = java.util.ArrayList<String>()
-        arrayList.add("sticker/emoji/001.webp")
-        arrayList.add("sticker/emoji/002.webp")
+        arrayList.add("file:///android_asset/sticker/emoji/001.webp")//file:///android_asset/$url
+        arrayList.add("file:///android_asset/sticker/emoji/002.webp")
         arrayList.add("sticker/emoji/003.webp")
         arrayList.add("sticker/emoji/004.webp")
         arrayList.add("sticker/emoji/005.webp")

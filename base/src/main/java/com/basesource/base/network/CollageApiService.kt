@@ -41,6 +41,12 @@ interface CollageApiService {
 
     @POST("v4/account/get-token")
     fun getTokenFirebase(@Body requestBody: DataEncrypt): Response<ResponseBody>
+
+    @GET("mock_sticker_data")
+    suspend fun getStickers(): Response<ResponseBody>
+
+    @GET("mock_background_data")
+    suspend fun getBackgrounds(): Response<ResponseBody>
 }
 
 

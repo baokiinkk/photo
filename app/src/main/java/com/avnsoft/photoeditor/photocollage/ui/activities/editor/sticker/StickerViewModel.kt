@@ -2,10 +2,8 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker
 
 import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
-import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.EmojiTab
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerAsset
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerAsset.lstEmoj
+import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerModel
+import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,10 +12,11 @@ import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
-class StickerViewModel : BaseViewModel() {
+class StickerViewModel(
+    private val stickerRepo: StickerRepoImpl
+) : BaseViewModel() {
 
     val uiState = MutableStateFlow(StickerUIState())
-
 
     fun getConfigSticker(bitmap: Bitmap?) {
         uiState.update {
@@ -26,16 +25,33 @@ class StickerViewModel : BaseViewModel() {
             )
         }
         viewModelScope.launch(Dispatchers.IO) {
-            val emojiTabs = StickerAsset.initStickerPager()
-            uiState.update {
-                it.copy(
-                    emojiTabs = emojiTabs
-                )
+            val response = stickerRepo.getStickers()
+            when (response) {
+                is com.basesource.base.result.Result.Success -> {
+                    uiState.update {
+                        it.copy(
+                            stickers = response.data,
+                            currentTab = response.data.first()
+                        )
+                    }
+                }
+
+                is com.basesource.base.result.Result.Error -> {
+                    uiState.update {
+                        it.copy(
+                            error = response.exception.message
+                        )
+                    }
+                }
+
+                else -> {
+
+                }
             }
         }
     }
 
-    fun selectedTab(tab: EmojiTab) {
+    fun selectedTab(tab: StickerModel) {
         uiState.update {
             it.copy(
                 currentTab = tab
@@ -78,13 +94,10 @@ class StickerViewModel : BaseViewModel() {
 
 data class StickerUIState(
     val originBitmap: Bitmap? = null,
-    val currentTab: EmojiTab = EmojiTab(
-        "Emoji",
-        R.drawable.ic_cate_sticker_emoij,
-        items = lstEmoj()
-    ),
-    val emojiTabs: List<EmojiTab> = emptyList(),
+    val currentTab: StickerModel? = null,
+    val stickers: List<StickerModel> = emptyList(),
     val pathSticker: StickerData = StickerData.StickerFromAsset(""),
     val isLoading: Boolean = false,
+    val error: String? = null
 )
 

@@ -41,7 +41,7 @@ fun DiscoverTemplates(onSeeAll: () -> Unit = {}, onTemplateClick: (TemplateItem)
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Text(text = "Templates", style = AppStyle.title1().bold().gray900())
             Image(
-                painterResource(R.drawable.ic_template), contentDescription = "", modifier = Modifier
+                painterResource(R.drawable.ic_store_template), contentDescription = "", modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .size(24.dp)
             )

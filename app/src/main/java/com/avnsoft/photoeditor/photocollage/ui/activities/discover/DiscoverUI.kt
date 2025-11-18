@@ -52,7 +52,17 @@ fun DiscoverUI(viewModel: MainViewModel? = null) {
             }
         )
         Spacer(Modifier.height(12.dp))
-        DiscoverShortcuts()
+        DiscoverShortcuts(
+            onRemoveObject = {
+                viewModel?.navigateFeature(FeatureType.REMOVE_OBJECT)
+            },
+            onAIEnhance = {
+                viewModel?.navigateFeature(FeatureType.AI_ENHANCE)
+            },
+            onRemoveBG = {
+                viewModel?.navigateFeature(FeatureType.REMOVE_BACKGROUND)
+            }
+        )
         DiscoverTemplates()
         DiscoverQuickEdits(){}
     }

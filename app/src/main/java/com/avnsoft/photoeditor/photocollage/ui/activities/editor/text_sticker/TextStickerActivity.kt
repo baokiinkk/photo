@@ -312,7 +312,6 @@ class TextStickerActivity : BaseActivity() {
                             },
                             onApply = {
                                 stickerView?.setShowFocus(false)
-                                viewmodel.showLoading()
                                 stickerView?.post {
                                     captureView(
                                         localView,
@@ -330,7 +329,6 @@ class TextStickerActivity : BaseActivity() {
                                                 context = this@TextStickerActivity,
                                                 bitmap = captured,
                                                 onImageSaved = { pathBitmap ->
-                                                    viewmodel.hideLoading()
                                                     val intent = Intent()
                                                     intent.putExtra("pathBitmap", "$pathBitmap")
                                                     setResult(RESULT_OK, intent)

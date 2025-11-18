@@ -1,4 +1,5 @@
 package com.avnsoft.photoeditor.photocollage
+
 import android.app.Application
 import android.content.Context
 import coil.Coil
@@ -6,6 +7,7 @@ import coil.ImageLoader
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import com.avnsoft.photoeditor.photocollage.di.AppModule
+import com.avnsoft.photoeditor.photocollage.di.appLocalModule
 import com.basesource.base.di.BaseModule
 import com.basesource.base.di.networkModule
 import org.koin.android.ext.koin.androidContext
@@ -30,7 +32,7 @@ class BaseApplication : Application(), KoinComponent {
         setupCoil()
     }
 
-    private fun setupCoil(){
+    private fun setupCoil() {
         val imageLoader = ImageLoader.Builder(this)
             .diskCache {
                 DiskCache.Builder()
@@ -56,6 +58,7 @@ fun initKoin(context: Context) {
             BaseModule().module,
             AppModule().module,
             networkModule,
+            appLocalModule
         )
     }
 }
