@@ -93,8 +93,13 @@ fun CollageScreen(
     }
 
     LaunchedEffect(collageState.stickerBitmapPath) {
-        currentStickerData = collageState.stickerBitmapPath?.takeIf { it.isNotEmpty() }?.let { path ->
-            StickerData.StickerFromAsset(pathSticker = path)
+        try {
+            currentStickerData = collageState.stickerBitmapPath?.takeIf { it.isNotEmpty() }?.let { path ->
+                StickerData.StickerFromAsset(pathSticker = path)
+            } ?: null
+        } catch (e: Exception) {
+            e.printStackTrace()
+            currentStickerData = null
         }
     }
 
