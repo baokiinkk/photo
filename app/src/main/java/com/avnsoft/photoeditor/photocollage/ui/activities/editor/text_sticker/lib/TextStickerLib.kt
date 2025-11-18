@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -28,12 +29,17 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TextStickerLib(
-    viewmodel: TextStickerViewModel = koinViewModel()
+    modifier: Modifier = Modifier,
+    viewmodel: TextStickerViewModel = koinViewModel(),
 ) {
     LaunchedEffect(Unit) {
         viewmodel.getConfigTextSticker()
     }
-    Box {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .clipToBounds()
+    ) {
         val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
         val context = LocalContext.current
         var opacityColor by remember { mutableStateOf(0f) }
@@ -54,7 +60,8 @@ fun TextStickerLib(
         {
             TextStickerLayer(
                 modifier = Modifier
-                    .weight(1f),
+                    .weight(1f)
+                ,
                 viewmodel = viewmodel,
                 stickerView = stickerView,
                 onResultStickerView = { stickerView = it }

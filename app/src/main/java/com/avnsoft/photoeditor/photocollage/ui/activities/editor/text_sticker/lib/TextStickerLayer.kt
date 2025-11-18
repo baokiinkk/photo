@@ -63,8 +63,6 @@ fun TextStickerLayer(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .graphicsLayer()
-            .clipToBounds()
             .clickableWithAlphaEffect {
                 if (isVisibleTextField) {
                     isVisibleTextField = false
@@ -83,6 +81,7 @@ fun TextStickerLayer(
                     textFieldValue = textFieldValue.copy(text = "")
                 }
             }
+            .clipToBounds()
     ) {
         Box(
             modifier = Modifier
