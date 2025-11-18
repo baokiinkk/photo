@@ -37,6 +37,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextStickerLib
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.basesource.base.result.Result
@@ -48,8 +49,6 @@ import org.koin.compose.koinInject
 fun CollageScreen(
     uris: List<Uri>,
     vm: CollageViewModel,
-    sticker: StickerView? = null,
-    stickerView: ((StickerView) -> Unit)? = null,
     onBack: () -> Unit,
 ) {
     // Observe state from ViewModel
@@ -89,11 +88,18 @@ fun CollageScreen(
         }
     }
     LaunchedEffect(Unit) {
-
         vm.load(uris.size.coerceAtLeast(1))
-        currentStickerData = StickerData.StickerFromAsset(
-            pathSticker = collageState.stickerBitmapPath.toString()
-        )
+    }
+
+    LaunchedEffect(collageState.stickerBitmapPath) {
+        try {
+            currentStickerData = collageState.stickerBitmapPath?.takeIf { it.isNotEmpty() }?.let { path ->
+                StickerData.StickerFromAsset(pathSticker = path)
+            } ?: null
+        } catch (e: Exception) {
+            e.printStackTrace()
+            currentStickerData = null
+        }
     }
 
     Box(
@@ -239,9 +245,7 @@ fun CollageScreen(
         }
 
         if (showTextSheet) {
-            TextUI(sticker, stickerView = {
-                stickerView?.invoke(it)
-            }, state = collageState.textState ?: TextStickerUIState())
+            TextStickerLib()
         }
         if (showGridsSheet) {
             GridsSheet(
@@ -345,7 +349,6 @@ fun CollageScreen(
                     stickerUIState = stickerUIState.copy(currentTab = tab)
                 },
                 onCancel = {
-                    vm.cancelStickerChanges()
                     showStickerSheet = false
                     currentStickerData = null
                 },

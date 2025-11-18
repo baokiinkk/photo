@@ -6,14 +6,12 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageScreen
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
 import com.basesource.base.ui.base.BaseActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CollageActivity : BaseActivity() {
     private val vm: CollageViewModel by viewModel()
-    private var stickerView: StickerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,10 +21,6 @@ class CollageActivity : BaseActivity() {
                 CollageScreen(
                     list,
                     vm,
-                    sticker = stickerView,
-                    stickerView = {
-                        stickerView = it
-                    },
                     onBack = { finish() },
 
                     )

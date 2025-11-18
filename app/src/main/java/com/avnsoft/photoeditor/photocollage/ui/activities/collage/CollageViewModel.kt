@@ -60,8 +60,6 @@ class CollageViewModel(
     // Lưu frame selection tạm thời khi đang chọn (chưa confirm)
     private var tempFrameSelection: com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection? = null
 
-    // Lưu sticker bitmap path tạm thời khi đang chọn (chưa confirm)
-    private var tempStickerBitmapPath: String? = null
 
     // Lưu image transforms tạm thời khi đang chỉnh sửa (chưa confirm)
     private var tempImageTransforms: Map<Int, com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState>? = null
@@ -473,25 +471,59 @@ class CollageViewModel(
         }
     }
 
-    // Helper để update state từ các tools khác (mở rộng sau)
     fun updateStickerBitmapPath(path: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            tempStickerBitmapPath = path
-            _collageState.value = _collageState.value.copy(
+            val currentState = _collageState.value
+            val lastSavedState = undoRedoManager.getLastState()
+
+            val newState = currentState.copy(
                 stickerBitmapPath = path
             )
-        }
-    }
 
-    fun cancelStickerChanges() {
-        viewModelScope.launch(Dispatchers.IO) {
-            // Khôi phục sticker bitmap path về state đã lưu cuối cùng
-            val lastSavedState = undoRedoManager.getLastState()
-            val stickerBitmapPathToRestore = lastSavedState?.stickerBitmapPath ?: initialState?.stickerBitmapPath
-            tempStickerBitmapPath = null
-            _collageState.value = _collageState.value.copy(
-                stickerBitmapPath = stickerBitmapPathToRestore
-            )
+            val stateToSave = lastSavedState?.let { last ->
+                newState.copy(
+                    templateId = last.templateId,
+                    topMargin = last.topMargin,
+                    columnMargin = last.columnMargin,
+                    cornerRadius = last.cornerRadius,
+                    ratio = last.ratio,
+                    backgroundSelection = last.backgroundSelection,
+                    frameSelection = last.frameSelection,
+                    texts = last.texts,
+                    stickers = last.stickers,
+                    stickerBitmapPath = path,
+                    imageTransforms = last.imageTransforms,
+                    filter = last.filter,
+                    blur = last.blur,
+                    brightness = last.brightness,
+                    contrast = last.contrast,
+                    saturation = last.saturation,
+                    textState = last.textState
+                )
+            } ?: newState
+
+            val hasChanges = lastSavedState?.let { last ->
+                last.stickerBitmapPath != stateToSave.stickerBitmapPath
+            } ?: true
+
+            if (!hasChanges) {
+                _collageState.value = stateToSave
+                return@launch
+            }
+
+            if (!hasInitialStateBeenSaved && initialState != null) {
+                val initial = initialState!!
+                val hasInitialChanges = initial.stickerBitmapPath != stateToSave.stickerBitmapPath
+
+                if (hasInitialChanges) {
+                    undoRedoManager.saveState(initial.copy())
+                    hasInitialStateBeenSaved = true
+                }
+            }
+
+            undoRedoManager.saveState(stateToSave)
+            _collageState.value = stateToSave
+            updateUndoRedoState()
         }
     }
 

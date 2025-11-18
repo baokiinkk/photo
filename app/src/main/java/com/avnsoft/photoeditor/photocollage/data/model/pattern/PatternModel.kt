@@ -1,7 +1,9 @@
 package com.avnsoft.photoeditor.photocollage.data.model.pattern
 
 import com.basesource.base.ui.base.IScreenData
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PatternModel(
     val eventId: Long,
     val urlThumb: String?,
@@ -16,6 +18,7 @@ data class PatternModel(
     val bannerUrl: String?
 ) : IScreenData
 
+@Serializable
 data class PatternContentModel(
     val title: String,
     val name: String,
