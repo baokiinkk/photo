@@ -131,7 +131,7 @@ class StoreStickerDetailActivity : BaseActivity() {
                                 }
                             }
                             if (uiState.item?.isUsed == true) {
-                                ButtonUseStickerPack(
+                                ButtonUsePack(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = 14.dp)
@@ -142,7 +142,7 @@ class StoreStickerDetailActivity : BaseActivity() {
                                         }
                                 )
                             } else {
-                                ButtonUnlockStickerPack(
+                                ButtonUnlockPack(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = 14.dp)
@@ -180,8 +180,9 @@ class StoreStickerDetailActivity : BaseActivity() {
 }
 
 @Composable
-fun ButtonUseStickerPack(
-    modifier: Modifier
+fun ButtonUsePack(
+    modifier: Modifier,
+    text: String = stringResource(R.string.use_sticker_pack)
 ) {
     Card(
         modifier = modifier
@@ -205,7 +206,7 @@ fun ButtonUseStickerPack(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(R.string.use_sticker_pack),
+                text = text,
                 style = AppStyle.buttonLarge().semibold().primary500()
             )
         }
@@ -213,8 +214,9 @@ fun ButtonUseStickerPack(
 }
 
 @Composable
-fun ButtonUnlockStickerPack(
-    modifier: Modifier = Modifier
+fun ButtonUnlockPack(
+    modifier: Modifier = Modifier,
+    text: String = stringResource(R.string.unlock_sticker_pack)
 ) {
     Row(
         modifier = modifier
@@ -240,7 +242,7 @@ fun ButtonUnlockStickerPack(
         ImageWidget(resId = R.drawable.ic_store_star)
         Spacer(modifier = Modifier.width(4.dp))
         Text(
-            text = stringResource(R.string.unlock_sticker_pack),
+            text = text,
             style = AppStyle.buttonLarge().semibold().white(),
         )
     }

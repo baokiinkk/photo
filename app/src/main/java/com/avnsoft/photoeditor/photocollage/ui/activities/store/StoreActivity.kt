@@ -95,9 +95,11 @@ class StoreActivity : BaseActivity() {
                                 },
                                 onUseClick = {
                                     if (it.isUsed) {
-                                        gotoEditPhoto()
+                                        gotoEditPhoto(
+                                            CollageTool.STICKER
+                                        )
                                     } else {
-                                        viewModel.updateIsUsedById(it.eventId)
+                                        viewModel.updateIsUsedStickerById(it.eventId)
                                     }
                                 }
                             )
@@ -113,7 +115,13 @@ class StoreActivity : BaseActivity() {
                                     )
                                 },
                                 onUseClick = {
-
+                                    if (it.isUsed) {
+                                        gotoEditPhoto(
+                                            CollageTool.BACKGROUND
+                                        )
+                                    } else {
+                                        viewModel.updateIsUsedPatternById(it.eventId)
+                                    }
                                 }
                             )
                         }
@@ -124,7 +132,7 @@ class StoreActivity : BaseActivity() {
 
     }
 
-    private fun gotoEditPhoto() {
+    private fun gotoEditPhoto(tool: CollageTool) {
         launchActivity(
             toActivity = ImagePickerActivity::class.java,
             ImageRequest(TypeSelect.SINGLE)
@@ -135,7 +143,7 @@ class StoreActivity : BaseActivity() {
                     toActivity = EditorActivity::class.java,
                     input = EditorInput(
                         pathBitmap = it,
-                        tool = CollageTool.STICKER
+                        tool = tool
                     ),
                 )
             }

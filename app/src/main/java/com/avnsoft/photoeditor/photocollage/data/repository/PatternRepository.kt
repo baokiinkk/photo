@@ -9,6 +9,8 @@ import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternGroup
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternModel
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternResponse
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternRoomModel
+import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerContentModel
+import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerModel
 import com.basesource.base.network.CollageApiService
 import com.basesource.base.network.map
 import com.basesource.base.network.safeApiCall
@@ -42,6 +44,38 @@ class PatternRepository(
             )
         }
     }
+
+    suspend fun getNewPatterns(): Result<List<PatternModel>> {
+        if (!editorSharedPref.getIsSyncSticker()) {
+            syncPatterns()
+        }
+        val response = appDataDao.getPatterns()
+        val data = response.mapIndexed { index, model ->
+            val contents = model.content.map { item ->
+                PatternContentModel(
+                    title = item.title,
+                    name = item.name,
+                    urlThumb = item.urlThumb
+                )
+            }
+            PatternModel(
+                eventId = model.eventId,
+                urlThumb = model.urlThumb,
+                content = contents,
+                isPro = model.isPro,
+                isFree = model.isFree,
+                isReward = model.isReward,
+                isUsed = model.isUsed,
+                tabName = model.eventName,
+                total = contents.size.toString(),
+                bannerUrl = model.bannerUrl
+            )
+        }.filter {
+            it.isUsed
+        }
+        return Result.Success(data)
+    }
+
 
     suspend fun syncPatterns() {
         if (editorSharedPref.getIsSyncPattern()) return

@@ -67,9 +67,18 @@ class StoreViewModel(
         }
     }
 
-    fun updateIsUsedById(eventId: Long) {
+    fun updateIsUsedStickerById(eventId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             stickerRepo.updateIsUsedById(
+                eventId,
+                true
+            )
+        }
+    }
+
+    fun updateIsUsedPatternById(eventId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            patternRepo.updateIsUsedPatternById(
                 eventId,
                 true
             )
