@@ -7,7 +7,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
@@ -24,20 +30,39 @@ class EditorStoreActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            var isShowTextSticker by remember { mutableStateOf(false) }
             Scaffold(
                 containerColor = AppColor.White
             ) { inner ->
                 Column(
-                      modifier = Modifier
+                    modifier = Modifier
                         .fillMaxSize()
                         .statusBarsPadding()
-                          .background(Color.Gray)
+                        .background(Color.Gray)
                 ) {
                     HeaderStore(
                         title = stringResource(R.string.store),
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
-                    TextStickerLib()
+                    Button(
+                        onClick = {
+                            isShowTextSticker = true
+                        },
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .clipToBounds()
+                    ) {
+                        Text("Show")
+                    }
+                    TextStickerLib(
+                        isShowToolPanel = isShowTextSticker,
+                        onApply = {
+                            isShowTextSticker = false
+                        },
+                        onCancel = {
+                            isShowTextSticker = false
+                        }
+                    )
                 }
             }
         }
