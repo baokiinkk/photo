@@ -507,6 +507,8 @@ fun TextStickerToolPanel(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(vertical = 16.dp)
                 ) {
                     TabColor(
                         modifier = Modifier
@@ -518,14 +520,16 @@ fun TextStickerToolPanel(
                         sliderValueRange = 0f..255f
                     )
                 }
-                Spacer(modifier = Modifier.height(26.dp))
+//                Spacer(modifier = Modifier.height(26.dp))
             }
 
             TEXT_TAB.ALIGN.index -> {
-                Spacer(modifier = Modifier.height(28.dp))
+//                Spacer(modifier = Modifier.height(28.dp))
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(vertical = 16.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
@@ -537,7 +541,7 @@ fun TextStickerToolPanel(
                         TabAlign(onAlign)
                     }
                 }
-                Spacer(modifier = Modifier.height(24.dp))
+//                Spacer(modifier = Modifier.height(24.dp))
             }
         }
 

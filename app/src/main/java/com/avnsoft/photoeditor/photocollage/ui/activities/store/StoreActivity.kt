@@ -35,6 +35,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePicke
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity.Companion.RESULT_URI
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImageRequest
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.TypeSelect
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.editor.EditorStoreActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.TabTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker.detail.StoreStickerDetailActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.background.TabBackground
@@ -84,8 +85,10 @@ class StoreActivity : BaseActivity() {
                         StoreTab.TEMPLATE -> {
                             TabTemplates(
                                 templates = uiState.templates,
-                                onBannerClickable = {
-
+                                onItemClicked = {
+                                    launchActivity(
+                                        toActivity = EditorStoreActivity::class.java
+                                    )
                                 }
                             )
                         }

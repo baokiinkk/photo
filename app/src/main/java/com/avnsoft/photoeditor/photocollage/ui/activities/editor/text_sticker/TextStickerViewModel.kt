@@ -18,7 +18,7 @@ class TextStickerViewModel : BaseViewModel() {
 
     var textMeasured: Boolean = false
 
-    fun getConfigTextSticker(bitmap: Bitmap?) {
+    fun getConfigTextSticker(bitmap: Bitmap? = null) {
         uiState.update {
             it.copy(
                 originBitmap = bitmap,
