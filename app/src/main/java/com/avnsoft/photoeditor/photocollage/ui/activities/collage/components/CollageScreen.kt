@@ -93,9 +93,10 @@ fun CollageScreen(
 
     LaunchedEffect(collageState.stickerBitmapPath) {
         try {
-            currentStickerData = collageState.stickerBitmapPath?.takeIf { it.isNotEmpty() }?.let { path ->
-                StickerData.StickerFromAsset(pathSticker = path)
-            } ?: null
+            currentStickerData =
+                collageState.stickerBitmapPath?.takeIf { it.isNotEmpty() }?.let { path ->
+                    StickerData.StickerFromAsset(pathSticker = path)
+                } ?: null
         } catch (e: Exception) {
             e.printStackTrace()
             currentStickerData = null
@@ -243,10 +244,16 @@ fun CollageScreen(
                 }
             )
         }
-
-        if (showTextSheet) {
-            TextStickerLib()
-        }
+        TextStickerLib(
+            modifier = Modifier.padding(bottom = 62.dp),
+            isShowToolPanel = showTextSheet,
+            onApply = {
+                showTextSheet = false
+            },
+            onCancel = {
+                showTextSheet = false
+            }
+        )
         if (showGridsSheet) {
             GridsSheet(
                 templates = templates,
@@ -337,8 +344,9 @@ fun CollageScreen(
         }
 
         if (showStickerSheet) {
-            if(stickerUIState.currentTab == null)
-                stickerUIState = stickerUIState.copy(currentTab = stickerUIState.stickers.firstOrNull())
+            if (stickerUIState.currentTab == null)
+                stickerUIState =
+                    stickerUIState.copy(currentTab = stickerUIState.stickers.firstOrNull())
             StickerToolPanel(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -47,7 +47,8 @@ fun TextStickerLayer(
     modifier: Modifier = Modifier,
     viewmodel: TextStickerViewModel,
     stickerView: StickerView?,
-    onResultStickerView: (StickerView) -> Unit
+    onResultStickerView: (StickerView) -> Unit,
+    isShowToolPanel: Boolean,
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     var textFieldValue by remember {
@@ -89,7 +90,7 @@ fun TextStickerLayer(
                 .align(Alignment.Center)
                 .onGloballyPositioned { layoutCoordinates ->
                     textFieldSize = layoutCoordinates.size
-                    if (!viewmodel.textMeasured) {
+                    if (!viewmodel.textMeasured && isShowToolPanel) {
                         viewmodel.addFirstTextSticker(textFieldSize)
                         viewmodel.textMeasured = true
                     }

@@ -1,7 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -10,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
@@ -24,13 +24,16 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.Te
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.basesource.base.components.ColorPickerDialog
-import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.utils.clickableWithAlphaEffect
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TextStickerLib(
     modifier: Modifier = Modifier,
     viewmodel: TextStickerViewModel = koinViewModel(),
+    isShowToolPanel: Boolean,
+    onApply: () -> Unit,
+    onCancel: () -> Unit
 ) {
     LaunchedEffect(Unit) {
         viewmodel.getConfigTextSticker()
@@ -53,82 +56,91 @@ fun TextStickerLib(
         var stickerView by remember { mutableStateOf<StickerView?>(null) }
 
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
         )
         {
             TextStickerLayer(
                 modifier = Modifier
-                    .weight(1f)
+//                    .weight(1f)
                 ,
                 viewmodel = viewmodel,
                 stickerView = stickerView,
-                onResultStickerView = { stickerView = it }
+                onResultStickerView = { stickerView = it },
+                isShowToolPanel = isShowToolPanel
             )
 
-            TextStickerToolPanel(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                items = uiState.items,
-                onCancel = {
-                    (context as? BaseActivity)?.finish()
-                },
-                onApply = {
+            if (isShowToolPanel) {
+                TextStickerToolPanel(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickableWithAlphaEffect {
 
-                },
-                addTextSticker = { index, item ->
-                    viewmodel.addTextSticker(
-                        index = index,
-                        item = item,
-                    )
-                },
-                uiState = uiState,
-                onSelectedColor = { color ->
-                    stickerView?.getCurrentTextSticker()
-                        ?.getAddTextProperties()?.textColor = color.toArgb()
-                    stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
-                        stickerView?.replace(
-                            TextSticker(
-                                context,
-                                it
-                            )
+                        }
+                        .align(Alignment.BottomCenter),
+                    items = uiState.items,
+                    onCancel = {
+                        viewmodel.resetTextIndex()
+                        onCancel.invoke()
+                    },
+                    onApply = {
+                        viewmodel.resetTextIndex()
+                        onApply.invoke()
+                    },
+                    addTextSticker = { index, item ->
+                        viewmodel.addTextSticker(
+                            index = index,
+                            item = item,
                         )
-                    }
-                },
-                opacityColorValue = opacityColor,
-                onOpacityColor = {
-                    opacityColor = it
-                    stickerView?.getCurrentTextSticker()
-                        ?.getAddTextProperties()?.textAlpha = (255 - it).toInt()
-                    stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
-                        stickerView?.replace(
-                            TextSticker(
-                                context,
-                                it
+                    },
+                    uiState = uiState,
+                    onSelectedColor = { color ->
+                        stickerView?.getCurrentTextSticker()
+                            ?.getAddTextProperties()?.textColor = color.toArgb()
+                        stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
+                            stickerView?.replace(
+                                TextSticker(
+                                    context,
+                                    it
+                                )
                             )
-                        )
-                    }
-                },
-                onAlign = {
-                    when (it) {
-                        TEXT_ALIGN.START -> {
-                            stickerView?.setStickerHorizontalPosition(Sticker.Position.LEFT)
                         }
+                    },
+                    opacityColorValue = opacityColor,
+                    onOpacityColor = {
+                        opacityColor = it
+                        stickerView?.getCurrentTextSticker()
+                            ?.getAddTextProperties()?.textAlpha = (255 - it).toInt()
+                        stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
+                            stickerView?.replace(
+                                TextSticker(
+                                    context,
+                                    it
+                                )
+                            )
+                        }
+                    },
+                    onAlign = {
+                        when (it) {
+                            TEXT_ALIGN.START -> {
+                                stickerView?.setStickerHorizontalPosition(Sticker.Position.LEFT)
+                            }
 
-                        TEXT_ALIGN.CENTER -> {
-                            stickerView?.setStickerHorizontalPosition(Sticker.Position.CENTER)
-                        }
+                            TEXT_ALIGN.CENTER -> {
+                                stickerView?.setStickerHorizontalPosition(Sticker.Position.CENTER)
+                            }
 
-                        TEXT_ALIGN.END -> {
-                            stickerView?.setStickerHorizontalPosition(Sticker.Position.RIGHT)
+                            TEXT_ALIGN.END -> {
+                                stickerView?.setStickerHorizontalPosition(Sticker.Position.RIGHT)
+                            }
                         }
+                    },
+                    onShowSystemColor = {
+                        showColorWheel = true
                     }
-                },
-                onShowSystemColor = {
-                    showColorWheel = true
-                }
-            )
+                )
+            }
         }
 
         if (showColorWheel) {

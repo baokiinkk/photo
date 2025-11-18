@@ -81,6 +81,14 @@ class TextStickerViewModel : BaseViewModel() {
             )
         }
     }
+
+    fun resetTextIndex(){
+        uiState.update {
+            it.copy(
+                textIndex = 0
+            )
+        }
+    }
 }
 
 data class TextStickerUIState(
