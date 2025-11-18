@@ -51,9 +51,7 @@ fun BackgroundLayer(
     ) {
         when (val selection = backgroundSelection) {
             is BackgroundSelection.Pattern -> {
-                val imageUri = remember(selection.urlRoot, selection.item.urlThumb) {
-                    getPatternImageUri(selection.urlRoot, selection.item.urlThumb)
-                }
+                val imageUri = selection.item.urlThumb
                 val fallbackPainter = remember(selection.item.name) {
                     loadPatternAssetPainter(context, selection.item.name)
                 }
