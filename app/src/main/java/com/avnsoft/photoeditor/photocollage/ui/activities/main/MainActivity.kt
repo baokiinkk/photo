@@ -37,6 +37,7 @@ class MainActivity : BaseActivity() {
     private val viewModel: MainViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.getTokenFirebase()
         getSignature()
         observerData()
         setContent {

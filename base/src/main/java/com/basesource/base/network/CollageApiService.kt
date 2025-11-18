@@ -39,14 +39,14 @@ interface CollageApiService {
         @Header("Authorization") token: String?
     ): Response<ResponseBody>
 
-    @POST("v4/account/get-token")
-    fun getTokenFirebase(@Body requestBody: DataEncrypt): Response<ResponseBody>
+    @POST("https://proxy-future-self.footballtv.info/v4/account/get-token")
+    suspend fun getTokenFirebase(@Body requestBody: DataEncrypt): String
 
     @GET("mock_sticker_data")
     suspend fun getStickers(): Response<ResponseBody>
 
-    @GET("mock_background_data")
-    suspend fun getBackgrounds(): Response<ResponseBody>
+    @GET("mock_template_data")
+    suspend fun getTemplates(): Response<ResponseBody>
 }
 
 

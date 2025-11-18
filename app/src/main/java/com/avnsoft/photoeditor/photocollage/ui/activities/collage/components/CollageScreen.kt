@@ -35,6 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.createBitmap
 import androidx.core.view.drawToBitmap
+import com.avnsoft.photoeditor.photocollage.data.repository.FrameRepository
+import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerData
@@ -47,6 +49,8 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.Te
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
+import com.basesource.base.result.Result
+import org.koin.compose.koinInject
 
 @Composable
 fun CollageScreen(
@@ -71,6 +75,8 @@ fun CollageScreen(
     var showTextSheet by remember { mutableStateOf(false) }
 
     // Sticker state
+
+    val stickerRepo: StickerRepoImpl = koinInject()
     var stickerUIState by remember { mutableStateOf(StickerUIState()) }
     var currentStickerData by remember { mutableStateOf<StickerData?>(null) }
     var currentTextData by remember { mutableStateOf<AddTextProperties?>(null) }
@@ -139,11 +145,12 @@ fun CollageScreen(
                     .background(BackgroundWhite)
 
             ) {
-                val templateToUse = selected ?: templates.firstOrNull() ?: CollageTemplates.defaultFor(uris.size.coerceAtLeast(1))
+                val templateToUse = selected ?: templates.firstOrNull()
+                ?: CollageTemplates.defaultFor(uris.size.coerceAtLeast(1))
                 // Map slider values to Dp
                 val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
                 val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
-                
+
                 CollagePreview(
                     images = uris,
                     template = templateToUse,
@@ -168,7 +175,7 @@ fun CollageScreen(
                     )
                 }
             }
-            
+
             // Bottom tools
             FeatureBottomTools(
                 tools = toolsCollage,
@@ -180,12 +187,14 @@ fun CollageScreen(
                             showFrameSheet = false
                             showTextSheet = false
                         }
+
                         CollageTool.RATIO -> {
                             showRatioSheet = true
                             showGridsSheet = false
                             showFrameSheet = false
                             showTextSheet = false
                         }
+
                         CollageTool.BACKGROUND -> {
                             showBackgroundSheet = true
                             showGridsSheet = false
@@ -194,6 +203,7 @@ fun CollageScreen(
                             showTextSheet = false
 
                         }
+
                         CollageTool.FRAME -> {
                             showFrameSheet = true
                             showGridsSheet = false
@@ -212,6 +222,7 @@ fun CollageScreen(
                             showFrameSheet = false
                             showTextSheet = false
                         }
+
                         CollageTool.TEXT -> {
                             showTextSheet = true
                             showStickerSheet = false
@@ -220,6 +231,7 @@ fun CollageScreen(
                             showBackgroundSheet = false
                             showFrameSheet = false
                         }
+
                         else -> {
                             showTextSheet = false
                             showGridsSheet = false
@@ -233,10 +245,10 @@ fun CollageScreen(
             )
         }
 
-        if(showTextSheet) {
-                TextUI(sticker, stickerView = {
-                    stickerView?.invoke(it)
-                }, state = collageState.textState ?: TextStickerUIState())
+        if (showTextSheet) {
+            TextUI(sticker, stickerView = {
+                stickerView?.invoke(it)
+            }, state = collageState.textState ?: TextStickerUIState())
         }
         if (showGridsSheet) {
             GridsSheet(
@@ -286,7 +298,7 @@ fun CollageScreen(
         }
 
         if (showBackgroundSheet) {
-              BackgroundSheet(
+            BackgroundSheet(
                 selectedBackgroundSelection = collageState.backgroundSelection,
                 onBackgroundSelect = { _, selection ->
                     vm.updateBackground(selection)
@@ -364,9 +376,17 @@ fun CollageScreen(
 
     // Initialize sticker emoji tabs when sticker sheet is shown
     LaunchedEffect(showStickerSheet) {
-        if (showStickerSheet && stickerUIState.emojiTabs.isEmpty()) {
-            val emojiTabs = StickerAsset.initStickerPager()
-            stickerUIState = stickerUIState.copy(emojiTabs = emojiTabs)
+        if (showStickerSheet && stickerUIState.stickers.isEmpty()) {
+            val emojiTabs = stickerRepo.getStickers()
+            when (emojiTabs) {
+                is Result.Success -> {
+                    stickerUIState = stickerUIState.copy(stickers = emojiTabs.data)
+                }
+
+                else -> {
+
+                }
+            }
         }
     }
 }

@@ -46,7 +46,13 @@ val networkModule = module {
     }
     single<OkHttpClient> {
         OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor())
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = if (BuildConfig.DEBUG) {
+                    HttpLoggingInterceptor.Level.BODY
+                } else {
+                    HttpLoggingInterceptor.Level.NONE
+                }
+            })
             .addInterceptor(AuthInterceptor { null })
             .addInterceptor(MockInterceptor(get()))
             .connectTimeout(30, TimeUnit.SECONDS)
@@ -57,7 +63,7 @@ val networkModule = module {
 
     single<Retrofit> {
         Retrofit.Builder()
-            .baseUrl("https://photo.footballtv.info/202105collagemaker/data/") // Replace with your base URL
+            .baseUrl("https://proxy-future-self.footballtv.info/") // Replace with your base URL
             .client(get())
             .addConverterFactory(GsonConverterFactory.create(get()))
             .build()

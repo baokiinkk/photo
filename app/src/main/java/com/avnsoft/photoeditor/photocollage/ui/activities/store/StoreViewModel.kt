@@ -3,8 +3,10 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.store
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternModel
 import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerModel
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.data.repository.PatternRepository
 import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
+import com.avnsoft.photoeditor.photocollage.data.repository.TemplateRepoImpl
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -16,7 +18,8 @@ import org.koin.android.annotation.KoinViewModel
 @KoinViewModel
 class StoreViewModel(
     private val stickerRepo: StickerRepoImpl,
-    private val patternRepo: PatternRepository
+    private val patternRepo: PatternRepository,
+    private val templateRepoImpl: TemplateRepoImpl
 ) : BaseViewModel() {
 
     val uiState = MutableStateFlow(StoreUIState())
@@ -33,6 +36,10 @@ class StoreViewModel(
 
             async {
                 getPreviewPatterns()
+            }
+
+            async {
+                getPreviewTemplates()
             }
         }
     }
@@ -67,6 +74,22 @@ class StoreViewModel(
         }
     }
 
+    suspend fun getPreviewTemplates() {
+        try {
+            val response = templateRepoImpl.getPreviewTemplates()
+            response.collect { item ->
+                uiState.update {
+                    it.copy(
+                        templates = item,
+                        selectedTabTemplate = item.firstOrNull()
+                    )
+                }
+            }
+        } catch (ex: Exception) {
+
+        }
+    }
+
     fun updateIsUsedStickerById(eventId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             stickerRepo.updateIsUsedById(
@@ -84,6 +107,16 @@ class StoreViewModel(
             )
         }
     }
+
+    fun updateIsUsedTemplateById(eventId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            templateRepoImpl.updateIsUsedById(
+                eventId,
+                true
+            )
+        }
+    }
+
 }
 
 data class StoreUIState(
@@ -92,5 +125,8 @@ data class StoreUIState(
 
     val patterns: List<PatternModel> = emptyList(),
     val selectedTabPattern: PatternModel? = null,
+
+    val templates: List<TemplateModel> = emptyList(),
+    val selectedTabTemplate: TemplateModel? = null
 )
 
