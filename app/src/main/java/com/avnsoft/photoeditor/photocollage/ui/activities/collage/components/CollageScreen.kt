@@ -2,14 +2,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 
 import android.app.Activity
 import android.content.ContextWrapper
-import android.graphics.Bitmap
-import android.graphics.Rect
 import android.net.Uri
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
-import android.view.PixelCopy
-import android.view.View
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -34,9 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.createBitmap
-import androidx.core.view.drawToBitmap
-import com.avnsoft.photoeditor.photocollage.data.repository.FrameRepository
 import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
@@ -44,7 +34,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerToolPanel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerUIState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerViewCompose
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerAsset
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
@@ -53,7 +42,6 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.basesource.base.result.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 @Composable
@@ -70,6 +58,7 @@ fun CollageScreen(
     val collageState by vm.collageState.collectAsState()
     val canUndo by vm.canUndo.collectAsState()
     val canRedo by vm.canRedo.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
 
     var showGridsSheet by remember { mutableStateOf(false) }
     var showRatioSheet by remember { mutableStateOf(false) }
@@ -84,8 +73,6 @@ fun CollageScreen(
     var stickerUIState by remember { mutableStateOf(StickerUIState()) }
     var currentStickerData by remember { mutableStateOf<StickerData?>(null) }
     var currentTextData by remember { mutableStateOf<AddTextProperties?>(null) }
-    val coroutineScope = rememberCoroutineScope()
-
 
     // Extract values from state
     val topMargin = collageState.topMargin
@@ -346,6 +333,8 @@ fun CollageScreen(
         }
 
         if (showStickerSheet) {
+            if(stickerUIState.currentTab == null)
+                stickerUIState = stickerUIState.copy(currentTab = stickerUIState.stickers.firstOrNull())
             StickerToolPanel(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -382,11 +371,9 @@ fun CollageScreen(
 
     // Initialize sticker emoji tabs when sticker sheet is shown
     LaunchedEffect(showStickerSheet) {
-        if (showStickerSheet && stickerUIState.stickers.isEmpty()) {
-            coroutineScope.launch {
-                val emojiTabs = withContext(Dispatchers.IO) {
-                    stickerRepo.getStickers()
-                }
+        coroutineScope.launch(Dispatchers.IO) {
+            if (showStickerSheet && stickerUIState.stickers.isEmpty()) {
+                val emojiTabs = stickerRepo.getStickers()
                 when (emojiTabs) {
                     is Result.Success -> {
                         stickerUIState = stickerUIState.copy(stickers = emojiTabs.data)
