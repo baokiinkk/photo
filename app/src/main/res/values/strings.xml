@@ -70,7 +70,7 @@
     <string name="lasso">Lasso</string>
     <string name="solid">Solid</string>
     <string name="pattern">Pattern</string>
-    <string name="replace">replace</string>
+    <string name="replace">Replace</string>
     <string name="swap">swap</string>
     <string name="store">Store</string>
     <string name="use">Use</string>
@@ -78,4 +78,5 @@
     <string name="use_sticker_pack">Use Sticker Pack</string>
     <string name="unlock_sticker_pack">Unlock Sticker Pack</string>
     <string name="background_pack">Background Pack</string>
+    <string name="template">Template</string>
 </resources>
