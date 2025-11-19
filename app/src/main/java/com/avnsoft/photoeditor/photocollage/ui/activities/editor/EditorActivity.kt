@@ -79,6 +79,12 @@ fun String?.toBitmap(context: Context? = null): Bitmap? {
     return bitmap
 }
 
+fun String?.uriToBitmap(context: Context): Bitmap? {
+    val imageUri = this?.toUri()
+    val bitmap = imageUri?.toBitmap(context)
+    return bitmap
+}
+
 class EditorActivity : BaseActivity() {
 
     private val viewmodel: EditorViewModel by viewModel()
@@ -87,38 +93,11 @@ class EditorActivity : BaseActivity() {
         intent.getInput()
     }
 
-    fun String?.uriToBitmap(context: Context): Bitmap? {
-        val imageUri = this?.toUri()
-        val bitmap = imageUri?.toBitmap(context)
-        return bitmap
-    }
-
-    var mLoadImageCallback: LoadImageCallback = object : LoadImageCallback {
-        override fun loadImage(str: String?, obj: Any?): Bitmap? {
-            try {
-                return BitmapFactory.decodeStream(assets.open(str!!))
-            } catch (io: IOException) {
-                io.printStackTrace()
-                return null
-            }
-        }
-
-        override fun loadImageOK(bitmap: Bitmap, obj: Any?) {
-            bitmap.recycle()
-        }
-    }
-
     private lateinit var blurView: BlurView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        try {
-            System.loadLibrary("ffmpeg")
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-        }
-
-        CGENativeLibrary.setLoadImageCallback(this.mLoadImageCallback, null)
+        initEditorLib()
         blurView = BlurView(this)
         blurView.tabShape()
         viewmodel.setPathBitmap(
@@ -498,4 +477,29 @@ fun deleteDirectoryRecursively(dir: File): Boolean {
         }
     }
     return dir.delete()  // xóa file hoặc folder rỗng
+}
+
+
+fun BaseActivity.initEditorLib() {
+    val mLoadImageCallback: LoadImageCallback = object : LoadImageCallback {
+        override fun loadImage(str: String?, obj: Any?): Bitmap? {
+            try {
+                return BitmapFactory.decodeStream(assets.open(str!!))
+            } catch (io: IOException) {
+                io.printStackTrace()
+                return null
+            }
+        }
+
+        override fun loadImageOK(bitmap: Bitmap, obj: Any?) {
+            bitmap.recycle()
+        }
+    }
+    try {
+        System.loadLibrary("ffmpeg")
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+    }
+
+    CGENativeLibrary.setLoadImageCallback(mLoadImageCallback, null)
 }

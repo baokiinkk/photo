@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store.editor
 
+import android.graphics.Bitmap
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
@@ -29,12 +30,21 @@ class EditorStoreViewModel : BaseViewModel() {
 
     val uiState = MutableStateFlow(EditorStoreUIState(items))
 
+    fun initData(bitmap: Bitmap?) {
+        uiState.update {
+            it.copy(
+                bitmap = bitmap
+            )
+        }
+    }
+
     fun onToolClick(tool: CollageTool) {
         uiState.update {
             it.copy(
                 tool = tool,
                 isShowTextSticker = tool == CollageTool.TEXT,
-                isShowSticker = tool == CollageTool.STICKER
+                isShowSticker = tool == CollageTool.STICKER,
+                isShowFilter = tool == CollageTool.FILTER
             )
         }
     }
@@ -54,11 +64,22 @@ class EditorStoreViewModel : BaseViewModel() {
             )
         }
     }
+
+    fun hideFilter() {
+        uiState.update {
+            it.copy(
+                isShowFilter = false,
+                tool = CollageTool.STICKER
+            )
+        }
+    }
 }
 
 data class EditorStoreUIState(
     val items: List<ToolItem>,
     val tool: CollageTool = CollageTool.NONE,
     val isShowTextSticker: Boolean = false,
-    val isShowSticker: Boolean = false
+    val isShowSticker: Boolean = false,
+    val bitmap: Bitmap? = null,
+    val isShowFilter: Boolean = false
 )

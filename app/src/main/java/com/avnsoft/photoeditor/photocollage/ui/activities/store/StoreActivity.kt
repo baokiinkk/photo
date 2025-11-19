@@ -1,7 +1,10 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store
 
+import android.net.Uri
 import android.os.Bundle
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +34,7 @@ import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity.Companion.RESULT_URI
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImageRequest
@@ -59,6 +63,19 @@ class StoreActivity : BaseActivity() {
         setContent {
             var selectedTab by remember { mutableStateOf(StoreTab.TEMPLATE) }
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.GetContent()
+            ) { uri: Uri? ->
+                uri?.let {
+                    launchActivity(
+                        toActivity = EditorStoreActivity::class.java,
+                        input = ToolInput(pathBitmap = it.toString())
+                    )
+                }
+            }
+
+
             Scaffold(
                 containerColor = AppColor.White
             ) { inner ->
@@ -86,9 +103,7 @@ class StoreActivity : BaseActivity() {
                             TabTemplates(
                                 templates = uiState.templates,
                                 onItemClicked = {
-                                    launchActivity(
-                                        toActivity = EditorStoreActivity::class.java
-                                    )
+                                    launcher.launch("image/*")
                                 }
                             )
                         }

@@ -1,5 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store.editor
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -38,30 +40,40 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Col
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterComposeLib
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.initEditorLib
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerLib
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextStickerLib
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.uriToBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.HeaderStore
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.clickableWithAlphaEffect
 import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.wysaid.nativePort.CGENativeLibrary
+import org.wysaid.nativePort.CGENativeLibrary.LoadImageCallback
+import java.io.IOException
 
 class EditorStoreActivity : BaseActivity() {
 
     private val viewmodel: EditorStoreViewModel by viewModel()
-    val stickerViewModel: StickerViewModel by viewModel()
-    val textStickerViewModel: TextStickerViewModel by viewModel()
+    private val screenInput: ToolInput? by lazy {
+        intent.getInput()
+    }
 
-    private lateinit var stickerView: StickerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        stickerView = StickerView(this, null)
+        initEditorLib()
+
+        viewmodel.initData(screenInput?.pathBitmap.uriToBitmap(this))
         setContent {
             val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
             Scaffold(
@@ -118,6 +130,23 @@ fun ContentStoreEditor(
     ) {
         val isText = uiState.tool == CollageTool.TEXT
         val isSticker = uiState.tool == CollageTool.STICKER
+        val isFilter = uiState.tool == CollageTool.FILTER
+
+        uiState.bitmap?.let {
+            FilterComposeLib(
+                modifier = Modifier
+                    .zIndex(if (isFilter) 1f else 0f),
+                bitmap = uiState.bitmap,
+                isShowToolPanel = uiState.isShowFilter,
+                onApply = {
+                    viewModel.hideFilter()
+                },
+                onCancel = {
+                    viewModel.hideFilter()
+                }
+            )
+        }
+
         TextStickerLib(
             modifier = Modifier
                 .zIndex(if (isText) 1f else 0f),
