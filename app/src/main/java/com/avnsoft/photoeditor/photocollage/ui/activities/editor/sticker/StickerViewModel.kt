@@ -18,7 +18,7 @@ class StickerViewModel(
 
     val uiState = MutableStateFlow(StickerUIState())
 
-    fun getConfigSticker(bitmap: Bitmap?) {
+    fun getConfigSticker(bitmap: Bitmap?=null) {
         uiState.update {
             it.copy(
                 originBitmap = bitmap,

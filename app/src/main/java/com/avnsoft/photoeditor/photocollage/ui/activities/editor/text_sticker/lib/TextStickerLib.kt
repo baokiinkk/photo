@@ -72,6 +72,8 @@ fun TextStickerLib(
             )
 
             if (isShowToolPanel) {
+                stickerView?.setShowBorder(true)
+                stickerView?.setShowIcons(true)
                 TextStickerToolPanel(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -81,10 +83,14 @@ fun TextStickerLib(
                         .align(Alignment.BottomCenter),
                     items = uiState.items,
                     onCancel = {
+                        stickerView?.setShowBorder(false)
+                        stickerView?.setShowIcons(false)
                         viewmodel.resetTextIndex()
                         onCancel.invoke()
                     },
                     onApply = {
+                        stickerView?.setShowBorder(false)
+                        stickerView?.setShowIcons(false)
                         viewmodel.resetTextIndex()
                         onApply.invoke()
                     },

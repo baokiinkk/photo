@@ -3,6 +3,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
@@ -35,7 +36,7 @@ sealed class StickerData {
 fun StickerViewCompose(
     modifier: Modifier,
     input: StickerData,
-    onReturnView: ((StickerView) -> Unit)? = null
+    onReturnView: ((StickerView) -> Unit)? = null,
 ) {
     AndroidView(
         modifier = modifier,
@@ -109,7 +110,7 @@ fun StickerViewCompose(
                 is StickerData.StickerFromAsset -> {
                     if (input.pathSticker.isNotEmpty()) {
                         CoroutineScope(Dispatchers.Main).launch {
-                            val bitmap =loadBitmap(view.context,input.pathSticker)
+                            val bitmap = loadBitmap(view.context, input.pathSticker)
 //                            val drawable = loadBitmapFromAssets(
 //                                view.context,
 //                                input.pathSticker

@@ -789,6 +789,11 @@ class StickerView : RelativeLayout {
         return true
     }
 
+    fun resetDefault(){
+        this.onStickerOperationListener?.onStickerTouchOutside(this.handlingSticker)
+        invalidate()
+    }
+
     protected fun onTouchUp(paramMotionEvent: MotionEvent) {
         val l = SystemClock.uptimeMillis()
         this.onMoving = false
