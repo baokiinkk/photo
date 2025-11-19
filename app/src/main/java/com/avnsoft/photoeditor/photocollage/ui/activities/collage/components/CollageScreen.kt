@@ -1,7 +1,5 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 
-import android.app.Activity
-import android.content.ContextWrapper
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,30 +18,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
+import androidx.compose.ui.zIndex
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerData
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerToolPanel
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerUIState
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerViewCompose
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerLib
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextStickerLib
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
-import com.basesource.base.result.Result
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 
 @Composable
 fun CollageScreen(
@@ -51,14 +38,29 @@ fun CollageScreen(
     vm: CollageViewModel,
     onBack: () -> Unit,
 ) {
+    // State để lưu trữ danh sách uris (có thể thay đổi khi thêm ảnh)
+    var currentUris by remember(uris) { mutableStateOf(uris) }
+    
+    // Launcher để chọn ảnh từ gallery
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let { newUri ->
+            // Thêm ảnh mới vào danh sách
+            currentUris = currentUris + newUri
+            // Cập nhật số lượng ảnh và load lại templates
+            // vm.load() sẽ tự động chọn grid đầu tiên
+            val newCount = currentUris.size.coerceAtLeast(1)
+            vm.load(newCount)
+        }
+    }
+    
     // Observe state from ViewModel
     val templates by vm.templates.collectAsState()
     val selected by vm.selected.collectAsState()
     val collageState by vm.collageState.collectAsState()
     val canUndo by vm.canUndo.collectAsState()
     val canRedo by vm.canRedo.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
-
     var showGridsSheet by remember { mutableStateOf(false) }
     var showRatioSheet by remember { mutableStateOf(false) }
     var showBackgroundSheet by remember { mutableStateOf(false) }
@@ -67,40 +69,13 @@ fun CollageScreen(
     var showTextSheet by remember { mutableStateOf(false) }
 
     // Sticker state
-
-    val stickerRepo: StickerRepoImpl = koinInject()
-    var stickerUIState by remember { mutableStateOf(StickerUIState()) }
-    var currentStickerData by remember { mutableStateOf<StickerData?>(null) }
-    var currentTextData by remember { mutableStateOf<AddTextProperties?>(null) }
-
     // Extract values from state
     val topMargin = collageState.topMargin
     val columnMargin = collageState.columnMargin
     val cornerRadius = collageState.cornerRadius
     val ratio = collageState.ratio
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            currentStickerData = StickerData.StickerFromGallery(
-                pathSticker = it.toString()
-            )
-        }
-    }
     LaunchedEffect(Unit) {
-        vm.load(uris.size.coerceAtLeast(1))
-    }
-
-    LaunchedEffect(collageState.stickerBitmapPath) {
-        try {
-            currentStickerData =
-                collageState.stickerBitmapPath?.takeIf { it.isNotEmpty() }?.let { path ->
-                    StickerData.StickerFromAsset(pathSticker = path)
-                } ?: null
-        } catch (e: Exception) {
-            e.printStackTrace()
-            currentStickerData = null
-        }
+        vm.load(currentUris.size.coerceAtLeast(1))
     }
 
     Box(
@@ -146,13 +121,13 @@ fun CollageScreen(
 
             ) {
                 val templateToUse = selected ?: templates.firstOrNull()
-                ?: CollageTemplates.defaultFor(uris.size.coerceAtLeast(1))
+                ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
                 // Map slider values to Dp
                 val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
                 val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
 
                 CollagePreview(
-                    images = uris,
+                    images = currentUris,
                     template = templateToUse,
                     gap = gapValue,
                     corner = cornerValue,
@@ -168,12 +143,6 @@ fun CollageScreen(
                         vm.confirmImageTransformChanges()
                     }
                 )
-                currentStickerData?.let {
-                    StickerViewCompose(
-                        modifier = Modifier.fillMaxSize(),
-                        input = it,
-                    )
-                }
             }
 
             // Bottom tools
@@ -232,6 +201,18 @@ fun CollageScreen(
                             showFrameSheet = false
                         }
 
+                        CollageTool.ADD_PHOTO -> {
+                            // Mở gallery để chọn ảnh
+                            launcher.launch("image/*")
+                            // Đóng tất cả các sheet khác
+                            showTextSheet = false
+                            showGridsSheet = false
+                            showRatioSheet = false
+                            showBackgroundSheet = false
+                            showFrameSheet = false
+                            showStickerSheet = false
+                        }
+
                         else -> {
                             showTextSheet = false
                             showGridsSheet = false
@@ -244,16 +225,6 @@ fun CollageScreen(
                 }
             )
         }
-        TextStickerLib(
-            modifier = Modifier.padding(bottom = 62.dp),
-            isShowToolPanel = showTextSheet,
-            onApply = {
-                showTextSheet = false
-            },
-            onCancel = {
-                showTextSheet = false
-            }
-        )
         if (showGridsSheet) {
             GridsSheet(
                 templates = templates,
@@ -272,6 +243,7 @@ fun CollageScreen(
                 onColumnMarginChange = { vm.updateColumnMargin(it) },
                 cornerRadius = cornerRadius,
                 onCornerRadiusChange = { vm.updateCornerRadius(it) },
+                imageCount = currentUris.size.coerceAtLeast(1),
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
@@ -342,71 +314,9 @@ fun CollageScreen(
                     .align(Alignment.BottomCenter)
             )
         }
-
-        if (showStickerSheet) {
-            if (stickerUIState.currentTab == null)
-                stickerUIState =
-                    stickerUIState.copy(currentTab = stickerUIState.stickers.firstOrNull())
-            StickerToolPanel(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .align(Alignment.BottomCenter),
-                uiState = stickerUIState,
-                onTabSelected = { tab ->
-                    stickerUIState = stickerUIState.copy(currentTab = tab)
-                },
-                onCancel = {
-                    showStickerSheet = false
-                    currentStickerData = null
-                },
-                onApply = {
-                    showStickerSheet = false
-                    vm.updateStickerBitmapPath(
-                        when (currentStickerData) {
-                            is StickerData.StickerFromAsset -> (currentStickerData as StickerData.StickerFromAsset).pathSticker
-                            is StickerData.StickerFromGallery -> (currentStickerData as StickerData.StickerFromGallery).pathSticker
-                            null -> ""
-                        }
-                    )
-                },
-                onStickerSelected = { path ->
-                    currentStickerData = StickerData.StickerFromAsset(path)
-                },
-                onAddStickerFromGallery = {
-                    launcher.launch("image/*")
-                }
-            )
-        }
-    }
-
-    // Initialize sticker emoji tabs when sticker sheet is shown
-    LaunchedEffect(showStickerSheet) {
-        coroutineScope.launch(Dispatchers.IO) {
-            if (showStickerSheet && stickerUIState.stickers.isEmpty()) {
-                val emojiTabs = stickerRepo.getStickers()
-                when (emojiTabs) {
-                    is Result.Success -> {
-                        stickerUIState = stickerUIState.copy(stickers = emojiTabs.data)
-                    }
-
-                    else -> {
-
-                    }
-                }
-            }
-        }
     }
 }
 
-private fun android.content.Context.findActivity(): Activity? {
-    var ctx = this
-    while (ctx is ContextWrapper) {
-        if (ctx is Activity) return ctx
-        ctx = ctx.baseContext
-    }
-    return null
-}
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
