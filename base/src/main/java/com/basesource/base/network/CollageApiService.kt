@@ -34,7 +34,7 @@ interface CollageApiService {
     ): String
 
     @GET("https://proxy-future-self.footballtv.info/v3/tools/get-by-id/{id}")
-   suspend fun getProgress(
+    suspend fun getProgress(
         @Path("id") id: String?,
         @Header("Authorization") token: String?
     ): String
@@ -47,6 +47,17 @@ interface CollageApiService {
 
     @GET("mock_template_data")
     suspend fun getTemplates(): Response<ResponseBody>
+
+
+    @Multipart
+    @POST("https://proxy-future-self.footballtv.info/v3/tools/remove-object-manual")
+    suspend fun genRemoveObject(
+        @Part fileMask: MultipartBody.Part?,
+        @Part file: MultipartBody.Part?,
+        @Part data: MultipartBody.Part?,
+        @Header("Authorization") token: String?
+    ): String
+
 }
 
 

@@ -223,7 +223,11 @@ class DrawingView @JvmOverloads constructor(
             canvasDrawMask.drawRect(this, clearPaint)
             canvasDrawPreview.drawRect(this, clearPaint)
         }
-        bitmapView = Bitmap.createScaledBitmap(originalBitmap, widthImg, heightImg, true)
+        Log.d(
+            "aaaaa",
+            "width $widthImg && height $heightImg  originalBitmap: ${originalBitmap.width} && ${originalBitmap.height}"
+        )
+        bitmapView = Bitmap.createScaledBitmap(originalBitmap, originalBitmap.width, originalBitmap.height, true)
         invalidate()
     }
 

@@ -87,29 +87,7 @@ class EditorViewModel(
 
     }
 
-    suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {
-        try {
-            if (sourceUri == null) return null
-            val inputStream =
-                context.contentResolver.openInputStream(sourceUri) ?: return null
-            val file = File(
-                context.filesDir,
-                "theme_image_${System.currentTimeMillis()}.png"
-            ) // có thể đổi tên nếu muốn
-            val outputStream = FileOutputStream(file)
 
-            inputStream.use { input ->
-                outputStream.use { output ->
-                    input.copyTo(output)
-                }
-            }
-            // Trả về Uri nội bộ
-            return file.absolutePath
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return null
-        }
-    }
 
 
     fun updateBitmap(tool: CollageTool = CollageTool.NONE, pathBitmap: String?, bitmap: Bitmap?) {
@@ -358,3 +336,27 @@ data class EditorUIState(
     val canUndo: Boolean = false,
     val canRedo: Boolean = false
 )
+
+suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {
+    try {
+        if (sourceUri == null) return null
+        val inputStream =
+            context.contentResolver.openInputStream(sourceUri) ?: return null
+        val file = File(
+            context.filesDir,
+            "theme_image_${System.currentTimeMillis()}.png"
+        ) // có thể đổi tên nếu muốn
+        val outputStream = FileOutputStream(file)
+
+        inputStream.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+        // Trả về Uri nội bộ
+        return file.absolutePath
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return null
+    }
+}
