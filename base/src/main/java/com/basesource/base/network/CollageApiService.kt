@@ -27,17 +27,17 @@ interface CollageApiService {
 
     @Multipart
     @POST("v3/tools/remove-object-auto-detect")
-    fun genAutoDetect(
+    suspend fun genAutoDetect(
         @Part file: MultipartBody.Part?,
         @Part data: MultipartBody.Part?,
         @Header("Authorization") token: String?
-    ): Response<ResponseBody>
+    ): String
 
-    @GET("v3/tools/get-by-id/{id}")
-    fun getProgress(
+    @GET("https://proxy-future-self.footballtv.info/v3/tools/get-by-id/{id}")
+   suspend fun getProgress(
         @Path("id") id: String?,
         @Header("Authorization") token: String?
-    ): Response<ResponseBody>
+    ): String
 
     @POST("https://proxy-future-self.footballtv.info/v4/account/get-token")
     suspend fun getTokenFirebase(@Body requestBody: DataEncrypt): String

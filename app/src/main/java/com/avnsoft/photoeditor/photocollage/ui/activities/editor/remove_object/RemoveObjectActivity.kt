@@ -3,6 +3,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,27 +26,38 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.RecyclerView
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.databinding.ActivityRemoveObjectBinding
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BrushShapeSlider
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.DialogAIGenerate
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.ObjAdapter
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.ObjAuto
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.RemoveObjState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.Type
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.ui.base.BaseNativeActivity
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.toJson
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.collections.remove
 
-class RemoveObjectActivity : BaseActivity() {
+class RemoveObjectActivity : BaseNativeActivity() {
 
     private val viewmodel: RemoveObjectViewModel by viewModel()
 
@@ -57,6 +69,18 @@ class RemoveObjectActivity : BaseActivity() {
         ActivityRemoveObjectBinding.inflate(layoutInflater)
     }
 
+    private val objAdapter by lazy {
+        ObjAdapter(this).apply {
+            eventClickObj = {
+                onObjAutoSelected(it)
+            }
+        }
+    }
+
+    private val btRemoveObState = MutableStateFlow(false)
+
+    var removingDialog: DialogAIGenerate = DialogAIGenerate()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +89,26 @@ class RemoveObjectActivity : BaseActivity() {
             newPathBitmap = cacheDir.absolutePath + "/BitmapOriginal_For_remove_obj.jpeg"
         )
         setContentView(binding.root)
-        viewmodel.refreshTokenFirebase()
+
+        binding.recyclerV.adapter = objAdapter
+        binding.recyclerV.itemAnimator = object : DefaultItemAnimator() {
+            override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder) = true
+        }
+
+        binding.tvAll.isSelected = true
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewmodel.listObjDetected.collect {
+                    binding.tvAll.text = "All" + " (${it.size})"
+                    objAdapter?.differ?.submitList(null)
+                    objAdapter?.differ?.submitList(it)
+                    Log.d("thanhc", " All ${it.size}")
+                    Log.d("thanhc", " submitList ${it.first().toJson()}")
+                    binding.viewRemoveObject.drawingView?.setListObjAuto(it)
+                }
+            }
+        }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewmodel.uiState.collect {
@@ -82,37 +125,40 @@ class RemoveObjectActivity : BaseActivity() {
                 viewmodel.removeObjState.collect {
                     when (it) {
                         is RemoveObjState.DoneRemoving -> {
-//                            removingDialog.dismiss()
-//                            binding.btRevemoObj.isEnabled = false
-//                            binding.btRevemoObj.isVisible = false
-//                            drawingView?.setBitmapDraw(it.bitmapResult)
-//                            drawingView?.setListObjSelected(null)
-//                            removeObjVM?.updateListObjDetected(objAdapter?.listObjSelected)
-//                            objAdapter?.listObjSelected?.clear()
+                            removingDialog.dismiss()
+                            binding.btRevemoObj.isEnabled = false
+                            binding.btRevemoObj.isVisible = false
+                            binding.viewRemoveObject.drawingView?.setBitmapDraw(it.bitmapResult)
+                            binding.viewRemoveObject.drawingView?.setListObjSelected(null)
+//                            viewmodel.updateListObjDetected(objAdapter?.listObjSelected)
+                            objAdapter?.listObjSelected?.clear()
 //                            binding.btChangeImg.visibility = View.VISIBLE
                         }
 
                         is RemoveObjState.RemovingObj -> {
-                            Log.e("RemoveObjStateRemovingObj", "removingDialog.show: ", )
-//                            removingDialog.setContent(getString(R.string.content_removing_object))
-//                            removingDialog.show(supportFragmentManager, removingDialog.tag)
+                            Log.e("RemoveObjStateRemovingObj", "removingDialog.show: ")
+                            removingDialog.setContent(getString(R.string.content_removing_object))
+                            removingDialog.show(supportFragmentManager, removingDialog.tag)
                         }
 
                         is RemoveObjState.Error -> {
-//                            removingDialog.dismiss()
-                            Toast.makeText(this@RemoveObjectActivity, it.getErrorMessage(), Toast.LENGTH_SHORT).show()
+                            removingDialog.dismiss()
+                            Toast.makeText(
+                                this@RemoveObjectActivity,
+                                it.getErrorMessage(),
+                                Toast.LENGTH_SHORT
+                            ).show()
 
                         }
 
                         is RemoveObjState.None -> Unit
                         is RemoveObjState.DoneScanning -> {
-//                            removingDialog.dismiss()
-//                            setAutoDetectedObjLayoutState()
+                            removingDialog.dismiss()
                         }
 
                         is RemoveObjState.ScanningObj -> {
-//                            removingDialog.setContent(getString(R.string.content_detecting_object))
-//                            removingDialog.show(supportFragmentManager, removingDialog.tag)
+                            removingDialog.setContent(getString(R.string.content_removing_object))
+                            removingDialog.show(supportFragmentManager, removingDialog.tag)
                         }
                     }
                 }
@@ -132,19 +178,50 @@ class RemoveObjectActivity : BaseActivity() {
                 binding.viewRemoveObject.setType(Type.LASSO_ERASE)
             },
             onTabSelected = {
-                when(it){
+                when (it) {
                     RemoveObjectTab.TAB.AUTO -> {
                         binding.viewRemoveObject.setType(Type.SELECT_OBJ)
+                        viewmodel.getObjDetectedAuto(binding.viewRemoveObject.drawingView)
+                        binding.frameTool.isVisible = true
                     }
+
                     RemoveObjectTab.TAB.BRUSH -> {
                         binding.viewRemoveObject.setType(Type.BRUSH)
+                        binding.frameTool.isInvisible = true
                     }
+
                     RemoveObjectTab.TAB.LASSO -> {
                         binding.viewRemoveObject.setType(Type.LASSO_BRUSH)
+                        binding.frameTool.isInvisible = true
                     }
                 }
             }
         )
+    }
+
+    private fun onObjAutoSelected(objAuto: ObjAuto) {
+        if (objAuto.isRemoved) {
+            return
+        }
+        if (objAdapter?.listObjSelected?.contains(objAuto) == true) {
+            objAdapter?.listObjSelected?.remove(objAuto)
+        } else {
+            objAdapter?.listObjSelected?.add(objAuto)
+            objAdapter?.differ?.currentList?.indexOf(objAuto)?.let {
+                if (it != -1) {
+                    binding.recyclerV.smoothScrollToPosition(it)
+                }
+            }
+        }
+        objAdapter?.notifyItemRangeChanged(
+            0, objAdapter!!.differ.currentList.size
+        )
+        binding.viewRemoveObject.drawingView?.setListObjSelected(objAdapter!!.listObjSelected)
+        if (objAdapter!!.listObjSelected.isNotEmpty()) {
+            btRemoveObState.value = true
+            binding.btRevemoObj.isEnabled = true
+            binding.btRevemoObj.isVisible = true
+        }
     }
 
     private fun headerUI() {
@@ -172,6 +249,7 @@ class RemoveObjectActivity : BaseActivity() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(200.dp)
                     .padding(top = 16.dp)
                     .background(Color.White, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
             ) {
@@ -198,7 +276,6 @@ class RemoveObjectActivity : BaseActivity() {
 
                 when (uiState.tab) {
                     RemoveObjectTab.TAB.AUTO -> {
-
                     }
 
                     RemoveObjectTab.TAB.BRUSH -> {

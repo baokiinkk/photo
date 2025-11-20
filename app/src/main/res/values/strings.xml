@@ -79,4 +79,5 @@
     <string name="unlock_sticker_pack">Unlock Sticker Pack</string>
     <string name="background_pack">Background Pack</string>
     <string name="template">Template</string>
+    <string name="content_removing_object">Magic AI is removing...</string>
 </resources>
