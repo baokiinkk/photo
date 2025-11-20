@@ -25,6 +25,7 @@ data class ProcessedCellData(
     val clearPathInCenterVertical: Boolean? = null,
     val fitBound: Boolean? = null,  // Fit bound
     val pathAlignParentRight: Boolean? = null,  // Path align parent right
+    val cornerMethod: String? = null, // Corner method identifier
     val imageUri: Uri
 )
 
@@ -70,6 +71,7 @@ object CollagePreviewDataProcessor {
         canvasWidth: Float,
         canvasHeight: Float
     ): ProcessedCellData {
+        val cornerMethod = parseCornerMethod(cell.cornerMethod)
         // Points là optional nếu có path hoặc clearPath
         if (cell.points != null) {
             require(cell.points.size >= 6 && cell.points.size % 2 == 0) {
@@ -133,6 +135,7 @@ object CollagePreviewDataProcessor {
                 cell.clearPathType, cell.clearPathRatioBound,
                 cell.clearPathInCenterHorizontal, cell.clearPathInCenterVertical,
                 cell.fitBound, cell.pathAlignParentRight,
+                cornerMethod,
                 imageUri
             )
         } else {
@@ -148,6 +151,7 @@ object CollagePreviewDataProcessor {
                     cell.clearPathType, cell.clearPathRatioBound,
                     cell.clearPathInCenterHorizontal, cell.clearPathInCenterVertical,
                     cell.fitBound, cell.pathAlignParentRight,
+                    cornerMethod,
                     imageUri
                 )
             }
@@ -193,11 +197,24 @@ object CollagePreviewDataProcessor {
                 cell.clearPathType, cell.clearPathRatioBound,
                 cell.clearPathInCenterHorizontal, cell.clearPathInCenterVertical,
                 cell.fitBound, cell.pathAlignParentRight,
+                cornerMethod,
                 imageUri
             )
         }
         
         return result
+    }
+}
+
+private fun parseCornerMethod(value: Any?): String? {
+    return when (value) {
+        is String -> value
+        is Number -> when (value.toInt()) {
+            1 -> "3_6"
+            2 -> "3_13"
+            else -> null
+        }
+        else -> null
     }
 }
 
