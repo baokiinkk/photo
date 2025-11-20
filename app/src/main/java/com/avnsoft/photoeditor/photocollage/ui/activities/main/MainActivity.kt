@@ -31,6 +31,9 @@ import androidx.core.net.toUri
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
 
 class MainActivity : BaseActivity() {
@@ -70,9 +73,11 @@ class MainActivity : BaseActivity() {
 
                             FeatureType.FREE_STYLE -> TODO()
                             FeatureType.REMOVE_BACKGROUND -> TODO()
-                            FeatureType.AI_ENHANCE -> TODO()
-                            FeatureType.REMOVE_OBJECT -> {
+                            FeatureType.AI_ENHANCE -> {
                                 gotoStorePhoto()
+                            }
+                            FeatureType.REMOVE_OBJECT -> {
+                                gotoRemoveObject()
                             }
 
                             FeatureType.EDIT_PHOTO -> {
@@ -106,6 +111,24 @@ class MainActivity : BaseActivity() {
                     toActivity = EditorActivity::class.java,
                     input = EditorInput(pathBitmap = it),
                 )
+            }
+        }
+    }
+
+    private fun gotoRemoveObject(){
+        launchActivity(
+            toActivity = ImagePickerActivity::class.java,
+            ImageRequest(TypeSelect.SINGLE)
+        ) { result ->
+            val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
+            result?.let {
+                lifecycleScope.launch {
+                    val pathBitmap =copyImageToAppStorage(this@MainActivity, result.toUri())
+                    launchActivity(
+                        toActivity = RemoveObjectActivity::class.java,
+                        input = ToolInput(pathBitmap = pathBitmap),
+                    )
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
@@ -40,6 +41,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Fea
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BrushShapeSlider
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.DialogAIGenerate
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.DrawingView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.ObjAdapter
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.ObjAuto
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.RemoveObjState
@@ -53,6 +55,7 @@ import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.toJson
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.collections.remove
@@ -97,6 +100,30 @@ class RemoveObjectActivity : BaseNativeActivity() {
 
         binding.tvAll.isSelected = true
 
+        binding.btAll.setOnClickListener {
+            objAdapter.selectAll {
+                binding.viewRemoveObject.drawingView?.setListObjSelected(it.filter { objAuto -> !objAuto.isRemoved })
+                if (it.isNotEmpty()) {
+                    btRemoveObState.value = true
+                    binding.btRevemoObj.isEnabled = true
+                    binding.btRevemoObj.isVisible = true
+                }
+            }
+        }
+
+        binding.btRevemoObj.setOnClickListener {
+
+            Log.e("RemoveObjStateRemovingObj", "call removeObj:1.0")
+            //doRemoveObj()
+
+            Log.e("RemoveObjStateRemovingObj", "call removeObj:1.1")
+            Log.e("RemoveObjStateRemovingObj", "call removeObj:1.2")
+
+            binding.viewRemoveObject.drawingView?.let {
+                doRemoveObj(it)
+            }
+        }
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewmodel.listObjDetected.collect {
@@ -114,7 +141,8 @@ class RemoveObjectActivity : BaseNativeActivity() {
                 viewmodel.uiState.collect {
                     if (it.bitmap != null) {
                         binding.viewRemoveObject.registerView(it.bitmap)
-                        binding.viewRemoveObject.setType(Type.BRUSH)
+                        activeTabFirst()
+//                        binding.viewRemoveObject.setType(Type.BRUSH)
                     }
                 }
 
@@ -126,12 +154,13 @@ class RemoveObjectActivity : BaseNativeActivity() {
                     when (it) {
                         is RemoveObjState.DoneRemoving -> {
                             removingDialog.dismiss()
+                            binding.frameTool.isVisible = true
                             binding.btRevemoObj.isEnabled = false
                             binding.btRevemoObj.isVisible = false
                             binding.viewRemoveObject.drawingView?.setBitmapDraw(it.bitmapResult)
                             binding.viewRemoveObject.drawingView?.setListObjSelected(null)
-//                            viewmodel.updateListObjDetected(objAdapter?.listObjSelected)
-                            objAdapter?.listObjSelected?.clear()
+                            viewmodel.updateListObjDetected(objAdapter.listObjSelected)
+                            objAdapter.listObjSelected?.clear()
 //                            binding.btChangeImg.visibility = View.VISIBLE
                         }
 
@@ -164,12 +193,75 @@ class RemoveObjectActivity : BaseNativeActivity() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            viewmodel.buttonState.collect {
+                Log.i("TAG", "observerDataChangeứefwef: ${it}")
+
+                when (it) {
+                    ButtonState.CAN_PREV -> {
+//                        setButtonState(binding.btNext, enabled = false)
+//                        setButtonState(binding.btPrev, enabled = true)
+                        viewmodel.updateUndoRedoState(
+                            canUndo = false,
+                            canRedo = true
+                        )
+//                        binding.btnReverse.isEnabled = true
+                    }
+
+                    ButtonState.CAN_NEXT -> {
+//                        setButtonState(binding.btNext, enabled = true)
+//                        setButtonState(binding.btPrev, enabled = false)
+                        viewmodel.updateUndoRedoState(
+                            canUndo = true,
+                            canRedo = false
+                        )
+//                        binding.btnReverse.isEnabled = false
+                    }
+
+                    ButtonState.CAN_PREV_AND_NEXT -> {
+//                        setButtonState(binding.btNext, enabled = true)
+//                        setButtonState(binding.btPrev, enabled = true)
+                        viewmodel.updateUndoRedoState(
+                            canUndo = true,
+                            canRedo = true
+                        )
+//                        binding.btnReverse.isEnabled = true
+                    }
+
+                    ButtonState.NONE -> {
+//                        setButtonState(binding.btNext, false)
+//                        setButtonState(binding.btPrev, false)
+                        viewmodel.updateUndoRedoState(
+                            canUndo = false,
+                            canRedo = false
+                        )
+//                        binding.btnReverse.isEnabled = false
+                    }
+
+                    ButtonState.CAN_SAVE -> {
+                        setButtonSaveState(true)
+                    }
+
+                    ButtonState.CAN_NOT_SAVE -> {
+                        setButtonSaveState(false)
+                    }
+                }
+            }
+        }
+
         headerUI()
         footerUI(
             viewModel = viewmodel,
             onSliderBrushChange = {
                 binding.viewRemoveObject.setStrokeWidth(strokeWidth = it, true)
                 viewmodel.updateBlurBrush(it)
+            },
+            onValueChangeFinished = {
+                binding.viewRemoveObject.setStrokeWidth(
+                    strokeWidth = viewmodel.composeUIState.value.blurBrush,
+                    false
+                )
             },
             onAddLasso = {
                 binding.viewRemoveObject.setType(Type.LASSO_BRUSH)
@@ -199,6 +291,28 @@ class RemoveObjectActivity : BaseNativeActivity() {
         )
     }
 
+    private fun activeTabFirst() {
+//        binding.viewRemoveObject.setType(Type.SELECT_OBJ)
+//        viewmodel.getObjDetectedAuto(binding.viewRemoveObject.drawingView)
+        binding.frameTool.isInvisible = true
+        binding.viewRemoveObject.setType(Type.BRUSH)
+    }
+
+    private fun setButtonSaveState(isEnable: Boolean) {
+//        binding.btSave.isEnabled = isEnable
+//        if (isEnable) {
+//            binding.btSave.setTextColor(android.graphics.Color.parseColor("#615BFD"))
+//        } else {
+//            binding.btSave.setTextColor(android.graphics.Color.parseColor("#BABABB"))
+//        }
+    }
+
+    private fun setButtonState(view: ImageView, enabled: Boolean) {
+        view.apply {
+            isEnabled = enabled
+        }
+    }
+
     private fun onObjAutoSelected(objAuto: ObjAuto) {
         if (objAuto.isRemoved) {
             return
@@ -224,14 +338,41 @@ class RemoveObjectActivity : BaseNativeActivity() {
         }
     }
 
+    private fun doRemoveObj(drawingView: DrawingView) {
+        Log.e("RemoveObjStateRemovingObj", "call removeObj:1 ")
+        viewmodel.removeObj(
+            drawingView,
+            listObjSelected = objAdapter.listObjSelected,
+        )
+    }
+
     private fun headerUI() {
         binding.composeHeader.setContent {
+            val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
             FeaturePhotoHeader(
-                onUndo = {},
-                onRedo = {},
-                onSave = {},
-                canUndo = false,
-                canRedo = false
+                onBack = {
+                    finish()
+                },
+                onUndo = {
+                    viewmodel.setCurrImageIndex(false) { bm ->
+                        binding.viewRemoveObject.drawingView?.setBitmapDraw(bm)
+                    }
+
+                },
+                onRedo = {
+                    viewmodel.setCurrImageIndex(true) { bm ->
+                        binding.viewRemoveObject.drawingView?.setBitmapDraw(bm)
+                    }
+                },
+                onSave = {
+                    viewmodel.saveImg { pathSave ->
+                        if (pathSave != null) {
+//                            navigateNextScreen(pathSave)
+                        }
+                    }
+                },
+                canUndo = uiState.canUndo,
+                canRedo = uiState.canRedo
             )
         }
     }
@@ -241,7 +382,8 @@ class RemoveObjectActivity : BaseNativeActivity() {
         onSliderBrushChange: (Float) -> Unit,
         onAddLasso: () -> Unit,
         onSubtractLasso: () -> Unit,
-        onTabSelected: (RemoveObjectTab.TAB) -> Unit
+        onTabSelected: (RemoveObjectTab.TAB) -> Unit,
+        onValueChangeFinished: (() -> Unit)? = null
     ) {
         binding.composeFooter.setContent {
             val uiState by viewModel.composeUIState.collectAsStateWithLifecycle()
@@ -276,13 +418,15 @@ class RemoveObjectActivity : BaseNativeActivity() {
 
                 when (uiState.tab) {
                     RemoveObjectTab.TAB.AUTO -> {
+
                     }
 
                     RemoveObjectTab.TAB.BRUSH -> {
                         Spacer(modifier = Modifier.height(36.dp))
                         TabBrush(
                             uiState = uiState,
-                            onSliderBrushChange = onSliderBrushChange
+                            onSliderBrushChange = onSliderBrushChange,
+                            onValueChangeFinished = onValueChangeFinished
                         )
                     }
 
@@ -353,14 +497,16 @@ fun TabLasso(
 @Composable
 fun TabBrush(
     uiState: RemoveObjectComposeUIState,
-    onSliderBrushChange: (Float) -> Unit
+    onSliderBrushChange: (Float) -> Unit,
+    onValueChangeFinished: (() -> Unit)? = null
 ) {
     BrushShapeSlider(
         value = uiState.blurBrush,
         onValueChange = onSliderBrushChange,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
+        onValueChangeFinished = onValueChangeFinished
     )
 }
 

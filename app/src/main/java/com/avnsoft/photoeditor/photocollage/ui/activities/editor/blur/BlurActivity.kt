@@ -292,7 +292,8 @@ fun BlurToolPanel(
 fun BrushShapeSlider(
     value: Float,
     onValueChange: (Float) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onValueChangeFinished: (() -> Unit)? = null
 ) {
     Row(
         modifier = modifier,
@@ -309,7 +310,8 @@ fun BrushShapeSlider(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier
-                .weight(1f)
+                .weight(1f),
+            onValueChangeFinished = onValueChangeFinished
         )
 
         Spacer(modifier = Modifier.width(20.dp))
@@ -327,7 +329,8 @@ fun BrushShapeSlider(
 fun SliderZoom(
     value: Float,
     onValueChange: (Float) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onValueChangeFinished: (() -> Unit)? = null
 ) {
     Box(
         modifier = modifier
@@ -388,6 +391,7 @@ fun SliderZoom(
         Slider(
             value = value,
             onValueChange = onValueChange,
+            onValueChangeFinished = onValueChangeFinished,
             valueRange = 0f..100f,
             modifier = Modifier
                 .fillMaxWidth(),

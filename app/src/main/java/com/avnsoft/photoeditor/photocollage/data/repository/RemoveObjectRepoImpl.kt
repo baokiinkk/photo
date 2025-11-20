@@ -5,6 +5,7 @@ import android.util.Log
 import com.android.amg.AMGUtil
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GenAutoDetectResponse
+import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GenRemoveObjectResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GetTokenFirebaseResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.ImageSuccessResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.RemoveObjRequestBody
@@ -118,27 +119,66 @@ class RemoveObjectRepoImpl(
         Log.d("getAccessToken", "after encrypt: ${responseGetToken.toJson()}")
         editorSharedPref.setIsRequestedToken(true)
         editorSharedPref.saveAccessToken(responseGetToken.token)
+    }
 
-//        Log.e("getAccessToken", "before encrypt: ----------------- ")
+    suspend fun genRemoveObject(
+        fileMask: File,
+        fileOrigin: File
+    ): GenRemoveObjectResponse {
+        val requestMaskFile = fileMask.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val maskFile =
+            MultipartBody.Part.createFormData("mask_file", fileMask.name, requestMaskFile)
 
-//        val dataEncrypt = DataEncrypt(
-//            data = token
-//        )
-//        val response = safeApiCall<GetTokenFirebaseResponse>(
-//            context = context,
-//            apiCallMock = { api.getTokenFirebase(dataEncrypt) },
-//            apiCall = { api.getTokenFirebase(dataEncrypt) }
-//        )
-//        when (response) {
-//            is Result.Success -> {
-//                editorSharedPref.setIsRequestedToken(true)
-//                editorSharedPref.saveAccessToken(response.data.token)
-//                Log.d("getAccessToken", "after encrypt: ${response.data.token}")
-//            }
-//
-//            else -> {
-//
-//            }
+        val requestFile = fileOrigin.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val originFile =
+            MultipartBody.Part.createFormData("file", fileOrigin.name, requestFile)
+
+        val json = gson.toJson(
+            RemoveObjRequestBody(
+                tier = TierUtil.getTearUser(context)
+            )
+        )
+
+        val encrypt = AMGUtil.encryptFile(context, json, fileOrigin, "firebaseToken")
+
+        val dataRequest = MultipartBody.Part.createFormData("data", encrypt)
+        Log.e("", "removeObj: ")
+        val data = api.genRemoveObject(
+            maskFile,
+            originFile, dataRequest, "Bearer " + editorSharedPref.getAccessToken()
+        )
+
+        Log.d("TAG", "onViewReady: $data")
+        val cleanResponseBody = data.replace("\"", "")
+        val decryptedResponse = AMGUtil.decrypt(context, cleanResponseBody)
+        Log.d("TAG", "Decrypted response: $decryptedResponse")
+        val responsePostAI =
+            gson.fromJson(decryptedResponse, GenRemoveObjectResponse::class.java)
+        Log.d("TAG", "id response:  ${responsePostAI.id}")
+        return responsePostAI
+    }
+
+    suspend fun getProgressRemoveObject(
+        id: String
+    ): ImageSuccessResponse {
+        val data = api.getProgress(
+            id = id,
+            token = "Bearer " + editorSharedPref.getAccessToken()
+        )
+
+        Log.d("TAG", "onViewReady: $data")
+        val cleanResponseBody = data.replace("\"", "")
+        val decryptedResponse = AMGUtil.decrypt(context, cleanResponseBody)
+        Log.d("TAG", "Decrypted response: $decryptedResponse")
+
+//        if (decryptedResponse.equals("null")) {
+//            throw Exception("Data is null")
 //        }
+        val responsePostAI = gson.fromJson(
+            decryptedResponse,
+            ImageSuccessResponse::class.java
+        )
+
+        return responsePostAI
     }
 }

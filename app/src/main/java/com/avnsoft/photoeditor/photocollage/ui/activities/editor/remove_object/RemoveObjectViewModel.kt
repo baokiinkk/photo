@@ -25,14 +25,25 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.android.annotation.KoinViewModel
 import java.io.File
 import java.io.FileOutputStream
+import java.net.URL
+
+enum class ButtonState {
+
+    CAN_PREV, CAN_NEXT, CAN_PREV_AND_NEXT, NONE, CAN_SAVE, CAN_NOT_SAVE
+}
 
 @KoinViewModel
 class RemoveObjectViewModel(
@@ -60,13 +71,23 @@ class RemoveObjectViewModel(
             icon = R.drawable.ic_remove_object_lasso
         )
     )
+    private val folderTemp = context.cacheDir.absolutePath + "/ImageRemoveObjTemp"
+
 
     init {
         initData()
+        val folder = File(folderTemp)
+        folder.deleteRecursively()
+        if (!folder.exists()) {
+            folder.mkdirs()
+        }
+
     }
 
     val listPathImgRemoved = ArrayList<String>()
 
+    private val _buttonState = MutableStateFlow(ButtonState.NONE)
+    val buttonState = _buttonState.asStateFlow()
 
     fun setOriginalBitmap(
         bitmap: Bitmap?,
@@ -264,8 +285,11 @@ class RemoveObjectViewModel(
                         cancel()
                     }
                 } catch (ex: Exception) {
-                    continueRequest = false
-                    _removeObjState.value = RemoveObjState.Error(ex)
+//                    continueRequest = false
+//                    _removeObjState.value = RemoveObjState.Error(ex)
+                }
+                if (continueRequest) {
+                    delay(4000)
                 }
             }
 
@@ -276,25 +300,184 @@ class RemoveObjectViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             removeObjectRepoImpl.getTokenFirebase()
         }
-//        executeTask(
-//            onTask = {
-//                removeObjectRepoImpl.getTokenFirebase()
-//            },
-//            onSuccess = {
-//                Log.i("TAG", "refeshTokenFirebase: $it")
-//            }
-//        )
     }
+
+    var isRemoveObj = false
+        private set
+
+    fun removeObj(
+        drawingView: DrawingView,
+        listObjSelected: ArrayList<ObjAuto>?,
+    ) {
+        Log.e("RemoveObjStateRemovingObj", "call removeObj:2 ")
+        isRemoveObj = true
+        Log.e("RemoveObjStateRemovingObj", "call removeObj:3 ")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                Log.e("RemoveObjStateRemovingObj", "call removeObj:4 ")
+                Log.e("RemoveObjStateRemovingObj", "call removeObj:5")
+
+                _removeObjState.value = RemoveObjState.RemovingObj
+                val mask = drawingView.getMask()
+                val canvas = Canvas(mask)
+                Log.d("TAG", "removeObj: ${listPathImgRemoved.size}")
+                val originalBitmap = listPathImgRemoved[currIndexImg].getBitmapOriginal()
+                val originalBitmapWidth = originalBitmap.width
+                val originalBitmapHeight = originalBitmap.height
+                originalBitmap.recycle()
+                listObjSelected?.onEach { objAuto ->
+                    if (!objAuto.isRemoved) {
+                        val bitmapMaskScale = Bitmap.createScaledBitmap(
+                            objAuto.bitmapMask, originalBitmapWidth, originalBitmapHeight, true
+                        )
+                        canvas.drawBitmap(bitmapMaskScale, 0f, 0f, null)
+                        bitmapMaskScale.recycle()
+                    }
+                }
+
+                val pathSaveMask = context.cacheDir.absolutePath + "/BitmapMask.jpeg"
+
+                FileOutputStream(pathSaveMask, false).use {
+                    mask.compress(Bitmap.CompressFormat.JPEG, 100, it)
+                }
+                val fileMask = File(pathSaveMask)
+
+                Log.d("TAG", "removeObj: ${listPathImgRemoved[currIndexImg]}")
+                val fileOrigin = File(listPathImgRemoved[currIndexImg])
+
+                val response = removeObjectRepoImpl.genRemoveObject(
+                    fileMask = fileMask,
+                    fileOrigin = fileOrigin
+                )
+
+                resquestResponseRemoveObj(response.id)
+            } catch (e: Exception) {
+                Log.i("TAG", "requestImagesdfsdf: 2 $e ")
+                _removeObjState.value = RemoveObjState.Error(e)
+                cancel()
+            }
+        }
+    }
+
+
+    private fun resquestResponseRemoveObj(
+        id: String,
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            var continueRequest = true
+            while (continueRequest) {
+                try {
+                    val responsePostAI = removeObjectRepoImpl.getProgressRemoveObject(id)
+                    continueRequest = false
+                    val pathSave = folderTemp + "/${System.currentTimeMillis()}.jpeg"
+                    responsePostAI.result.url.downloadAndSaveToFile(pathSave)
+                    val bitmapRemoved = pathSave.getBitmapOriginal()
+                    listPathImgRemoved.add(pathSave)
+                    currIndexImg = listPathImgRemoved.size - 1
+                    _buttonState.value = ButtonState.CAN_SAVE
+                    delay(100)
+                    _buttonState.value = ButtonState.CAN_PREV
+                    _removeObjState.value = RemoveObjState.DoneRemoving(bitmapRemoved)
+                    cancel()
+                } catch (ex: Exception){
+
+                }
+                if (continueRequest) {
+                    delay(4000)
+                }
+            }
+        }
+    }
+
+    fun updateListObjDetected(listObjSelected: List<ObjAuto>?) {
+        listObjSelected?.let { listObjAuto ->
+            _listObjDetected.value = _listObjDetected.value.map {
+                if (listObjAuto.contains(it)) {
+                    it.copy(isRemoved = true)
+                } else {
+                    it
+                }
+            }
+        }
+    }
+
+    fun updateUndoRedoState(canUndo: Boolean, canRedo: Boolean) {
+        uiState.update {
+            it.copy(
+                canUndo = canUndo,
+                canRedo = canRedo
+            )
+        }
+    }
+
+    fun setCurrImageIndex(isNext: Boolean, onDone: (Bitmap) -> Unit) {
+
+        viewModelScope.launch {
+            val size = listPathImgRemoved.size
+
+            if (size == 1) {
+                _buttonState.value = ButtonState.NONE
+                return@launch
+            }
+
+            if (isNext && currIndexImg < size - 1) {
+                currIndexImg++
+            } else if (!isNext && currIndexImg > 0) {
+                currIndexImg--
+            }
+
+            if (currIndexImg == 0) {
+                _buttonState.value = ButtonState.CAN_NOT_SAVE
+            } else {
+                _buttonState.value = ButtonState.CAN_SAVE
+            }
+            withContext(Dispatchers.IO) {
+                listPathImgRemoved[currIndexImg].getBitmapOriginal()
+            }.let(onDone)
+
+            if (currIndexImg == 0) {
+                _buttonState.value = ButtonState.CAN_NEXT
+            } else if (size > 1 && currIndexImg == size - 1) {
+                _buttonState.value = ButtonState.CAN_PREV
+            } else {
+                _buttonState.value = ButtonState.CAN_PREV_AND_NEXT
+            }
+        }
+    }
+
+    fun saveImg(onDone: (bitmap: Bitmap?) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            var bitmapSave: Bitmap? = listPathImgRemoved[currIndexImg].getBitmapOriginal()
+            onDone.invoke(bitmapSave)
+        }
+    }
+
+}
+
+suspend fun String.downloadAndSaveToFile(pathSave: String) = withContext(Dispatchers.IO) {
+    val url = URL(this@downloadAndSaveToFile)
+    val connection = url.openConnection()
+    connection.connect()
+//    val file = File(pathSave)
+    url.openStream().use input@{ input ->
+        FileOutputStream(pathSave, false).use { output ->
+            input.copyTo(output)
+        }
+    }
+
+//    Log.d("DOWNLOAD", "Saved: ${file.absolutePath}, size=${file.length()}")
 }
 
 data class RemoveObjectUIState(
     val bitmap: Bitmap? = null,
+    val canUndo: Boolean = false,
+    val canRedo: Boolean = false
 )
 
 data class RemoveObjectComposeUIState(
     val blurBrush: Float = 50f,
     val tabs: List<RemoveObjectTab> = emptyList(),
-    val tab: RemoveObjectTab.TAB = RemoveObjectTab.TAB.AUTO
+    val tab: RemoveObjectTab.TAB = RemoveObjectTab.TAB.BRUSH
 )
 
 data class RemoveObjectTab(

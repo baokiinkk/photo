@@ -1,7 +1,5 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store.editor
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -9,25 +7,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -35,31 +25,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterComposeLib
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.initEditorLib
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerLib
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextStickerLib
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.uriToBitmap
-import com.avnsoft.photoeditor.photocollage.ui.activities.store.HeaderStore
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.clickableWithAlphaEffect
-import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.wysaid.nativePort.CGENativeLibrary
-import org.wysaid.nativePort.CGENativeLibrary.LoadImageCallback
-import java.io.IOException
 
 class EditorStoreActivity : BaseActivity() {
 
