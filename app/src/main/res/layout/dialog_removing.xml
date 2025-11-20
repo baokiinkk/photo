@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/transparent">
+
+    <!-- Background overlay -->
+    <View
+        android:id="@+id/background_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000" />
+
+    <!-- Dialog Content -->
+    <LinearLayout
+        android:id="@+id/dialog_content"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <!-- Icon -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/pb_loading"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/anim_ai_loading" />
+
+        <!-- Text -->
+        <TextView
+            android:id="@+id/textMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/content_removing_object"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:gravity="center" />
+    </LinearLayout>
+</RelativeLayout>

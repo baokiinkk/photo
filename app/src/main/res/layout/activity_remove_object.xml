@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F2F4F8"
@@ -27,16 +28,16 @@
         app:layout_constraintTop_toBottomOf="@+id/composeHeader" />
 
     <TextView
-        android:id="@+id/removeView"
+        android:id="@+id/btRevemoObj"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="-20dp"
         android:background="@drawable/bg_remove_button"
+        android:clipToPadding="false"
         android:drawableStart="@drawable/ic_remove_object_star"
         android:drawablePadding="12dp"
         android:elevation="12dp"
-        android:clipToPadding="false"
         android:outlineProvider="bounds"
         android:paddingHorizontal="16dp"
         android:paddingVertical="10dp"
@@ -53,5 +54,77 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/frameTool"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="82dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/composeFooter">
+
+        <TableRow
+            android:id="@+id/tb_auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/bt_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:background="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="10dp">
+
+                <ImageView
+                    android:id="@+id/ic_select_all"
+                    android:layout_width="51dp"
+                    android:layout_height="51dp"
+                    android:src="@drawable/ic_select_all_object_scan" />
+
+                <TextView
+                    android:id="@+id/tv_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:paddingVertical="5dp"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="All"
+                    android:textColor="#202023"
+                    android:textSize="11dp" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="10dp"
+                android:background="#CAC5CD" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_obj" />
+
+        </TableRow>
+
+    </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

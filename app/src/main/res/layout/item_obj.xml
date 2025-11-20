@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="7dp"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/rootObjectDetect"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="@drawable/stroke_object_detect"
+        android:gravity="center">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:adjustViewBounds="true"
+            android:backgroundTint="#E6E0E9"
+            app:shapeAppearanceOverlay="@style/rounded_corner_12" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/stateSelected"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:adjustViewBounds="true"
+            android:alpha="0.7"
+            android:src="@drawable/img_transparent_seleted" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="1"
+        android:paddingHorizontal="3dp"
+        android:text="sdgsaergserthsertherhaweharh"
+        android:textColor="#525252"
+        android:textSize="11dp" />
+
+</LinearLayout>

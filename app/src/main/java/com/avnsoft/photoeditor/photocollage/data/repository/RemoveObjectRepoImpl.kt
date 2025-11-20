@@ -6,6 +6,7 @@ import com.android.amg.AMGUtil
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GenAutoDetectResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GetTokenFirebaseResponse
+import com.avnsoft.photoeditor.photocollage.data.model.remove_object.ImageSuccessResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.RemoveObjRequestBody
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.ResponseObjAuto
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.TierUtil
@@ -15,11 +16,14 @@ import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.gson
 import com.basesource.base.utils.toJson
 import com.google.gson.Gson
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.core.annotation.Single
 import java.io.File
+import kotlin.text.replace
 
 @Single
 class RemoveObjectRepoImpl(
@@ -40,9 +44,10 @@ class RemoveObjectRepoImpl(
             )
         )
 
-        val encrypt = AMGUtil.encrypt(
+        val encrypt = AMGUtil.encryptFile(
             context,
             json,
+            fileOrigin,
             "firebaseToken"
         )
 
@@ -50,8 +55,16 @@ class RemoveObjectRepoImpl(
         val data = MultipartBody.Part.createFormData(
             "data", encrypt
         )
-        try {
-
+        return try {
+            val token = "Bearer " + editorSharedPref.getAccessToken()
+            val data = api.genAutoDetect(originFile, data, token)
+            val cleanResponseBody = data.replace("\"", "")
+            val decryptedResponse = AMGUtil.decrypt(context, cleanResponseBody)
+            Log.d("TAG", "Decrypted response genAutoDetect: $decryptedResponse")
+            val responsePostAI =
+                gson.fromJson(decryptedResponse, GenAutoDetectResponse::class.java)
+            Log.d("TAG", "id response:  ${responsePostAI.id}")
+            responsePostAI
         } catch (ex: Exception) {
             when (ex) {
                 is retrofit2.HttpException -> {
@@ -67,25 +80,28 @@ class RemoveObjectRepoImpl(
             }
             throw ex
         }
-        api.genAutoDetect(originFile, data, editorSharedPref.getAccessToken())
-        return GenAutoDetectResponse(
-            id = "123",
-            success = true
-        )
     }
 
     suspend fun getProgress(
         id: String
-    ): ResponseObjAuto? {
-        api.getProgress(
+    ): ResponseObjAuto {
+        val data = api.getProgress(
             id = id,
-            token = "tokenApi"
+            token = "Bearer " + editorSharedPref.getAccessToken()
         )
-        return ResponseObjAuto(
-            message = "success",
-            result = emptyList(),
-            status_code = 200
+
+        Log.d("TAG", "onViewReady: $data")
+        val cleanResponseBody = data.replace("\"", "")
+        val decryptedResponse = AMGUtil.decrypt(context, cleanResponseBody)
+        Log.d("TAG", "Decrypted response getProgress: $decryptedResponse")
+        if (decryptedResponse.equals("null")) {
+            throw Exception("Data is null")
+        }
+        val responsePostAI = gson.fromJson(
+            decryptedResponse,
+            ResponseObjAuto::class.java
         )
+        return responsePostAI
     }
 
     suspend fun getTokenFirebase() {

@@ -46,7 +46,7 @@ class RemoveObjectCustomView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private var drawingView: DrawingView? = null
+     var drawingView: DrawingView? = null
 
 
     fun registerView(mBitmap: Bitmap) {
@@ -75,4 +75,5 @@ class RemoveObjectCustomView @JvmOverloads constructor(
     fun setStrokeWidth(strokeWidth: Float, isDrawTouchSize: Boolean) {
         drawingView?.setStrokeWidth(strokeWidth, isDrawTouchSize)
     }
+
 }

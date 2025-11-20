@@ -55,6 +55,7 @@ fun StickerLib(
         if (isShowToolPanel) {
             stickerView?.setShowBorder(true)
             stickerView?.setShowIcons(true)
+            stickerView?.setLocked(false)
             StickerToolPanel(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -72,11 +73,13 @@ fun StickerLib(
                 onCancel = {
                     stickerView?.setShowBorder(false)
                     stickerView?.setShowIcons(false)
+                    stickerView?.setLocked(true)
                     onCancel.invoke()
                 },
                 onApply = {
                     stickerView?.setShowBorder(false)
                     stickerView?.setShowIcons(false)
+                    stickerView?.setLocked(true)
                     onApply.invoke()
                 },
                 onAddStickerFromGallery = {
