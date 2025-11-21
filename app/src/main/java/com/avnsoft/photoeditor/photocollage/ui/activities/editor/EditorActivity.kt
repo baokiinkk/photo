@@ -406,7 +406,6 @@ fun EditorScreen(
 //                                viewmodel.scaleBitmapToBox(newSize.toSize())
 //                            }
                         }
-                        .background(Color.Red)
                 ) {
                     uiState.originBitmap?.let {
                         Image(

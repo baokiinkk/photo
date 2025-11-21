@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
 import android.opengl.GLSurfaceView

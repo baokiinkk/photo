@@ -36,7 +36,9 @@ fun FeaturePhotoHeader(
     onSave: () -> Unit,
     canUndo: Boolean = false,
     canRedo: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    canSave: Boolean = false,
+    type: TEXT_TYPE = TEXT_TYPE.ROUND
 ) {
     val context = LocalContext.current
     Row(
@@ -62,34 +64,63 @@ fun FeaturePhotoHeader(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onUndo, enabled = canUndo) {
+            IconButton(onClick = {}, enabled = canUndo) {
                 Icon(
                     painter = painterResource(R.drawable.ic_undo),
                     contentDescription = "Undo",
-                    tint = if (canUndo) Gray900 else Gray300
+                    tint = if (canUndo) Gray900 else Gray300,
+                    modifier = Modifier.clickableWithAlphaEffect(onClick = onUndo)
                 )
             }
             IconButton(onClick = onRedo, enabled = canRedo) {
                 Icon(
                     painter = painterResource(R.drawable.ic_redo),
                     contentDescription = "Redo",
-                    tint = if (canRedo) Gray900 else Gray300
+                    tint = if (canRedo) Gray900 else Gray300,
+                    modifier = Modifier.clickableWithAlphaEffect(onClick = onRedo)
                 )
             }
         }
 
-        Text(
-            modifier = Modifier
-                .background(Primary500, RoundedCornerShape(8.dp))
-                .padding(horizontal = 12.dp, vertical = 8.dp)
-                .clickableWithAlphaEffect {
-                    onSave.invoke()
-                },
-            text = "Save",
-            textAlign = TextAlign.Center,
-            style = AppStyle.button().semibold().white()
-        )
+        when (type) {
+            TEXT_TYPE.TEXT -> {
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                        .clickableWithAlphaEffect {
+                            if (canSave) onSave.invoke()
+                        },
+                    text = "Save",
+                    textAlign = TextAlign.Center,
+                    style = if (canSave) {
+                        AppStyle.caption1().bold().primary500()
+                    } else {
+                        AppStyle.caption1().bold().gray300()
+                    }
+                )
+            }
+
+            TEXT_TYPE.ROUND -> {
+                Text(
+                    modifier = Modifier
+                        .background(Primary500, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                        .clickableWithAlphaEffect {
+                            onSave.invoke()
+                        },
+                    text = "Save",
+                    textAlign = TextAlign.Center,
+                    style = AppStyle.button().semibold().white()
+                )
+            }
+        }
+
     }
+}
+
+enum class TEXT_TYPE {
+    TEXT,
+    ROUND
 }
 
 @Preview(showBackground = true)

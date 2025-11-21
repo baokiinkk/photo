@@ -240,9 +240,9 @@ class EditorViewModel(
                         it.copy(
                             bitmap = previous.bitmap,
                             canUndo = undoStack.size >= 2,
-                            canRedo = undoStack.size >= 2,
+                            canRedo = true,
                             backgroundColor = previous.backgroundColor,
-                            originBitmap = previous.originBitmap
+                            originBitmap = previous.originBitmap,
                         )
                     }
                     pathBitmapResult = previous.pathBitmapResult
@@ -253,7 +253,7 @@ class EditorViewModel(
                         it.copy(
                             backgroundColor = previous.backgroundColor,
                             canUndo = undoStack.size >= 2,
-                            canRedo = undoStack.size >= 2
+                            canRedo = true
                         )
                     }
                 }

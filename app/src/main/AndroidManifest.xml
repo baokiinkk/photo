@@ -86,6 +86,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible"/>
 
+        <activity android:name=".ui.activities.editor.remove_background.RemoveBackgroundActivity"/>
     </application>
 
 </manifest>

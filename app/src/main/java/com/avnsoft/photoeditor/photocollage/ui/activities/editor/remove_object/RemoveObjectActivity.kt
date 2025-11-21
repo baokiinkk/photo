@@ -1,10 +1,10 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.databinding.ActivityRemoveObjectBinding
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.TEXT_TYPE
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BrushShapeSlider
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.DialogAIGenerate
@@ -49,16 +50,13 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.l
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
-import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.BaseNativeActivity
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.toJson
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlin.collections.remove
 
 class RemoveObjectActivity : BaseNativeActivity() {
 
@@ -138,9 +136,28 @@ class RemoveObjectActivity : BaseNativeActivity() {
         }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewmodel.uiState.collect {
+                viewmodel.bitmapUIState.collect {
                     if (it.bitmap != null) {
-                        binding.viewRemoveObject.registerView(it.bitmap)
+                        binding.viewRemoveObject.registerView(
+                            mBitmap = it.bitmap,
+                            onDrawView = {
+                                binding.btRevemoObj.isEnabled = false
+                                binding.btRevemoObj.isVisible = false
+                            },
+                            onFinishDrawView = { isBrush ->
+                                if (!isBrush) {
+                                    binding.btRevemoObj.isEnabled = false
+                                    binding.btRevemoObj.isVisible = false
+                                } else {
+                                    btRemoveObState.value = true
+                                    binding.btRevemoObj.isEnabled = true
+                                    binding.btRevemoObj.isVisible = true
+                                }
+                            },
+                            eventClickObjView = { item ->
+                                onObjAutoSelected(item)
+                            }
+                        )
                         activeTabFirst()
 //                        binding.viewRemoveObject.setType(Type.BRUSH)
                     }
@@ -154,7 +171,9 @@ class RemoveObjectActivity : BaseNativeActivity() {
                     when (it) {
                         is RemoveObjState.DoneRemoving -> {
                             removingDialog.dismiss()
-                            binding.frameTool.isVisible = true
+                            if (viewmodel.composeUIState.value.tab == RemoveObjectTab.TAB.AUTO) {
+                                binding.frameTool.isVisible = true
+                            }
                             binding.btRevemoObj.isEnabled = false
                             binding.btRevemoObj.isVisible = false
                             binding.viewRemoveObject.drawingView?.setBitmapDraw(it.bitmapResult)
@@ -203,8 +222,8 @@ class RemoveObjectActivity : BaseNativeActivity() {
 //                        setButtonState(binding.btNext, enabled = false)
 //                        setButtonState(binding.btPrev, enabled = true)
                         viewmodel.updateUndoRedoState(
-                            canUndo = false,
-                            canRedo = true
+                            canUndo = true,
+                            canRedo = false
                         )
 //                        binding.btnReverse.isEnabled = true
                     }
@@ -213,8 +232,8 @@ class RemoveObjectActivity : BaseNativeActivity() {
 //                        setButtonState(binding.btNext, enabled = true)
 //                        setButtonState(binding.btPrev, enabled = false)
                         viewmodel.updateUndoRedoState(
-                            canUndo = true,
-                            canRedo = false
+                            canUndo = false,
+                            canRedo = true
                         )
 //                        binding.btnReverse.isEnabled = false
                     }
@@ -299,6 +318,7 @@ class RemoveObjectActivity : BaseNativeActivity() {
     }
 
     private fun setButtonSaveState(isEnable: Boolean) {
+        viewmodel.canSaveState.value = isEnable
 //        binding.btSave.isEnabled = isEnable
 //        if (isEnable) {
 //            binding.btSave.setTextColor(android.graphics.Color.parseColor("#615BFD"))
@@ -348,7 +368,9 @@ class RemoveObjectActivity : BaseNativeActivity() {
 
     private fun headerUI() {
         binding.composeHeader.setContent {
-            val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+            val undoRedoState by viewmodel.undoRedoState.collectAsStateWithLifecycle()
+            val canSaveState by viewmodel.canSaveState.collectAsStateWithLifecycle()
+
             FeaturePhotoHeader(
                 onBack = {
                     finish()
@@ -366,13 +388,21 @@ class RemoveObjectActivity : BaseNativeActivity() {
                 },
                 onSave = {
                     viewmodel.saveImg { pathSave ->
+                        Log.d("aaa", "----- $pathSave")
                         if (pathSave != null) {
-//                            navigateNextScreen(pathSave)
+                            val intent = Intent()
+                            intent.putExtra("pathBitmap", "$pathSave")
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        } else {
+                            finish()
                         }
                     }
                 },
-                canUndo = uiState.canUndo,
-                canRedo = uiState.canRedo
+                canUndo = undoRedoState.canUndo,
+                canRedo = undoRedoState.canRedo,
+                type = TEXT_TYPE.TEXT,
+                canSave = canSaveState
             )
         }
     }

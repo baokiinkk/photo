@@ -20,7 +20,11 @@ import com.avnsoft.photoeditor.photocollage.R
 import kotlin.math.abs
 import androidx.core.graphics.scale
 import androidx.core.graphics.createBitmap
+import com.avnsoft.photoeditor.photocollage.pref.SharedPrefsApi
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.getSoftwareBitmap
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import kotlin.getValue
 
 
 enum class Type {
@@ -29,7 +33,8 @@ enum class Type {
 
 class DrawingView @JvmOverloads constructor(
     context: Context, attributeSet: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(context, attributeSet, defStyleAttr) {
+) : View(context, attributeSet, defStyleAttr), KoinComponent {
+    private val sharedPrefsApi: SharedPrefsApi by inject()
 
     private var type = Type.BRUSH
 
@@ -227,7 +232,12 @@ class DrawingView @JvmOverloads constructor(
             "aaaaa",
             "width $widthImg && height $heightImg  originalBitmap: ${originalBitmap.width} && ${originalBitmap.height}"
         )
-        bitmapView = Bitmap.createScaledBitmap(originalBitmap, originalBitmap.width, originalBitmap.height, true)
+        bitmapView = Bitmap.createScaledBitmap(
+            originalBitmap,
+            widthImg,
+            heightImg,
+            true
+        )
         invalidate()
     }
 
@@ -237,11 +247,12 @@ class DrawingView @JvmOverloads constructor(
         if ((widthImg.toFloat()) / (heightImg.toFloat()) > (w.toFloat()) / (h.toFloat())) {
             heightImg = (heightImg * w) / widthImg
             widthImg = w
-            Log.i("TAG", "onSizeChangedưefwef: $w / $h / ${widthImg} / ${heightImg}")
+            Log.i("TAG", "calculateWidthAndHeightOfImage: $w / $h / ${widthImg} / ${heightImg}")
         } else {
             widthImg = (widthImg * h) / heightImg
             heightImg = h
         }
+        Log.i("TAG", "calculateWidthAndHeightOfImage: widthImg: $widthImg && heightImg: $heightImg")
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
