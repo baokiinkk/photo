@@ -58,6 +58,14 @@ interface CollageApiService {
         @Header("Authorization") token: String?
     ): String
 
+
+    @Multipart
+    @POST("https://proxy-future-self.footballtv.info/v3/tools/remove-background")
+    suspend fun requestRemoveBg(
+        @Part file: MultipartBody.Part?,
+        @Part data: MultipartBody.Part?,
+        @Header("Authorization") token: String?
+    ): String
 }
 
 

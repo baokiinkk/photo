@@ -98,6 +98,7 @@ private fun DependencyHandlerScope.coreAndroid() {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.ktx)
+    implementation(libs.lottie.compose)
 }
 
 private fun DependencyHandlerScope.composeBom() {

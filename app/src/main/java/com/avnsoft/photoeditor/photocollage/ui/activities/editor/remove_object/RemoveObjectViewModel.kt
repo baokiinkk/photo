@@ -1,6 +1,5 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
@@ -32,9 +31,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.android.annotation.KoinViewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -51,10 +47,12 @@ class RemoveObjectViewModel(
     private val removeObjectRepoImpl: RemoveObjectRepoImpl
 ) : BaseViewModel() {
 
-    val uiState = MutableStateFlow(RemoveObjectUIState())
+    val bitmapUIState = MutableStateFlow(BitmapUIState())
     val composeUIState = MutableStateFlow(RemoveObjectComposeUIState())
 
     val undoRedoState = MutableStateFlow((UndoRedoState()))
+
+    val canSaveState = MutableStateFlow(false)
 
     val tabs = listOf(
         RemoveObjectTab(
@@ -102,7 +100,7 @@ class RemoveObjectViewModel(
                 }
                 listPathImgRemoved.add(newPathBitmap)
             }
-            uiState.update {
+            bitmapUIState.update {
                 it.copy(
                     bitmap = bitmap
                 )
@@ -156,6 +154,9 @@ class RemoveObjectViewModel(
     val removeObjState = _removeObjState.asStateFlow()
     private var currIndexImg = 0
 
+    private var originalPathBitmap: String? = null
+
+
     fun getObjDetectedAuto(
         drawingView: DrawingView?,
     ) {
@@ -163,8 +164,7 @@ class RemoveObjectViewModel(
         if (!isListObjDetected()) {
             val start = System.currentTimeMillis()
             _removeObjState.value = RemoveObjState.ScanningObj
-            jobDetectObjAuto?.cancel()
-            jobDetectObjAuto = viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(Dispatchers.IO) {
                 try {
                     val fileOrigin = File(listPathImgRemoved[currIndexImg])
                     val response = removeObjectRepoImpl.genAutoDetect(fileOrigin)
@@ -461,17 +461,14 @@ suspend fun String.downloadAndSaveToFile(pathSave: String) = withContext(Dispatc
     val url = URL(this@downloadAndSaveToFile)
     val connection = url.openConnection()
     connection.connect()
-//    val file = File(pathSave)
     url.openStream().use input@{ input ->
         FileOutputStream(pathSave, false).use { output ->
             input.copyTo(output)
         }
     }
-
-//    Log.d("DOWNLOAD", "Saved: ${file.absolutePath}, size=${file.length()}")
 }
 
-data class RemoveObjectUIState(
+data class BitmapUIState(
     val bitmap: Bitmap? = null,
 )
 

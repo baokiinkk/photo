@@ -33,6 +33,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
 
@@ -72,7 +73,9 @@ class MainActivity : BaseActivity() {
                             }
 
                             FeatureType.FREE_STYLE -> TODO()
-                            FeatureType.REMOVE_BACKGROUND -> TODO()
+                            FeatureType.REMOVE_BACKGROUND -> {
+                                gotoRemoveBackground()
+                            }
                             FeatureType.AI_ENHANCE -> {
                                 gotoStorePhoto()
                             }
@@ -126,6 +129,24 @@ class MainActivity : BaseActivity() {
                     val pathBitmap =copyImageToAppStorage(this@MainActivity, result.toUri())
                     launchActivity(
                         toActivity = RemoveObjectActivity::class.java,
+                        input = ToolInput(pathBitmap = pathBitmap),
+                    )
+                }
+            }
+        }
+    }
+
+    private fun gotoRemoveBackground(){
+        launchActivity(
+            toActivity = ImagePickerActivity::class.java,
+            ImageRequest(TypeSelect.SINGLE)
+        ) { result ->
+            val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
+            result?.let {
+                lifecycleScope.launch {
+                    val pathBitmap =copyImageToAppStorage(this@MainActivity, result.toUri())
+                    launchActivity(
+                        toActivity = RemoveBackgroundActivity::class.java,
                         input = ToolInput(pathBitmap = pathBitmap),
                     )
                 }
