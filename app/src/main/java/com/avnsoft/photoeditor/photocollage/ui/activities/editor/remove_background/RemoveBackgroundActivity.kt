@@ -1,5 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -18,19 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.DialogAIGenerate
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.animation.LoadAnimation
@@ -38,7 +35,6 @@ import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.launchActivity
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
@@ -74,9 +70,9 @@ class RemoveBackgroundActivity : BaseActivity() {
                         onClick = {
                             val file = File(uiState.imageUrl)
                             val uriString = Uri.fromFile(file).toString()
-                            launchActivity(
-                                toActivity = EditorActivity::class.java,
-                                input = EditorInput(pathBitmap = uriString),
+                            returnToData(
+                                type = screenInput?.type ?: ToolInput.TYPE.NEW,
+                                pathBitmap = uriString
                             )
                         }
                     ) {
@@ -120,6 +116,24 @@ fun LoadingAnimation(
                     style = AppStyle.title2().semibold().white()
                 )
             }
+        }
+    }
+}
+
+fun BaseActivity.returnToData(type: ToolInput.TYPE, pathBitmap: String?) {
+    when (type) {
+        ToolInput.TYPE.NEW -> {
+            launchActivity(
+                toActivity = EditorActivity::class.java,
+                input = EditorInput(pathBitmap = pathBitmap),
+            )
+        }
+
+        ToolInput.TYPE.BACK_AND_RETURN -> {
+            val intent = Intent()
+            intent.putExtra("pathBitmap", "$pathBitmap")
+            setResult(RESULT_OK, intent)
+            finish()
         }
     }
 }

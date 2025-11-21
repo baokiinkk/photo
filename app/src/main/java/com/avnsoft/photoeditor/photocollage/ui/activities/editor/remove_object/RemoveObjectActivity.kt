@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -39,6 +40,8 @@ import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.databinding.ActivityRemoveObjectBinding
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.TEXT_TYPE
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BrushShapeSlider
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.DialogAIGenerate
@@ -50,9 +53,11 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.l
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
+import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.BaseNativeActivity
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.toJson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -390,6 +395,7 @@ class RemoveObjectActivity : BaseNativeActivity() {
                     viewmodel.saveImg { pathSave ->
                         Log.d("aaa", "----- $pathSave")
                         if (pathSave != null) {
+
                             val intent = Intent()
                             intent.putExtra("pathBitmap", "$pathSave")
                             setResult(RESULT_OK, intent)
@@ -570,3 +576,20 @@ fun RemoveObjectTab(
     }
 }
 
+fun BaseNativeActivity.returnToData(type: ToolInput.TYPE, pathBitmap: String?) {
+    when (type) {
+        ToolInput.TYPE.NEW -> {
+            launchActivity(
+                toActivity = EditorActivity::class.java,
+                input = EditorInput(pathBitmap = pathBitmap),
+            )
+        }
+
+        ToolInput.TYPE.BACK_AND_RETURN -> {
+            val intent = Intent()
+            intent.putExtra("pathBitmap", "$pathBitmap")
+            setResult(RESULT_OK, intent)
+            finish()
+        }
+    }
+}

@@ -71,8 +71,14 @@ import java.io.OutputStream
 
 
 data class ToolInput(
-    val pathBitmap: String? = null
+    val pathBitmap: String? = null,
+    val type: TYPE = TYPE.NEW
 ) : IScreenData {
+
+    enum class TYPE {
+        NEW,
+        BACK_AND_RETURN
+    }
 
     fun getBitmap(context: Context): Bitmap? {
 //        val imageUri = pathBitmap?.toUri()
