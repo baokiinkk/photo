@@ -62,18 +62,20 @@ fun FeaturePhotoHeader(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onUndo, enabled = canUndo) {
+            IconButton(onClick = {}, enabled = canUndo) {
                 Icon(
                     painter = painterResource(R.drawable.ic_undo),
                     contentDescription = "Undo",
-                    tint = if (canUndo) Gray900 else Gray300
+                    tint = if (canUndo) Gray900 else Gray300,
+                    modifier = Modifier.clickableWithAlphaEffect(onClick = onUndo)
                 )
             }
             IconButton(onClick = onRedo, enabled = canRedo) {
                 Icon(
                     painter = painterResource(R.drawable.ic_redo),
                     contentDescription = "Redo",
-                    tint = if (canRedo) Gray900 else Gray300
+                    tint = if (canRedo) Gray900 else Gray300,
+                    modifier = Modifier.clickableWithAlphaEffect(onClick = onRedo)
                 )
             }
         }

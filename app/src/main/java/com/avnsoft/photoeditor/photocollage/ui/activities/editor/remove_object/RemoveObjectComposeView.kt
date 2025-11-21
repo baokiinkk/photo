@@ -12,58 +12,31 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.l
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.ObjAuto
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.Type
 
-
-@Composable
-fun RemoveObjectComposeView(
-    modifier: Modifier = Modifier,
-    bitmapOrigin: Bitmap?,
-    currTypeManual: Type = Type.BRUSH,
-    onDrawView: () -> Unit,
-    onFinishDrawView: (Boolean) -> Unit,
-    eventViewClickObj: (ObjAuto) -> Unit
-) {
-
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
-            Log.d("aaa", "AndroidView")
-            val view = RemoveObjectCustomView(context)
-            bitmapOrigin?.let {
-                view.registerView(bitmapOrigin)
-            }
-            view
-        },
-        update = { view ->
-            Log.d("aaa", "update")
-
-        }
-    )
-}
-
 class RemoveObjectCustomView @JvmOverloads constructor(
     private val context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-     var drawingView: DrawingView? = null
+    var drawingView: DrawingView? = null
 
 
-    fun registerView(mBitmap: Bitmap) {
+    fun registerView(
+        mBitmap: Bitmap,
+        onDrawView: () -> Unit,
+        onFinishDrawView: (Boolean) -> Unit,
+        eventClickObjView: ((ObjAuto) -> Unit)? = null
+    ) {
         removeAllViews()
         drawingView = DrawingView(context, mBitmap).apply {
-            onDraw = {
-            }
-            onFinishDraw = { isBrush ->
-
-            }
+            onDraw = onDrawView
+            onFinishDraw = onFinishDrawView
             layoutParams = LayoutParams(
                 LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT
             )
 
-            eventClickObj = { item ->
-            }
+            eventClickObj = eventClickObjView
         }
         addView(drawingView)
     }

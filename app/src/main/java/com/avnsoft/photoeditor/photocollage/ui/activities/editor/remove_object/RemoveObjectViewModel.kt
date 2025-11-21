@@ -54,6 +54,8 @@ class RemoveObjectViewModel(
     val uiState = MutableStateFlow(RemoveObjectUIState())
     val composeUIState = MutableStateFlow(RemoveObjectComposeUIState())
 
+    val undoRedoState = MutableStateFlow((UndoRedoState()))
+
     val tabs = listOf(
         RemoveObjectTab(
             tab = RemoveObjectTab.TAB.AUTO,
@@ -379,7 +381,7 @@ class RemoveObjectViewModel(
                     _buttonState.value = ButtonState.CAN_PREV
                     _removeObjState.value = RemoveObjState.DoneRemoving(bitmapRemoved)
                     cancel()
-                } catch (ex: Exception){
+                } catch (ex: Exception) {
 
                 }
                 if (continueRequest) {
@@ -402,7 +404,7 @@ class RemoveObjectViewModel(
     }
 
     fun updateUndoRedoState(canUndo: Boolean, canRedo: Boolean) {
-        uiState.update {
+        undoRedoState.update {
             it.copy(
                 canUndo = canUndo,
                 canRedo = canRedo
@@ -445,11 +447,12 @@ class RemoveObjectViewModel(
         }
     }
 
-    fun saveImg(onDone: (bitmap: Bitmap?) -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
-            var bitmapSave: Bitmap? = listPathImgRemoved[currIndexImg].getBitmapOriginal()
-            onDone.invoke(bitmapSave)
-        }
+    fun saveImg(onDone: (pathBitmap: String?) -> Unit) {
+        onDone.invoke(listPathImgRemoved[currIndexImg])
+//        viewModelScope.launch(Dispatchers.IO) {
+//            val bitmapSave: Bitmap? = listPathImgRemoved[currIndexImg].getBitmapOriginal()
+//            onDone.invoke(bitmapSave)
+//        }
     }
 
 }
@@ -470,9 +473,13 @@ suspend fun String.downloadAndSaveToFile(pathSave: String) = withContext(Dispatc
 
 data class RemoveObjectUIState(
     val bitmap: Bitmap? = null,
+)
+
+data class UndoRedoState(
     val canUndo: Boolean = false,
     val canRedo: Boolean = false
 )
+
 
 data class RemoveObjectComposeUIState(
     val blurBrush: Float = 50f,
