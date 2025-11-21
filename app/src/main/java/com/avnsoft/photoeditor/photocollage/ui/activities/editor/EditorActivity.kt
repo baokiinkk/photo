@@ -49,6 +49,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropActivi
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.DrawActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerActivity
@@ -220,7 +221,10 @@ class EditorActivity : BaseActivity() {
                         CollageTool.REMOVE -> {
                             launchActivity(
                                 toActivity = RemoveObjectActivity::class.java,
-                                input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                input = ToolInput(
+                                    pathBitmap = viewmodel.pathBitmapResult,
+                                    type = ToolInput.TYPE.BACK_AND_RETURN
+                                ),
                                 callback = { result ->
                                     if (result.resultCode == RESULT_OK) {
                                         val pathBitmap =
@@ -237,7 +241,9 @@ class EditorActivity : BaseActivity() {
                         CollageTool.BACKGROUND -> {
                             launchActivity(
                                 toActivity = BackgroundActivity::class.java,
-                                input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                input = ToolInput(
+                                    pathBitmap = viewmodel.pathBitmapResult,
+                                ),
                                 callback = { result ->
                                     if (result.resultCode == RESULT_OK) {
                                         val json = result.data?.getStringExtra("pathBitmap")
@@ -256,6 +262,26 @@ class EditorActivity : BaseActivity() {
                             launchActivity(
                                 toActivity = DrawActivity::class.java,
                                 input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+                                callback = { result ->
+                                    if (result.resultCode == RESULT_OK) {
+                                        val pathBitmap =
+                                            result.data?.getStringExtra("pathBitmap")
+                                        viewmodel.updateBitmap(
+                                            pathBitmap = pathBitmap,
+                                            bitmap = pathBitmap.toBitmap()
+                                        )
+                                    }
+                                }
+                            )
+                        }
+
+                        CollageTool.REMOVE_BG -> {
+                            launchActivity(
+                                toActivity = RemoveBackgroundActivity::class.java,
+                                input = ToolInput(
+                                    pathBitmap = viewmodel.pathBitmapResult,
+                                    type = ToolInput.TYPE.BACK_AND_RETURN
+                                ),
                                 callback = { result ->
                                     if (result.resultCode == RESULT_OK) {
                                         val pathBitmap =

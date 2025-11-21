@@ -395,11 +395,14 @@ class RemoveObjectActivity : BaseNativeActivity() {
                     viewmodel.saveImg { pathSave ->
                         Log.d("aaa", "----- $pathSave")
                         if (pathSave != null) {
-
-                            val intent = Intent()
-                            intent.putExtra("pathBitmap", "$pathSave")
-                            setResult(RESULT_OK, intent)
-                            finish()
+                            returnToData(
+                                type = screenInput?.type ?: ToolInput.TYPE.NEW,
+                                pathBitmap = pathSave
+                            )
+//                            val intent = Intent()
+//                            intent.putExtra("pathBitmap", "$pathSave")
+//                            setResult(RESULT_OK, intent)
+//                            finish()
                         } else {
                             finish()
                         }
@@ -579,10 +582,10 @@ fun RemoveObjectTab(
 fun BaseNativeActivity.returnToData(type: ToolInput.TYPE, pathBitmap: String?) {
     when (type) {
         ToolInput.TYPE.NEW -> {
-            launchActivity(
-                toActivity = EditorActivity::class.java,
-                input = EditorInput(pathBitmap = pathBitmap),
-            )
+            val intent = Intent(this, EditorActivity::class.java)
+            val input = EditorInput(pathBitmap = pathBitmap)
+            intent.putExtra("arg", input.toJson())
+            startActivity(intent)
         }
 
         ToolInput.TYPE.BACK_AND_RETURN -> {

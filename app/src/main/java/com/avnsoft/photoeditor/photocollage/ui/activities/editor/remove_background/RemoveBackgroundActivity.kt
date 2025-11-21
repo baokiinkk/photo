@@ -72,7 +72,8 @@ class RemoveBackgroundActivity : BaseActivity() {
                             val uriString = Uri.fromFile(file).toString()
                             returnToData(
                                 type = screenInput?.type ?: ToolInput.TYPE.NEW,
-                                pathBitmap = uriString
+                                pathUri = uriString,
+                                pathFile = uiState.imageUrl
                             )
                         }
                     ) {
@@ -120,18 +121,22 @@ fun LoadingAnimation(
     }
 }
 
-fun BaseActivity.returnToData(type: ToolInput.TYPE, pathBitmap: String?) {
+fun BaseActivity.returnToData(
+    type: ToolInput.TYPE,
+    pathUri: String?,
+    pathFile: String?
+) {
     when (type) {
         ToolInput.TYPE.NEW -> {
             launchActivity(
                 toActivity = EditorActivity::class.java,
-                input = EditorInput(pathBitmap = pathBitmap),
+                input = EditorInput(pathBitmap = pathUri),
             )
         }
 
         ToolInput.TYPE.BACK_AND_RETURN -> {
             val intent = Intent()
-            intent.putExtra("pathBitmap", "$pathBitmap")
+            intent.putExtra("pathBitmap", "$pathFile")
             setResult(RESULT_OK, intent)
             finish()
         }
