@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,15 +23,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformCalculator
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerLib
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextStickerLib
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun CollageScreen(
@@ -38,21 +44,44 @@ fun CollageScreen(
     vm: CollageViewModel,
     onBack: () -> Unit,
 ) {
+    val context = LocalContext.current
+    
     // State để lưu trữ danh sách uris (có thể thay đổi khi thêm ảnh)
     var currentUris by remember(uris) { mutableStateOf(uris) }
+    
+    // Giới hạn tối đa 10 ảnh
+    val MAX_PHOTOS = 10
+    val canAddPhoto = currentUris.size < MAX_PHOTOS
     
     // Launcher để chọn ảnh từ gallery
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let { newUri ->
-            // Thêm ảnh mới vào danh sách
-            currentUris = currentUris + newUri
-            // Cập nhật số lượng ảnh và load lại templates
-            // vm.load() sẽ tự động chọn grid đầu tiên
-            val newCount = currentUris.size.coerceAtLeast(1)
-            vm.load(newCount)
+            // Kiểm tra giới hạn trước khi thêm
+            if (currentUris.size < MAX_PHOTOS) {
+                // Thêm ảnh mới vào danh sách
+                currentUris = currentUris + newUri
+                // Cập nhật số lượng ảnh và load lại templates
+                // vm.load() sẽ tự động chọn grid đầu tiên
+                val newCount = currentUris.size.coerceAtLeast(1)
+                vm.load(newCount)
+            }
         }
+    }
+    
+    // Hàm helper để reset và tính lại image transforms khi đổi grids hoặc add photo
+    // Hàm này sẽ được gọi từ LaunchedEffect
+    suspend fun resetImageTransforms(template: CollageTemplate, canvasWidth: Float, canvasHeight: Float) {
+        val initialTransforms = ImageTransformCalculator.calculateInitialTransformsFromTemplate(
+            context = context,
+            template = template,
+            images = currentUris,
+            canvasWidth = canvasWidth,
+            canvasHeight = canvasHeight
+        )
+        vm.updateImageTransforms(initialTransforms)
+        vm.confirmImageTransformChanges()
     }
     
     // Observe state from ViewModel
@@ -105,7 +134,7 @@ fun CollageScreen(
                 }
             }
 
-            Box(
+            BoxWithConstraints(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 16.dp)
@@ -125,6 +154,18 @@ fun CollageScreen(
                 // Map slider values to Dp
                 val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
                 val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
+                
+                val canvasWidth = constraints.maxWidth.toFloat()
+                val canvasHeight = constraints.maxHeight.toFloat()
+
+                // Reset transforms khi đổi template hoặc thêm ảnh
+                LaunchedEffect(templateToUse.id, currentUris.size) {
+                    if (templateToUse.id.isNotEmpty() && currentUris.isNotEmpty() && canvasWidth > 0 && canvasHeight > 0) {
+                        // Delay để đảm bảo template và images đã được cập nhật hoàn toàn
+                        delay(300)
+                        resetImageTransforms(templateToUse, canvasWidth, canvasHeight)
+                    }
+                }
 
                 CollagePreview(
                     images = currentUris,
@@ -202,15 +243,18 @@ fun CollageScreen(
                         }
 
                         CollageTool.ADD_PHOTO -> {
-                            // Mở gallery để chọn ảnh
-                            launcher.launch("image/*")
-                            // Đóng tất cả các sheet khác
-                            showTextSheet = false
-                            showGridsSheet = false
-                            showRatioSheet = false
-                            showBackgroundSheet = false
-                            showFrameSheet = false
-                            showStickerSheet = false
+                            // Chỉ mở gallery nếu chưa đạt giới hạn
+                            if (canAddPhoto) {
+                                // Mở gallery để chọn ảnh
+                                launcher.launch("image/*")
+                                // Đóng tất cả các sheet khác
+                                showTextSheet = false
+                                showGridsSheet = false
+                                showRatioSheet = false
+                                showBackgroundSheet = false
+                                showFrameSheet = false
+                                showStickerSheet = false
+                            }
                         }
 
                         else -> {
@@ -222,7 +266,8 @@ fun CollageScreen(
                             showStickerSheet = false
                         }
                     }
-                }
+                },
+                disabledTools = if (!canAddPhoto) setOf(CollageTool.ADD_PHOTO) else emptySet()
             )
         }
         if (showGridsSheet) {

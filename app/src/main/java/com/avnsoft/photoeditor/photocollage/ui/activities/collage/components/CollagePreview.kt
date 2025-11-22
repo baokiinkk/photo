@@ -70,6 +70,104 @@ data class ImageTransformState(
     val scale: Float = 1f
 )
 
+/**
+ * Object để tính toán initial transforms cho ảnh để vừa với bound
+ * Có thể tái sử dụng khi đổi grids hoặc add photo
+ */
+object ImageTransformCalculator {
+    /**
+     * Tính toán initial transforms cho tất cả ảnh trong processed cells
+     * @param context Context để đọc kích thước ảnh
+     * @param processedCells Danh sách cells đã được xử lý
+     * @return Map<Int, ImageTransformState> với key là index của cell
+     */
+    suspend fun calculateInitialTransforms(
+        context: Context,
+        processedCells: List<ProcessedCellData>
+    ): Map<Int, ImageTransformState> {
+        return withContext(Dispatchers.IO) {
+            processedCells.mapIndexedNotNull { index, cellData ->
+                val imageSize = getImageSizeFromUri(context, cellData.imageUri)
+                if (imageSize != null) {
+                    val scale = calculateMaxZoomScale(
+                        boundWidth = cellData.width,
+                        boundHeight = cellData.height,
+                        imageWidth = imageSize.width,
+                        imageHeight = imageSize.height
+                    )
+                    index to ImageTransformState(offset = Offset.Zero, scale = scale)
+                } else {
+                    index to ImageTransformState(offset = Offset.Zero, scale = 1f)
+                }
+            }.toMap()
+        }
+    }
+
+    /**
+     * Tính toán initial transforms từ template và images
+     * @param context Context để đọc kích thước ảnh
+     * @param template Template collage
+     * @param images Danh sách URI ảnh
+     * @param canvasWidth Chiều rộng canvas (pixel)
+     * @param canvasHeight Chiều cao canvas (pixel)
+     * @return Map<Int, ImageTransformState> với key là index của cell
+     */
+    suspend fun calculateInitialTransformsFromTemplate(
+        context: Context,
+        template: CollageTemplate,
+        images: List<Uri>,
+        canvasWidth: Float,
+        canvasHeight: Float
+    ): Map<Int, ImageTransformState> {
+        val processedCells = CollagePreviewDataProcessor.processTemplate(
+            template = template,
+            images = images,
+            canvasWidth = canvasWidth,
+            canvasHeight = canvasHeight
+        )
+        return calculateInitialTransforms(context, processedCells)
+    }
+
+    private fun calculateMaxZoomScale(
+        boundWidth: Float,
+        boundHeight: Float,
+        imageWidth: Float,
+        imageHeight: Float
+    ): Float {
+        val widthRatio = boundWidth / imageWidth
+        val heightRatio = boundHeight / imageHeight
+        val fitScale = kotlin.math.min(widthRatio, heightRatio)
+        val fillScale = kotlin.math.max(widthRatio, heightRatio)
+        return if (fitScale > 0f) {
+            fillScale / fitScale
+        } else {
+            1f
+        }
+    }
+
+    private suspend fun getImageSizeFromUri(context: Context, uri: Uri): Size? {
+        return try {
+            withContext(Dispatchers.IO) {
+                val options = BitmapFactory.Options().apply {
+                    inJustDecodeBounds = true
+                }
+                val inputStream = context.contentResolver.openInputStream(uri)
+                inputStream?.use {
+                    BitmapFactory.decodeStream(it, null, options)
+                    if (options.outWidth > 0 && options.outHeight > 0) {
+                        Size(options.outWidth.toFloat(), options.outHeight.toFloat())
+                    } else {
+                        null
+                    }
+                } ?: null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+}
+
 @Composable
 fun CollagePreview(
     images: List<Uri>,
@@ -111,8 +209,9 @@ fun CollagePreview(
 
         LaunchedEffect(processedCells, imageTransforms) {
             if (imageTransforms.isEmpty() && processedCells.isNotEmpty()) {
-                delay(100)
-                val initialTransforms = calculateInitialTransforms(context, processedCells)
+                // Delay để đảm bảo images đã được load và processed cells đã sẵn sàng
+                delay(300)
+                val initialTransforms = ImageTransformCalculator.calculateInitialTransforms(context, processedCells)
                 initialTransforms.forEach { (index, transform) ->
                     imageStates[index] = transform to false
                 }
@@ -491,66 +590,6 @@ private fun clearAreaModifier(
     }
 }
 
-private suspend fun calculateInitialTransforms(
-    context: Context,
-    processedCells: List<ProcessedCellData>
-): Map<Int, ImageTransformState> {
-    return withContext(Dispatchers.IO) {
-        processedCells.mapIndexedNotNull { index, cellData ->
-            val imageSize = getImageSizeFromUri(context, cellData.imageUri)
-            if (imageSize != null) {
-                val scale = calculateMaxZoomScale(
-                    boundWidth = cellData.width,
-                    boundHeight = cellData.height,
-                    imageWidth = imageSize.width,
-                    imageHeight = imageSize.height
-                )
-                index to ImageTransformState(offset = Offset.Zero, scale = scale)
-            } else {
-                index to ImageTransformState(offset = Offset.Zero, scale = 1f)
-            }
-        }.toMap()
-    }
-}
-
-private fun calculateMaxZoomScale(
-    boundWidth: Float,
-    boundHeight: Float,
-    imageWidth: Float,
-    imageHeight: Float
-): Float {
-    val widthRatio = boundWidth / imageWidth
-    val heightRatio = boundHeight / imageHeight
-    val fitScale = kotlin.math.min(widthRatio, heightRatio)
-    val fillScale = kotlin.math.max(widthRatio, heightRatio)
-    return if (fitScale > 0f) {
-        fillScale / fitScale
-    } else {
-        1f
-    }
-}
-
-private suspend fun getImageSizeFromUri(context: Context, uri: Uri): Size? {
-    return try {
-        withContext(Dispatchers.IO) {
-            val options = BitmapFactory.Options().apply {
-                inJustDecodeBounds = true
-            }
-            val inputStream = context.contentResolver.openInputStream(uri)
-            inputStream?.use {
-                BitmapFactory.decodeStream(it, null, options)
-                if (options.outWidth > 0 && options.outHeight > 0) {
-                    Size(options.outWidth.toFloat(), options.outHeight.toFloat())
-                } else {
-                    null
-                }
-            } ?: null
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
-}
 
 private fun extractTransforms(
     imageStates: @JvmSuppressWildcards MutableMap<Int, Pair<ImageTransformState, Boolean>>

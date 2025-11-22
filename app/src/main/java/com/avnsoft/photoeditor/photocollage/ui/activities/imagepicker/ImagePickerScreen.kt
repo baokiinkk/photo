@@ -90,6 +90,7 @@ fun ImagePickerScreen(
                         }
                     },
                     showCameraTile = true,
+                    maxSelect = viewModel.MAX_SELECT,
                     onCameraClick = {
                         val activity = (context as? BaseActivity) ?: return@GalleryGrid
                         val hasCamera = ContextCompat.checkSelfPermission(

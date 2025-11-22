@@ -58,7 +58,8 @@ fun FeatureBottomTools(
     tools: List<ToolItem> = listOf(),
     onToolClick: (CollageTool) -> Unit = {},
     tool: CollageTool = CollageTool.NONE,
-    onItemSelect: (ToolItem) -> Unit = {}
+    onItemSelect: (ToolItem) -> Unit = {},
+    disabledTools: Set<CollageTool> = emptySet()
 ) {
     Row(
         modifier = modifier
@@ -70,9 +71,12 @@ fun FeatureBottomTools(
             ToolItem(
                 item = item,
                 isSelect = tool == item.tool,
+                isDisabled = item.tool in disabledTools,
                 onClick = {
-                    onToolClick(item.tool)
-                    onItemSelect.invoke(item)
+                    if (item.tool !in disabledTools) {
+                        onToolClick(item.tool)
+                        onItemSelect.invoke(item)
+                    }
                 }
             )
         }
@@ -83,6 +87,7 @@ fun FeatureBottomTools(
 private fun ToolItem(
     item: ToolItem,
     isSelect: Boolean,
+    isDisabled: Boolean = false,
     onClick: () -> Unit
 ) {
     Column(
@@ -90,19 +95,29 @@ private fun ToolItem(
         modifier = Modifier
             .width(65.dp)
             .padding(vertical = 12.dp)
-            .clickableWithAlphaEffect(onClick = onClick)
+            .clickableWithAlphaEffect(
+                onClick = onClick,
+                enabled = !isDisabled
+            )
     ) {
         Image(
             painterResource(item.icon),
             contentDescription = "",
             modifier = Modifier.size(24.dp),
-            colorFilter = if (isSelect) ColorFilter.tint(AppColor.Primary500) else null,
+            colorFilter = when {
+                isSelect -> ColorFilter.tint(AppColor.Primary500)
+                isDisabled -> ColorFilter.tint(Color.Gray.copy(alpha = 0.5f))
+                else -> null
+            },
         )
         Text(
             modifier = Modifier.padding(top = 2.dp),
             text = stringResource(item.label),
-            style = if (isSelect) AppStyle.caption2().medium().primary500() else AppStyle.caption2()
-                .medium().gray800()
+            style = when {
+                isSelect -> AppStyle.caption2().medium().primary500()
+                isDisabled -> AppStyle.caption2().medium().gray400()
+                else -> AppStyle.caption2().medium().gray800()
+            }
         )
     }
 }
