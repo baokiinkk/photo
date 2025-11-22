@@ -81,6 +81,8 @@
         <activity android:name=".ui.activities.store.StoreActivity" />
         <activity android:name=".ui.activities.store.tab.sticker.detail.StoreStickerDetailActivity" />
         <activity android:name=".ui.activities.store.tab.background.detail.StoreBackgroundDetailActivity" />
+        <activity android:name=".ui.activities.settings.SettingsActivity" />
+        <activity android:name=".ui.activities.language.LanguageSelectionActivity" />
         <activity
             android:name=".ui.activities.store.editor.EditorStoreActivity"
             android:exported="false"
