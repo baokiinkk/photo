@@ -25,6 +25,8 @@ data class ProcessedCellData(
     val clearPathInCenterVertical: Boolean? = null,
     val fitBound: Boolean? = null,  // Fit bound
     val pathAlignParentRight: Boolean? = null,  // Path align parent right
+    val cornerMethod: String? = null, // Corner method identifier
+    val shrinkMethod: String? = null, // Shrink method identifier
     val imageUri: Uri
 )
 
@@ -70,6 +72,8 @@ object CollagePreviewDataProcessor {
         canvasWidth: Float,
         canvasHeight: Float
     ): ProcessedCellData {
+        val cornerMethod = parseCornerMethod(cell.cornerMethod)
+        val shrinkMethod = parseShrinkMethod(cell.shrinkMethod)
         // Points là optional nếu có path hoặc clearPath
         if (cell.points != null) {
             require(cell.points.size >= 6 && cell.points.size % 2 == 0) {
@@ -133,6 +137,7 @@ object CollagePreviewDataProcessor {
                 cell.clearPathType, cell.clearPathRatioBound,
                 cell.clearPathInCenterHorizontal, cell.clearPathInCenterVertical,
                 cell.fitBound, cell.pathAlignParentRight,
+                cornerMethod, shrinkMethod,
                 imageUri
             )
         } else {
@@ -148,6 +153,7 @@ object CollagePreviewDataProcessor {
                     cell.clearPathType, cell.clearPathRatioBound,
                     cell.clearPathInCenterHorizontal, cell.clearPathInCenterVertical,
                     cell.fitBound, cell.pathAlignParentRight,
+                    cornerMethod, shrinkMethod,
                     imageUri
                 )
             }
@@ -193,11 +199,40 @@ object CollagePreviewDataProcessor {
                 cell.clearPathType, cell.clearPathRatioBound,
                 cell.clearPathInCenterHorizontal, cell.clearPathInCenterVertical,
                 cell.fitBound, cell.pathAlignParentRight,
+                cornerMethod, shrinkMethod,
                 imageUri
             )
         }
         
         return result
+    }
+}
+
+private fun parseCornerMethod(value: Any?): String? {
+    return when (value) {
+        is String -> value
+        is Number -> when (value.toInt()) {
+            1 -> "3_6"
+            2 -> "3_13"
+            else -> null
+        }
+        else -> null
+    }
+}
+
+private fun parseShrinkMethod(value: Any?): String? {
+    return when (value) {
+        is String -> value
+        is Number -> when (value.toInt()) {
+            0 -> "DEFAULT"
+            1 -> "3_3"
+            2 -> "USING_MAP"
+            3 -> "3_6"
+            4 -> "3_8"
+            5 -> "COMMON"
+            else -> null
+        }
+        else -> null
     }
 }
 

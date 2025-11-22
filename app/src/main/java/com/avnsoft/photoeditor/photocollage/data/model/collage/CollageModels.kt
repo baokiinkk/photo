@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.data.model.collage
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
@@ -62,7 +63,8 @@ data class CellSpec(
 
 class FreePolygonShape(
     private val points: List<Float>,
-    private val shrinkMap: Map<String, List<Float>>? = null
+    private val shrinkMap: Map<String, List<Float>>? = null,
+    private val shrinkSpacingPx: Float = 0f
 ) : Shape {
     init {
         require(points.size >= 6 && points.size % 2 == 0) { 
@@ -77,64 +79,35 @@ class FreePolygonShape(
         }
         
         val pointCount = points.size / 2
-        
-        // Nếu có shrinkMap, sử dụng đường cong (quadratic bezier)
-        if (shrinkMap != null && shrinkMap.isNotEmpty()) {
-            // Tính toán các điểm với shrink direction để tạo đường cong
-            val actualPoints = mutableListOf<androidx.compose.ui.geometry.Offset>()
-            
-            for (i in 0 until pointCount) {
-                val x = points[i * 2] * size.width
-                val y = points[i * 2 + 1] * size.height
-                actualPoints.add(androidx.compose.ui.geometry.Offset(x, y))
+        val hasShrinkMap = shrinkMap != null && shrinkMap.isNotEmpty()
+        val spacing = shrinkSpacingPx
+
+        if (hasShrinkMap && pointCount > 0) {
+            val shrunkPoints = MutableList(pointCount) { index ->
+                val baseX = points[index * 2] * size.width
+                val baseY = points[index * 2 + 1] * size.height
+                val dir = shrinkMap!![index.toString()]
+                val deltaX = if (dir != null && dir.size >= 2) dir[0] * spacing else 0f
+                val deltaY = if (dir != null && dir.size >= 2) dir[1] * spacing else 0f
+                Offset(baseX + deltaX, baseY + deltaY)
             }
-            
-            // Tạo path với đường cong
-            path.moveTo(actualPoints[0].x, actualPoints[0].y)
-            
-            for (i in 0 until pointCount) {
-                val currentIdx = i
-                val nextIdx = (i + 1) % pointCount
-                val currentPoint = actualPoints[currentIdx]
-                val nextPoint = actualPoints[nextIdx]
-                
-                // Lấy shrink direction từ shrinkMap
-                val shrinkDir = shrinkMap[currentIdx.toString()]?.let { 
-                    if (it.size >= 2) androidx.compose.ui.geometry.Offset(it[0], it[1]) else null
-                }
-                
-                if (shrinkDir != null && (shrinkDir.x != 0f || shrinkDir.y != 0f)) {
-                    // Tính control point dựa trên shrink direction
-                    // shrinkDir là vector direction, scale nó để tạo control point
-                    val shrinkAmount = kotlin.math.min(size.width, size.height) * 0.1f
-                    val controlX = currentPoint.x + shrinkDir.x * shrinkAmount
-                    val controlY = currentPoint.y + shrinkDir.y * shrinkAmount
-                    
-                    // Sử dụng quadratic bezier để tạo đường cong
-                    path.quadraticTo(
-                        x1 = controlX,
-                        y1 = controlY,
-                        x2 = nextPoint.x,
-                        y2 = nextPoint.y
-                    )
-                } else {
-                    // Không có shrinkMap hoặc direction = 0, dùng đường thẳng
-                    path.lineTo(nextPoint.x, nextPoint.y)
-                }
+
+            path.moveTo(shrunkPoints[0].x, shrunkPoints[0].y)
+            for (i in 1 until shrunkPoints.size) {
+                path.lineTo(shrunkPoints[i].x, shrunkPoints[i].y)
             }
         } else {
-            // Không có shrinkMap, dùng đường thẳng như cũ
-        val x0 = points[0] * size.width
-        val y0 = points[1] * size.height
-        path.moveTo(x0, y0)
-            
+            val x0 = points[0] * size.width
+            val y0 = points[1] * size.height
+            path.moveTo(x0, y0)
+
             for (i in 2 until points.size step 2) {
-            val x = points[i] * size.width
-            val y = points[i + 1] * size.height
-            path.lineTo(x, y)
+                val x = points[i] * size.width
+                val y = points[i + 1] * size.height
+                path.lineTo(x, y)
+            }
         }
-        }
-        
+
         path.close()
         return Outline.Generic(path)
     }

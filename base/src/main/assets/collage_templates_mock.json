@@ -3,25 +3,13 @@
   "data": {
     "templates": [
       {
-        "id": "1-full",
+        "id": "01_0",
         "cells": [
           { 
             "x": 0, 
             "y": 0, 
             "width": 1, 
             "height": 1, 
-            "points": [0,0, 1,0, 1,1, 0,1] 
-          }
-        ]
-      },
-      {
-        "id": "1-full-margin",
-        "cells": [
-          { 
-            "x": 0.03, 
-            "y": 0.03, 
-            "width": 0.94, 
-            "height": 0.94, 
             "points": [0,0, 1,0, 1,1, 0,1] 
           }
         ]

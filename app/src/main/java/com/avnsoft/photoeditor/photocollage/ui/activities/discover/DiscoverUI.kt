@@ -41,7 +41,7 @@ fun DiscoverUI(viewModel: MainViewModel? = null) {
             .verticalScroll(rememberScrollState())
             .background(BackgroundLight)
     ) {
-        DiscoverBanner()
+        DiscoverBanner(viewModel)
         Spacer(Modifier.height(20.dp))
         DiscoverFunctionCards(
             onCollageClick = {
@@ -69,7 +69,9 @@ fun DiscoverUI(viewModel: MainViewModel? = null) {
 }
 
 @Composable
-fun DiscoverHeader() {
+fun DiscoverHeader(
+    viewModel: MainViewModel?
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -78,7 +80,11 @@ fun DiscoverHeader() {
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
         Image(
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier
+                .size(24.dp)
+                .clickableWithAlphaEffect {
+                    viewModel?.navigateFeature(FeatureType.SETTING)
+                },
             painter = painterResource(R.drawable.ic_menu),
             contentDescription = ""
         )
@@ -105,7 +111,7 @@ fun DiscoverHeader() {
 }
 
 @Composable
-fun DiscoverBanner() {
+fun DiscoverBanner(viewModel: MainViewModel?) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -118,7 +124,7 @@ fun DiscoverBanner() {
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
-        DiscoverHeader()
+        DiscoverHeader(viewModel)
     }
 }
 
