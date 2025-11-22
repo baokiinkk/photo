@@ -81,4 +81,6 @@
     <string name="template">Template</string>
     <string name="content_removing_object">Magic AI is removing...</string>
     <string name="content_magic_ai_is_enhancing">Magic AI is enhancing...</string>
+    <string name="save">Save</string>
+    <string name="apply">Apply</string>
 </resources>

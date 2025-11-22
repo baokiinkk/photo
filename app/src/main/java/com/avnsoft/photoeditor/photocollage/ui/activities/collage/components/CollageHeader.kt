@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,7 +39,8 @@ fun FeaturePhotoHeader(
     canRedo: Boolean = false,
     modifier: Modifier = Modifier,
     canSave: Boolean = false,
-    type: TEXT_TYPE = TEXT_TYPE.ROUND
+    type: TEXT_TYPE = TEXT_TYPE.ROUND,
+    textRight: String = stringResource(R.string.save)
 ) {
     val context = LocalContext.current
     Row(
@@ -90,12 +92,12 @@ fun FeaturePhotoHeader(
                         .clickableWithAlphaEffect {
                             if (canSave) onSave.invoke()
                         },
-                    text = "Save",
+                    text = textRight,
                     textAlign = TextAlign.Center,
                     style = if (canSave) {
-                        AppStyle.caption1().bold().primary500()
+                        AppStyle.buttonMedium().semibold().primary500()
                     } else {
-                        AppStyle.caption1().bold().gray300()
+                        AppStyle.buttonMedium().semibold().gray300()
                     }
                 )
             }
@@ -108,7 +110,7 @@ fun FeaturePhotoHeader(
                         .clickableWithAlphaEffect {
                             onSave.invoke()
                         },
-                    text = "Save",
+                    text = textRight,
                     textAlign = TextAlign.Center,
                     style = AppStyle.button().semibold().white()
                 )
