@@ -43,7 +43,7 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 
-class StickerView : RelativeLayout {
+open class StickerView : RelativeLayout {
     private var bitmapPoints = FloatArray(8)
 
     private val borderPaint: Paint

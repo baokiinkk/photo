@@ -97,7 +97,11 @@ class MainViewModel(
     fun getTokenFirebase() {
         if (!editorSharedPref.isRequestedToken()) {
             viewModelScope.launch(Dispatchers.IO) {
-                removeObjectRepoImpl.getTokenFirebase()
+                try {
+                    removeObjectRepoImpl.getTokenFirebase()
+                } catch (ex: Exception){
+
+                }
             }
         }
     }

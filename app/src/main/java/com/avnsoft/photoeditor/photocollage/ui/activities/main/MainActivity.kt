@@ -21,6 +21,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppS
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity.Companion.RESULT_URI
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImageRequest
@@ -93,6 +94,10 @@ class MainActivity : BaseActivity() {
                                 gotoSetting()
                             }
 
+                            FeatureType.FREE_STYLE -> {
+                                gotoFreeStyle()
+                            }
+
                             else -> {}
                         }
                     }
@@ -107,6 +112,16 @@ class MainActivity : BaseActivity() {
             val uris = result?.map { it.toUri() } ?: emptyList()
             if (uris.isNotEmpty()) {
                 CollageActivity.start(this, uris)
+            }
+        }
+    }
+
+    private fun gotoFreeStyle() {
+        launchActivity(toActivity = ImagePickerActivity::class.java) { result ->
+            val result: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+            val uris = result?.map { it.toUri() } ?: emptyList()
+            if (uris.isNotEmpty()) {
+                FreeStyleActivity.start(this, uris)
             }
         }
     }

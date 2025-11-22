@@ -453,6 +453,7 @@ fun TextStickerToolPanel(
         stringResource(TEXT_TAB.ALIGN.res)
     )
     var selectedTab by remember { mutableIntStateOf(TEXT_TAB.FONT.index) }
+    var selectedTabAlign by remember { mutableStateOf(TEXT_ALIGN.CENTER) }
 
     Column(
         modifier = modifier
@@ -538,7 +539,13 @@ fun TextStickerToolPanel(
                             .padding(horizontal = 12.dp, 8.dp)
                             .align(Alignment.Center),
                     ) {
-                        TabAlign(onAlign)
+                        TabAlign(
+                            onAlign = {
+                                onAlign.invoke(it)
+                                selectedTabAlign = it
+                            },
+                            selectedTab = selectedTabAlign
+                        )
                     }
                 }
 //                Spacer(modifier = Modifier.height(24.dp))
@@ -564,9 +571,10 @@ enum class TEXT_ALIGN(val index: Int) {
 
 @Composable
 fun TabAlign(
+    selectedTab: TEXT_ALIGN,
     onAlign: (TEXT_ALIGN) -> Unit,
 ) {
-    var selectedTab by remember { mutableStateOf(TEXT_ALIGN.CENTER) }
+//    var selectedTab by remember { mutableStateOf(TEXT_ALIGN.CENTER) }
     val items = listOf(
         R.drawable.ic_align_start,
         R.drawable.ic_align_center,
@@ -581,7 +589,7 @@ fun TabAlign(
             ItemAlign(
                 isSelected = selectedTab.index == index,
                 onSelectedTab = {
-                    selectedTab = TEXT_ALIGN.entries.toTypedArray()[index]
+                    val selectedTab = TEXT_ALIGN.entries.toTypedArray()[index]
                     onAlign.invoke(selectedTab)
                 }
             )

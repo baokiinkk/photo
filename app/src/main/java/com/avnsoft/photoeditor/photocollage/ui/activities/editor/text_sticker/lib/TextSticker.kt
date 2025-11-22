@@ -159,15 +159,17 @@ class TextSticker(private val context: Context, paramAddTextProperties: AddTextP
         paramCanvas.restore()
         paramCanvas.save()
         paramCanvas.concat(matrix)
-        val i = this.paddingWidth
-        val j = this.height / 2
-        val k = this.staticLayout!!.getHeight() / 2
-        paramCanvas.translate(i.toFloat(), (j - k).toFloat())
-        this.staticLayout!!.draw(paramCanvas)
-        paramCanvas.restore()
-        paramCanvas.save()
-        paramCanvas.concat(matrix)
-        paramCanvas.restore()
+        if (staticLayout !=null){
+            val i = this.paddingWidth
+            val j = this.height / 2
+            val k = this.staticLayout!!.getHeight() / 2
+            paramCanvas.translate(i.toFloat(), (j - k).toFloat())
+            this.staticLayout!!.draw(paramCanvas)
+            paramCanvas.restore()
+            paramCanvas.save()
+            paramCanvas.concat(matrix)
+            paramCanvas.restore()
+        }
     }
 
     fun getAddTextProperties(): AddTextProperties? {

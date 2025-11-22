@@ -85,6 +85,7 @@ class AddTextProperties {
                 addTextProperties.fontIndex = 0
                 addTextProperties.isShowBackground = false
                 addTextProperties.backgroundBorder = 8
+                addTextProperties.text = "Click to Edit"
                 return addTextProperties
             }
     }

@@ -92,6 +92,8 @@
         <activity android:name=".ui.activities.editor.remove_background.RemoveBackgroundActivity" />
 
         <activity android:name=".ui.activities.editor.ai_enhance.AIEnhanceActivity" />
+
+        <activity android:name=".ui.activities.freestyle.FreeStyleActivity" />
     </application>
 
 </manifest>
