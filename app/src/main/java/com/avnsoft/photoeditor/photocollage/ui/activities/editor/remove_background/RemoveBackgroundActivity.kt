@@ -6,13 +6,16 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -88,7 +91,9 @@ class RemoveBackgroundActivity : BaseActivity() {
 @Composable
 fun LoadingAnimation(
     isShowLoading: Boolean,
-    content: String
+    content: String,
+    isCancel: Boolean = false,
+    onCancel: (() -> Unit)? = null
 ) {
     if (isShowLoading) {
         Box(
@@ -116,6 +121,23 @@ fun LoadingAnimation(
                     text = content,
                     style = AppStyle.title2().semibold().white()
                 )
+
+                if (isCancel) {
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .background(Color.Transparent)
+                            .border(1.dp, Color.White, RoundedCornerShape(8.dp))
+                            .clickableWithAlphaEffect(onClick = onCancel)
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 4.dp),
+                            text = stringResource(R.string.cancel),
+                            style = AppStyle.buttonMedium().semibold().white(),
+                        )
+                    }
+                }
             }
         }
     }

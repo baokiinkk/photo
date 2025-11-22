@@ -80,13 +80,16 @@
         <activity android:name=".ui.activities.editor.draw.DrawActivity" />
         <activity android:name=".ui.activities.store.StoreActivity" />
         <activity android:name=".ui.activities.store.tab.sticker.detail.StoreStickerDetailActivity" />
-        <activity android:name=".ui.activities.store.tab.background.detail.StoreBackgroundDetailActivity"/>
-        <activity android:name=".ui.activities.store.editor.EditorStoreActivity"
+        <activity android:name=".ui.activities.store.tab.background.detail.StoreBackgroundDetailActivity" />
+        <activity
+            android:name=".ui.activities.store.editor.EditorStoreActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysVisible"/>
+            android:windowSoftInputMode="stateAlwaysVisible" />
 
-        <activity android:name=".ui.activities.editor.remove_background.RemoveBackgroundActivity"/>
+        <activity android:name=".ui.activities.editor.remove_background.RemoveBackgroundActivity" />
+
+        <activity android:name=".ui.activities.editor.ai_enhance.AIEnhanceActivity" />
     </application>
 
 </manifest>

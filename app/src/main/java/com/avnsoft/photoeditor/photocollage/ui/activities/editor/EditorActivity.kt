@@ -41,6 +41,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Col
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.adjust.AdjustActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.ai_enhance.AIEnhanceActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurView
@@ -278,6 +279,26 @@ class EditorActivity : BaseActivity() {
                         CollageTool.REMOVE_BG -> {
                             launchActivity(
                                 toActivity = RemoveBackgroundActivity::class.java,
+                                input = ToolInput(
+                                    pathBitmap = viewmodel.pathBitmapResult,
+                                    type = ToolInput.TYPE.BACK_AND_RETURN
+                                ),
+                                callback = { result ->
+                                    if (result.resultCode == RESULT_OK) {
+                                        val pathBitmap =
+                                            result.data?.getStringExtra("pathBitmap")
+                                        viewmodel.updateBitmap(
+                                            pathBitmap = pathBitmap,
+                                            bitmap = pathBitmap.toBitmap()
+                                        )
+                                    }
+                                }
+                            )
+                        }
+
+                        CollageTool.ENHANCE -> {
+                            launchActivity(
+                                toActivity = AIEnhanceActivity::class.java,
                                 input = ToolInput(
                                     pathBitmap = viewmodel.pathBitmapResult,
                                     type = ToolInput.TYPE.BACK_AND_RETURN
