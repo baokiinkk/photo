@@ -177,6 +177,7 @@ fun CollagePreview(
     borderWidth: Dp = 5.dp,
     backgroundSelection: BackgroundSelection? = null,
     imageTransforms: Map<Int, ImageTransformState> = emptyMap(),
+    topMargin: Float = 0f,
     onImageClick: ((Uri) -> Unit)? = null,
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)? = null,
     modifier: Modifier = Modifier
@@ -186,6 +187,16 @@ fun CollagePreview(
         val context = LocalContext.current
         val canvasWidth = constraints.maxWidth.toFloat()
         val canvasHeight = constraints.maxHeight.toFloat()
+        
+        // Áp dụng topMargin: giảm kích thước vùng bound tổng
+        // topMargin: 0-1 -> padding: 0-20% của canvas
+        val topMarginPx = topMargin * 0.2f * canvasHeight
+        val leftMarginPx = topMargin * 0.2f * canvasWidth
+        val rightMarginPx = topMargin * 0.2f * canvasWidth
+        val bottomMarginPx = topMargin * 0.2f * canvasHeight
+        
+        val effectiveCanvasWidth = canvasWidth - leftMarginPx - rightMarginPx
+        val effectiveCanvasHeight = canvasHeight - topMarginPx - bottomMarginPx
 
         BackgroundLayer(
             backgroundSelection = backgroundSelection,
@@ -194,23 +205,38 @@ fun CollagePreview(
 
         var processedCells by remember { mutableStateOf<List<ProcessedCellData>>(emptyList()) }
 
-        LaunchedEffect(template, images, canvasWidth, canvasHeight) {
+        LaunchedEffect(template, images, effectiveCanvasWidth, effectiveCanvasHeight) {
             processedCells = withContext(Dispatchers.IO) {
                 CollagePreviewDataProcessor.processTemplate(
                     template = template,
                     images = images,
-                    canvasWidth = canvasWidth,
-                    canvasHeight = canvasHeight
+                    canvasWidth = effectiveCanvasWidth,
+                    canvasHeight = effectiveCanvasHeight
                 )
             }
         }
+        
+        // Cập nhật processedCells khi topMargin thay đổi (không reset transforms)
+        LaunchedEffect(topMargin) {
+            if (template.id.isNotEmpty() && images.isNotEmpty() && effectiveCanvasWidth > 0 && effectiveCanvasHeight > 0) {
+                processedCells = withContext(Dispatchers.IO) {
+                    CollagePreviewDataProcessor.processTemplate(
+                        template = template,
+                        images = images,
+                        canvasWidth = effectiveCanvasWidth,
+                        canvasHeight = effectiveCanvasHeight
+                    )
+                }
+            }
+        }
 
-        val imageStates = remember { mutableStateMapOf<Int, Pair<ImageTransformState, Boolean>>() }
+        // Lưu imageStates với key là template.id để không bị reset khi gap/corner thay đổi
+        val imageStates = remember(template.id) { mutableStateMapOf<Int, Pair<ImageTransformState, Boolean>>() }
 
         LaunchedEffect(processedCells, imageTransforms) {
             if (imageTransforms.isEmpty() && processedCells.isNotEmpty()) {
                 // Delay để đảm bảo images đã được load và processed cells đã sẵn sàng
-                delay(300)
+                delay(500)
                 val initialTransforms = ImageTransformCalculator.calculateInitialTransforms(context, processedCells)
                 initialTransforms.forEach { (index, transform) ->
                     imageStates[index] = transform to false
@@ -230,17 +256,32 @@ fun CollagePreview(
             }
         }
 
-        CollageContent(
-            processedCells = processedCells,
-            gap = gap,
-            corner = corner,
-            borderWidthPx = with(density) { borderWidth.toPx() },
-            cornerRadiusPx = with(density) { corner.toPx() },
-            density = density,
-            imageStates = imageStates,
-            onImageClick = onImageClick,
-            onImageTransformsChange = onImageTransformsChange
-        )
+        // Offset để áp dụng margin và background để che phần ảnh vượt ra ngoài
+        // Không dùng clipToBounds ở đây để không clip ảnh tròn thành hình vuông
+        Box(
+            modifier = Modifier
+                .offset(
+                    x = with(density) { leftMarginPx.toDp() },
+                    y = with(density) { topMarginPx.toDp() }
+                )
+                .size(
+                    width = with(density) { effectiveCanvasWidth.toDp() },
+                    height = with(density) { effectiveCanvasHeight.toDp() }
+                )
+                .background(BackgroundWhite) // Thêm background để che phần ảnh vượt ra ngoài
+        ) {
+            CollageContent(
+                processedCells = processedCells,
+                gap = gap,
+                corner = corner,
+                borderWidthPx = with(density) { borderWidth.toPx() },
+                cornerRadiusPx = with(density) { corner.toPx() },
+                density = density,
+                imageStates = imageStates,
+                onImageClick = onImageClick,
+                onImageTransformsChange = onImageTransformsChange
+            )
+        }
     }
 }
 

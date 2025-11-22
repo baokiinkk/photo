@@ -72,13 +72,22 @@ fun CollageScreen(
     
     // Hàm helper để reset và tính lại image transforms khi đổi grids hoặc add photo
     // Hàm này sẽ được gọi từ LaunchedEffect
-    suspend fun resetImageTransforms(template: CollageTemplate, canvasWidth: Float, canvasHeight: Float) {
+    suspend fun resetImageTransforms(template: CollageTemplate, canvasWidth: Float, canvasHeight: Float, topMargin: Float = 0f) {
+        // Áp dụng topMargin: giảm kích thước vùng bound tổng
+        val topMarginPx = topMargin * 0.2f * canvasHeight
+        val leftMarginPx = topMargin * 0.2f * canvasWidth
+        val rightMarginPx = topMargin * 0.2f * canvasWidth
+        val bottomMarginPx = topMargin * 0.2f * canvasHeight
+        
+        val effectiveCanvasWidth = canvasWidth - leftMarginPx - rightMarginPx
+        val effectiveCanvasHeight = canvasHeight - topMarginPx - bottomMarginPx
+        
         val initialTransforms = ImageTransformCalculator.calculateInitialTransformsFromTemplate(
             context = context,
             template = template,
             images = currentUris,
-            canvasWidth = canvasWidth,
-            canvasHeight = canvasHeight
+            canvasWidth = effectiveCanvasWidth,
+            canvasHeight = effectiveCanvasHeight
         )
         vm.updateImageTransforms(initialTransforms)
         vm.confirmImageTransformChanges()
@@ -158,12 +167,14 @@ fun CollageScreen(
                 val canvasWidth = constraints.maxWidth.toFloat()
                 val canvasHeight = constraints.maxHeight.toFloat()
 
-                // Reset transforms khi đổi template hoặc thêm ảnh
+                // Reset transforms khi đổi template hoặc thêm ảnh (KHÔNG reset khi topMargin thay đổi)
                 LaunchedEffect(templateToUse.id, currentUris.size) {
                     if (templateToUse.id.isNotEmpty() && currentUris.isNotEmpty() && canvasWidth > 0 && canvasHeight > 0) {
+                        // Clear transforms trước để trigger lại tính toán
+                        vm.updateImageTransforms(emptyMap())
                         // Delay để đảm bảo template và images đã được cập nhật hoàn toàn
-                        delay(300)
-                        resetImageTransforms(templateToUse, canvasWidth, canvasHeight)
+                        delay(500)
+                        resetImageTransforms(templateToUse, canvasWidth, canvasHeight, topMargin)
                     }
                 }
 
@@ -174,6 +185,7 @@ fun CollageScreen(
                     corner = cornerValue,
                     backgroundSelection = collageState.backgroundSelection,
                     imageTransforms = collageState.imageTransforms,
+                    topMargin = topMargin,
                     onImageClick = { uri ->
                         // Callback về path của image khi click
                         // TODO: Xử lý callback này (ví dụ: mở editor cho image này)
