@@ -1,16 +1,21 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -18,19 +23,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.DialogAIGenerate
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.animation.LoadAnimation
@@ -38,7 +38,6 @@ import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.launchActivity
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
@@ -74,9 +73,10 @@ class RemoveBackgroundActivity : BaseActivity() {
                         onClick = {
                             val file = File(uiState.imageUrl)
                             val uriString = Uri.fromFile(file).toString()
-                            launchActivity(
-                                toActivity = EditorActivity::class.java,
-                                input = EditorInput(pathBitmap = uriString),
+                            returnToData(
+                                type = screenInput?.type ?: ToolInput.TYPE.NEW,
+                                pathUri = uriString,
+                                pathFile = uiState.imageUrl
                             )
                         }
                     ) {
@@ -91,7 +91,9 @@ class RemoveBackgroundActivity : BaseActivity() {
 @Composable
 fun LoadingAnimation(
     isShowLoading: Boolean,
-    content: String
+    content: String,
+    isCancel: Boolean = false,
+    onCancel: (() -> Unit)? = null
 ) {
     if (isShowLoading) {
         Box(
@@ -119,7 +121,46 @@ fun LoadingAnimation(
                     text = content,
                     style = AppStyle.title2().semibold().white()
                 )
+
+                if (isCancel) {
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .background(Color.Transparent)
+                            .border(1.dp, Color.White, RoundedCornerShape(8.dp))
+                            .clickableWithAlphaEffect(onClick = onCancel)
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 4.dp),
+                            text = stringResource(R.string.cancel),
+                            style = AppStyle.buttonMedium().semibold().white(),
+                        )
+                    }
+                }
             }
+        }
+    }
+}
+
+fun BaseActivity.returnToData(
+    type: ToolInput.TYPE,
+    pathUri: String?,
+    pathFile: String?
+) {
+    when (type) {
+        ToolInput.TYPE.NEW -> {
+            launchActivity(
+                toActivity = EditorActivity::class.java,
+                input = EditorInput(pathBitmap = pathUri),
+            )
+        }
+
+        ToolInput.TYPE.BACK_AND_RETURN -> {
+            val intent = Intent()
+            intent.putExtra("pathBitmap", "$pathFile")
+            setResult(RESULT_OK, intent)
+            finish()
         }
     }
 }

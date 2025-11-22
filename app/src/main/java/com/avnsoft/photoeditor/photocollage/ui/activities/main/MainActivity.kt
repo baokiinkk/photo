@@ -31,6 +31,7 @@ import androidx.core.net.toUri
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.ai_enhance.AIEnhanceActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
@@ -77,7 +78,7 @@ class MainActivity : BaseActivity() {
                                 gotoRemoveBackground()
                             }
                             FeatureType.AI_ENHANCE -> {
-                                gotoStorePhoto()
+                                gotoAIEnhanceActivity()
                             }
                             FeatureType.REMOVE_OBJECT -> {
                                 gotoRemoveObject()
@@ -147,6 +148,24 @@ class MainActivity : BaseActivity() {
                     val pathBitmap =copyImageToAppStorage(this@MainActivity, result.toUri())
                     launchActivity(
                         toActivity = RemoveBackgroundActivity::class.java,
+                        input = ToolInput(pathBitmap = pathBitmap),
+                    )
+                }
+            }
+        }
+    }
+
+    private fun gotoAIEnhanceActivity(){
+        launchActivity(
+            toActivity = ImagePickerActivity::class.java,
+            ImageRequest(TypeSelect.SINGLE)
+        ) { result ->
+            val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
+            result?.let {
+                lifecycleScope.launch {
+                    val pathBitmap =copyImageToAppStorage(this@MainActivity, result.toUri())
+                    launchActivity(
+                        toActivity = AIEnhanceActivity::class.java,
                         input = ToolInput(pathBitmap = pathBitmap),
                     )
                 }
