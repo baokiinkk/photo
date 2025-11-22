@@ -411,7 +411,8 @@ class RemoveObjectActivity : BaseNativeActivity() {
                 canUndo = undoRedoState.canUndo,
                 canRedo = undoRedoState.canRedo,
                 type = TEXT_TYPE.TEXT,
-                canSave = canSaveState
+                canSave = canSaveState,
+                textRight = stringResource(R.string.apply)
             )
         }
     }

@@ -22,13 +22,13 @@ class AdjustViewModel : BaseViewModel() {
         ToolItem(CollageTool.CONTRAST, R.string.contrast, R.drawable.ic_contrast, index = 1),
         ToolItem(CollageTool.SATURATION, R.string.saturation, R.drawable.ic_saturation, index = 2),
         ToolItem(CollageTool.WARMTH, R.string.warmth, R.drawable.ic_warmth, index = 20),
-        ToolItem(CollageTool.FADE, R.string.fade, R.drawable.ic_fade, index = 7),
+//        ToolItem(CollageTool.FADE, R.string.fade, R.drawable.ic_fade, index = 7),
         ToolItem(CollageTool.HIGHLIGHT, R.string.highlight, R.drawable.ic_highlight, index = 21),
         ToolItem(CollageTool.SHADOW, R.string.shadow, R.drawable.ic_shadow, index = 9),
         ToolItem(CollageTool.HUE, R.string.hue, R.drawable.ic_hue, index = 4),
         ToolItem(CollageTool.VIGNETTE, R.string.vignette, R.drawable.ic_vignette, index = 6),
         ToolItem(CollageTool.SHARPEN, R.string.sharpen, R.drawable.ic_sharpen, index = 3),
-        ToolItem(CollageTool.GRAIN, R.string.grain, R.drawable.ic_grain, index = 10),
+//        ToolItem(CollageTool.GRAIN, R.string.grain, R.drawable.ic_grain, index = 10),
     )
 
     val uiState = MutableStateFlow(AdjustUIState(items = items))

@@ -21,6 +21,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppS
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity.Companion.RESULT_URI
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImageRequest
@@ -73,13 +74,14 @@ class MainActivity : BaseActivity() {
                                 gotoCollage()
                             }
 
-                            FeatureType.FREE_STYLE -> TODO()
                             FeatureType.REMOVE_BACKGROUND -> {
                                 gotoRemoveBackground()
                             }
+
                             FeatureType.AI_ENHANCE -> {
                                 gotoAIEnhanceActivity()
                             }
+
                             FeatureType.REMOVE_OBJECT -> {
                                 gotoRemoveObject()
                             }
@@ -91,6 +93,12 @@ class MainActivity : BaseActivity() {
                             FeatureType.SETTING -> {
                                 gotoSetting()
                             }
+
+                            FeatureType.FREE_STYLE -> {
+                                gotoFreeStyle()
+                            }
+
+                            else -> {}
                         }
                     }
                 }
@@ -104,6 +112,16 @@ class MainActivity : BaseActivity() {
             val uris = result?.map { it.toUri() } ?: emptyList()
             if (uris.isNotEmpty()) {
                 CollageActivity.start(this, uris)
+            }
+        }
+    }
+
+    private fun gotoFreeStyle() {
+        launchActivity(toActivity = ImagePickerActivity::class.java) { result ->
+            val result: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+            val uris = result?.map { it.toUri() } ?: emptyList()
+            if (uris.isNotEmpty()) {
+                FreeStyleActivity.start(this, uris)
             }
         }
     }
@@ -127,7 +145,7 @@ class MainActivity : BaseActivity() {
         launchActivity(SettingsActivity::class.java)
     }
 
-    private fun gotoRemoveObject(){
+    private fun gotoRemoveObject() {
         launchActivity(
             toActivity = ImagePickerActivity::class.java,
             ImageRequest(TypeSelect.SINGLE)
@@ -135,7 +153,7 @@ class MainActivity : BaseActivity() {
             val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
             result?.let {
                 lifecycleScope.launch {
-                    val pathBitmap =copyImageToAppStorage(this@MainActivity, result.toUri())
+                    val pathBitmap = copyImageToAppStorage(this@MainActivity, result.toUri())
                     launchActivity(
                         toActivity = RemoveObjectActivity::class.java,
                         input = ToolInput(pathBitmap = pathBitmap),
@@ -145,7 +163,7 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun gotoRemoveBackground(){
+    private fun gotoRemoveBackground() {
         launchActivity(
             toActivity = ImagePickerActivity::class.java,
             ImageRequest(TypeSelect.SINGLE)
@@ -153,7 +171,7 @@ class MainActivity : BaseActivity() {
             val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
             result?.let {
                 lifecycleScope.launch {
-                    val pathBitmap =copyImageToAppStorage(this@MainActivity, result.toUri())
+                    val pathBitmap = copyImageToAppStorage(this@MainActivity, result.toUri())
                     launchActivity(
                         toActivity = RemoveBackgroundActivity::class.java,
                         input = ToolInput(pathBitmap = pathBitmap),
@@ -163,7 +181,7 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun gotoAIEnhanceActivity(){
+    private fun gotoAIEnhanceActivity() {
         launchActivity(
             toActivity = ImagePickerActivity::class.java,
             ImageRequest(TypeSelect.SINGLE)
@@ -171,7 +189,7 @@ class MainActivity : BaseActivity() {
             val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
             result?.let {
                 lifecycleScope.launch {
-                    val pathBitmap =copyImageToAppStorage(this@MainActivity, result.toUri())
+                    val pathBitmap = copyImageToAppStorage(this@MainActivity, result.toUri())
                     launchActivity(
                         toActivity = AIEnhanceActivity::class.java,
                         input = ToolInput(pathBitmap = pathBitmap),

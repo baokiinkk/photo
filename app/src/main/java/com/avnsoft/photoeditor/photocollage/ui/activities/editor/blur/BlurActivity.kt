@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.TEXT_TYPE
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.adjust.SliderTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.saveImage
@@ -125,7 +126,10 @@ class BlurActivity : BaseActivity() {
                             }
                         },
                         canUndo = canUndo,
-                        canRedo = canRedo
+                        canRedo = canRedo,
+                        canSave = true,
+                        textRight = stringResource(R.string.apply),
+                        type = TEXT_TYPE.TEXT
                     )
 
                     Spacer(modifier = Modifier.height(28.dp))

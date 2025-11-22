@@ -27,6 +27,9 @@ class TextStickerViewModel : BaseViewModel() {
         }
     }
 
+    var addTextPropertiesDefault = AddTextProperties.defaultProperties.apply {
+        fontName = FontAsset.listFonts.first().fontPath
+    }
     fun addTextSticker(
         index: Int,
         item: FontItem,
@@ -82,7 +85,7 @@ class TextStickerViewModel : BaseViewModel() {
         }
     }
 
-    fun resetTextIndex(){
+    fun resetTextIndex() {
         uiState.update {
             it.copy(
                 textIndex = 0

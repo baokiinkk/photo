@@ -176,7 +176,7 @@ fun DiscoverFunctionCards(
                 .weight(1f)
                 .height(92.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .clickableWithAlphaEffect { onCollageClick() },
+                .clickableWithAlphaEffect { onFreeStyleClick() },
         ) {
             Image(
                 modifier = Modifier.fillMaxSize(),

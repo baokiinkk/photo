@@ -29,7 +29,7 @@ class CollageActivity : BaseActivity() {
     }
 
     companion object {
-        private const val EXTRA_URIS = "extra_uris"
+         const val EXTRA_URIS = "extra_uris"
         fun start(context: Context, uris: List<Uri>) {
             val i = Intent(context, CollageActivity::class.java)
             i.putParcelableArrayListExtra(EXTRA_URIS, ArrayList(uris))
