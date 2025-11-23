@@ -43,6 +43,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
@@ -231,7 +232,6 @@ fun BackgroundSheet(
                             val colorHex = currentSelectedColor.colorToHex()
                             onBackgroundSelect(BackgroundTab.SOLID, BackgroundSelection.Solid(colorHex))
                         },
-                        onColorPickerClick = { showColorWheel = true },
                         onColorWheelClick = { showColorWheel = true }
                     )
                 }
@@ -308,7 +308,6 @@ fun BackgroundSheet(
 private fun SolidBackgroundTab(
     selectedColor: Color,
     onColorSelect: (Color) -> Unit,
-    onColorPickerClick: () -> Unit,
     onColorWheelClick: () -> Unit
 ) {
     Column(
@@ -316,52 +315,6 @@ private fun SolidBackgroundTab(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
-        // Color selection tools
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // Color Picker (Eyedropper) button
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(
-                        color = Color(0xFF9747FF).copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .clickableWithAlphaEffect(onClick = onColorPickerClick),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Check, // Placeholder - replace with proper icon
-                    contentDescription = "Color Picker",
-                    tint = Color(0xFF9747FF),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-
-            // Color Wheel button
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(
-                        color = Color(0xFFF3F4F6),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .clickableWithAlphaEffect(onClick = onColorWheelClick),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Check, // Placeholder - replace with proper icon
-                    contentDescription = "Color Wheel",
-                    tint = Color(0xFF6B7280),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
-
         // Color swatches grid
         val solidColors = listOf(
             Color(0xFFFFFFFF), // White
@@ -382,13 +335,21 @@ private fun SolidBackgroundTab(
         )
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(5),
+            columns = GridCells.FixedSize(32.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            item {
+                Image(painter = painterResource(R.drawable.ic_color_picker),
+                    contentDescription = "",
+                    modifier = Modifier.size(32.dp).clickableWithAlphaEffect{
+                        onColorWheelClick.invoke()
+                    }
+                )
+            }
             items(solidColors) { color ->
                 SolidColorSwatch(
                     color = color,
@@ -408,7 +369,7 @@ private fun SolidColorSwatch(
 ) {
     Box(
         modifier = Modifier
-            .size(44.dp)
+            .size(32.dp)
             .background(
                 color = color,
                 shape = CircleShape
@@ -462,7 +423,6 @@ private fun PatternBackgroundTab(
     onGroupClick: (PatternModel) -> Unit,
     onPatternSelect: ((PatternContentModel, PatternModel) -> Unit)? = null
 ) {
-    val context = LocalContext.current
     val patternRepository: PatternRepository = koinInject()
 
     var patterns by remember { mutableStateOf<List<PatternModel>>(emptyList()) }
@@ -538,9 +498,7 @@ private fun PatternBackgroundTab(
             patternState == PatternState.GROUP -> {
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     items(patterns) { group ->
                         PatternGroupCard(
@@ -554,9 +512,7 @@ private fun PatternBackgroundTab(
             patternState == PatternState.CHILD && selectedGroup != null -> {
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     items(selectedGroup.content) { item ->
                         PatternItemCard(
@@ -591,7 +547,7 @@ private fun PatternGroupCard(
     ) {
         Box(
             modifier = Modifier
-                .size(100.dp)
+                .size(64.dp)
                 .background(
                     color = Color.White,
                     shape = RoundedCornerShape(12.dp)
@@ -651,8 +607,9 @@ private fun PatternGroupCard(
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = patternGroup.tabName,
-            style = AppStyle.body2().medium().gray900(),
+            style = AppStyle.caption2().medium().gray(),
             maxLines = 1,
+            textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
     }

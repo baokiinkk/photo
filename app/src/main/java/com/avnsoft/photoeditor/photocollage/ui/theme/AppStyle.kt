@@ -283,9 +283,9 @@ class AppColor(private val textStyle: TextStyle) {
         )
     }
 
-    fun gray700(): TextStyle {
+    fun gray(): TextStyle {
         return textStyle.copy(
-            color = Color(0xFF2B2B2C)
+            color = Color(0xFF1D2939)
         )
     }
 
