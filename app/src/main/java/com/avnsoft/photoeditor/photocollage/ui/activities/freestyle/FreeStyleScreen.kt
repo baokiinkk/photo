@@ -357,8 +357,14 @@ fun TextStickerFooterTool(
                 }
                 .align(Alignment.BottomCenter),
             items = uiState.items,
-            onCancel = onCancel,
-            onApply = onApply,
+            onCancel = {
+                viewmodel.resetTextIndex()
+                onCancel.invoke()
+            },
+            onApply = {
+                viewmodel.resetTextIndex()
+                onApply.invoke()
+            },
             addTextSticker = { index, item ->
                 viewmodel.addTextSticker(
                     index = index,
@@ -450,6 +456,7 @@ fun BoxAddFirstTextSticker(
 ) {
     val context = LocalContext.current
 
+    var textMeasured by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -459,7 +466,7 @@ fun BoxAddFirstTextSticker(
                 .wrapContentWidth()
                 .align(Alignment.Center)
                 .onGloballyPositioned { layoutCoordinates ->
-                    if (!viewmodel.textMeasured) {
+                    if (!textMeasured) {
                         val addTextProperties = AddTextProperties.defaultProperties
                         addTextProperties.fontName = FontAsset.listFonts.first().fontPath
                         addTextProperties.fontIndex = 0
@@ -468,7 +475,7 @@ fun BoxAddFirstTextSticker(
                         addTextProperties.textHeight = layoutCoordinates.size.height
                         viewmodel.addTextPropertiesDefault = addTextProperties
                         onAddFirstText.invoke(addTextProperties)
-                        viewmodel.textMeasured = true
+                        textMeasured = true
                     }
                 }
                 .alpha(0f)
