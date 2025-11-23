@@ -7,56 +7,107 @@
       "eventId": 999,
       "urlThumb": "",
       "bannerUrl": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+      "frameUrl": "pattern/Default/frame.webp",
       "content": [
         {
           "title": "D0",
           "name": "item_0.webp",
-          "urlThumb": "pattern/Default/item_0.webp"
+          "urlThumb": "pattern/Default/item_0.webp",
+          "x": 0.15,
+          "y": 0.15,
+          "width": 0.25,
+          "height": 0.3,
+          "rotate": 0
         },
         {
           "title": "D1",
           "name": "item_1.webp",
-          "urlThumb": "pattern/Default/item_1.webp"
+          "urlThumb": "pattern/Default/item_1.webp",
+          "x": 0.65,
+          "y": 0.15,
+          "width": 0.25,
+          "height": 0.3,
+          "rotate": -5
         },
         {
           "title": "D2",
           "name": "item_2.webp",
-          "urlThumb": "pattern/Default/item_2.webp"
+          "urlThumb": "pattern/Default/item_2.webp",
+          "x": 0.15,
+          "y": 0.55,
+          "width": 0.25,
+          "height": 0.3,
+          "rotate": 3
         },
         {
           "title": "D3",
           "name": "item_3.webp",
-          "urlThumb": "pattern/Default/item_3.webp"
+          "urlThumb": "pattern/Default/item_3.webp",
+          "x": 0.6,
+          "y": 0.65,
+          "width": 0.3,
+          "height": 0.3,
+          "rotate": -2
         },
         {
           "title": "D4",
           "name": "item_4.webp",
-          "urlThumb": "pattern/Default/item_4.webp"
+          "urlThumb": "pattern/Default/item_4.webp",
+          "x": 0.1,
+          "y": 0.1,
+          "width": 0.2,
+          "height": 0.25,
+          "rotate": 0
         },
         {
           "title": "D5",
           "name": "item_5.webp",
-          "urlThumb": "pattern/Default/item_5.webp"
+          "urlThumb": "pattern/Default/item_5.webp",
+          "x": 0.7,
+          "y": 0.1,
+          "width": 0.2,
+          "height": 0.25,
+          "rotate": 0
         },
         {
           "title": "D6",
           "name": "item_6.webp",
-          "urlThumb": "pattern/Default/item_6.webp"
+          "urlThumb": "pattern/Default/item_6.webp",
+          "x": 0.1,
+          "y": 0.5,
+          "width": 0.2,
+          "height": 0.25,
+          "rotate": 0
         },
         {
           "title": "D7",
           "name": "item_7.webp",
-          "urlThumb": "pattern/Default/item_7.webp"
+          "urlThumb": "pattern/Default/item_7.webp",
+          "x": 0.7,
+          "y": 0.6,
+          "width": 0.25,
+          "height": 0.3,
+          "rotate": 0
         },
         {
           "title": "D8",
           "name": "item_8.webp",
-          "urlThumb": "pattern/Default/item_8.webp"
+          "urlThumb": "pattern/Default/item_8.webp",
+          "x": 0.4,
+          "y": 0.4,
+          "width": 0.2,
+          "height": 0.2,
+          "rotate": 15
         },
         {
           "title": "D9",
           "name": "item_9.webp",
-          "urlThumb": "pattern/Default/item_9.webp"
+          "urlThumb": "pattern/Default/item_9.webp",
+          "x": 0.05,
+          "y": 0.05,
+          "width": 0.15,
+          "height": 0.15,
+          "rotate": -10
         }
       ],
       "isPro": false,
@@ -73,59 +124,110 @@
         {
           "title": "C1",
           "name": "item_1.jpg",
-          "urlThumb": "202105collagemaker/pattern/cloud/thumb_1.jpg"
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_1.jpg",
+          "x": 0.06,
+          "y": 0.13,
+          "width": 0.25,
+          "height": 0.2,
+          "rotate": 0
         },
         {
           "title": "C2",
           "name": "item_2.jpg",
-          "urlThumb": "202105collagemaker/pattern/cloud/thumb_2.jpg"
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_2.jpg",
+          "x": 0.4,
+          "y": 0.13,
+          "width": 0.21,
+          "height": 0.16,
+          "rotate": 0
         },
         {
           "title": "C3",
           "name": "item_3.jpg",
-          "urlThumb": "202105collagemaker/pattern/cloud/thumb_3.jpg"
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_3.jpg",
+          "x": 0.63,
+          "y": 0.05,
+          "width": 0.26,
+          "height": 0.15,
+          "rotate": -11.3
         },
         {
           "title": "C4",
           "name": "item_4.jpg",
-          "urlThumb": "202105collagemaker/pattern/cloud/thumb_4.jpg"
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_4.jpg",
+          "x": 0.13,
+          "y": 0.33,
+          "width": 0.24,
+          "height": 0.15,
+          "rotate": 0
         },
         {
           "title": "C5",
           "name": "item_5.jpg",
-          "urlThumb": "202105collagemaker/pattern/cloud/thumb_5.jpg"
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_5.jpg",
+          "x": 0.36,
+          "y": 0.31,
+          "width": 0.25,
+          "height": 0.16,
+          "rotate": 0
         },
         {
           "title": "C6",
           "name": "item_6.jpg",
-          "urlThumb": "202105collagemaker/pattern/cloud/thumb_6.jpg"
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_6.jpg",
+          "x": 0.6,
+          "y": 0.33,
+          "width": 0.2,
+          "height": 0.21,
+          "rotate": -9.9
         },
         {
           "title": "C7",
           "name": "item_7.jpg",
-          "urlThumb": "202105collagemaker/pattern/cloud/thumb_7.jpg"
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_7.jpg",
+          "x": 0.1,
+          "y": 0.46,
+          "width": 0.26,
+          "height": 0.15,
+          "rotate": 0
         },
         {
           "title": "C8",
           "name": "item_8.jpg",
-          "urlThumb": "202105collagemaker/pattern/cloud/thumb_8.jpg"
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_8.jpg",
+          "x": 0.4,
+          "y": 0.51,
+          "width": 0.22,
+          "height": 0.18,
+          "rotate": 0
         },
         {
           "title": "C9",
           "name": "item_9.jpg",
-          "urlThumb": "202105collagemaker/pattern/cloud/thumb_9.jpg"
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_9.jpg",
+          "x": 0.61,
+          "y": 0.52,
+          "width": 0.25,
+          "height": 0.17,
+          "rotate": 0
         },
         {
           "title": "C10",
           "name": "item_10.jpg",
-          "urlThumb": "202105collagemaker/pattern/cloud/thumb_10.jpg"
+          "urlThumb": "202105collagemaker/pattern/cloud/thumb_10.jpg",
+          "x": 0.08,
+          "y": 0.73,
+          "width": 0.19,
+          "height": 0.15,
+          "rotate": 6.8
         }
       ],
       "urlZip": "202105collagemaker/pattern/cloud/Archive.zip",
       "isPro": false,
       "isReward": true,
       "isFree": false,
-      "isUsed": false
+      "isUsed": false,
+      "frameUrl": "202105collagemaker/pattern/cloud/frame.png"
     },
     {
       "eventName": "Glitter",
@@ -136,59 +238,110 @@
         {
           "title": "G1",
           "name": "item_1.jpg",
-          "urlThumb": "202105collagemaker/pattern/glitter/thumb_1.jpg"
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_1.jpg",
+          "x": 0.09,
+          "y": 0.07,
+          "width": 0.24,
+          "height": 0.15,
+          "rotate": -2.2
         },
         {
           "title": "G2",
           "name": "item_2.jpg",
-          "urlThumb": "202105collagemaker/pattern/glitter/thumb_2.jpg"
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_2.jpg",
+          "x": 0.32,
+          "y": 0.1,
+          "width": 0.19,
+          "height": 0.17,
+          "rotate": 0
         },
         {
           "title": "G3",
           "name": "item_3.jpg",
-          "urlThumb": "202105collagemaker/pattern/glitter/thumb_3.jpg"
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_3.jpg",
+          "x": 0.63,
+          "y": 0.07,
+          "width": 0.24,
+          "height": 0.2,
+          "rotate": 0
         },
         {
           "title": "G4",
           "name": "item_4.jpg",
-          "urlThumb": "202105collagemaker/pattern/glitter/thumb_4.jpg"
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_4.jpg",
+          "x": 0.07,
+          "y": 0.29,
+          "width": 0.18,
+          "height": 0.15,
+          "rotate": 0
         },
         {
           "title": "G5",
           "name": "item_5.jpg",
-          "urlThumb": "202105collagemaker/pattern/glitter/thumb_5.jpg"
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_5.jpg",
+          "x": 0.33,
+          "y": 0.34,
+          "width": 0.16,
+          "height": 0.19,
+          "rotate": 9.4
         },
         {
           "title": "G6",
           "name": "item_6.jpg",
-          "urlThumb": "202105collagemaker/pattern/glitter/thumb_6.jpg"
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_6.jpg",
+          "x": 0.64,
+          "y": 0.33,
+          "width": 0.22,
+          "height": 0.18,
+          "rotate": 0
         },
         {
           "title": "G7",
           "name": "item_7.jpg",
-          "urlThumb": "202105collagemaker/pattern/glitter/thumb_7.jpg"
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_7.jpg",
+          "x": 0.08,
+          "y": 0.48,
+          "width": 0.25,
+          "height": 0.18,
+          "rotate": 0
         },
         {
           "title": "G8",
           "name": "item_8.jpg",
-          "urlThumb": "202105collagemaker/pattern/glitter/thumb_8.jpg"
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_8.jpg",
+          "x": 0.35,
+          "y": 0.49,
+          "width": 0.19,
+          "height": 0.21,
+          "rotate": -13.8
         },
         {
           "title": "G9",
           "name": "item_9.jpg",
-          "urlThumb": "202105collagemaker/pattern/glitter/thumb_9.jpg"
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_9.jpg",
+          "x": 0.61,
+          "y": 0.46,
+          "width": 0.2,
+          "height": 0.18,
+          "rotate": -5.5
         },
         {
           "title": "G10",
           "name": "item_10.jpg",
-          "urlThumb": "202105collagemaker/pattern/glitter/thumb_10.jpg"
+          "urlThumb": "202105collagemaker/pattern/glitter/thumb_10.jpg",
+          "x": 0.08,
+          "y": 0.66,
+          "width": 0.21,
+          "height": 0.19,
+          "rotate": 13.1
         }
       ],
       "urlZip": "202105collagemaker/pattern/glitter/Archive.zip",
       "isPro": false,
       "isReward": true,
       "isFree": false,
-      "isUsed": false
+      "isUsed": false,
+      "frameUrl": "202105collagemaker/pattern/glitter/frame.png"
     },
     {
       "eventName": "Holo",
@@ -199,54 +352,100 @@
         {
           "title": "H1",
           "name": "item_1.png",
-          "urlThumb": "202105collagemaker/pattern/holo/thumb_1.png"
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_1.png",
+          "x": 0.06,
+          "y": 0.08,
+          "width": 0.25,
+          "height": 0.23,
+          "rotate": 0
         },
         {
           "title": "H2",
           "name": "item_2.png",
-          "urlThumb": "202105collagemaker/pattern/holo/thumb_2.png"
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_2.png",
+          "x": 0.41,
+          "y": 0.14,
+          "width": 0.16,
+          "height": 0.21,
+          "rotate": -5.6
         },
         {
           "title": "H3",
           "name": "item_3.png",
-          "urlThumb": "202105collagemaker/pattern/holo/thumb_3.png"
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_3.png",
+          "x": 0.6,
+          "y": 0.09,
+          "width": 0.23,
+          "height": 0.21,
+          "rotate": 14.3
         },
         {
           "title": "H4",
           "name": "item_4.png",
-          "urlThumb": "202105collagemaker/pattern/holo/thumb_4.png"
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_4.png",
+          "x": 0.13,
+          "y": 0.35,
+          "width": 0.21,
+          "height": 0.21,
+          "rotate": -6.5
         },
         {
           "title": "H5",
           "name": "item_5.png",
-          "urlThumb": "202105collagemaker/pattern/holo/thumb_5.png"
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_5.png",
+          "x": 0.38,
+          "y": 0.32,
+          "width": 0.25,
+          "height": 0.23,
+          "rotate": 11.6
         },
         {
           "title": "H6",
           "name": "item_6.png",
-          "urlThumb": "202105collagemaker/pattern/holo/thumb_6.png"
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_6.png",
+          "x": 0.66,
+          "y": 0.41,
+          "width": 0.16,
+          "height": 0.21,
+          "rotate": 8.9
         },
         {
           "title": "H7",
           "name": "item_7.png",
-          "urlThumb": "202105collagemaker/pattern/holo/thumb_7.png"
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_7.png",
+          "x": 0.09,
+          "y": 0.65,
+          "width": 0.18,
+          "height": 0.23,
+          "rotate": -12.7
         },
         {
           "title": "H8",
           "name": "item_8.png",
-          "urlThumb": "202105collagemaker/pattern/holo/thumb_8.png"
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_8.png",
+          "x": 0.38,
+          "y": 0.64,
+          "width": 0.2,
+          "height": 0.21,
+          "rotate": 0
         },
         {
           "title": "H9",
           "name": "item_9.png",
-          "urlThumb": "202105collagemaker/pattern/holo/thumb_9.png"
+          "urlThumb": "202105collagemaker/pattern/holo/thumb_9.png",
+          "x": 0.6,
+          "y": 0.62,
+          "width": 0.21,
+          "height": 0.24,
+          "rotate": -7.1
         }
       ],
       "urlZip": "202105collagemaker/pattern/holo/Archive.zip",
       "isPro": false,
       "isReward": true,
       "isFree": false,
-      "isUsed": false
+      "isUsed": false,
+      "frameUrl": "202105collagemaker/pattern/holo/frame.png"
     },
     {
       "eventName": "Love",
@@ -257,54 +456,100 @@
         {
           "title": "L1",
           "name": "item_1.png",
-          "urlThumb": "202105collagemaker/pattern/love/thumb_1.png"
+          "urlThumb": "202105collagemaker/pattern/love/thumb_1.png",
+          "x": 0.12,
+          "y": 0.08,
+          "width": 0.26,
+          "height": 0.23,
+          "rotate": 1.2
         },
         {
           "title": "L2",
           "name": "item_2.png",
-          "urlThumb": "202105collagemaker/pattern/love/thumb_2.png"
+          "urlThumb": "202105collagemaker/pattern/love/thumb_2.png",
+          "x": 0.36,
+          "y": 0.13,
+          "width": 0.25,
+          "height": 0.24,
+          "rotate": 0
         },
         {
           "title": "L3",
           "name": "item_3.png",
-          "urlThumb": "202105collagemaker/pattern/love/thumb_3.png"
+          "urlThumb": "202105collagemaker/pattern/love/thumb_3.png",
+          "x": 0.65,
+          "y": 0.11,
+          "width": 0.23,
+          "height": 0.18,
+          "rotate": 1.1
         },
         {
           "title": "L4",
           "name": "item_4.png",
-          "urlThumb": "202105collagemaker/pattern/love/thumb_4.png"
+          "urlThumb": "202105collagemaker/pattern/love/thumb_4.png",
+          "x": 0.08,
+          "y": 0.37,
+          "width": 0.25,
+          "height": 0.25,
+          "rotate": 0
         },
         {
           "title": "L5",
           "name": "item_5.png",
-          "urlThumb": "202105collagemaker/pattern/love/thumb_5.png"
+          "urlThumb": "202105collagemaker/pattern/love/thumb_5.png",
+          "x": 0.38,
+          "y": 0.38,
+          "width": 0.26,
+          "height": 0.25,
+          "rotate": 0
         },
         {
           "title": "L6",
           "name": "item_6.png",
-          "urlThumb": "202105collagemaker/pattern/love/thumb_6.png"
+          "urlThumb": "202105collagemaker/pattern/love/thumb_6.png",
+          "x": 0.66,
+          "y": 0.34,
+          "width": 0.21,
+          "height": 0.23,
+          "rotate": 4.9
         },
         {
           "title": "L7",
           "name": "item_7.png",
-          "urlThumb": "202105collagemaker/pattern/love/thumb_7.png"
+          "urlThumb": "202105collagemaker/pattern/love/thumb_7.png",
+          "x": 0.15,
+          "y": 0.66,
+          "width": 0.23,
+          "height": 0.18,
+          "rotate": 0
         },
         {
           "title": "L8",
           "name": "item_8.png",
-          "urlThumb": "202105collagemaker/pattern/love/thumb_8.png"
+          "urlThumb": "202105collagemaker/pattern/love/thumb_8.png",
+          "x": 0.4,
+          "y": 0.64,
+          "width": 0.26,
+          "height": 0.18,
+          "rotate": 0
         },
         {
           "title": "L9",
           "name": "item_9.png",
-          "urlThumb": "202105collagemaker/pattern/love/thumb_9.png"
+          "urlThumb": "202105collagemaker/pattern/love/thumb_9.png",
+          "x": 0.59,
+          "y": 0.67,
+          "width": 0.21,
+          "height": 0.18,
+          "rotate": -2.3
         }
       ],
       "urlZip": "202105collagemaker/pattern/love/Archive.zip",
       "isPro": false,
       "isReward": true,
       "isFree": false,
-      "isUsed": false
+      "isUsed": false,
+      "frameUrl": "202105collagemaker/pattern/love/frame.png"
     },
     {
       "eventName": "Paper",
@@ -315,59 +560,110 @@
         {
           "title": "P1",
           "name": "item_1.png",
-          "urlThumb": "202105collagemaker/pattern/paper/thumb_1.png"
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_1.png",
+          "x": 0.13,
+          "y": 0.09,
+          "width": 0.2,
+          "height": 0.19,
+          "rotate": 7.9
         },
         {
           "title": "P2",
           "name": "item_2.png",
-          "urlThumb": "202105collagemaker/pattern/paper/thumb_2.png"
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_2.png",
+          "x": 0.38,
+          "y": 0.08,
+          "width": 0.26,
+          "height": 0.15,
+          "rotate": -10.9
         },
         {
           "title": "P3",
           "name": "item_3.png",
-          "urlThumb": "202105collagemaker/pattern/paper/thumb_3.png"
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_3.png",
+          "x": 0.68,
+          "y": 0.09,
+          "width": 0.19,
+          "height": 0.15,
+          "rotate": -0.9
         },
         {
           "title": "P4",
           "name": "item_4.png",
-          "urlThumb": "202105collagemaker/pattern/paper/thumb_4.png"
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_4.png",
+          "x": 0.08,
+          "y": 0.32,
+          "width": 0.24,
+          "height": 0.16,
+          "rotate": 11.4
         },
         {
           "title": "P5",
           "name": "item_5.png",
-          "urlThumb": "202105collagemaker/pattern/paper/thumb_5.png"
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_5.png",
+          "x": 0.39,
+          "y": 0.25,
+          "width": 0.17,
+          "height": 0.18,
+          "rotate": 0
         },
         {
           "title": "P6",
           "name": "item_6.png",
-          "urlThumb": "202105collagemaker/pattern/paper/thumb_6.png"
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_6.png",
+          "x": 0.62,
+          "y": 0.29,
+          "width": 0.24,
+          "height": 0.19,
+          "rotate": 0
         },
         {
           "title": "P7",
           "name": "item_7.png",
-          "urlThumb": "202105collagemaker/pattern/paper/thumb_7.png"
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_7.png",
+          "x": 0.09,
+          "y": 0.52,
+          "width": 0.2,
+          "height": 0.21,
+          "rotate": -11.8
         },
         {
           "title": "P8",
           "name": "item_8.png",
-          "urlThumb": "202105collagemaker/pattern/paper/thumb_8.png"
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_8.png",
+          "x": 0.35,
+          "y": 0.46,
+          "width": 0.19,
+          "height": 0.15,
+          "rotate": 0
         },
         {
           "title": "P9",
           "name": "item_9.png",
-          "urlThumb": "202105collagemaker/pattern/paper/thumb_9.png"
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_9.png",
+          "x": 0.63,
+          "y": 0.49,
+          "width": 0.22,
+          "height": 0.15,
+          "rotate": -0.7
         },
         {
           "title": "P10",
           "name": "item_10.png",
-          "urlThumb": "202105collagemaker/pattern/paper/thumb_10.png"
+          "urlThumb": "202105collagemaker/pattern/paper/thumb_10.png",
+          "x": 0.1,
+          "y": 0.72,
+          "width": 0.17,
+          "height": 0.15,
+          "rotate": 3.5
         }
       ],
       "urlZip": "202105collagemaker/pattern/paper/Archive.zip",
       "isPro": false,
       "isReward": true,
       "isFree": false,
-      "isUsed": false
+      "isUsed": false,
+      "frameUrl": "202105collagemaker/pattern/paper/frame.png"
     },
     {
       "eventName": "Rose Gold",
@@ -378,49 +674,90 @@
         {
           "title": "R1",
           "name": "item_1.png",
-          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_1.png"
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_1.png",
+          "x": 0.09,
+          "y": 0.09,
+          "width": 0.19,
+          "height": 0.17,
+          "rotate": -8.3
         },
         {
           "title": "R2",
           "name": "item_2.png",
-          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_2.png"
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_2.png",
+          "x": 0.39,
+          "y": 0.1,
+          "width": 0.19,
+          "height": 0.23,
+          "rotate": 6.0
         },
         {
           "title": "R3",
           "name": "item_3.png",
-          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_3.png"
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_3.png",
+          "x": 0.59,
+          "y": 0.11,
+          "width": 0.25,
+          "height": 0.2,
+          "rotate": -14.4
         },
         {
           "title": "R4",
           "name": "item_4.png",
-          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_4.png"
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_4.png",
+          "x": 0.08,
+          "y": 0.34,
+          "width": 0.18,
+          "height": 0.19,
+          "rotate": -5.2
         },
         {
           "title": "R5",
           "name": "item_5.png",
-          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_5.png"
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_5.png",
+          "x": 0.36,
+          "y": 0.32,
+          "width": 0.17,
+          "height": 0.23,
+          "rotate": 0
         },
         {
           "title": "R6",
           "name": "item_6.png",
-          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_6.png"
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_6.png",
+          "x": 0.65,
+          "y": 0.36,
+          "width": 0.25,
+          "height": 0.24,
+          "rotate": 0
         },
         {
           "title": "R7",
           "name": "item_7.png",
-          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_7.png"
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_7.png",
+          "x": 0.14,
+          "y": 0.61,
+          "width": 0.18,
+          "height": 0.18,
+          "rotate": 12.3
         },
         {
           "title": "R8",
           "name": "item_8.png",
-          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_8.png"
+          "urlThumb": "202105collagemaker/pattern/rose_gold/thumb_8.png",
+          "x": 0.39,
+          "y": 0.6,
+          "width": 0.18,
+          "height": 0.2,
+          "rotate": 3.0
         }
       ],
       "urlZip": "202105collagemaker/pattern/rose_gold/Archive.zip",
       "isPro": false,
       "isReward": true,
       "isFree": false,
-      "isUsed": false
+      "isUsed": false,
+      "frameUrl": "202105collagemaker/pattern/rose gold/frame.png"
     },
     {
       "eventName": "Stars",
@@ -431,59 +768,110 @@
         {
           "title": "S1",
           "name": "item_1.png",
-          "urlThumb": "202105collagemaker/pattern/stars/thumb_1.png"
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_1.png",
+          "x": 0.09,
+          "y": 0.1,
+          "width": 0.26,
+          "height": 0.15,
+          "rotate": 0
         },
         {
           "title": "S2",
           "name": "item_2.png",
-          "urlThumb": "202105collagemaker/pattern/stars/thumb_2.png"
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_2.png",
+          "x": 0.32,
+          "y": 0.1,
+          "width": 0.21,
+          "height": 0.18,
+          "rotate": 8.1
         },
         {
           "title": "S3",
           "name": "item_3.png",
-          "urlThumb": "202105collagemaker/pattern/stars/thumb_3.png"
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_3.png",
+          "x": 0.6,
+          "y": 0.13,
+          "width": 0.19,
+          "height": 0.19,
+          "rotate": 0.9
         },
         {
           "title": "S4",
           "name": "item_4.png",
-          "urlThumb": "202105collagemaker/pattern/stars/thumb_4.png"
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_4.png",
+          "x": 0.07,
+          "y": 0.33,
+          "width": 0.2,
+          "height": 0.15,
+          "rotate": 0.5
         },
         {
           "title": "S5",
           "name": "item_5.png",
-          "urlThumb": "202105collagemaker/pattern/stars/thumb_5.png"
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_5.png",
+          "x": 0.36,
+          "y": 0.32,
+          "width": 0.19,
+          "height": 0.15,
+          "rotate": 0
         },
         {
           "title": "S6",
           "name": "item_6.png",
-          "urlThumb": "202105collagemaker/pattern/stars/thumb_6.png"
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_6.png",
+          "x": 0.63,
+          "y": 0.33,
+          "width": 0.23,
+          "height": 0.2,
+          "rotate": 0
         },
         {
           "title": "S7",
           "name": "item_7.png",
-          "urlThumb": "202105collagemaker/pattern/stars/thumb_7.png"
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_7.png",
+          "x": 0.12,
+          "y": 0.53,
+          "width": 0.16,
+          "height": 0.21,
+          "rotate": -5.7
         },
         {
           "title": "S8",
           "name": "item_8.png",
-          "urlThumb": "202105collagemaker/pattern/stars/thumb_8.png"
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_8.png",
+          "x": 0.41,
+          "y": 0.46,
+          "width": 0.25,
+          "height": 0.18,
+          "rotate": 8.5
         },
         {
           "title": "S9",
           "name": "item_9.png",
-          "urlThumb": "202105collagemaker/pattern/stars/thumb_9.png"
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_9.png",
+          "x": 0.67,
+          "y": 0.48,
+          "width": 0.23,
+          "height": 0.2,
+          "rotate": -9.7
         },
         {
           "title": "S10",
           "name": "item_10.png",
-          "urlThumb": "202105collagemaker/pattern/stars/thumb_10.png"
+          "urlThumb": "202105collagemaker/pattern/stars/thumb_10.png",
+          "x": 0.06,
+          "y": 0.74,
+          "width": 0.17,
+          "height": 0.19,
+          "rotate": 8.2
         }
       ],
       "urlZip": "202105collagemaker/pattern/stars/Archive.zip",
       "isPro": false,
       "isReward": true,
       "isFree": false,
-      "isUsed": false
+      "isUsed": false,
+      "frameUrl": "202105collagemaker/pattern/stars/frame.png"
     },
     {
       "eventName": "Summer",
@@ -494,49 +882,90 @@
         {
           "title": "S1",
           "name": "item_1.png",
-          "urlThumb": "202105collagemaker/pattern/summer/thumb_1.png"
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_1.png",
+          "x": 0.09,
+          "y": 0.08,
+          "width": 0.25,
+          "height": 0.18,
+          "rotate": -12.7
         },
         {
           "title": "S2",
           "name": "item_2.png",
-          "urlThumb": "202105collagemaker/pattern/summer/thumb_2.png"
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_2.png",
+          "x": 0.39,
+          "y": 0.11,
+          "width": 0.26,
+          "height": 0.2,
+          "rotate": 4.3
         },
         {
           "title": "S3",
           "name": "item_3.png",
-          "urlThumb": "202105collagemaker/pattern/summer/thumb_3.png"
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_3.png",
+          "x": 0.61,
+          "y": 0.05,
+          "width": 0.2,
+          "height": 0.23,
+          "rotate": 9.4
         },
         {
           "title": "S4",
           "name": "item_4.png",
-          "urlThumb": "202105collagemaker/pattern/summer/thumb_4.png"
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_4.png",
+          "x": 0.1,
+          "y": 0.4,
+          "width": 0.24,
+          "height": 0.24,
+          "rotate": 13.6
         },
         {
           "title": "S5",
           "name": "item_5.png",
-          "urlThumb": "202105collagemaker/pattern/summer/thumb_5.png"
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_5.png",
+          "x": 0.33,
+          "y": 0.41,
+          "width": 0.19,
+          "height": 0.17,
+          "rotate": 3.1
         },
         {
           "title": "S6",
           "name": "item_6.png",
-          "urlThumb": "202105collagemaker/pattern/summer/thumb_6.png"
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_6.png",
+          "x": 0.6,
+          "y": 0.36,
+          "width": 0.24,
+          "height": 0.24,
+          "rotate": 0
         },
         {
           "title": "S7",
           "name": "item_7.png",
-          "urlThumb": "202105collagemaker/pattern/summer/thumb_7.png"
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_7.png",
+          "x": 0.13,
+          "y": 0.6,
+          "width": 0.26,
+          "height": 0.17,
+          "rotate": 0
         },
         {
           "title": "S8",
           "name": "item_8.png",
-          "urlThumb": "202105collagemaker/pattern/summer/thumb_8.png"
+          "urlThumb": "202105collagemaker/pattern/summer/thumb_8.png",
+          "x": 0.33,
+          "y": 0.61,
+          "width": 0.25,
+          "height": 0.17,
+          "rotate": -13.3
         }
       ],
       "urlZip": "202105collagemaker/pattern/summer/Archive.zip",
       "isPro": false,
       "isReward": true,
       "isFree": false,
-      "isUsed": false
+      "isUsed": false,
+      "frameUrl": "202105collagemaker/pattern/summer/frame.png"
     },
     {
       "eventName": "Texture",
@@ -547,59 +976,110 @@
         {
           "title": "T1",
           "name": "item_1.png",
-          "urlThumb": "202105collagemaker/pattern/texture/thumb_1.png"
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_1.png",
+          "x": 0.09,
+          "y": 0.1,
+          "width": 0.26,
+          "height": 0.18,
+          "rotate": 14.6
         },
         {
           "title": "T2",
           "name": "item_2.png",
-          "urlThumb": "202105collagemaker/pattern/texture/thumb_2.png"
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_2.png",
+          "x": 0.34,
+          "y": 0.15,
+          "width": 0.19,
+          "height": 0.15,
+          "rotate": 0.4
         },
         {
           "title": "T3",
           "name": "item_3.png",
-          "urlThumb": "202105collagemaker/pattern/texture/thumb_3.png"
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_3.png",
+          "x": 0.59,
+          "y": 0.14,
+          "width": 0.24,
+          "height": 0.15,
+          "rotate": 0
         },
         {
           "title": "T4",
           "name": "item_4.png",
-          "urlThumb": "202105collagemaker/pattern/texture/thumb_4.png"
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_4.png",
+          "x": 0.08,
+          "y": 0.28,
+          "width": 0.22,
+          "height": 0.16,
+          "rotate": 0
         },
         {
           "title": "T5",
           "name": "item_5.png",
-          "urlThumb": "202105collagemaker/pattern/texture/thumb_5.png"
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_5.png",
+          "x": 0.37,
+          "y": 0.31,
+          "width": 0.26,
+          "height": 0.19,
+          "rotate": 1.8
         },
         {
           "title": "T6",
           "name": "item_6.png",
-          "urlThumb": "202105collagemaker/pattern/texture/thumb_6.png"
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_6.png",
+          "x": 0.67,
+          "y": 0.27,
+          "width": 0.21,
+          "height": 0.2,
+          "rotate": -13.9
         },
         {
           "title": "T7",
           "name": "item_7.png",
-          "urlThumb": "202105collagemaker/pattern/texture/thumb_7.png"
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_7.png",
+          "x": 0.15,
+          "y": 0.53,
+          "width": 0.19,
+          "height": 0.15,
+          "rotate": -5.7
         },
         {
           "title": "T8",
           "name": "item_8.png",
-          "urlThumb": "202105collagemaker/pattern/texture/thumb_8.png"
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_8.png",
+          "x": 0.36,
+          "y": 0.54,
+          "width": 0.24,
+          "height": 0.17,
+          "rotate": 0
         },
         {
           "title": "T9",
           "name": "item_9.png",
-          "urlThumb": "202105collagemaker/pattern/texture/thumb_9.png"
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_9.png",
+          "x": 0.65,
+          "y": 0.53,
+          "width": 0.24,
+          "height": 0.15,
+          "rotate": 0
         },
         {
           "title": "T10",
           "name": "item_10.png",
-          "urlThumb": "202105collagemaker/pattern/texture/thumb_10.png"
+          "urlThumb": "202105collagemaker/pattern/texture/thumb_10.png",
+          "x": 0.13,
+          "y": 0.75,
+          "width": 0.19,
+          "height": 0.19,
+          "rotate": -9.4
         }
       ],
       "urlZip": "202105collagemaker/pattern/texture/Archive.zip",
       "isPro": false,
       "isReward": true,
       "isFree": false,
-      "isUsed": false
+      "isUsed": false,
+      "frameUrl": "202105collagemaker/pattern/texture/frame.png"
     },
     {
       "eventName": "Water",
@@ -610,59 +1090,110 @@
         {
           "title": "W1",
           "name": "item_1.png",
-          "urlThumb": "202105collagemaker/pattern/water/thumb_1.png"
+          "urlThumb": "202105collagemaker/pattern/water/thumb_1.png",
+          "x": 0.08,
+          "y": 0.06,
+          "width": 0.26,
+          "height": 0.15,
+          "rotate": -9.7
         },
         {
           "title": "W2",
           "name": "item_2.png",
-          "urlThumb": "202105collagemaker/pattern/water/thumb_2.png"
+          "urlThumb": "202105collagemaker/pattern/water/thumb_2.png",
+          "x": 0.34,
+          "y": 0.08,
+          "width": 0.22,
+          "height": 0.19,
+          "rotate": 9.1
         },
         {
           "title": "W3",
           "name": "item_3.png",
-          "urlThumb": "202105collagemaker/pattern/water/thumb_3.png"
+          "urlThumb": "202105collagemaker/pattern/water/thumb_3.png",
+          "x": 0.64,
+          "y": 0.08,
+          "width": 0.24,
+          "height": 0.17,
+          "rotate": -0.6
         },
         {
           "title": "W4",
           "name": "item_4.png",
-          "urlThumb": "202105collagemaker/pattern/water/thumb_4.png"
+          "urlThumb": "202105collagemaker/pattern/water/thumb_4.png",
+          "x": 0.1,
+          "y": 0.32,
+          "width": 0.18,
+          "height": 0.15,
+          "rotate": -12.3
         },
         {
           "title": "W5",
           "name": "item_5.png",
-          "urlThumb": "202105collagemaker/pattern/water/thumb_5.png"
+          "urlThumb": "202105collagemaker/pattern/water/thumb_5.png",
+          "x": 0.36,
+          "y": 0.26,
+          "width": 0.26,
+          "height": 0.2,
+          "rotate": 0
         },
         {
           "title": "W6",
           "name": "item_6.png",
-          "urlThumb": "202105collagemaker/pattern/water/thumb_6.png"
+          "urlThumb": "202105collagemaker/pattern/water/thumb_6.png",
+          "x": 0.66,
+          "y": 0.32,
+          "width": 0.19,
+          "height": 0.15,
+          "rotate": 5.0
         },
         {
           "title": "W7",
           "name": "item_7.png",
-          "urlThumb": "202105collagemaker/pattern/water/thumb_7.png"
+          "urlThumb": "202105collagemaker/pattern/water/thumb_7.png",
+          "x": 0.1,
+          "y": 0.52,
+          "width": 0.2,
+          "height": 0.2,
+          "rotate": 7.7
         },
         {
           "title": "W8",
           "name": "item_8.png",
-          "urlThumb": "202105collagemaker/pattern/water/thumb_8.png"
+          "urlThumb": "202105collagemaker/pattern/water/thumb_8.png",
+          "x": 0.36,
+          "y": 0.53,
+          "width": 0.22,
+          "height": 0.19,
+          "rotate": 0
         },
         {
           "title": "W9",
           "name": "item_9.png",
-          "urlThumb": "202105collagemaker/pattern/water/thumb_9.png"
+          "urlThumb": "202105collagemaker/pattern/water/thumb_9.png",
+          "x": 0.6,
+          "y": 0.49,
+          "width": 0.21,
+          "height": 0.19,
+          "rotate": -7.0
         },
         {
           "title": "W10",
           "name": "item_10.png",
-          "urlThumb": "202105collagemaker/pattern/water/thumb_10.png"
+          "urlThumb": "202105collagemaker/pattern/water/thumb_10.png",
+          "x": 0.1,
+          "y": 0.72,
+          "width": 0.25,
+          "height": 0.2,
+          "rotate": -6.6
         }
       ],
       "urlZip": "202105collagemaker/pattern/water/Archive.zip",
       "isPro": false,
       "isReward": true,
       "isFree": false,
-      "isUsed": false
+      "isUsed": false,
+      "frameUrl": "202105collagemaker/pattern/water/frame.png"
     }
   ],
   "urlRoot": "https://photo.footballtv.info/"

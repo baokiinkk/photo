@@ -134,122 +134,151 @@ fun CollageScreen(
                 else -> null
             }
         }
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)) {
+            BoxWithConstraints(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 80.dp, bottom = 175.dp)
+                    .then(
+                        if (aspectRatioValue != null) {
+                            Modifier.aspectRatio(aspectRatioValue)
+                        } else {
+                            Modifier
+                        }
+                    )
+                    .background(BackgroundWhite)
 
-        BoxWithConstraints(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 16.dp)
-                .padding(top = 80.dp, bottom = 175.dp)
-                .then(
-                    if (aspectRatioValue != null) {
-                        Modifier.aspectRatio(aspectRatioValue)
-                    } else {
-                        Modifier
+            )
+            {
+                val templateToUse = selected ?: templates.firstOrNull() ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
+                // Map slider values to Dp
+                val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
+                val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
+
+                val canvasWidth = constraints.maxWidth.toFloat()
+                val canvasHeight = constraints.maxHeight.toFloat()
+
+                // Reset transforms khi đổi template hoặc thêm ảnh (KHÔNG reset khi topMargin thay đổi)
+                LaunchedEffect(templateToUse.id, currentUris.size) {
+                    if (templateToUse.id.isNotEmpty() && currentUris.isNotEmpty() && canvasWidth > 0 && canvasHeight > 0) {
+                        // Clear transforms trước để trigger lại tính toán
+                        vm.updateImageTransforms(emptyMap())
+                        // Delay để đảm bảo template và images đã được cập nhật hoàn toàn
+                        delay(500)
+                        resetImageTransforms(templateToUse, canvasWidth, canvasHeight, topMargin)
                     }
-                )
-                .background(BackgroundWhite)
-
-        ) {
-            val templateToUse = selected ?: templates.firstOrNull() ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
-            // Map slider values to Dp
-            val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
-            val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
-
-            val canvasWidth = constraints.maxWidth.toFloat()
-            val canvasHeight = constraints.maxHeight.toFloat()
-
-            // Reset transforms khi đổi template hoặc thêm ảnh (KHÔNG reset khi topMargin thay đổi)
-            LaunchedEffect(templateToUse.id, currentUris.size) {
-                if (templateToUse.id.isNotEmpty() && currentUris.isNotEmpty() && canvasWidth > 0 && canvasHeight > 0) {
-                    // Clear transforms trước để trigger lại tính toán
-                    vm.updateImageTransforms(emptyMap())
-                    // Delay để đảm bảo template và images đã được cập nhật hoàn toàn
-                    delay(500)
-                    resetImageTransforms(templateToUse, canvasWidth, canvasHeight, topMargin)
                 }
+
+                CollagePreview(
+                    images = currentUris,
+                    template = templateToUse,
+                    gap = gapValue,
+                    corner = cornerValue,
+                    backgroundSelection = collageState.backgroundSelection,
+                    imageTransforms = collageState.imageTransforms,
+                    topMargin = topMargin,
+                    onImageClick = { uri ->
+                        // Callback về path của image khi click
+                        // TODO: Xử lý callback này (ví dụ: mở editor cho image này)
+                    },
+                    onImageTransformsChange = { transforms ->
+                        // Lưu transforms vào ViewModel và confirm vào undo stack
+                        vm.updateImageTransforms(transforms)
+                        vm.confirmImageTransformChanges()
+                    })
             }
 
-            CollagePreview(
-                images = currentUris,
-                template = templateToUse,
-                gap = gapValue,
-                corner = cornerValue,
-                backgroundSelection = collageState.backgroundSelection,
-                imageTransforms = collageState.imageTransforms,
-                topMargin = topMargin,
-                onImageClick = { uri ->
-                    // Callback về path của image khi click
-                    // TODO: Xử lý callback này (ví dụ: mở editor cho image này)
+            StickerLib(
+                isShowToolPanel = showStickerSheet,
+                onApply = {
+                    showStickerSheet = false
                 },
-                onImageTransformsChange = { transforms ->
-                    // Lưu transforms vào ViewModel và confirm vào undo stack
-                    vm.updateImageTransforms(transforms)
-                    vm.confirmImageTransformChanges()
-                })
-        }
+                onCancel = {
+                    showStickerSheet = false
+                }
+            )
+            TextStickerLib(
+                isShowToolPanel = showTextSheet,
+                onApply = {
+                    showTextSheet = false
+                },
+                onCancel = {
+                    showTextSheet = false
+                }
+            )
+            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                FeatureBottomTools(
+                    tools = toolsCollage, onToolClick = { tool ->
+                        when (tool) {
+                            CollageTool.GRIDS -> {
+                                showGridsSheet = true
+                                showRatioSheet = false
+                                showFrameSheet = false
+                                showTextSheet = false
+                            }
 
-        Box(modifier = Modifier.fillMaxWidth()) {
+                            CollageTool.RATIO -> {
+                                showRatioSheet = true
+                                showGridsSheet = false
+                                showFrameSheet = false
+                                showTextSheet = false
+                            }
 
-            FeatureBottomTools(
-                tools = toolsCollage, onToolClick = { tool ->
-                    when (tool) {
-                        CollageTool.GRIDS -> {
-                            showGridsSheet = true
-                            showRatioSheet = false
-                            showFrameSheet = false
-                            showTextSheet = false
-                        }
+                            CollageTool.BACKGROUND -> {
+                                showBackgroundSheet = true
+                                showGridsSheet = false
+                                showRatioSheet = false
+                                showFrameSheet = false
+                                showTextSheet = false
 
-                        CollageTool.RATIO -> {
-                            showRatioSheet = true
-                            showGridsSheet = false
-                            showFrameSheet = false
-                            showTextSheet = false
-                        }
+                            }
 
-                        CollageTool.BACKGROUND -> {
-                            showBackgroundSheet = true
-                            showGridsSheet = false
-                            showRatioSheet = false
-                            showFrameSheet = false
-                            showTextSheet = false
+                            CollageTool.FRAME -> {
+                                showFrameSheet = true
+                                showGridsSheet = false
+                                showRatioSheet = false
+                                showBackgroundSheet = false
+                                showStickerSheet = false
+                                showTextSheet = false
 
-                        }
+                            }
 
-                        CollageTool.FRAME -> {
-                            showFrameSheet = true
-                            showGridsSheet = false
-                            showRatioSheet = false
-                            showBackgroundSheet = false
-                            showStickerSheet = false
-                            showTextSheet = false
+                            CollageTool.STICKER -> {
+                                showStickerSheet = true
+                                showGridsSheet = false
+                                showRatioSheet = false
+                                showBackgroundSheet = false
+                                showFrameSheet = false
+                                showTextSheet = false
+                            }
 
-                        }
+                            CollageTool.TEXT -> {
+                                showTextSheet = true
+                                showStickerSheet = false
+                                showGridsSheet = false
+                                showRatioSheet = false
+                                showBackgroundSheet = false
+                                showFrameSheet = false
+                            }
 
-                        CollageTool.STICKER -> {
-                            showStickerSheet = true
-                            showGridsSheet = false
-                            showRatioSheet = false
-                            showBackgroundSheet = false
-                            showFrameSheet = false
-                            showTextSheet = false
-                        }
+                            CollageTool.ADD_PHOTO -> {
+                                // Chỉ mở gallery nếu chưa đạt giới hạn
+                                if (canAddPhoto) {
+                                    // Mở gallery để chọn ảnh
+                                    launcher.launch("image/*")
+                                    // Đóng tất cả các sheet khác
+                                    showTextSheet = false
+                                    showGridsSheet = false
+                                    showRatioSheet = false
+                                    showBackgroundSheet = false
+                                    showFrameSheet = false
+                                    showStickerSheet = false
+                                }
+                            }
 
-                        CollageTool.TEXT -> {
-                            showTextSheet = true
-                            showStickerSheet = false
-                            showGridsSheet = false
-                            showRatioSheet = false
-                            showBackgroundSheet = false
-                            showFrameSheet = false
-                        }
-
-                        CollageTool.ADD_PHOTO -> {
-                            // Chỉ mở gallery nếu chưa đạt giới hạn
-                            if (canAddPhoto) {
-                                // Mở gallery để chọn ảnh
-                                launcher.launch("image/*")
-                                // Đóng tất cả các sheet khác
+                            else -> {
                                 showTextSheet = false
                                 showGridsSheet = false
                                 showRatioSheet = false
@@ -258,94 +287,80 @@ fun CollageScreen(
                                 showStickerSheet = false
                             }
                         }
-
-                        else -> {
-                            showTextSheet = false
+                    }, disabledTools = if (!canAddPhoto) setOf(CollageTool.ADD_PHOTO) else emptySet()
+                )
+                if (showGridsSheet) {
+                    GridsSheet(
+                        templates = templates,
+                        selectedTemplate = selected,
+                        onTemplateSelect = { template ->
+                            vm.selectTemplate(template)
+                        },
+                        onClose = { showGridsSheet = false },
+                        onConfirm = { tab ->
+                            vm.confirmGridsChanges(tab)
                             showGridsSheet = false
+                        },
+                        topMargin = topMargin,
+                        onTopMarginChange = { vm.updateTopMargin(it) },
+                        columnMargin = columnMargin,
+                        onColumnMarginChange = { vm.updateColumnMargin(it) },
+                        cornerRadius = cornerRadius,
+                        onCornerRadiusChange = { vm.updateCornerRadius(it) },
+                        imageCount = currentUris.size.coerceAtLeast(1),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    )
+                }
+
+                if (showRatioSheet) {
+                    RatioSheet(
+                        selectedRatio = ratio, onRatioSelect = { aspect ->
+                            vm.updateRatio(aspect.label)
+                        }, onClose = {
+                            vm.cancelRatioChanges()
                             showRatioSheet = false
+                        }, onConfirm = {
+                            vm.confirmRatioChanges()
+                            showRatioSheet = false
+                        }, modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    )
+                }
+
+                if (showBackgroundSheet) {
+                    BackgroundSheet(
+                        selectedBackgroundSelection = collageState.backgroundSelection, onBackgroundSelect = { _, selection ->
+                            vm.updateBackground(selection)
+                        }, onClose = {
+                            vm.cancelBackgroundChanges()
                             showBackgroundSheet = false
+                        }, onConfirm = {
+                            vm.confirmBackgroundChanges()
+                            showBackgroundSheet = false
+                        }, modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    )
+                }
+
+                if (showFrameSheet) {
+                    FrameSheet(
+                        selectedFrameSelection = collageState.frameSelection, onFrameSelect = { selection ->
+                            vm.updateFrame(selection)
+                        }, onClose = {
+                            vm.cancelFrameChanges()
                             showFrameSheet = false
-                            showStickerSheet = false
-                        }
-                    }
-                }, disabledTools = if (!canAddPhoto) setOf(CollageTool.ADD_PHOTO) else emptySet()
-            )
-            if (showGridsSheet) {
-                GridsSheet(
-                    templates = templates,
-                    selectedTemplate = selected,
-                    onTemplateSelect = { template ->
-                        vm.selectTemplate(template)
-                    },
-                    onClose = { showGridsSheet = false },
-                    onConfirm = { tab ->
-                        vm.confirmGridsChanges(tab)
-                        showGridsSheet = false
-                    },
-                    topMargin = topMargin,
-                    onTopMarginChange = { vm.updateTopMargin(it) },
-                    columnMargin = columnMargin,
-                    onColumnMarginChange = { vm.updateColumnMargin(it) },
-                    cornerRadius = cornerRadius,
-                    onCornerRadiusChange = { vm.updateCornerRadius(it) },
-                    imageCount = currentUris.size.coerceAtLeast(1),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .align(Alignment.BottomCenter)
-                )
-            }
-
-            // Ratio Sheet (hiện khi click Ratio tool)
-            if (showRatioSheet) {
-                RatioSheet(
-                    selectedRatio = ratio, onRatioSelect = { aspect ->
-                    vm.updateRatio(aspect.label)
-                }, onClose = {
-                    vm.cancelRatioChanges()
-                    showRatioSheet = false
-                }, onConfirm = {
-                    vm.confirmRatioChanges()
-                    showRatioSheet = false
-                }, modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .align(Alignment.BottomCenter)
-                )
-            }
-
-            if (showBackgroundSheet) {
-                BackgroundSheet(
-                    selectedBackgroundSelection = collageState.backgroundSelection, onBackgroundSelect = { _, selection ->
-                    vm.updateBackground(selection)
-                }, onClose = {
-                    vm.cancelBackgroundChanges()
-                    showBackgroundSheet = false
-                }, onConfirm = {
-                    vm.confirmBackgroundChanges()
-                    showBackgroundSheet = false
-                }, modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .align(Alignment.BottomCenter)
-                )
-            }
-
-            if (showFrameSheet) {
-                FrameSheet(
-                    selectedFrameSelection = collageState.frameSelection, onFrameSelect = { selection ->
-                    vm.updateFrame(selection)
-                }, onClose = {
-                    vm.cancelFrameChanges()
-                    showFrameSheet = false
-                }, onConfirm = {
-                    vm.confirmFrameChanges()
-                    showFrameSheet = false
-                }, modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .align(Alignment.BottomCenter)
-                )
+                        }, onConfirm = {
+                            vm.confirmFrameChanges()
+                            showFrameSheet = false
+                        }, modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    )
+                }
             }
         }
     }
