@@ -26,11 +26,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerLib
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextStickerLib
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.EditTextStickerLayer
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleStickerComposeView
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleViewModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.StickerFooterTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.TextStickerFooterTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import kotlinx.coroutines.delay
@@ -39,6 +48,8 @@ import kotlinx.coroutines.delay
 fun CollageScreen(
     uris: List<Uri>,
     vm: CollageViewModel,
+    freeStyleViewModel: FreeStyleViewModel,
+    stickerView: FreeStyleStickerView,
     onBack: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -69,7 +80,12 @@ fun CollageScreen(
 
     // Hàm helper để reset và tính lại image transforms khi đổi grids hoặc add photo
     // Hàm này sẽ được gọi từ LaunchedEffect
-    suspend fun resetImageTransforms(template: CollageTemplate, canvasWidth: Float, canvasHeight: Float, topMargin: Float = 0f) {
+    suspend fun resetImageTransforms(
+        template: CollageTemplate,
+        canvasWidth: Float,
+        canvasHeight: Float,
+        topMargin: Float = 0f
+    ) {
         // Áp dụng topMargin: giảm kích thước vùng bound tổng
         val topMarginPx = topMargin * 0.2f * canvasHeight
         val leftMarginPx = topMargin * 0.2f * canvasWidth
@@ -80,7 +96,11 @@ fun CollageScreen(
         val effectiveCanvasHeight = canvasHeight - topMarginPx - bottomMarginPx
 
         val initialTransforms = ImageTransformCalculator.calculateInitialTransformsFromTemplate(
-            context = context, template = template, images = currentUris, canvasWidth = effectiveCanvasWidth, canvasHeight = effectiveCanvasHeight
+            context = context,
+            template = template,
+            images = currentUris,
+            canvasWidth = effectiveCanvasWidth,
+            canvasHeight = effectiveCanvasHeight
         )
         vm.updateImageTransforms(initialTransforms)
         vm.confirmImageTransformChanges()
@@ -134,9 +154,11 @@ fun CollageScreen(
                 else -> null
             }
         }
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
             BoxWithConstraints(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
@@ -152,7 +174,8 @@ fun CollageScreen(
 
             )
             {
-                val templateToUse = selected ?: templates.firstOrNull() ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
+                val templateToUse = selected ?: templates.firstOrNull()
+                ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
                 // Map slider values to Dp
                 val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
                 val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
@@ -190,27 +213,34 @@ fun CollageScreen(
                     })
             }
 
-            StickerLib(
-                isShowToolPanel = showStickerSheet,
-                onApply = {
-                    showStickerSheet = false
-                },
-                onCancel = {
-                    showStickerSheet = false
-                }
+            FreeStyleStickerComposeView(
+                modifier = Modifier
+                    .fillMaxSize(),
+                view = stickerView
             )
-            TextStickerLib(
-                isShowToolPanel = showTextSheet,
-                onApply = {
-                    showTextSheet = false
-                },
-                onCancel = {
-                    showTextSheet = false
-                }
-            )
+
+//            StickerLib(
+//                isShowToolPanel = showStickerSheet,
+//                onApply = {
+//                    showStickerSheet = false
+//                },
+//                onCancel = {
+//                    showStickerSheet = false
+//                }
+//            )
+//            TextStickerLib(
+//                isShowToolPanel = showTextSheet,
+//                onApply = {
+//                    showTextSheet = false
+//                },
+//                onCancel = {
+//                    showTextSheet = false
+//                }
+//            )
             Column(modifier = Modifier.align(Alignment.BottomCenter)) {
                 FeatureBottomTools(
-                    tools = toolsCollage, onToolClick = { tool ->
+                    tools = toolsCollage,
+                    onToolClick = { tool ->
                         when (tool) {
                             CollageTool.GRIDS -> {
                                 showGridsSheet = true
@@ -287,7 +317,8 @@ fun CollageScreen(
                                 showStickerSheet = false
                             }
                         }
-                    }, disabledTools = if (!canAddPhoto) setOf(CollageTool.ADD_PHOTO) else emptySet()
+                    },
+                    disabledTools = if (!canAddPhoto) setOf(CollageTool.ADD_PHOTO) else emptySet()
                 )
                 if (showGridsSheet) {
                     GridsSheet(
@@ -332,15 +363,19 @@ fun CollageScreen(
 
                 if (showBackgroundSheet) {
                     BackgroundSheet(
-                        selectedBackgroundSelection = collageState.backgroundSelection, onBackgroundSelect = { _, selection ->
+                        selectedBackgroundSelection = collageState.backgroundSelection,
+                        onBackgroundSelect = { _, selection ->
                             vm.updateBackground(selection)
-                        }, onClose = {
+                        },
+                        onClose = {
                             vm.cancelBackgroundChanges()
                             showBackgroundSheet = false
-                        }, onConfirm = {
+                        },
+                        onConfirm = {
                             vm.confirmBackgroundChanges()
                             showBackgroundSheet = false
-                        }, modifier = Modifier
+                        },
+                        modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
                     )
@@ -348,17 +383,102 @@ fun CollageScreen(
 
                 if (showFrameSheet) {
                     FrameSheet(
-                        selectedFrameSelection = collageState.frameSelection, onFrameSelect = { selection ->
+                        selectedFrameSelection = collageState.frameSelection,
+                        onFrameSelect = { selection ->
                             vm.updateFrame(selection)
-                        }, onClose = {
+                        },
+                        onClose = {
                             vm.cancelFrameChanges()
                             showFrameSheet = false
-                        }, onConfirm = {
+                        },
+                        onConfirm = {
                             vm.confirmFrameChanges()
                             showFrameSheet = false
-                        }, modifier = Modifier
+                        },
+                        modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
+                    )
+                }
+
+                when {
+                    showStickerSheet -> {
+                        stickerView.setLocked(true)
+                        StickerFooterTool(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            stickerView = stickerView,
+                            onCancel = {
+                                stickerView.removeCurrentSticker()
+                                stickerView.setLocked(false)
+                                showStickerSheet = false
+                            },
+                            onApply = {
+                                stickerView.setLocked(false)
+                                showStickerSheet = false
+                            }
+                        )
+                    }
+
+                    showTextSheet -> {
+                        stickerView.setLocked(true)
+                        TextStickerFooterTool(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            stickerView = stickerView,
+                            onCancel = {
+                                stickerView.removeCurrentSticker()
+                                stickerView.setLocked(false)
+                                showTextSheet = false
+                            },
+                            onApply = {
+                                stickerView.setLocked(false)
+                                showTextSheet = false
+                            },
+                            onAddFirstText = {
+                                stickerView.addSticker(
+                                    TextSticker(
+                                        stickerView.context,
+                                        it,
+
+                                        ),
+                                    Sticker.Position.TOP
+                                )
+                            },
+                            addTextSticker = { font ->
+                                stickerView.replace(
+                                    TextSticker(
+                                        stickerView.context,
+                                        font
+                                    )
+                                )
+                            },
+                        )
+                    }
+
+
+                    else -> {
+
+                    }
+                }
+
+                val textStickerUIState by freeStyleViewModel.uiState.collectAsStateWithLifecycle()
+                if (textStickerUIState.isVisibleTextField) {
+                    EditTextStickerLayer(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        onEditText = {
+                            freeStyleViewModel.hideEditTextSticker()
+                            stickerView.replace(
+                                TextSticker(
+                                    stickerView.context,
+                                    it
+                                )
+                            )
+                        },
+                        editTextProperties = textStickerUIState.editTextProperties
                     )
                 }
             }
@@ -396,7 +516,11 @@ private fun CollageScreenPreview() {
             ) {
                 val templateToUse = CollageTemplates.LEFT_BIG_RIGHT_2
                 CollagePreview(
-                    images = mockUris, template = templateToUse, gap = 6.dp, corner = 12.dp, modifier = Modifier.fillMaxSize()
+                    images = mockUris,
+                    template = templateToUse,
+                    gap = 6.dp,
+                    corner = 12.dp,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 

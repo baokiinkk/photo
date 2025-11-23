@@ -4,8 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageScreen
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleViewModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
 import com.basesource.base.ui.base.BaseActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -13,14 +21,21 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class CollageActivity : BaseActivity() {
     private val vm: CollageViewModel by viewModel()
 
+    private lateinit var stickerView: FreeStyleStickerView
+
+    private val freeStyleViewModel: FreeStyleViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initView()
         val list = intent.getParcelableArrayListExtra<Uri>(EXTRA_URIS) ?: arrayListOf()
         setContent {
             MainTheme {
                 CollageScreen(
                     list,
                     vm,
+                    freeStyleViewModel = freeStyleViewModel,
+                    stickerView = stickerView,
                     onBack = { finish() },
 
                     )
@@ -28,8 +43,77 @@ class CollageActivity : BaseActivity() {
         }
     }
 
+    private fun initView() {
+        stickerView = FreeStyleStickerView(this)
+        stickerView.setLocked(false)
+        stickerView.setConstrained(true)
+        stickerView.configDefaultIcons()
+        stickerView.setOnStickerOperationListener(object : StickerView.OnStickerOperationListener {
+            public override fun onTextStickerEdit(param1Sticker: Sticker) {
+                if (param1Sticker is TextSticker) {
+                    freeStyleViewModel.showEditTextSticker(param1Sticker.getAddTextProperties())
+                }
+            }
+
+            public override fun onStickerAdded(sticker: Sticker) {
+                Log.d("stickerView", "onStickerAdded")
+                if (sticker is TextSticker) {
+                    stickerView.configDefaultIcons()
+                } else if (sticker is DrawableSticker || sticker is FreeStyleSticker) {
+                    stickerView.configStickerIcons()
+                }
+                stickerView.invalidate()
+            }
+
+            public override fun onStickerClicked(sticker: Sticker) {
+            }
+
+            public override fun onStickerDeleted(sticker: Sticker) {
+            }
+
+            public override fun onStickerDragFinished(sticker: Sticker) {
+            }
+
+
+            public override fun onStickerZoomFinished(sticker: Sticker) {
+            }
+
+            public override fun onTouchDownForBeauty(param1Float1: Float, param1Float2: Float) {
+            }
+
+            public override fun onTouchDragForBeauty(param1Float1: Float, param1Float2: Float) {
+            }
+
+            public override fun onTouchUpForBeauty(param1Float1: Float, param1Float2: Float) {
+            }
+
+
+            public override fun onStickerFlipped(sticker: Sticker) {
+            }
+
+            public override fun onStickerTouchOutside(param1Sticker: Sticker?) {
+            }
+
+            public override fun onStickerTouchedDown(sticker: Sticker) {
+                Log.d("stickerView", "onStickerTouchedDown")
+                stickerView.setShowFocus(true)
+                if (sticker is TextSticker) {
+                    stickerView.configDefaultIcons()
+                } else if (sticker is DrawableSticker) {
+                    stickerView.configStickerIcons()
+                } else if (sticker is FreeStyleSticker) {
+                }
+                stickerView.swapLayers()
+                stickerView.invalidate()
+            }
+
+            public override fun onStickerDoubleTapped(sticker: Sticker) {
+            }
+        })
+    }
+
     companion object {
-         const val EXTRA_URIS = "extra_uris"
+        const val EXTRA_URIS = "extra_uris"
         fun start(context: Context, uris: List<Uri>) {
             val i = Intent(context, CollageActivity::class.java)
             i.putParcelableArrayListExtra(EXTRA_URIS, ArrayList(uris))
