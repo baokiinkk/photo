@@ -98,6 +98,10 @@ class MainActivity : BaseActivity() {
                                 gotoFreeStyle()
                             }
 
+                            FeatureType.STORE -> {
+                                gotoStore()
+                            }
+
                             else -> {}
                         }
                     }
@@ -124,6 +128,9 @@ class MainActivity : BaseActivity() {
                 FreeStyleActivity.start(this, uris)
             }
         }
+    }
+    private fun gotoStore() {
+        launchActivity(toActivity = StoreActivity::class.java)
     }
 
     private fun gotoEditPhoto() {

@@ -103,7 +103,9 @@ fun DiscoverHeader(
             contentDescription = ""
         )
         Image(
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(24.dp).clickableWithAlphaEffect{
+                viewModel?.navigateFeature(FeatureType.STORE)
+            },
             painter = painterResource(R.drawable.ic_market),
             contentDescription = ""
         )
