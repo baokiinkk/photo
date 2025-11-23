@@ -3,7 +3,6 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
@@ -26,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.zIndex
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -42,7 +40,6 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -59,7 +56,6 @@ import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CellSpec
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.data.model.collage.FreePolygonShape
-import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -268,7 +264,6 @@ fun CollagePreview(
                     width = with(density) { effectiveCanvasWidth.toDp() },
                     height = with(density) { effectiveCanvasHeight.toDp() }
                 )
-                .background(BackgroundWhite) // Thêm background để che phần ảnh vượt ra ngoài
         ) {
             CollageContent(
                 processedCells = processedCells,
@@ -339,6 +334,7 @@ private fun CollageImageCell(
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)?
 ) {
     val shouldShowBorder = isSelected || cellData.imageUri.toString().contains("true")
+
     val imageBoxModifier = with(density) {
         Modifier
             .offset(x = cellData.left.toDp(), y = cellData.top.toDp())
@@ -346,16 +342,63 @@ private fun CollageImageCell(
             .clip(shape)
             .then(clearAreaModifier(cellData, cornerRadiusPx))
             .padding(gap / 2)
+            .clip(RoundedCornerShape(corner))
     }
 
-    Box(modifier = imageBoxModifier.clipToBounds()) {
+    // ⭐ Box là hitbox thật
+    Box(
+        modifier = imageBoxModifier
+            .clipToBounds()
+            .then(
+                if (isSelected)
+                    transformGestureModifier(
+                        index = index,
+                        transformState = transformState,
+                        cellWidth = cellData.width,
+                        cellHeight = cellData.height,
+                        imageStates = imageStates,
+                        onImageTransformsChange = onImageTransformsChange
+                    )
+                else
+                    selectGestureModifier(
+                        index = index,
+                        imageStates = imageStates,
+                        onImageClick = onImageClick,
+                        imageUri = cellData.imageUri,
+                        onImageTransformsChange = onImageTransformsChange
+                    )
+            )
+            // ⭐ Vẽ border TRÊN Box => border nằm trên EVERYTHING
+            .drawWithContent {
+                drawContent()
+
+                if (shouldShowBorder) {
+                    val outline = shape.createOutline(
+                        size = size,
+                        layoutDirection = LayoutDirection.Ltr,
+                        density = this
+                    )
+
+                    if (outline is Outline.Generic) {
+                        val borderWidth = if (isSelected) 15f else borderWidthPx
+
+                        drawPath(
+                            path = outline.path,
+                            color = Primary500,
+                            style = Stroke(
+                                width = borderWidth,
+                                cap = StrokeCap.Round,
+                                pathEffect = PathEffect.cornerPathEffect(
+                                    cornerRadiusPx * 1.5f
+                                )
+                            )
+                        )
+                    }
+                }
+            }
+    ) {
+
         val currentTransform = imageStates[index]?.first ?: ImageTransformState()
-        val borderPadding = if (shouldShowBorder) {
-            val borderWidth = if (isSelected) borderWidthPx * 1.5f else borderWidthPx
-            with(density) { borderWidth.toDp() }
-        } else {
-            0.dp
-        }
 
         AsyncImage(
             model = cellData.imageUri,
@@ -369,56 +412,9 @@ private fun CollageImageCell(
                     scaleY = currentTransform.scale
                     transformOrigin = TransformOrigin.Center
                     clip = true
-                }
-                .then(
-                    if (isSelected) {
-                        transformGestureModifier(
-                            index = index,
-                            transformState = currentTransform,
-                            cellWidth = cellData.width,
-                            cellHeight = cellData.height,
-                            imageStates = imageStates,
-                            onImageTransformsChange = onImageTransformsChange
-                        )
-                    } else {
-                        selectGestureModifier(
-                            index = index,
-                            imageStates = imageStates,
-                            onImageClick = onImageClick,
-                            imageUri = cellData.imageUri,
-                            onImageTransformsChange = onImageTransformsChange
-                        )
-                    }
-                ),
+                },
             error = painterResource(R.drawable.ic_empty_image)
         )
-
-        // Vẽ border sau image để luôn nằm trên
-        if (shouldShowBorder) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .drawBehind {
-                        val outline = shape.createOutline(
-                            size = size,
-                            layoutDirection = LayoutDirection.Ltr,
-                            density = this@drawBehind
-                        )
-                        if (outline is Outline.Generic) {
-                            val borderWidth = if (isSelected) borderWidthPx * 1.5f else borderWidthPx
-                            drawPath(
-                                path = outline.path,
-                                color = Primary500,
-                                style = Stroke(
-                                    width = borderWidth,
-                                    cap = StrokeCap.Round,
-                                    pathEffect = PathEffect.cornerPathEffect(cornerRadiusPx * 1.5f)
-                                )
-                            )
-                        }
-                    }
-            )
-        }
     }
 }
 
@@ -509,93 +505,95 @@ private fun clearAreaModifier(
             Modifier
                 .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
                 .drawWithContent {
-                drawContent()
-                val actualWidth = size.width
-                val actualHeight = size.height
-                val ratioBound = cellData.clearPathRatioBound
-                val left = ratioBound[0] * actualWidth
-                val top = ratioBound[1] * actualHeight
-                val right = ratioBound[2] * actualWidth
-                val bottom = ratioBound[3] * actualHeight
-                val pathWidth = right - left
-                val pathHeight = bottom - top
-
-                val (finalLeft, finalTop) = if (cellData.shrinkMethod == "3_8") {
-                    // Với SHRINK_METHOD_3_8, căn giữa hoàn toàn
-                    val centerX = actualWidth / 2f
-                    val centerY = actualHeight / 2f
-                    (centerX - pathWidth / 2f) to (centerY - pathHeight / 2f)
-                } else if (cellData.shrinkMethod == "3_6") {
-                    // Với SHRINK_METHOD_3_6 cho clearPath, logic đặc biệt
+                    drawContent()
+                    val actualWidth = size.width
+                    val actualHeight = size.height
                     val ratioBound = cellData.clearPathRatioBound
-                    val x = if (ratioBound != null && ratioBound.size >= 4 && ratioBound[0] > 0) {
-                        actualWidth - pathWidth / 2f
+                    val left = ratioBound[0] * actualWidth
+                    val top = ratioBound[1] * actualHeight
+                    val right = ratioBound[2] * actualWidth
+                    val bottom = ratioBound[3] * actualHeight
+                    val pathWidth = right - left
+                    val pathHeight = bottom - top
+
+                    val (finalLeft, finalTop) = if (cellData.shrinkMethod == "3_8") {
+                        // Với SHRINK_METHOD_3_8, căn giữa hoàn toàn
+                        val centerX = actualWidth / 2f
+                        val centerY = actualHeight / 2f
+                        (centerX - pathWidth / 2f) to (centerY - pathHeight / 2f)
+                    } else if (cellData.shrinkMethod == "3_6") {
+                        // Với SHRINK_METHOD_3_6 cho clearPath, logic đặc biệt
+                        val ratioBound = cellData.clearPathRatioBound
+                        val x = if (ratioBound != null && ratioBound.size >= 4 && ratioBound[0] > 0) {
+                            actualWidth - pathWidth / 2f
+                        } else {
+                            -pathWidth / 2f
+                        }
+                        val y = actualHeight / 2f - pathHeight / 2f
+                        x to y
                     } else {
-                        -pathWidth / 2f
+                        calculateCenteredPosition(
+                            left = left,
+                            top = top,
+                            width = pathWidth,
+                            height = pathHeight,
+                            containerWidth = actualWidth,
+                            containerHeight = actualHeight,
+                            centerHorizontal = cellData.clearPathInCenterHorizontal,
+                            centerVertical = cellData.clearPathInCenterVertical
+                        )
                     }
-                    val y = actualHeight / 2f - pathHeight / 2f
-                    x to y
-                } else {
-                    calculateCenteredPosition(
-                        left = left,
-                        top = top,
-                        width = pathWidth,
-                        height = pathHeight,
-                        containerWidth = actualWidth,
-                        containerHeight = actualHeight,
-                        centerHorizontal = cellData.clearPathInCenterHorizontal,
-                        centerVertical = cellData.clearPathInCenterVertical
-                    )
-                }
 
-                val useRoundedCorner = cellData.cornerMethod == "3_13"
-                val useHexagonCorner = cellData.cornerMethod == "3_6"
-                val clearPath = if (useHexagonCorner) {
-                    // Với CORNER_METHOD_3_6, tạo hexagon với size = min(pathWidth, pathHeight)
-                    val hexSize = kotlin.math.min(pathWidth, pathHeight)
-                    val centerX = finalLeft + pathWidth / 2f
-                    val centerY = finalTop + pathHeight / 2f
-                    Path().createHexagonPath(
-                        left = centerX - hexSize / 2f,
-                        top = centerY - hexSize / 2f,
-                        width = hexSize,
-                        height = hexSize,
-                        cornerRadiusPx = cornerRadiusPx
-                    )
-                } else {
-                    when (cellData.clearPathType) {
-                        "CIRCLE" -> Path().createCirclePath(finalLeft, finalTop, pathWidth, pathHeight)
-                        "HEART" -> {
-                            val heartPath = Path().createHeartPath(pathWidth, pathHeight)
-                            Path().apply {
-                                addPath(heartPath, Offset(finalLeft, finalTop))
+                    val useRoundedCorner = cellData.cornerMethod == "3_13"
+                    val useHexagonCorner = cellData.cornerMethod == "3_6"
+                    val clearPath = if (useHexagonCorner) {
+                        // Với CORNER_METHOD_3_6, tạo hexagon với size = min(pathWidth, pathHeight)
+                        val hexSize = kotlin.math.min(pathWidth, pathHeight)
+                        val centerX = finalLeft + pathWidth / 2f
+                        val centerY = finalTop + pathHeight / 2f
+                        Path().createHexagonPath(
+                            left = centerX - hexSize / 2f,
+                            top = centerY - hexSize / 2f,
+                            width = hexSize,
+                            height = hexSize,
+                            cornerRadiusPx = cornerRadiusPx
+                        )
+                    } else {
+                        when (cellData.clearPathType) {
+                            "CIRCLE" -> Path().createCirclePath(finalLeft, finalTop, pathWidth, pathHeight)
+                            "HEART" -> {
+                                val heartPath = Path().createHeartPath(pathWidth, pathHeight)
+                                Path().apply {
+                                    addPath(heartPath, Offset(finalLeft, finalTop))
+                                }
                             }
-                        }
-                        "RECT" -> {
-                            if (useRoundedCorner && cornerRadiusPx > 0f) {
-                                Path().createRoundedRectPath(
-                                    finalLeft,
-                                    finalTop,
-                                    pathWidth,
-                                    pathHeight,
-                                    cornerRadiusPx
-                                )
-                            } else {
-                                Path().createRectPath(finalLeft, finalTop, pathWidth, pathHeight)
+
+                            "RECT" -> {
+                                if (useRoundedCorner && cornerRadiusPx > 0f) {
+                                    Path().createRoundedRectPath(
+                                        finalLeft,
+                                        finalTop,
+                                        pathWidth,
+                                        pathHeight,
+                                        cornerRadiusPx
+                                    )
+                                } else {
+                                    Path().createRectPath(finalLeft, finalTop, pathWidth, pathHeight)
+                                }
                             }
+
+                            else -> null
                         }
-                        else -> null
+                    }
+
+                    clearPath?.let {
+                        drawPath(
+                            path = it,
+                            color = Color.Transparent,
+                            blendMode = BlendMode.Clear
+                        )
                     }
                 }
-
-                clearPath?.let {
-                    drawPath(
-                        path = it,
-                        color = Color.Transparent,
-                        blendMode = BlendMode.Clear
-                    )
-                }
-            }
         }
         cellData.clearAreaPoints != null -> {
             val clearPoints = cellData.clearAreaPoints
@@ -603,26 +601,26 @@ private fun clearAreaModifier(
                 Modifier
                     .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
                     .drawWithContent {
-                    drawContent()
-                    val actualWidth = size.width
-                    val actualHeight = size.height
-                    val clearPath = Path().apply {
-                        val x0 = clearPoints[0] * actualWidth
-                        val y0 = clearPoints[1] * actualHeight
-                        moveTo(x0, y0)
-                        for (i in 2 until clearPoints.size step 2) {
-                            val x = clearPoints[i] * actualWidth
-                            val y = clearPoints[i + 1] * actualHeight
-                            lineTo(x, y)
+                        drawContent()
+                        val actualWidth = size.width
+                        val actualHeight = size.height
+                        val clearPath = Path().apply {
+                            val x0 = clearPoints[0] * actualWidth
+                            val y0 = clearPoints[1] * actualHeight
+                            moveTo(x0, y0)
+                            for (i in 2 until clearPoints.size step 2) {
+                                val x = clearPoints[i] * actualWidth
+                                val y = clearPoints[i + 1] * actualHeight
+                                lineTo(x, y)
+                            }
+                            close()
                         }
-                        close()
+                        drawPath(
+                            path = clearPath,
+                            color = Color.Transparent,
+                            blendMode = BlendMode.Clear
+                        )
                     }
-                    drawPath(
-                        path = clearPath,
-                        color = Color.Transparent,
-                        blendMode = BlendMode.Clear
-                    )
-                }
             } else {
                 Modifier
             }
