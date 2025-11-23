@@ -5,6 +5,7 @@ import android.util.Log
 import com.android.amg.AMGUtil
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
 import com.avnsoft.photoeditor.photocollage.data.model.ai_enhance.AIEnhanceResponse
+import com.avnsoft.photoeditor.photocollage.data.model.ai_enhance.ProcessAiEnhanceResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_background.RemoveBackgroundResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GetTokenFirebaseResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.ImageSuccessResponse
@@ -66,7 +67,7 @@ class AIEnhanceRepoImpl(
                 requestFile
             )
 
-            val response = api.genRemoveBg(
+            val response = api.genAiEnhance(
                 file = fileImg,
                 data = data,
                 token = token
@@ -114,7 +115,7 @@ class AIEnhanceRepoImpl(
 
     suspend fun getProgressRemoveBg(
         id: String
-    ): ImageSuccessResponse {
+    ): ProcessAiEnhanceResponse {
         try {
             val data = api.getProgress(
                 id = id,
@@ -130,7 +131,7 @@ class AIEnhanceRepoImpl(
             }
             val responsePostAI = gson.fromJson(
                 decryptedResponse,
-                ImageSuccessResponse::class.java
+                ProcessAiEnhanceResponse::class.java
             )
             return responsePostAI
         } catch (ex: Exception) {

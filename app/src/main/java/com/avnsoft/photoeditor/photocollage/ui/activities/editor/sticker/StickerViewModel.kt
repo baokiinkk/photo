@@ -18,6 +18,8 @@ class StickerViewModel(
 
     val uiState = MutableStateFlow(StickerUIState())
 
+    var isAddSticker = false
+
     fun getConfigSticker(bitmap: Bitmap?=null) {
         if (bitmap!=null){
             uiState.update {

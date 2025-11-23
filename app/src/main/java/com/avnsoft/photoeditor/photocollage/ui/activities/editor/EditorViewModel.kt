@@ -52,9 +52,6 @@ class EditorViewModel(
         ToolItem(CollageTool.BACKGROUND, R.string.background, R.drawable.ic_sticker_tool),
         ToolItem(CollageTool.STICKER, R.string.sticker_tool, R.drawable.ic_sticker_tool),
         ToolItem(CollageTool.TEXT, R.string.text_tool, R.drawable.ic_text_tool),
-        ToolItem(CollageTool.REMOVE, R.string.remove, R.drawable.ic_remove),
-        ToolItem(CollageTool.ENHANCE, R.string.enhance, R.drawable.ic_ai_enhance),
-        ToolItem(CollageTool.REMOVE_BG, R.string.remove_bg, R.drawable.ic_removebg),
         ToolItem(CollageTool.DRAW, R.string.draw, R.drawable.ic_draw),
     )
 
@@ -70,14 +67,16 @@ class EditorViewModel(
     fun setPathBitmap(
         pathBitmap: String?,
         bitmap: Bitmap?,
-        tool: CollageTool?
+        tool: CollageTool?,
+        backgroundSelection: BackgroundSelection?
     ) {
         viewModelScope.launch {
             pathBitmapResult = copyImageToAppStorage(context, pathBitmap?.toUri())
             uiState.update {
                 it.copy(
                     bitmap = bitmap,
-                    originBitmap = bitmap
+                    originBitmap = bitmap,
+                    backgroundColor = backgroundSelection
                 )
             }
             tool?.let {
@@ -88,9 +87,11 @@ class EditorViewModel(
     }
 
 
-
-
-    fun updateBitmap(tool: CollageTool = CollageTool.NONE, pathBitmap: String?, bitmap: Bitmap?) {
+    fun updateBitmap(
+        tool: CollageTool = CollageTool.NONE,
+        pathBitmap: String?,
+        bitmap: Bitmap?
+    ) {
         if (bitmap == null || canvasSize == null) return
         pathBitmapResult = pathBitmap
         viewModelScope.launch(Dispatchers.Default) {
@@ -253,9 +254,12 @@ class EditorViewModel(
                         it.copy(
                             backgroundColor = previous.backgroundColor,
                             canUndo = undoStack.size >= 2,
-                            canRedo = true
+                            canRedo = true,
+                            bitmap = previous.bitmap,
+                            originBitmap = previous.originBitmap,
                         )
                     }
+                    pathBitmapResult = previous.pathBitmapResult
                 }
 
                 else -> {
@@ -322,7 +326,13 @@ sealed class StackData {
         val originBitmap: Bitmap?
     ) : StackData()
 
-    data class Background(val backgroundColor: BackgroundSelection?) : StackData()
+    data class Background(
+        val backgroundColor: BackgroundSelection?,
+        val bitmap: Bitmap,
+        val pathBitmapResult: String?,
+        val originBitmap: Bitmap?
+    ) : StackData()
+
     data object NONE : StackData()
 }
 

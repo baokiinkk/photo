@@ -9,8 +9,10 @@ import com.avnsoft.photoeditor.photocollage.data.repository.RemoveBackgroundRepo
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.downloadAndSaveToFile
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
@@ -26,6 +28,9 @@ class RemoveBackgroundViewModel(
 ) : BaseViewModel() {
 
     val uiState = MutableStateFlow(RemoveBackgroundUIState())
+
+    val _removeBgState = Channel<String>()
+    val removeBgState = _removeBgState.receiveAsFlow()
 
     fun initData(pathBitmap: String?) {
         if (pathBitmap == null) return
@@ -56,6 +61,7 @@ class RemoveBackgroundViewModel(
                 val response = removeBackgroundRepo.getProgressRemoveBg(id)
                 val pathFile = saveFileAndReturnPathFile(response.result.url)
                 hideLoading()
+                _removeBgState.send(pathFile)
                 uiState.update {
                     it.copy(
                         imageUrl = pathFile

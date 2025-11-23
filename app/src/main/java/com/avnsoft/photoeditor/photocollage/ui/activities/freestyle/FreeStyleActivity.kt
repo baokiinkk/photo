@@ -6,21 +6,46 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageActivity.Companion.EXTRA_URIS
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.TEXT_TYPE
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
+import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity.Companion.RESULT_URI
+import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.utils.ImageWidget
+import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.fromJsonTypeToken
+import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.toJson
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FreeStyleActivity : BaseActivity() {
@@ -48,7 +73,7 @@ class FreeStyleActivity : BaseActivity() {
         viewmodel.initData(list)
         setContent {
             Scaffold(
-                containerColor = Color(0xFFF2F4F8)
+                containerColor = Color.White
             ) { inner ->
                 Box(
                     modifier = Modifier
@@ -58,15 +83,32 @@ class FreeStyleActivity : BaseActivity() {
                         modifier = Modifier.fillMaxSize(),
                         viewmodel = viewmodel,
                         stickerView = stickerView,
+                        onBack = {
+                            finish()
+                        },
                         onToolClick = {
                             when (it) {
                                 CollageTool.STICKER -> {
                                     viewmodel.showStickerTool()
                                 }
 
-                                CollageTool.TEXT ->{
+                                CollageTool.TEXT -> {
                                     viewmodel.showTextSticker()
                                 }
+
+                                CollageTool.BACKGROUND -> {
+                                    viewmodel.showBackgroundTool()
+                                }
+
+                                CollageTool.ADD_PHOTO -> {
+                                    launchActivity(toActivity = ImagePickerActivity::class.java) { result ->
+                                        val result: List<String>? =
+                                            result.data?.getStringExtra(RESULT_URI)
+                                                ?.fromJsonTypeToken()
+                                        viewmodel.addMorePhoto(result)
+                                    }
+                                }
+
                                 else -> {
 
                                 }
@@ -83,6 +125,13 @@ class FreeStyleActivity : BaseActivity() {
             Log.d("ssss", "data nek ${it.toJson()}")
             stickerView.addSticker(it, Sticker.Position.CENTER, 1f)
         }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewmodel.removeSticker.collect {
+                    stickerView.remove(it)
+                }
+            }
+        }
     }
 
     private fun initView() {
@@ -93,31 +142,7 @@ class FreeStyleActivity : BaseActivity() {
         stickerView.setOnStickerOperationListener(object : StickerView.OnStickerOperationListener {
             public override fun onTextStickerEdit(param1Sticker: Sticker) {
                 if (param1Sticker is TextSticker) {
-//                    param1Sticker.isShow = false
-//                    stickerView.setHandlingSticker(null)
                     viewmodel.showEditTextSticker(param1Sticker.getAddTextProperties())
-//                    textEditorDialogFragment = TextEditorDialogFragment.show(
-//                        this@FreeStyleActivity,
-//                        (sticker as TextSticker).getAddTextProperties()
-//                    )
-//                    textEditor = object : TextEditor() {
-//                        fun onDone(addTextProperties: AddTextProperties?) {
-//                            stickerView.remove(sticker)
-//                            stickerView.addSticker(
-//                                TextSticker(
-//                                    this@FreeStyleActivity,
-//                                    addTextProperties
-//                                )
-//                            )
-//
-//                            showToolBar()
-//                        }
-//
-//                        fun onBackButton() {
-//                            showToolBar()
-//                        }
-//                    }
-//                    textEditorDialogFragment.setOnTextEditorListener(textEditor)
                 }
             }
 
@@ -132,46 +157,16 @@ class FreeStyleActivity : BaseActivity() {
             }
 
             public override fun onStickerClicked(sticker: Sticker) {
-                if (sticker is FreeStyleSticker) {
-                    val freeStyleSticker: FreeStyleSticker = sticker as FreeStyleSticker
-
-//                    index = listPhotoSelected.indexOf(freeStyleSticker.getPhoto())
-//                    LogUtils.logD(FreeStyleActivity.TAG, "onStickerClicked", index)
-//                    if (currentFunction === Function.EDITOR_IMAGE) {
-//                        return
-//                    }
-//                    if (currentFunction !== Function.NONE) {
-//                        checkCurrentFunction()
-//                    }
-//
-//                    currentFunction = Function.EDITOR_IMAGE
-//                    if (editImageView.getVisibility() !== View.VISIBLE) {
-//                        hideToolbar()
-//                        editImageView.show()
-//                    }
-                }
             }
 
             public override fun onStickerDeleted(sticker: Sticker) {
-                if (sticker is FreeStyleSticker) {
-//                    listPhotoSelected.removeAt(index)
-//                    LogUtils.logD(FreeStyleActivity.TAG, "onStickerDeleted", index)
-//                    checkNumberOfImageSelected()
-//                    if (currentFunction === Function.EDITOR_IMAGE) onBackPressed()
-                }
             }
 
             public override fun onStickerDragFinished(sticker: Sticker) {
-                if (sticker is FreeStyleSticker) {
-//                    val freeStyleSticker: FreeStyleSticker = sticker as FreeStyleSticker
-//                    index = listPhotoSelected.indexOf(freeStyleSticker.getPhoto())
-//                    LogUtils.logD(FreeStyleActivity.TAG, "onStickerDragFinished", index)
-                }
             }
 
 
             public override fun onStickerZoomFinished(sticker: Sticker) {
-//                Log.d(FreeStyleActivity.TAG, "onStickerZoomFinished")
             }
 
             public override fun onTouchDownForBeauty(param1Float1: Float, param1Float2: Float) {
@@ -185,17 +180,9 @@ class FreeStyleActivity : BaseActivity() {
 
 
             public override fun onStickerFlipped(sticker: Sticker) {
-//                Log.d(FreeStyleActivity.TAG, "onStickerFlipped")
             }
 
             public override fun onStickerTouchOutside(param1Sticker: Sticker?) {
-                param1Sticker?.isShow = true
-                Log.d("stickerView", "onStickerTouchOutside")
-//                if (currentFunction === Function.EDITOR_IMAGE) {
-//                    index = -1
-//                    LogUtils.logD(FreeStyleActivity.TAG, "onStickerTouchOutside", index)
-//                    onBackPressed()
-//                }
             }
 
             public override fun onStickerTouchedDown(sticker: Sticker) {
@@ -206,22 +193,64 @@ class FreeStyleActivity : BaseActivity() {
                 } else if (sticker is DrawableSticker) {
                     stickerView.configStickerIcons()
                 } else if (sticker is FreeStyleSticker) {
-//                    val freeStyleSticker: FreeStyleSticker = (sticker as FreeStyleSticker)
-//                    index = listPhotoSelected.indexOf(freeStyleSticker.getPhoto())
-//                    LogUtils.logD(FreeStyleActivity.TAG, "onStickerTouchedDown", index)
                 }
                 stickerView.swapLayers()
                 stickerView.invalidate()
-//                if (currentFunction === Function.EDITOR_IMAGE && sticker !is FreeStyleSticker) {
-//                    onBackPressed()
-//                }
             }
 
             public override fun onStickerDoubleTapped(sticker: Sticker) {
-//                Log.d(FreeStyleActivity.TAG, "onDoubleTapped: double tap will be with two click")
-//                if (stickerView.getCurrentSticker() is TextSticker) {
-//                }
             }
         })
+    }
+}
+
+@Composable
+fun HeaderSave(
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit,
+    isActionRight: Boolean = true,
+    onActionRight: () -> Unit,
+    textRight: String = stringResource(R.string.save),
+    type: TEXT_TYPE = TEXT_TYPE.ROUND,
+) {
+    Row(
+        modifier = modifier,
+    ) {
+        ImageWidget(
+            modifier = Modifier
+                .clickableWithAlphaEffect(onClick = onBack),
+            resId = R.drawable.ic_arrow_left
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        when (type) {
+            TEXT_TYPE.TEXT -> {
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                        .clickableWithAlphaEffect {
+                            if (isActionRight) onActionRight.invoke()
+                        },
+                    text = textRight,
+                    textAlign = TextAlign.Center,
+                    style = if (isActionRight) {
+                        AppStyle.buttonMedium().semibold().primary500()
+                    } else {
+                        AppStyle.buttonMedium().semibold().gray300()
+                    }
+                )
+            }
+
+            TEXT_TYPE.ROUND -> {
+                Text(
+                    modifier = Modifier
+                        .background(Primary500, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                        .clickableWithAlphaEffect(onClick = onActionRight),
+                    text = textRight,
+                    textAlign = TextAlign.Center,
+                    style = AppStyle.button().semibold().white()
+                )
+            }
+        }
     }
 }

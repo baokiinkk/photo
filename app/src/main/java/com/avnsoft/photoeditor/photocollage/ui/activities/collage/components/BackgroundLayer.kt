@@ -16,6 +16,7 @@ import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.utils.getPatternImageUri
 import com.avnsoft.photoeditor.photocollage.utils.loadPatternAssetPainter
+import com.basesource.base.utils.ImageWidget
 
 /**
  * Composable để render background layer dựa trên BackgroundSelection
@@ -29,7 +30,7 @@ fun BackgroundLayer(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    
+
     // Get background color (default white if null or not Solid)
     val bgColor = remember(backgroundSelection) {
         when (val selection = backgroundSelection) {
@@ -40,10 +41,11 @@ fun BackgroundLayer(
                     BackgroundWhite
                 }
             }
+
             else -> BackgroundWhite
         }
     }
-    
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -55,7 +57,7 @@ fun BackgroundLayer(
                 val fallbackPainter = remember(selection.item.name) {
                     loadPatternAssetPainter(context, selection.item.name)
                 }
-                
+
                 AsyncImage(
                     model = ImageRequest.Builder(context)
                         .data(imageUri)
@@ -67,6 +69,7 @@ fun BackgroundLayer(
                     modifier = Modifier.fillMaxSize()
                 )
             }
+
             is BackgroundSelection.Gradient -> {
                 // Render gradient from colors
                 val gradientColors = remember(selection.item.colors) {
@@ -78,7 +81,7 @@ fun BackgroundLayer(
                         }
                     }
                 }
-                
+
                 if (gradientColors.size >= 2) {
                     Box(
                         modifier = Modifier
@@ -95,6 +98,20 @@ fun BackgroundLayer(
                     )
                 }
             }
+
+            is BackgroundSelection.BackgroundTransparent -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    ImageWidget(
+                        modifier = Modifier.fillMaxSize(),
+                        resId = selection.resId,
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+
             else -> {
                 // Solid color or null - already handled by bgColor background
             }

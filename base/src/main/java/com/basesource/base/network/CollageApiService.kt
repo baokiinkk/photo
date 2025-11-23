@@ -68,8 +68,8 @@ interface CollageApiService {
     ): String
 
     @Multipart
-    @POST("https://proxy-future-self.footballtv.info/v3/tools/remove-background")
-    suspend fun genRemoveBg(
+    @POST("https://proxy-future-self.footballtv.info/v3/tools/enhance-image")
+    suspend fun genAiEnhance(
         @Part file: MultipartBody.Part?,
         @Part data: MultipartBody.Part?,
         @Header("Authorization") token: String?

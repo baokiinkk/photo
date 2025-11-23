@@ -436,7 +436,8 @@ fun calcIntensity(intensity: Float, minValue: Float, maxValue: Float, originValu
 @Composable
 fun OriginalButton(
     modifier: Modifier = Modifier,
-    onPressedChange: (Boolean) -> Unit
+    resId: Int = R.drawable.ic_compare,
+    onPressedChange: (Boolean) -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -465,7 +466,7 @@ fun OriginalButton(
     ) {
         ImageWidget(
             modifier = Modifier.align(Alignment.Center),
-            resId = R.drawable.ic_compare
+            resId =resId
         )
     }
 }

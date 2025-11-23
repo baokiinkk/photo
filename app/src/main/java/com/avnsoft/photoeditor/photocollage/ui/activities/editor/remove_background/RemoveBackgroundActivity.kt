@@ -26,10 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
@@ -38,6 +42,7 @@ import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.launchActivity
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
@@ -53,7 +58,7 @@ class RemoveBackgroundActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewmodel.initData(screenInput?.pathBitmap)
-
+        observerData()
         setContent {
             Scaffold(
                 containerColor = Color(0xFFF2F4F8)
@@ -68,20 +73,54 @@ class RemoveBackgroundActivity : BaseActivity() {
                         isShowLoading = uiState.isShowLoading,
                         content = stringResource(R.string.content_removing_object)
                     )
-                    Button(
-                        modifier = Modifier.align(Alignment.BottomCenter),
-                        onClick = {
-                            val file = File(uiState.imageUrl)
-                            val uriString = Uri.fromFile(file).toString()
-                            returnToData(
-                                type = screenInput?.type ?: ToolInput.TYPE.NEW,
-                                pathUri = uriString,
-                                pathFile = uiState.imageUrl
-                            )
-                        }
-                    ) {
-                        Text("Go Editor")
-                    }
+//                    Button(
+//                        modifier = Modifier.align(Alignment.BottomCenter),
+//                        onClick = {
+//                            val file = File(uiState.imageUrl)
+//                            val uriString = Uri.fromFile(file).toString()
+//                            returnToData(
+//                                type = screenInput?.type ?: ToolInput.TYPE.NEW,
+//                                pathUri = uriString,
+//                                pathFile = uiState.imageUrl
+//                            )
+//                        }
+//                    ) {
+//                        Text("Go Editor")
+//                    }
+                }
+            }
+        }
+    }
+
+    private fun observerData() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewmodel.removeBgState.collect { imageUrl ->
+                    launchActivity(
+                        toActivity = BackgroundActivity::class.java,
+                        input = ToolInput(
+                            pathBitmap = imageUrl,
+                            isBackgroundTransparent = true,
+                            type = screenInput?.type ?: ToolInput.TYPE.NEW
+                        )
+                    )
+                    finish()
+
+//                    val file = File(imageUrl)
+//                    val uriString = Uri.fromFile(file).toString()
+//                    when (screenInput?.type) {
+//                        ToolInput.TYPE.NEW -> {
+//
+//                        }
+//
+//                        ToolInput.TYPE.BACK_AND_RETURN -> {
+//
+//                        }
+//
+//                        else -> {
+//
+//                        }
+//                    }
                 }
             }
         }

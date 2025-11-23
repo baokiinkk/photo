@@ -45,3 +45,4 @@ fun LoadImage(
         colorFilter = colorFilter
     )
 }
+

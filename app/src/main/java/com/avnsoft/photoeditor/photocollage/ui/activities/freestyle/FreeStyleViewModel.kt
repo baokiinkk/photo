@@ -6,18 +6,25 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.Photo
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import java.util.Stack
 
 @KoinViewModel
 class FreeStyleViewModel(
@@ -27,6 +34,10 @@ class FreeStyleViewModel(
     val freeStyleSticker = MutableLiveData<MutableList<FreeStyleSticker>>()
 
     val uiState = MutableStateFlow(FreeStyleUIState())
+
+
+    private val _removeSticker = Channel<Sticker>()
+    val removeSticker = _removeSticker.receiveAsFlow()
 
     fun initData(uriList: List<Uri>) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -54,7 +65,7 @@ class FreeStyleViewModel(
         }
     }
 
-    fun applySticker() {
+    fun applySticker(sticker: Sticker?) {
         uiState.update {
             it.copy(
                 isShowStickerTool = false
@@ -104,14 +115,94 @@ class FreeStyleViewModel(
             )
         }
     }
+
+    fun showBackgroundTool() {
+        uiState.update {
+            it.copy(
+                isShowBackgroundTool = true
+            )
+        }
+    }
+
+    fun cancelBackgroundTool() {
+        uiState.update {
+            it.copy(
+                isShowBackgroundTool = false
+            )
+        }
+    }
+
+    fun applyBackgroundTool() {
+        uiState.update {
+            it.copy(
+                isShowBackgroundTool = false
+            )
+        }
+    }
+
+    fun updateBackground(selection: BackgroundSelection) {
+        uiState.update {
+            it.copy(
+                backgroundSelection = selection
+            )
+        }
+    }
+
+    fun addMorePhoto(result: List<String>?) {
+        val uris = result?.map { it.toUri() } ?: emptyList()
+        val data = uris.mapIndexed { index, uri ->
+            val drawable = decodeUriToDrawable(context, uri, 400, 400)
+            FreeStyleSticker(index, Photo(uri, 0), drawable)
+        }.toMutableList()
+        freeStyleSticker.postValue(data)
+    }
 }
 
 data class FreeStyleUIState(
     val isShowStickerTool: Boolean = false,
     val isShowTextStickerTool: Boolean = false,
     val isVisibleTextField: Boolean = false,
-    val editTextProperties: AddTextProperties = AddTextProperties.defaultProperties
+    val editTextProperties: AddTextProperties = AddTextProperties.defaultProperties,
+    val isShowBackgroundTool: Boolean = false,
+    val backgroundSelection: BackgroundSelection? = BackgroundSelection
+        .Solid("#F2F4F8"),
+
+    val canUndo: Boolean = false,
+    val canRedo: Boolean = false
 )
+
+sealed class StackFreeStyle(
+    open val sticker: Sticker?,
+    open val background: BackgroundSelection?
+) {
+
+    data class StackOriginal(
+        override val sticker: Sticker,
+        override val background: BackgroundSelection?
+    ) : StackFreeStyle(sticker, background)
+
+    data class Background(
+        override val sticker: Sticker,
+        override val background: BackgroundSelection?
+    ) : StackFreeStyle(sticker, background)
+
+    data class StackFrame(
+        override val sticker: Sticker,
+        override val background: BackgroundSelection?
+    ) : StackFreeStyle(sticker, background)
+
+    data class StackSticker(
+        override val sticker: Sticker,
+        override val background: BackgroundSelection?
+    ) : StackFreeStyle(sticker, background)
+
+    data class StackAddPhoto(
+        override val sticker: Sticker,
+        override val background: BackgroundSelection?
+    ) : StackFreeStyle(sticker, background)
+
+    data object NONE : StackFreeStyle(null, null)
+}
 
 fun decodeUriToDrawable(context: Context, uri: Uri?, w: Int, h: Int): BitmapDrawable? {
     try {

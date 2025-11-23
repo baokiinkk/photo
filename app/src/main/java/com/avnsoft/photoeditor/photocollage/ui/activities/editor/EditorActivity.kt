@@ -71,7 +71,7 @@ import java.io.IOException
 
 data class EditorInput(
     val pathBitmap: String? = null,
-    val tool: CollageTool? = null
+    val tool: CollageTool? = null,
 ) : IScreenData
 
 fun String?.toBitmap(context: Context? = null): Bitmap? {
@@ -95,6 +95,15 @@ class EditorActivity : BaseActivity() {
         intent.getInput()
     }
 
+    val backgroundSelection: BackgroundSelection? by lazy {
+        val json = intent.getStringExtra("backgroundSelection")
+        json?.let {
+            Json.decodeFromString<BackgroundSelection>(json)
+        } ?: run {
+            null
+        }
+    }
+
     private lateinit var blurView: BlurView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,7 +114,8 @@ class EditorActivity : BaseActivity() {
         viewmodel.setPathBitmap(
             pathBitmap = screenInput?.pathBitmap,
             bitmap = screenInput?.pathBitmap.uriToBitmap(this),
-            tool = screenInput?.tool
+            tool = screenInput?.tool,
+            backgroundSelection = backgroundSelection
         )
         enableEdgeToEdge()
         setContent {
@@ -247,11 +257,21 @@ class EditorActivity : BaseActivity() {
                                 ),
                                 callback = { result ->
                                     if (result.resultCode == RESULT_OK) {
-                                        val json = result.data?.getStringExtra("pathBitmap")
+                                        val json = result.data?.getStringExtra("backgroundSelection")
                                             ?: return@launchActivity
                                         val data = Json.decodeFromString<BackgroundSelection>(json)
+
+                                        val pathBitmap =
+                                            result.data?.getStringExtra("pathBitmap")
+
+
                                         viewmodel.push(
-                                            StackData.Background(data)
+                                            StackData.Background(
+                                                backgroundColor = data,
+                                                bitmap = viewmodel.uiState.value.bitmap!!,
+                                                pathBitmapResult = viewmodel.pathBitmapResult,
+                                                originBitmap = viewmodel.uiState.value.originBitmap
+                                            )
                                         )
                                         viewmodel.updateBackgroundColor(data)
                                     }
