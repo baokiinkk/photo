@@ -26,17 +26,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformCalculator
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerLib
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextStickerLib
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun CollageScreen(
@@ -45,14 +42,14 @@ fun CollageScreen(
     onBack: () -> Unit,
 ) {
     val context = LocalContext.current
-    
+
     // State để lưu trữ danh sách uris (có thể thay đổi khi thêm ảnh)
     var currentUris by remember(uris) { mutableStateOf(uris) }
-    
+
     // Giới hạn tối đa 10 ảnh
     val MAX_PHOTOS = 10
     val canAddPhoto = currentUris.size < MAX_PHOTOS
-    
+
     // Launcher để chọn ảnh từ gallery
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -69,7 +66,7 @@ fun CollageScreen(
             }
         }
     }
-    
+
     // Hàm helper để reset và tính lại image transforms khi đổi grids hoặc add photo
     // Hàm này sẽ được gọi từ LaunchedEffect
     suspend fun resetImageTransforms(template: CollageTemplate, canvasWidth: Float, canvasHeight: Float, topMargin: Float = 0f) {
@@ -78,21 +75,17 @@ fun CollageScreen(
         val leftMarginPx = topMargin * 0.2f * canvasWidth
         val rightMarginPx = topMargin * 0.2f * canvasWidth
         val bottomMarginPx = topMargin * 0.2f * canvasHeight
-        
+
         val effectiveCanvasWidth = canvasWidth - leftMarginPx - rightMarginPx
         val effectiveCanvasHeight = canvasHeight - topMarginPx - bottomMarginPx
-        
+
         val initialTransforms = ImageTransformCalculator.calculateInitialTransformsFromTemplate(
-            context = context,
-            template = template,
-            images = currentUris,
-            canvasWidth = effectiveCanvasWidth,
-            canvasHeight = effectiveCanvasHeight
+            context = context, template = template, images = currentUris, canvasWidth = effectiveCanvasWidth, canvasHeight = effectiveCanvasHeight
         )
         vm.updateImageTransforms(initialTransforms)
         vm.confirmImageTransformChanges()
     }
-    
+
     // Observe state from ViewModel
     val templates by vm.templates.collectAsState()
     val selected by vm.selected.collectAsState()
@@ -116,92 +109,89 @@ fun CollageScreen(
         vm.load(currentUris.size.coerceAtLeast(1))
     }
 
-    Box(
+    Column(
         Modifier
             .fillMaxSize()
             .background(Background2)
     ) {
-        Column(Modifier.fillMaxSize()) {
-            // Header
-            FeaturePhotoHeader(
-                onBack = onBack,
-                onUndo = { vm.undo() },
-                onRedo = { vm.redo() },
-                onSave = { /* TODO */ },
-                canUndo = canUndo && !showGridsSheet && !showRatioSheet,
-                canRedo = canRedo && !showGridsSheet && !showRatioSheet
-            )
-            // Calculate aspect ratio from ratio string (e.g., "1:1" -> 1.0, "4:5" -> 0.8)
-            val aspectRatioValue = remember(ratio) {
-                when (ratio) {
-                    "Original" -> null // No aspect ratio constraint for Original
-                    "1:1" -> 1f
-                    "4:5" -> 4f / 5f
-                    "5:4" -> 5f / 4f
-                    "3:4" -> 3f / 4f
-                    else -> null
-                }
+        // Header
+        FeaturePhotoHeader(
+            onBack = onBack,
+            onUndo = { vm.undo() },
+            onRedo = { vm.redo() },
+            onSave = { /* TODO */ },
+            canUndo = canUndo && !showGridsSheet && !showRatioSheet,
+            canRedo = canRedo && !showGridsSheet && !showRatioSheet
+        )
+        // Calculate aspect ratio from ratio string (e.g., "1:1" -> 1.0, "4:5" -> 0.8)
+        val aspectRatioValue = remember(ratio) {
+            when (ratio) {
+                "Original" -> null // No aspect ratio constraint for Original
+                "1:1" -> 1f
+                "4:5" -> 4f / 5f
+                "5:4" -> 5f / 4f
+                "3:4" -> 3f / 4f
+                else -> null
             }
+        }
 
-            BoxWithConstraints(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 80.dp, bottom = 175.dp)
-                    .then(
-                        if (aspectRatioValue != null) {
-                            Modifier.aspectRatio(aspectRatioValue)
-                        } else {
-                            Modifier
-                        }
-                    )
-                    .background(BackgroundWhite)
-
-            ) {
-                val templateToUse = selected ?: templates.firstOrNull()
-                ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
-                // Map slider values to Dp
-                val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
-                val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
-                
-                val canvasWidth = constraints.maxWidth.toFloat()
-                val canvasHeight = constraints.maxHeight.toFloat()
-
-                // Reset transforms khi đổi template hoặc thêm ảnh (KHÔNG reset khi topMargin thay đổi)
-                LaunchedEffect(templateToUse.id, currentUris.size) {
-                    if (templateToUse.id.isNotEmpty() && currentUris.isNotEmpty() && canvasWidth > 0 && canvasHeight > 0) {
-                        // Clear transforms trước để trigger lại tính toán
-                        vm.updateImageTransforms(emptyMap())
-                        // Delay để đảm bảo template và images đã được cập nhật hoàn toàn
-                        delay(500)
-                        resetImageTransforms(templateToUse, canvasWidth, canvasHeight, topMargin)
-                    }
-                }
-
-                CollagePreview(
-                    images = currentUris,
-                    template = templateToUse,
-                    gap = gapValue,
-                    corner = cornerValue,
-                    backgroundSelection = collageState.backgroundSelection,
-                    imageTransforms = collageState.imageTransforms,
-                    topMargin = topMargin,
-                    onImageClick = { uri ->
-                        // Callback về path của image khi click
-                        // TODO: Xử lý callback này (ví dụ: mở editor cho image này)
-                    },
-                    onImageTransformsChange = { transforms ->
-                        // Lưu transforms vào ViewModel và confirm vào undo stack
-                        vm.updateImageTransforms(transforms)
-                        vm.confirmImageTransformChanges()
+        BoxWithConstraints(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp)
+                .padding(top = 80.dp, bottom = 175.dp)
+                .then(
+                    if (aspectRatioValue != null) {
+                        Modifier.aspectRatio(aspectRatioValue)
+                    } else {
+                        Modifier
                     }
                 )
+                .background(BackgroundWhite)
+
+        ) {
+            val templateToUse = selected ?: templates.firstOrNull() ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
+            // Map slider values to Dp
+            val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
+            val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
+
+            val canvasWidth = constraints.maxWidth.toFloat()
+            val canvasHeight = constraints.maxHeight.toFloat()
+
+            // Reset transforms khi đổi template hoặc thêm ảnh (KHÔNG reset khi topMargin thay đổi)
+            LaunchedEffect(templateToUse.id, currentUris.size) {
+                if (templateToUse.id.isNotEmpty() && currentUris.isNotEmpty() && canvasWidth > 0 && canvasHeight > 0) {
+                    // Clear transforms trước để trigger lại tính toán
+                    vm.updateImageTransforms(emptyMap())
+                    // Delay để đảm bảo template và images đã được cập nhật hoàn toàn
+                    delay(500)
+                    resetImageTransforms(templateToUse, canvasWidth, canvasHeight, topMargin)
+                }
             }
 
-            // Bottom tools
+            CollagePreview(
+                images = currentUris,
+                template = templateToUse,
+                gap = gapValue,
+                corner = cornerValue,
+                backgroundSelection = collageState.backgroundSelection,
+                imageTransforms = collageState.imageTransforms,
+                topMargin = topMargin,
+                onImageClick = { uri ->
+                    // Callback về path của image khi click
+                    // TODO: Xử lý callback này (ví dụ: mở editor cho image này)
+                },
+                onImageTransformsChange = { transforms ->
+                    // Lưu transforms vào ViewModel và confirm vào undo stack
+                    vm.updateImageTransforms(transforms)
+                    vm.confirmImageTransformChanges()
+                })
+        }
+
+        Box(modifier = Modifier.fillMaxWidth()) {
+
             FeatureBottomTools(
-                tools = toolsCollage,
-                onToolClick = { tool ->
+                tools = toolsCollage, onToolClick = { tool ->
                     when (tool) {
                         CollageTool.GRIDS -> {
                             showGridsSheet = true
@@ -278,98 +268,85 @@ fun CollageScreen(
                             showStickerSheet = false
                         }
                     }
-                },
-                disabledTools = if (!canAddPhoto) setOf(CollageTool.ADD_PHOTO) else emptySet()
+                }, disabledTools = if (!canAddPhoto) setOf(CollageTool.ADD_PHOTO) else emptySet()
             )
-        }
-        if (showGridsSheet) {
-            GridsSheet(
-                templates = templates,
-                selectedTemplate = selected,
-                onTemplateSelect = { template ->
-                    vm.selectTemplate(template)
-                },
-                onClose = { showGridsSheet = false },
-                onConfirm = { tab ->
-                    vm.confirmGridsChanges(tab)
-                    showGridsSheet = false
-                },
-                topMargin = topMargin,
-                onTopMarginChange = { vm.updateTopMargin(it) },
-                columnMargin = columnMargin,
-                onColumnMarginChange = { vm.updateColumnMargin(it) },
-                cornerRadius = cornerRadius,
-                onCornerRadiusChange = { vm.updateCornerRadius(it) },
-                imageCount = currentUris.size.coerceAtLeast(1),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .align(Alignment.BottomCenter)
-            )
-        }
+            if (showGridsSheet) {
+                GridsSheet(
+                    templates = templates,
+                    selectedTemplate = selected,
+                    onTemplateSelect = { template ->
+                        vm.selectTemplate(template)
+                    },
+                    onClose = { showGridsSheet = false },
+                    onConfirm = { tab ->
+                        vm.confirmGridsChanges(tab)
+                        showGridsSheet = false
+                    },
+                    topMargin = topMargin,
+                    onTopMarginChange = { vm.updateTopMargin(it) },
+                    columnMargin = columnMargin,
+                    onColumnMarginChange = { vm.updateColumnMargin(it) },
+                    cornerRadius = cornerRadius,
+                    onCornerRadiusChange = { vm.updateCornerRadius(it) },
+                    imageCount = currentUris.size.coerceAtLeast(1),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .align(Alignment.BottomCenter)
+                )
+            }
 
-        // Ratio Sheet (hiện khi click Ratio tool)
-        if (showRatioSheet) {
-            RatioSheet(
-                selectedRatio = ratio,
-                onRatioSelect = { aspect ->
+            // Ratio Sheet (hiện khi click Ratio tool)
+            if (showRatioSheet) {
+                RatioSheet(
+                    selectedRatio = ratio, onRatioSelect = { aspect ->
                     vm.updateRatio(aspect.label)
-                },
-                onClose = {
+                }, onClose = {
                     vm.cancelRatioChanges()
                     showRatioSheet = false
-                },
-                onConfirm = {
+                }, onConfirm = {
                     vm.confirmRatioChanges()
                     showRatioSheet = false
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .align(Alignment.BottomCenter)
-            )
-        }
+                }, modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .align(Alignment.BottomCenter)
+                )
+            }
 
-        if (showBackgroundSheet) {
-            BackgroundSheet(
-                selectedBackgroundSelection = collageState.backgroundSelection,
-                onBackgroundSelect = { _, selection ->
+            if (showBackgroundSheet) {
+                BackgroundSheet(
+                    selectedBackgroundSelection = collageState.backgroundSelection, onBackgroundSelect = { _, selection ->
                     vm.updateBackground(selection)
-                },
-                onClose = {
+                }, onClose = {
                     vm.cancelBackgroundChanges()
                     showBackgroundSheet = false
-                },
-                onConfirm = {
+                }, onConfirm = {
                     vm.confirmBackgroundChanges()
                     showBackgroundSheet = false
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .align(Alignment.BottomCenter)
-            )
-        }
+                }, modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .align(Alignment.BottomCenter)
+                )
+            }
 
-        if (showFrameSheet) {
-            FrameSheet(
-                selectedFrameSelection = collageState.frameSelection,
-                onFrameSelect = { selection ->
+            if (showFrameSheet) {
+                FrameSheet(
+                    selectedFrameSelection = collageState.frameSelection, onFrameSelect = { selection ->
                     vm.updateFrame(selection)
-                },
-                onClose = {
+                }, onClose = {
                     vm.cancelFrameChanges()
                     showFrameSheet = false
-                },
-                onConfirm = {
+                }, onConfirm = {
                     vm.confirmFrameChanges()
                     showFrameSheet = false
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .align(Alignment.BottomCenter)
-            )
+                }, modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .align(Alignment.BottomCenter)
+                )
+            }
         }
     }
 }
@@ -390,12 +367,7 @@ private fun CollageScreenPreview() {
         Column(Modifier.fillMaxSize()) {
             // Header
             FeaturePhotoHeader(
-                onBack = {},
-                onUndo = {},
-                onRedo = {},
-                onSave = {},
-                canUndo = false,
-                canRedo = false
+                onBack = {}, onUndo = {}, onRedo = {}, onSave = {}, canUndo = false, canRedo = false
             )
 
             // Preview area
@@ -409,19 +381,13 @@ private fun CollageScreenPreview() {
             ) {
                 val templateToUse = CollageTemplates.LEFT_BIG_RIGHT_2
                 CollagePreview(
-                    images = mockUris,
-                    template = templateToUse,
-                    gap = 6.dp,
-                    corner = 12.dp,
-                    modifier = Modifier.fillMaxSize()
+                    images = mockUris, template = templateToUse, gap = 6.dp, corner = 12.dp, modifier = Modifier.fillMaxSize()
                 )
             }
 
             // Bottom tools
             FeatureBottomTools(
-                tools = toolsCollage,
-                onToolClick = {}
-            )
+                tools = toolsCollage, onToolClick = {})
         }
     }
 }
