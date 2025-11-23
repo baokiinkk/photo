@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -62,6 +63,7 @@ import com.basesource.base.utils.toJson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 
 class RemoveObjectActivity : BaseNativeActivity() {
 
@@ -580,13 +582,18 @@ fun RemoveObjectTab(
     }
 }
 
-fun BaseNativeActivity.returnToData(type: ToolInput.TYPE, pathBitmap: String?) {
+fun BaseNativeActivity.returnToData(
+    type: ToolInput.TYPE,
+    pathBitmap: String?
+) {
     when (type) {
         ToolInput.TYPE.NEW -> {
             val intent = Intent(this, EditorActivity::class.java)
-            val input = EditorInput(pathBitmap = pathBitmap)
+            val file = File(pathBitmap.orEmpty())
+            val input = EditorInput(pathBitmap = file.toUri().toString())
             intent.putExtra("arg", input.toJson())
             startActivity(intent)
+            finish()
         }
 
         ToolInput.TYPE.BACK_AND_RETURN -> {

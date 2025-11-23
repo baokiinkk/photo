@@ -4,11 +4,14 @@ import android.graphics.Typeface
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
@@ -17,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +34,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -42,11 +45,12 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundLayer
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.TEXT_TYPE
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.toolsCollage
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.HeaderApply
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerToolPanel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
@@ -69,40 +73,51 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+val toolsFreeStyle = listOf(
+    ToolItem(CollageTool.RATIO, R.string.ratio_tool, R.drawable.ic_ratio),
+    ToolItem(CollageTool.BACKGROUND, R.string.background_tool, R.drawable.ic_background_tool),
+    ToolItem(CollageTool.FRAME, R.string.frame_tool, R.drawable.ic_frame_tool),
+    ToolItem(CollageTool.TEXT, R.string.text_tool, R.drawable.ic_text_tool),
+    ToolItem(CollageTool.STICKER, R.string.sticker_tool, R.drawable.ic_sticker_tool),
+    ToolItem(CollageTool.ADD_PHOTO, R.string.add_photo_tool, R.drawable.ic_photo_tool)
+)
+
 @Composable
 fun FreeStyleScreen(
     modifier: Modifier,
     viewmodel: FreeStyleViewModel,
     stickerView: FreeStyleStickerView,
     onToolClick: (CollageTool) -> Unit,
+    onBack: () -> Unit
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     Box(
         modifier = modifier
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
         ) {
-            FeaturePhotoHeader(
-                onBack = {
-                },
-                onUndo = {
-                },
-                onRedo = {
-                },
-                onSave = {
-                },
-                canUndo = false,
-                canRedo = false,
-                type = TEXT_TYPE.TEXT,
-                canSave = true,
-                textRight = stringResource(R.string.apply)
+            HeaderSave(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .background(Color.White)
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                onBack = onBack,
+                onActionRight = {
+
+                }
             )
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .clipToBounds()
             ) {
+                BackgroundLayer(
+                    backgroundSelection = uiState.backgroundSelection,
+                    modifier = Modifier.fillMaxSize()
+                )
                 FreeStyleStickerComposeView(
                     modifier = Modifier
                         .fillMaxSize(),
@@ -111,23 +126,27 @@ fun FreeStyleScreen(
             }
 
             FeatureBottomTools(
-                tools = toolsCollage,
+                tools = toolsFreeStyle,
                 onToolClick = onToolClick
             )
         }
 
         when {
             uiState.isShowStickerTool -> {
+                stickerView.setLocked(true)
                 StickerFooterTool(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter),
                     stickerView = stickerView,
                     onCancel = {
+                        stickerView.removeCurrentSticker()
+                        stickerView.setLocked(false)
                         viewmodel.cancelSticker()
                     },
                     onApply = {
-                        viewmodel.applySticker()
+                        stickerView.setLocked(false)
+                        viewmodel.applySticker(stickerView.getCurrentDrawableSticker())
                     }
                 )
             }
@@ -140,6 +159,7 @@ fun FreeStyleScreen(
                         .align(Alignment.BottomCenter),
                     stickerView = stickerView,
                     onCancel = {
+                        stickerView.removeCurrentSticker()
                         stickerView.setLocked(false)
                         viewmodel.cancelTextSticker()
                     },
@@ -168,6 +188,25 @@ fun FreeStyleScreen(
                 )
             }
 
+            uiState.isShowBackgroundTool -> {
+                BackgroundSheet(
+                    selectedBackgroundSelection = uiState.backgroundSelection,
+                    onBackgroundSelect = { _, selection ->
+                        viewmodel.updateBackground(selection)
+                    },
+                    onClose = {
+                        viewmodel.cancelBackgroundTool()
+                    },
+                    onConfirm = {
+                        viewmodel.applyBackgroundTool()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .align(Alignment.BottomCenter)
+                )
+            }
+
             else -> {
 
             }
@@ -186,7 +225,7 @@ fun FreeStyleScreen(
                         )
                     )
                 },
-                editTextProperties =uiState.editTextProperties
+                editTextProperties = uiState.editTextProperties
             )
         }
 
@@ -201,20 +240,46 @@ fun StickerFooterTool(
     onCancel: () -> Unit,
     onApply: () -> Unit
 ) {
+    var isAddSticker by remember { mutableStateOf(true) }
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+
+    val scope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
             val bitmap = uri.toBitmap(stickerView.context)
-            stickerView.addSticker(
-                DrawableSticker(bitmap?.toDrawable(stickerView.resources))
-            )
+            if (isAddSticker) {
+                isAddSticker = false
+                stickerView.addSticker(
+                    DrawableSticker(bitmap?.toDrawable(stickerView.resources))
+                )
+            } else {
+                stickerView.replace(
+                    DrawableSticker(bitmap?.toDrawable(stickerView.resources))
+                )
+            }
+//            stickerView.addSticker(
+//                DrawableSticker(bitmap?.toDrawable(stickerView.resources))
+//            )
         }
     }
 
     LaunchedEffect(Unit) {
         viewmodel.getConfigSticker()
+    }
+
+    uiState.currentTab?.let {
+        if (isAddSticker) {
+            scope.launch {
+                val bitmap = loadBitmap(stickerView.context, it.content.first().urlThumb)
+                stickerView.addSticker(
+                    DrawableSticker(bitmap?.toDrawable(stickerView.resources)),
+                    Sticker.Position.TOP
+                )
+                isAddSticker = false
+            }
+        }
     }
     StickerToolPanel(
         modifier = modifier,
@@ -226,9 +291,20 @@ fun StickerFooterTool(
             if (it.isNotEmpty()) {
                 CoroutineScope(Dispatchers.Main).launch {
                     val bitmap = loadBitmap(stickerView.context, it)
-                    stickerView.addSticker(
-                        DrawableSticker(bitmap?.toDrawable(stickerView.resources))
-                    )
+                    if (isAddSticker) {
+                        isAddSticker = false
+                        stickerView.addSticker(
+                            DrawableSticker(bitmap?.toDrawable(stickerView.resources)),
+                            Sticker.Position.TOP
+                        )
+                    } else {
+                        stickerView.replace(
+                            DrawableSticker(bitmap?.toDrawable(stickerView.resources))
+                        )
+                    }
+//                    stickerView.addSticker(
+//                        DrawableSticker(bitmap?.toDrawable(stickerView.resources))
+//                    )
                 }
             }
         },
@@ -272,16 +348,6 @@ fun TextStickerFooterTool(
             viewmodel = viewmodel,
             onAddFirstText = onAddFirstText
         )
-//        TextStickerFeeStyleLayer(
-//            modifier = Modifier
-//                .fillMaxSize(),
-//            viewmodel = viewmodel,
-//            onAddFirstText = {
-//                onAddFirstText.invoke(it)
-//                viewmodel.addTextPropertiesDefault = it
-//            },
-//            onEditText = onEditText
-//        )
 
         TextStickerToolPanel(
             modifier = Modifier

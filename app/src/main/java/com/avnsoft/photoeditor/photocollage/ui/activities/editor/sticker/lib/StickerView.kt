@@ -571,6 +571,10 @@ open class StickerView : RelativeLayout {
         return currentSticker as? TextSticker
     }
 
+    fun getCurrentDrawableSticker(): DrawableSticker? {
+        return currentSticker as? DrawableSticker
+    }
+
     val stickerCount: Int
         get() = this.stickers.size
 
@@ -789,7 +793,7 @@ open class StickerView : RelativeLayout {
         return true
     }
 
-    fun resetDefault(){
+    fun resetDefault() {
         this.onStickerOperationListener?.onStickerTouchOutside(this.handlingSticker)
         invalidate()
     }

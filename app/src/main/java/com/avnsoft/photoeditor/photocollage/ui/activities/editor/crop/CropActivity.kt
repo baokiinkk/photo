@@ -72,7 +72,8 @@ import java.io.OutputStream
 
 data class ToolInput(
     val pathBitmap: String? = null,
-    val type: TYPE = TYPE.NEW
+    val type: TYPE = TYPE.NEW,
+    val isBackgroundTransparent: Boolean = false
 ) : IScreenData {
 
     enum class TYPE {

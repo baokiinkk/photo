@@ -48,13 +48,46 @@ class AIEnhanceViewModel(
         while (continueRequest) {
             try {
                 val response = aiEnhanceRepoImpl.getProgressRemoveBg(id)
-                val pathFile = saveFileAndReturnPathFile(response.result.url)
+                val items = mutableListOf<AIEnhanceResult>()
+                items.add(
+                    AIEnhanceResult(
+                        name = "origin",
+                        imageUrl = response.result.origin
+                    )
+                )
+                items.add(
+                    AIEnhanceResult(
+                        name = "Ashby",
+                        imageUrl = response.result.ashby
+                    )
+                )
+                items.add(
+                    AIEnhanceResult(
+                        name = "Gingham",
+                        imageUrl = response.result.gingham
+                    )
+                )
+                items.add(
+                    AIEnhanceResult(
+                        name = "Neyu",
+                        imageUrl = response.result.neyu
+                    )
+                )
                 hideLoading()
                 uiState.update {
                     it.copy(
-                        imageUrl = pathFile
+                        items = items,
+                        imageUrl = items.first().imageUrl,
+                        itemSelected = items.first()
                     )
                 }
+//                val pathFile = saveFileAndReturnPathFile(response.result.url)
+//                hideLoading()
+//                uiState.update {
+//                    it.copy(
+//                        imageUrl = pathFile
+//                    )
+//                }
                 continueRequest = false
             } catch (ex: Exception) {
 
@@ -62,6 +95,15 @@ class AIEnhanceViewModel(
             if (continueRequest) {
                 delay(4000)
             }
+        }
+    }
+
+    fun onItemClick(item: AIEnhanceResult) {
+        uiState.update {
+            it.copy(
+                imageUrl = item.imageUrl,
+                itemSelected = item
+            )
         }
     }
 
@@ -96,5 +138,12 @@ class AIEnhanceViewModel(
 
 data class AIEnhanceUIState(
     val imageUrl: String = "",
-    val isShowLoading: Boolean = true
+    val isShowLoading: Boolean = true,
+    val items: List<AIEnhanceResult> = emptyList(),
+    val itemSelected: AIEnhanceResult? = null
+)
+
+data class AIEnhanceResult(
+    val name: String,
+    val imageUrl: String
 )

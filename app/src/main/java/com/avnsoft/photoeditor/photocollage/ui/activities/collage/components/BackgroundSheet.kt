@@ -83,10 +83,18 @@ enum class PatternState {
 sealed class BackgroundSelection {
     @Serializable
     data class Solid(val color: String) : BackgroundSelection()
+
     @Serializable
-    data class Pattern(val item: PatternContentModel, val group: PatternModel) : BackgroundSelection()
+    data class Pattern(val item: PatternContentModel, val group: PatternModel) :
+        BackgroundSelection()
+
     @Serializable
     data class Gradient(val item: GradientItem, val group: GradientGroup) : BackgroundSelection()
+
+    @Serializable
+    data class BackgroundTransparent(
+        val resId: Int,
+    ) : BackgroundSelection()
 }
 
 @Composable
@@ -96,13 +104,14 @@ fun BackgroundSheet(
     onBackgroundSelect: (BackgroundTab, BackgroundSelection) -> Unit,
     onClose: () -> Unit,
     onConfirm: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isShowFooter: Boolean = true
 ) {
     var currentTab by remember(selectedTab) { mutableStateOf(selectedTab) }
     var showColorWheel by remember { mutableStateOf(false) }
     var patternState by remember { mutableStateOf(PatternState.GROUP) }
     var selectedPatternGroup by remember { mutableStateOf<PatternModel?>(null) }
-    
+
     // Extract color from selectedBackgroundSelection for color picker
     var initSelectColor by remember {
         mutableStateOf(
@@ -191,7 +200,11 @@ fun BackgroundSheet(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    listOf(BackgroundTab.SOLID, BackgroundTab.PATTERN, BackgroundTab.GRADIENT).forEach { tab ->
+                    listOf(
+                        BackgroundTab.SOLID,
+                        BackgroundTab.PATTERN,
+                        BackgroundTab.GRADIENT
+                    ).forEach { tab ->
                         val tabText = when (tab) {
                             BackgroundTab.SOLID -> "Solid"
                             BackgroundTab.PATTERN -> "Pattern"
@@ -229,7 +242,10 @@ fun BackgroundSheet(
                         onColorSelect = { color ->
                             currentSelectedColor = color
                             val colorHex = currentSelectedColor.colorToHex()
-                            onBackgroundSelect(BackgroundTab.SOLID, BackgroundSelection.Solid(colorHex))
+                            onBackgroundSelect(
+                                BackgroundTab.SOLID,
+                                BackgroundSelection.Solid(colorHex)
+                            )
                         },
                         onColorPickerClick = { showColorWheel = true },
                         onColorWheelClick = { showColorWheel = true }
@@ -265,40 +281,45 @@ fun BackgroundSheet(
                 }
             }
         }
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(1.dp)
-            .background(Gray100))
-        // Bottom Action Bar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            IconButton(onClick = onClose) {
-                Icon(
-                    modifier = Modifier.size(28.dp),
-                    painter = painterResource(R.drawable.ic_close),
-                    contentDescription = "Close",
-                    tint = Gray500
-                )
-            }
 
-            Text(
-                text = stringResource(R.string.color),
-                style = AppStyle.title2().semibold().gray900()
+        if (isShowFooter) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Gray100)
             )
+            // Bottom Action Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                IconButton(onClick = onClose) {
+                    Icon(
+                        modifier = Modifier.size(28.dp),
+                        painter = painterResource(R.drawable.ic_close),
+                        contentDescription = "Close",
+                        tint = Gray500
+                    )
+                }
 
-            IconButton(onClick = onConfirm) {
-                Icon(
-                    modifier = Modifier.size(28.dp),
-                    painter = painterResource(R.drawable.ic_confirm),
-                    contentDescription = "Confirm",
-                    tint = Gray900
+                Text(
+                    text = stringResource(R.string.color),
+                    style = AppStyle.title2().semibold().gray900()
                 )
+
+                IconButton(onClick = onConfirm) {
+                    Icon(
+                        modifier = Modifier.size(28.dp),
+                        painter = painterResource(R.drawable.ic_confirm),
+                        contentDescription = "Confirm",
+                        tint = Gray900
+                    )
+                }
             }
         }
     }
@@ -435,7 +456,10 @@ private fun SolidColorSwatch(
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = "Selected",
-                tint = if (color.toArgb() == Color.White.toArgb() || color.toArgb() == Color(0xFFE5E7EB).toArgb()) Color.Black else Color.White,
+                tint = if (color.toArgb() == Color.White.toArgb() || color.toArgb() == Color(
+                        0xFFE5E7EB
+                    ).toArgb()
+                ) Color.Black else Color.White,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -491,7 +515,7 @@ private fun PatternBackgroundTab(
             }
         }
     }
-    
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -688,8 +712,7 @@ private fun PatternItemCard(
                 )
                 .clickableWithAlphaEffect {
                     onPatternSelect?.invoke(patternItem, patternGroup)
-                }
-            ,
+                },
             contentAlignment = Alignment.Center
         ) {
             if (urlLoadFailed && fallbackPainter != null) {
@@ -784,7 +807,7 @@ private fun GradientBackgroundTab(
             }
         }
     }
-    
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
