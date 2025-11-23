@@ -852,7 +852,11 @@ open class StickerView : RelativeLayout {
     }
 
     fun removeCurrentSticker(): Boolean {
-        return remove(this.handlingSticker!!)
+        return try {
+            remove(this.handlingSticker!!)
+        } catch (ex: Exception) {
+            false
+        }
     }
 
     fun resetTextRotation() {
