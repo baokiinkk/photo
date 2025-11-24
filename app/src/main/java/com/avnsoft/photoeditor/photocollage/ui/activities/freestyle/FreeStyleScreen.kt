@@ -88,7 +88,8 @@ fun FreeStyleScreen(
     viewmodel: FreeStyleViewModel,
     stickerView: FreeStyleStickerView,
     onToolClick: (CollageTool) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onSave: () -> Unit
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     Box(
@@ -105,9 +106,7 @@ fun FreeStyleScreen(
                     .background(Color.White)
                     .padding(horizontal = 16.dp, vertical = 16.dp),
                 onBack = onBack,
-                onActionRight = {
-
-                }
+                onActionRight = onSave
             )
             Box(
                 modifier = Modifier

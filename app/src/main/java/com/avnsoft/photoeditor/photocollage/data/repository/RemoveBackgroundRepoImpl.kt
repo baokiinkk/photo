@@ -9,6 +9,7 @@ import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GetTokenFir
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.ImageSuccessResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.TierUtil
 import com.basesource.base.network.CollageApiService
+import com.basesource.base.network.RemoveBackgroundRequest
 import com.basesource.base.network.model.DataEncrypt
 import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.gson
@@ -17,6 +18,7 @@ import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.core.annotation.Single
 import java.io.File
 
@@ -31,52 +33,35 @@ class RemoveBackgroundRepoImpl(
         return try {
             val token = "Bearer " + editorSharedPref.getAccessToken()
 
-            // Tạo đối tượng Tier
             val tier = Tier(TierUtil.getTearUser(context).toInt())
+            val request = RemoveBackgroundRequest(
+                tier = tier.tier.toString(),
+                type = "1",
+                originalName = listOf(jpegFile.getName())
+            )
+            val jsonStr = gson.toJson(request)
+            Log.e("requestRemoveBg", "request : $jsonStr")
 
-            // Chuyển đối tượng Tier thành chuỗi JSON
-            val gson = Gson()
-            val jsonString = gson.toJson(tier)
-
-
-            // Mã hóa chuỗi JSON với AMGUtil.encryptFile
             val dataPush: String = AMGUtil.encryptFile(
                 context,
-                jsonString,
+                jsonStr,
                 jpegFile,
                 "TokenFirbaseTest"
             )
-
-
-            // Tạo MultipartBody.Part cho "data"
-            // Tạo MultipartBody.Part cho "data"
-            val data: MultipartBody.Part = MultipartBody.Part.createFormData("data", dataPush)
-
-
-            // Tạo RequestBody từ tệp ảnh JPEG
-            val requestFile = RequestBody.create(
-                "image/jpeg".toMediaTypeOrNull(),
-                jpegFile
+            val dataEncrypt = DataEncrypt(
+                data = dataPush
             )
-            // Tạo MultipartBody.Part cho "image_original"
-            val fileImg = MultipartBody.Part.createFormData(
-                "image_original",
-                jpegFile.getName(),
-                requestFile
-            )
-
+            Log.e("requestRemoveBg", "request to server: ${dataEncrypt.toJson()}")
             val response = api.requestRemoveBg(
-                file = fileImg,
-                data = data,
+                data = dataEncrypt,
                 token = token
             )
-            Log.e("", "response server: ${response.toJson()}")
-            val cleanResponseBody: String? = response.replace("\"", "")
-            val decryptedResponse: String? = AMGUtil.decrypt(context, cleanResponseBody)
-
+            Log.e("requestRemoveBg", "response server: ${response.toJson()}")
+            val cleanResponseBody: String = response.replace("\"", "")
+            val decryptedResponse: String = AMGUtil.decrypt(context, cleanResponseBody)
             val responsePostAI =
                 gson.fromJson(decryptedResponse, RemoveBackgroundResponse::class.java)
-            Log.e("", "onSuccess: $decryptedResponse")
+            Log.e("requestRemoveBg", "onSuccess: $decryptedResponse")
             responsePostAI
         } catch (ex: Exception) {
             when (ex) {
@@ -109,6 +94,22 @@ class RemoveBackgroundRepoImpl(
         Log.d("getAccessToken", "after encrypt: ${responseGetToken.toJson()}")
         editorSharedPref.setIsRequestedToken(true)
         editorSharedPref.saveAccessToken(responseGetToken.token)
+    }
+
+    suspend fun uploadFileToS3(
+        uploadUrl: String,
+        file: File,
+    ): String {
+        val requestFile = file.asRequestBody("application/octet-stream".toMediaTypeOrNull())
+        val response = api.uploadFileToS3(
+            uploadUrl = uploadUrl,
+            filePart = requestFile
+        )
+        if (response.isSuccessful) {
+            return uploadUrl
+        } else {
+            throw Exception("Failed to upload file to S3")
+        }
     }
 
     suspend fun getProgressRemoveBg(
@@ -154,3 +155,4 @@ class RemoveBackgroundRepoImpl(
 data class Tier(
     val tier: Int
 )
+

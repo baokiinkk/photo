@@ -56,14 +56,14 @@ val networkModule = module {
             .addInterceptor(AuthInterceptor { null })
             .addInterceptor(MockInterceptor(get()))
             .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(300, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
 
     single<Retrofit> {
         Retrofit.Builder()
-            .baseUrl("https://proxy-future-self.footballtv.info/") // Replace with your base URL
+            .baseUrl("https://gen-ai.amobear.com/") // Replace with your base URL
             .client(get())
             .addConverterFactory(GsonConverterFactory.create(get()))
             .build()

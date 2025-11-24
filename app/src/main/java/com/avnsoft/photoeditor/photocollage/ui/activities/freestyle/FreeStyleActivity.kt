@@ -16,6 +16,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -33,6 +37,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Dra
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity
@@ -75,6 +80,9 @@ class FreeStyleActivity : BaseActivity() {
             Scaffold(
                 containerColor = Color.White
             ) { inner ->
+
+                var showBottomSaveImage by remember { mutableStateOf(false) }
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -85,6 +93,9 @@ class FreeStyleActivity : BaseActivity() {
                         stickerView = stickerView,
                         onBack = {
                             finish()
+                        },
+                        onSave = {
+                            showBottomSaveImage = true
                         },
                         onToolClick = {
                             when (it) {
@@ -115,6 +126,17 @@ class FreeStyleActivity : BaseActivity() {
                             }
                         },
                     )
+
+                    if (showBottomSaveImage){
+                        ExportImageBottomSheet(
+                            onDismissRequest = {
+                                showBottomSaveImage = false
+                            },
+                            onDownload = {
+
+                            }
+                        )
+                    }
                 }
             }
         }

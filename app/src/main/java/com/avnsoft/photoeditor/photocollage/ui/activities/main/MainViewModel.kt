@@ -100,7 +100,7 @@ class MainViewModel(
                 try {
                     removeObjectRepoImpl.getTokenFirebase()
                 } catch (ex: Exception){
-
+                    ex.printStackTrace()
                 }
             }
         }

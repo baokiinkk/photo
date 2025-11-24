@@ -44,36 +44,32 @@ class RemoveBackgroundViewModel(
         showLoading()
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val jpegFile: File? = File(pathBitmap)
-                if (jpegFile == null) return@launch
+                val jpegFile = File(pathBitmap)
                 val response = removeBackgroundRepo.requestRemoveBg(jpegFile)
-                getProgressRemoveBg(response.id)
+                uploadFileToS3(
+                    url = response.links.first(),
+                    file = jpegFile
+                )
             } catch (ex: Exception) {
                 hideLoading()
             }
         }
     }
 
-    private suspend fun getProgressRemoveBg(id: String) {
-        var continueRequest = true
-        while (continueRequest) {
-            try {
-                val response = removeBackgroundRepo.getProgressRemoveBg(id)
-                val pathFile = saveFileAndReturnPathFile(response.result.url)
-                hideLoading()
-                _removeBgState.send(pathFile)
-                uiState.update {
-                    it.copy(
-                        imageUrl = pathFile
-                    )
-                }
-                continueRequest = false
-            } catch (ex: Exception) {
-
+    private suspend fun uploadFileToS3(url: String, file: File) {
+        try {
+            val response = removeBackgroundRepo.uploadFileToS3(uploadUrl = url, file = file)
+            val pathFile = saveFileAndReturnPathFile(response)
+            hideLoading()
+            _removeBgState.send(pathFile)
+            uiState.update {
+                it.copy(
+                    imageUrl = pathFile
+                )
             }
-            if (continueRequest) {
-                delay(4000)
-            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            hideLoading()
         }
     }
 

@@ -3,13 +3,18 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.core.graphics.scale
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
+import coil.decode.DecodeUtils.calculateInSampleSize
+import coil.size.Scale
+import com.airbnb.lottie.utils.Utils.resizeBitmapIfNeeded
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
@@ -347,7 +352,7 @@ data class EditorUIState(
     val canRedo: Boolean = false
 )
 
-suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {
+suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?, maxSize: Int = 1504): String? {
     try {
         if (sourceUri == null) return null
         val inputStream =
@@ -363,6 +368,7 @@ suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {
                 input.copyTo(output)
             }
         }
+
         // Trả về Uri nội bộ
         return file.absolutePath
     } catch (e: Exception) {

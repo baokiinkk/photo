@@ -29,7 +29,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Emoji">
+        android:theme="@style/Theme.Emoji"
+        android:usesCleartextTraffic="true">
         <activity
             android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity"
             android:exported="true">
