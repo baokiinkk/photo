@@ -355,51 +355,6 @@ data class EditorUIState(
     val canRedo: Boolean = false
 )
 
-//
-//suspend fun copyImageToAppStorage(
-//    context: Context,
-//    sourceUri: Uri?,
-//    maxSize: Int = 1504
-//): String? = withContext(Dispatchers.IO) {
-//    try {
-//        if (sourceUri == null) return@withContext null
-//
-//        context.contentResolver.openInputStream(sourceUri)?.use { inputStream ->
-//            val originalBitmap = BitmapFactory.decodeStream(inputStream) ?: return@withContext null
-//
-//            val (width, height) = originalBitmap.width to originalBitmap.height
-//            val maxDimension = max(width, height)
-//
-//            Log.d("aaaaa","width:$width && height:$height")
-//            val scaledBitmap =
-//                if (maxDimension <= maxSize) {
-//                    originalBitmap
-//                } else {
-//                    val scale = maxSize.toFloat() / maxDimension
-//                    val targetWidth = (width * scale).roundToInt()
-//                    val targetHeight = (height * scale).roundToInt()
-//                    Bitmap.createScaledBitmap(originalBitmap, targetWidth, targetHeight, true)
-//                        .also { if (it != originalBitmap) originalBitmap.recycle() }
-//                }
-//
-//            val file = File(
-//                context.filesDir,
-//                "theme_image_${System.currentTimeMillis()}.png"
-//            )
-//
-//            FileOutputStream(file).use { output ->
-//                scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, output)
-//            }
-//
-//            if (scaledBitmap != originalBitmap) scaledBitmap.recycle()
-//
-//            file.absolutePath
-//        }
-//    } catch (e: Exception) {
-//        e.printStackTrace()
-//        null
-//    }
-//}
 suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?, maxSize: Int = 1504): String? {
     try {
         if (sourceUri == null) return null
