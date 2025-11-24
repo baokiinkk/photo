@@ -44,11 +44,7 @@ class ImagePickerActivity : BaseActivity() {
                     dataRequest = args,
                     onDone = { uris ->
                         val data = Intent().apply {
-                            if (uris.size > 1) {
-                                putExtra(RESULT_URI, uris.map { it.toString() }.toJson())
-                            } else {
-                                putExtra(RESULT_URI, uris.firstOrNull()?.toString()?.toJson())
-                            }
+                            putExtra(RESULT_URI, uris.map { it.toString() }.toJson())
                         }
                         setResult(RESULT_OK, data)
                         finish()

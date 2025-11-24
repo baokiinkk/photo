@@ -110,10 +110,8 @@ class FreeStyleActivity : BaseActivity() {
 
                                 CollageTool.ADD_PHOTO -> {
                                     launchActivity(toActivity = ImagePickerActivity::class.java) { result ->
-                                        val result: List<String>? =
-                                            result.data?.getStringExtra(RESULT_URI)
-                                                ?.fromJsonTypeToken()
-                                        viewmodel.addMorePhoto(result)
+                                        val data: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+                                        viewmodel.addMorePhoto(data)
                                     }
                                 }
 

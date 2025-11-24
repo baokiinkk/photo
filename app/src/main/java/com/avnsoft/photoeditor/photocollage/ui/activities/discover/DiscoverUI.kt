@@ -64,7 +64,7 @@ fun DiscoverUI(viewModel: MainViewModel? = null) {
             }
         )
         DiscoverTemplates()
-        DiscoverQuickEdits(){}
+        DiscoverQuickEdits{}
     }
 }
 

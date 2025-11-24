@@ -24,15 +24,8 @@ import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.basesource.base.utils.clickableWithAlphaEffect
 
-// Data model mock
-private val mockTemplates = listOf(
-    TemplateItem(1, "Modern Collage", android.R.drawable.ic_menu_gallery),
-    TemplateItem(2, "Classic Mix", android.R.drawable.ic_menu_gallery),
-    TemplateItem(3, "Fresh Layout", android.R.drawable.ic_menu_gallery),
-)
-
 @Composable
-fun DiscoverTemplates(onSeeAll: () -> Unit = {}, onTemplateClick: (TemplateItem) -> Unit = {}) {
+fun DiscoverTemplates(onSeeAll: () -> Unit = {}, onTemplateClick: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,22 +43,7 @@ fun DiscoverTemplates(onSeeAll: () -> Unit = {}, onTemplateClick: (TemplateItem)
             )
         }
         Spacer(Modifier.height(12.dp))
-        Row(Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())) {
-            mockTemplates.forEach { template ->
-                Image(
-                    painterResource(template.imageRes),
-                    contentDescription = "",
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .size(130.dp)
-                        .clickableWithAlphaEffect {
-                            onTemplateClick(template)
-                        },
-                )
-            }
-        }
+
     }
 }
 

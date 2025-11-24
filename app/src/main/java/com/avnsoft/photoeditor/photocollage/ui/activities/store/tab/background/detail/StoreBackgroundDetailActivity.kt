@@ -42,6 +42,7 @@ import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.fromJson
+import com.basesource.base.utils.fromJsonTypeToken
 import com.basesource.base.utils.launchActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -134,8 +135,8 @@ class StoreBackgroundDetailActivity : BaseActivity() {
             toActivity = ImagePickerActivity::class.java,
             ImageRequest(TypeSelect.SINGLE)
         ) { result ->
-            val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
-            result?.let {
+            val data: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+            data?.firstOrNull()?.let {
                 launchActivity(
                     toActivity = EditorActivity::class.java,
                     input = EditorInput(
