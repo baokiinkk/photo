@@ -88,6 +88,10 @@ class FreeStyleActivity : BaseActivity() {
                         },
                         onToolClick = {
                             when (it) {
+                                CollageTool.RATIO -> {
+                                    viewmodel.showRatioTool()
+                                }
+
                                 CollageTool.STICKER -> {
                                     viewmodel.showStickerTool()
                                 }
@@ -98,6 +102,10 @@ class FreeStyleActivity : BaseActivity() {
 
                                 CollageTool.BACKGROUND -> {
                                     viewmodel.showBackgroundTool()
+                                }
+
+                                CollageTool.FRAME -> {
+                                    viewmodel.showFrameTool()
                                 }
 
                                 CollageTool.ADD_PHOTO -> {

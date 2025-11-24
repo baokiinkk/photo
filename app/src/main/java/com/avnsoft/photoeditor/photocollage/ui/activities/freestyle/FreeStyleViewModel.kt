@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
@@ -156,6 +157,70 @@ class FreeStyleViewModel(
         }.toMutableList()
         freeStyleSticker.postValue(data)
     }
+
+    fun showRatioTool() {
+        uiState.update {
+            it.copy(
+                isShowRatioTool = true
+            )
+        }
+    }
+
+    fun cancelRatioTool() {
+        uiState.update {
+            it.copy(
+                isShowRatioTool = false
+            )
+        }
+    }
+
+    fun applyRatioTool() {
+        uiState.update {
+            it.copy(
+                isShowRatioTool = false
+            )
+        }
+    }
+
+    fun updateRatio(ratio: String?) {
+        uiState.update {
+            it.copy(
+                ratio = ratio
+            )
+        }
+    }
+
+    fun showFrameTool() {
+        uiState.update {
+            it.copy(
+                isShowFrameTool = true
+            )
+        }
+    }
+
+    fun cancelFrameTool() {
+        uiState.update {
+            it.copy(
+                isShowFrameTool = false
+            )
+        }
+    }
+
+    fun applyFrameTool() {
+        uiState.update {
+            it.copy(
+                isShowFrameTool = false
+            )
+        }
+    }
+
+    fun updateFrame(selection: FrameSelection) {
+        uiState.update {
+            it.copy(
+                frameSelection = selection
+            )
+        }
+    }
 }
 
 data class FreeStyleUIState(
@@ -166,7 +231,10 @@ data class FreeStyleUIState(
     val isShowBackgroundTool: Boolean = false,
     val backgroundSelection: BackgroundSelection? = BackgroundSelection
         .Solid("#F2F4F8"),
-
+    val isShowRatioTool: Boolean = false,
+    val ratio: String? = null,
+    val isShowFrameTool: Boolean = false,
+    val frameSelection: FrameSelection? = null,
     val canUndo: Boolean = false,
     val canRedo: Boolean = false
 )

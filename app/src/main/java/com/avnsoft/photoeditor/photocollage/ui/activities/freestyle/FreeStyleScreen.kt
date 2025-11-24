@@ -7,6 +7,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,6 +25,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -50,6 +55,9 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Bac
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSheet
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.RatioSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerToolPanel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerViewModel
@@ -110,17 +118,58 @@ fun FreeStyleScreen(
                 }
             )
             Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .clipToBounds()
+                modifier = Modifier.weight(1f)
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 80.dp, bottom = 175.dp)
+                    .then(
+                        remember(uiState.ratio) {
+                            val aspectRatioValue = when (uiState.ratio) {
+                                "Original" -> null
+                                "1:1" -> 1f
+                                "4:5" -> 4f / 5f
+                                "5:4" -> 5f / 4f
+                                "3:4" -> 3f / 4f
+                                else -> null
+                            }
+                            if (aspectRatioValue != null) {
+                                Modifier.aspectRatio(aspectRatioValue)
+                            } else {
+                                Modifier
+                            }
+                        }
+                    )
             ) {
                 BackgroundLayer(
                     backgroundSelection = uiState.backgroundSelection,
                     modifier = Modifier.fillMaxSize()
                 )
+
+                // Frame layer
+                uiState.frameSelection?.let { frame ->
+                    when (frame) {
+                        is FrameSelection.Frame -> {
+                            val context = LocalContext.current
+                            val data = frame as FrameSelection.Frame
+                            val url = if (data.item.urlThumb?.startsWith("http://") == true || data.item.urlThumb?.startsWith("https://") == true) {
+                                data.item.urlThumb
+                            } else {
+                                "${data.urlRoot}${data.item.urlThumb}"
+                            }
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(url)
+                                    .build(),
+                                contentDescription = "",
+                                contentScale = ContentScale.FillBounds,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                        else -> {}
+                    }
+                }
+
                 FreeStyleStickerComposeView(
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     view = stickerView
                 )
             }
@@ -199,6 +248,44 @@ fun FreeStyleScreen(
                     },
                     onConfirm = {
                         viewmodel.applyBackgroundTool()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .align(Alignment.BottomCenter)
+                )
+            }
+
+            uiState.isShowRatioTool -> {
+                RatioSheet(
+                    selectedRatio = uiState.ratio,
+                    onRatioSelect = { aspect ->
+                        viewmodel.updateRatio(aspect.label)
+                    },
+                    onClose = {
+                        viewmodel.cancelRatioTool()
+                    },
+                    onConfirm = {
+                        viewmodel.applyRatioTool()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .align(Alignment.BottomCenter)
+                )
+            }
+
+            uiState.isShowFrameTool -> {
+                FrameSheet(
+                    selectedFrameSelection = uiState.frameSelection,
+                    onFrameSelect = { selection ->
+                        viewmodel.updateFrame(selection)
+                    },
+                    onClose = {
+                        viewmodel.cancelFrameTool()
+                    },
+                    onConfirm = {
+                        viewmodel.applyFrameTool()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
