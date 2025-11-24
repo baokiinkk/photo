@@ -138,13 +138,16 @@ fun FreeStyleScreen(
                             }
                         }
                     )
+                    .clipToBounds()
             ) {
                 BackgroundLayer(
                     backgroundSelection = uiState.backgroundSelection,
                     modifier = Modifier.fillMaxSize()
                 )
-
-                // Frame layer
+                FreeStyleStickerComposeView(
+                    modifier = Modifier.fillMaxSize(),
+                    view = stickerView
+                )
                 uiState.frameSelection?.let { frame ->
                     when (frame) {
                         is FrameSelection.Frame -> {
@@ -168,10 +171,6 @@ fun FreeStyleScreen(
                     }
                 }
 
-                FreeStyleStickerComposeView(
-                    modifier = Modifier.fillMaxSize(),
-                    view = stickerView
-                )
             }
 
             FeatureBottomTools(
