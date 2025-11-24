@@ -117,6 +117,7 @@ fun CollageScreen(
     val collageState by vm.collageState.collectAsState()
     val canUndo by vm.canUndo.collectAsState()
     val canRedo by vm.canRedo.collectAsState()
+    val unselectAllImagesTrigger by vm.unselectAllImagesTrigger.collectAsState()
     var showGridsSheet by remember { mutableStateOf(false) }
     var showRatioSheet by remember { mutableStateOf(false) }
     var showBackgroundSheet by remember { mutableStateOf(false) }
@@ -215,7 +216,9 @@ fun CollageScreen(
                             // Lưu transforms vào ViewModel và confirm vào undo stack
                             vm.updateImageTransforms(transforms)
                             vm.confirmImageTransformChanges()
-                        })
+                        },
+                        unselectAllTrigger = unselectAllImagesTrigger
+                    )
                     collageState.frameSelection?.takeIf { it is FrameSelection.Frame }?.let { frame->
                         val data  =  frame as FrameSelection.Frame
                         val url = if (data.item.urlThumb?.startsWith("http://") == true || data.item.urlThumb?.startsWith("https://") == true) {

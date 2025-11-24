@@ -51,6 +51,16 @@ class CollageViewModel(
     private val _canRedo = MutableStateFlow(false)
     val canRedo: StateFlow<Boolean> = _canRedo.asStateFlow()
 
+    // State để trigger unselect all images
+    private val _unselectAllImagesTrigger = MutableStateFlow(0)
+    val unselectAllImagesTrigger: StateFlow<Int> = _unselectAllImagesTrigger.asStateFlow()
+
+    fun triggerUnselectAllImages() {
+        viewModelScope.launch(Dispatchers.Main) {
+            _unselectAllImagesTrigger.value = _unselectAllImagesTrigger.value + 1
+        }
+    }
+
     // Lưu ratio tạm thời khi đang chọn (chưa confirm)
     private var tempRatio: String? = null
 

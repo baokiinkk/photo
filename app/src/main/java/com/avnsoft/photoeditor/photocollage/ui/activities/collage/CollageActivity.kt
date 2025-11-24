@@ -96,6 +96,8 @@ class CollageActivity : BaseActivity() {
 
             public override fun onStickerTouchedDown(sticker: Sticker) {
                 Log.d("stickerView", "onStickerTouchedDown")
+                // Unselect tất cả images trong CollagePreview
+                vm.triggerUnselectAllImages()
                 stickerView.setShowFocus(true)
                 if (sticker is TextSticker) {
                     stickerView.configDefaultIcons()
