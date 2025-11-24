@@ -3,11 +3,11 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,7 +44,6 @@ import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.frame.FrameCategory
 import com.avnsoft.photoeditor.photocollage.data.model.frame.FrameItem
 import com.avnsoft.photoeditor.photocollage.data.repository.FrameRepository
-import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray100
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray500
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
@@ -105,40 +103,29 @@ fun FrameSheet(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp)
                 .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // No Frame option
-            Box(
+            Image(
+                painter = painterResource(R.drawable.ic_cancel_frame),
+                contentDescription = "",
                 modifier = Modifier
-                    .background(
-                        if (selectedFrameSelection is FrameSelection.None) Color(0xFF9747FF) else Color(0xFFF3F4F6),
-                        RoundedCornerShape(20.dp)
-                    )
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .size(24.dp)
                     .clickableWithAlphaEffect {
-                        onFrameSelect(FrameSelection.None)
-                    }
-            ) {
-                Text(
-                    text = "✕",
-                    style = AppStyle.body2().medium().let {
-                        if (selectedFrameSelection is FrameSelection.None) it.white() else it.gray900()
-                    }
-                )
-            }
-
+                        onFrameSelect.invoke(FrameSelection.None)
+                    })
             categories?.forEach { category ->
                 Text(
                     text = category.categoryName.orEmpty(),
-                    style = AppStyle.body2().medium().let {
-                        if (selectedCategory == category) it.white() else it.gray900()
+                    style = AppStyle.caption1().semibold().let {
+                        if (selectedCategory == category) it.white() else it.gray500()
                     },
                     modifier = Modifier
                         .background(
                             if (selectedCategory == category) Color(0xFF9747FF) else Color(0xFFF3F4F6),
                             RoundedCornerShape(20.dp)
                         )
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
                         .clickableWithAlphaEffect {
                             selectedCategory = category
                         }
@@ -203,7 +190,7 @@ fun FrameSheet(
                                     frameCategory = selectedCategory!!,
                                     urlRoot = urlRoot,
                                     isSelected = selectedFrameSelection is FrameSelection.Frame &&
-                                            (selectedFrameSelection as FrameSelection.Frame).item.name == frame.name,
+                                            selectedFrameSelection.item.name == frame.name,
                                     onFrameSelect = { item, category ->
                                         onFrameSelect(FrameSelection.Frame(item, category, urlRoot))
                                     }

@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -50,7 +51,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Bac
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.HeaderApply
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerToolPanel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
@@ -259,9 +259,6 @@ fun StickerFooterTool(
                     DrawableSticker(bitmap?.toDrawable(stickerView.resources))
                 )
             }
-//            stickerView.addSticker(
-//                DrawableSticker(bitmap?.toDrawable(stickerView.resources))
-//            )
         }
     }
 
@@ -302,9 +299,6 @@ fun StickerFooterTool(
                             DrawableSticker(bitmap?.toDrawable(stickerView.resources))
                         )
                     }
-//                    stickerView.addSticker(
-//                        DrawableSticker(bitmap?.toDrawable(stickerView.resources))
-//                    )
                 }
             }
         },
@@ -329,7 +323,7 @@ fun TextStickerFooterTool(
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    var opacityColor by remember { mutableStateOf(0f) }
+    var opacityColor by remember { mutableFloatStateOf(0f) }
     var showColorWheel by remember { mutableStateOf(false) }
     var currentSelectedColor by remember {
         mutableStateOf(
@@ -377,10 +371,9 @@ fun TextStickerFooterTool(
             },
             uiState = uiState,
             onSelectedColor = { color ->
-                stickerView?.getCurrentTextSticker()
-                    ?.getAddTextProperties()?.textColor = color.toArgb()
-                stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
-                    stickerView?.replace(
+                stickerView.getCurrentTextSticker()?.getAddTextProperties()?.textColor = color.toArgb()
+                stickerView.getCurrentTextSticker()?.getAddTextProperties()?.let {
+                    stickerView.replace(
                         TextSticker(
                             context,
                             it
@@ -391,10 +384,10 @@ fun TextStickerFooterTool(
             opacityColorValue = opacityColor,
             onOpacityColor = {
                 opacityColor = it
-                stickerView?.getCurrentTextSticker()
+                stickerView.getCurrentTextSticker()
                     ?.getAddTextProperties()?.textAlpha = (255 - it).toInt()
-                stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
-                    stickerView?.replace(
+                stickerView.getCurrentTextSticker()?.getAddTextProperties()?.let {
+                    stickerView.replace(
                         TextSticker(
                             context,
                             it
@@ -405,15 +398,15 @@ fun TextStickerFooterTool(
             onAlign = {
                 when (it) {
                     TEXT_ALIGN.START -> {
-                        stickerView?.setStickerHorizontalPosition(Sticker.Position.LEFT)
+                        stickerView.setStickerHorizontalPosition(Sticker.Position.LEFT)
                     }
 
                     TEXT_ALIGN.CENTER -> {
-                        stickerView?.setStickerHorizontalPosition(Sticker.Position.CENTER)
+                        stickerView.setStickerHorizontalPosition(Sticker.Position.CENTER)
                     }
 
                     TEXT_ALIGN.END -> {
-                        stickerView?.setStickerHorizontalPosition(Sticker.Position.RIGHT)
+                        stickerView.setStickerHorizontalPosition(Sticker.Position.RIGHT)
                     }
                 }
             },
@@ -427,10 +420,9 @@ fun TextStickerFooterTool(
                 selectedColor = currentSelectedColor,
                 onColorSelected = { color ->
                     currentSelectedColor = color
-                    stickerView?.getCurrentTextSticker()
-                        ?.getAddTextProperties()?.textColor = color.toArgb()
-                    stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
-                        stickerView?.replace(
+                    stickerView.getCurrentTextSticker()?.getAddTextProperties()?.textColor = color.toArgb()
+                    stickerView.getCurrentTextSticker()?.getAddTextProperties()?.let {
+                        stickerView.replace(
                             TextSticker(
                                 context,
                                 it
@@ -537,7 +529,7 @@ fun EditTextStickerLayer(
     ) {
         val typeface = Typeface.createFromAsset(
             context.assets,
-            editTextProperties?.fontName!!
+            editTextProperties.fontName!!
         )
 
         Box(
@@ -575,7 +567,7 @@ fun EditTextStickerLayer(
                 },
                 textStyle = TextStyle(
                     fontFamily = FontFamily(typeface),
-                    color = Color(editTextProperties.textColor!!),
+                    color = Color(editTextProperties.textColor),
                     textAlign = TextAlign.Center,
                 ),
                 decorationBox = { innerTextField ->
