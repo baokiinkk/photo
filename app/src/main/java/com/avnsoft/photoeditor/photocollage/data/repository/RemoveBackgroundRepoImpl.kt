@@ -15,6 +15,7 @@ import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.gson
 import com.basesource.base.utils.toJson
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -112,44 +113,51 @@ class RemoveBackgroundRepoImpl(
         }
     }
 
-    suspend fun getProgressRemoveBg(
-        id: String
+    suspend fun getImageStatus(
+        id: String,
+        status: UPLOAD_TYPE_STATUS
     ): ImageSuccessResponse {
-        try {
-            val data = api.getProgress(
-                id = id,
-                token = "Bearer " + editorSharedPref.getAccessToken()
-            )
-
-            Log.d("TAG", "onViewReady: $data")
-            val cleanResponseBody = data.replace("\"", "")
-            val decryptedResponse = AMGUtil.decrypt(context, cleanResponseBody)
-            Log.d("TAG", "Decrypted response getProgress: $decryptedResponse")
-            if (decryptedResponse.equals("null")) {
-                throw Exception("Data is null")
-            }
-            val responsePostAI = gson.fromJson(
-                decryptedResponse,
-                ImageSuccessResponse::class.java
-            )
-            return responsePostAI
-        } catch (ex: Exception) {
-            when (ex) {
-                is retrofit2.HttpException -> {
-                    val codeHTTPException = ex.code()
-                    if (codeHTTPException == 401) {
-                        getTokenFirebase()
-                    }
-                }
-
-                else -> {
-
-                }
-            }
-            throw ex
-        }
-
+        val request = ImageStatusRequest(
+            id = id,
+            status = status.value
+        )
+        Log.d("getImageStatus", "request: ${request.toJson()}")
+        val dataPush: String = AMGUtil.encrypt(
+            context,
+            request.toJson(),
+            "TokenFirbaseTest"
+        )
+        val dataEncrypt = DataEncrypt(
+            data = dataPush
+        )
+        Log.d("getImageStatus", "dataEncrypt: ${dataEncrypt.toJson()}")
+        val response = api.getImageStatus(
+            data = dataEncrypt,
+            token = "Bearer " + editorSharedPref.getAccessToken()
+        )
+        Log.d("getImageStatus", "response: ${response.toJson()}")
+        Log.d("getImageStatus", "onViewReady: $response")
+        val cleanResponseBody = response.replace("\"", "")
+        val decryptedResponse = AMGUtil.decrypt(context, cleanResponseBody)
+        Log.d("getImageStatus", "Decrypted response getProgress: $decryptedResponse")
+        val responsePostAI = gson.fromJson(
+            decryptedResponse,
+            ImageSuccessResponse::class.java
+        )
+        return responsePostAI
     }
+}
+
+data class ImageStatusRequest(
+    @SerializedName("_id")
+    val id: String,
+    @SerializedName("status")
+    val status: Int
+)
+
+enum class UPLOAD_TYPE_STATUS(val value: Int) {
+    SUCCESS(1),
+    FAILED(0)
 }
 
 data class Tier(

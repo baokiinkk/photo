@@ -80,11 +80,17 @@ interface CollageApiService {
 
 
     @PUT
-    @Headers("Content-Type: image/jpeg")
     suspend fun uploadFileToS3(
         @Url uploadUrl: String,
         @Body filePart: RequestBody,
     ):  Response<ResponseBody>
+
+    @POST(" /v5/tools/remove-background/upload-image-status")
+    suspend fun getImageStatus(
+        @Body data: DataEncrypt,
+        @Header("Authorization") token: String?
+    ): String
+
 }
 
 
