@@ -7,12 +7,14 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.border
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,16 +35,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import com.avnsoft.photoeditor.photocollage.ui.activities.language.LanguageSelectionActivity
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.ui.activities.language.LanguageSelectionActivity
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
+import com.basesource.base.components.NavigationBar
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.LanguageManager
@@ -74,6 +80,8 @@ class SettingsActivity : BaseActivity() {
                     openPrivacyPolicy(this@SettingsActivity)
                 }, onRestorePurchase = {
                     // TODO: Implement restore purchase
+                }, onBack = {
+                    finish()
                 })
             }
         }
@@ -91,7 +99,8 @@ fun SettingsScreen(
     onGdpr: () -> Unit = {},
     onCheckUpdate: () -> Unit = {},
     onPrivacyPolicy: () -> Unit = {},
-    onRestorePurchase: () -> Unit = {}
+    onRestorePurchase: () -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
 
     val context = LocalContext.current
@@ -99,11 +108,21 @@ fun SettingsScreen(
     val versionName = packageInfo.versionName
     var showRatingDialog by remember { mutableStateOf(false) }
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundWhite),
     ) {
+        NavigationBar(
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 16.dp),
+            title = stringResource(R.string.settings),
+            titleStyle = AppStyle.title1().bold().Color_101828()
+        ) {
+            onBack.invoke()
+        }
         Column(
             modifier = Modifier
-                .border(1.dp, BackgroundWhite, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                .background(BackgroundGray)
                 .weight(1f),
         ) {
             Column(
@@ -111,7 +130,23 @@ fun SettingsScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                Image(
+                    painter = painterResource(R.drawable.img_banner_setting),
+                    contentDescription = "",
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(328f / 120),
+                )
                 SettingsGroup {
+                    SettingsItem(
+                        icon = R.drawable.ic_subscription_setting,
+                        title = stringResource(id = R.string.manager_subscription),
+                        onClick = onManagerSubscription
+                    )
+                    SettingsItem(
+                        icon = R.drawable.ic_restore_setting, title = stringResource(id = R.string.restore_purchase), onClick = onRestorePurchase
+                    )
                     SettingsItem(
                         icon = R.drawable.ic_language_setting,
                         title = stringResource(id = R.string.setting_language),
@@ -132,25 +167,17 @@ fun SettingsScreen(
                 }
 
                 SettingsGroup {
-                    SettingsItem(
-                        icon = R.drawable.ic_subscription_setting,
-                        title = stringResource(id = R.string.manager_subscription),
-                        onClick = onManagerSubscription
-                    )
+
                     SettingsItem(
                         icon = R.drawable.ic_gdpr_setting, title = stringResource(id = R.string.gdpr), onClick = onGdpr
                     )
-                    SettingsItem(
-                        icon = R.drawable.ic_update_setting, title = stringResource(id = R.string.check_app_update), onClick = onCheckUpdate
-                    )
-                }
 
-                SettingsGroup {
                     SettingsItem(
                         icon = R.drawable.ic_policy_setting, title = stringResource(id = R.string.privacy_policy), onClick = onPrivacyPolicy
                     )
+
                     SettingsItem(
-                        icon = R.drawable.ic_restore_setting, title = stringResource(id = R.string.restore_purchase), onClick = onRestorePurchase
+                        icon = R.drawable.ic_update_setting, title = stringResource(id = R.string.check_app_update), onClick = onCheckUpdate
                     )
                 }
             }
@@ -163,6 +190,7 @@ fun SettingsScreen(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
+                .background(BackgroundGray)
                 .padding(top = 4.dp)
         )
 
@@ -170,6 +198,7 @@ fun SettingsScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(BackgroundGray)
                 .align(Alignment.CenterHorizontally)
                 .padding(horizontal = 54.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -226,10 +255,11 @@ fun SettingsGroup(
 fun SettingsItem(
     icon: Int, title: String, value: String? = null, onClick: () -> Unit, showArrow: Boolean = true
 ) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .clickableWithAlphaEffect { onClick() }
-        .padding(horizontal = 16.dp, vertical = 12.dp),
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickableWithAlphaEffect { onClick() }
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -246,7 +276,7 @@ fun SettingsItem(
             if (value != null) {
                 Text(
                     text = value,
-                    style = AppStyle.body1().semibold().purple700(),
+                    style = AppStyle.body1().medium().Color_101828(),
                 )
             }
             if (showArrow) {
