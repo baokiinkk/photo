@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -35,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.adjust.OriginalButton
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.HeaderApply
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.LoadingAnimation
@@ -43,6 +46,7 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.image.LoadImage
+import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
@@ -59,10 +63,9 @@ class AIEnhanceActivity : BaseActivity() {
         viewmodel.initData(screenInput?.pathBitmap)
         setContent {
             Scaffold(
-                containerColor = Color(0xFFF2F4F8)
+                containerColor = Color.White
             ) { inner ->
                 val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
-                var showOriginal by remember { mutableStateOf(false) }
 
                 Box(
                     modifier = Modifier
@@ -75,6 +78,7 @@ class AIEnhanceActivity : BaseActivity() {
                                 top = inner.calculateTopPadding(),
                                 bottom = inner.calculateBottomPadding()
                             )
+                            .background(Color(0xFFF2F4F8))
                     ) {
                         HeaderApply(
                             modifier = Modifier
@@ -89,73 +93,39 @@ class AIEnhanceActivity : BaseActivity() {
                             }
                         )
                         Box(
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier
+                                .weight(1f)
+                               ,
+                            contentAlignment = Alignment.Center
                         ) {
-                            LoadImage(
-                                modifier = Modifier.fillMaxSize()
-                                    .blur(25.dp),
-                                model = uiState.imageUrl
-                            )
-//                            LoadImage(
-//                                model = screenInput?.pathBitmap,
-//                                contentDescription = null,
-//                                modifier = Modifier
-//                                    .fillMaxSize()
-//                                    .alpha(if (showOriginal) 1f else 0f),
-//                            )
-//                            OriginalButton(
-//                                resId = R.drawable.ic_show_ui_original,
-//                                modifier = Modifier
-//                                    .align(Alignment.BottomCenter)
-//                                    .padding(bottom = 16.dp, end = 16.dp)
-//                            ) {
-//                                showOriginal = it
-//                            }
-                        }
-                        LazyRow(
-                            contentPadding = PaddingValues(16.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            items(
-                                items = uiState.items,
-                            ) { item ->
-                                val isSelected = item == uiState.itemSelected
-                                Column(
+                            if (uiState.imageUrl.isNotEmpty()){
+                                LoadImage(
+                                    model = uiState.imageUrl,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Fit,
                                     modifier = Modifier
-                                        .fillParentMaxWidth(1f / uiState.items.size)
-                                        .aspectRatio(1f)
-                                        .clickableWithAlphaEffect {
-                                            viewmodel.onItemClick(item)
-                                        },
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-
-                                    if (isSelected){
-                                        ItemSelected(imageUrl = item.imageUrl)
-                                    } else {
-                                        LoadImage(
-                                            model = item.imageUrl,
-                                            contentDescription = null,
-                                            modifier = Modifier
-                                                .width(40.dp)
-                                                .height(40.dp)
-                                                .padding(2.dp)
-                                                .clip(RoundedCornerShape(10.dp))
-                                               ,
-                                            contentScale = ContentScale.Crop
-                                        )
+                                        .fillMaxSize(),
+                                    onSuccess = {
+                                        viewmodel.hideImageOriginalAfterLoaded()
                                     }
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Text(
-                                        text = item.name,
-                                        style = if (isSelected) {
-                                            AppStyle.body2().medium().Color_101828()
-                                        } else {
-                                            AppStyle.body2().semibold().Color_1D2939()
-                                        }
-                                    )
-                                }
+                                )
+                            }
+                            LoadImage(
+                                model = screenInput?.pathBitmap,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .alpha(if (uiState.showOriginal) 1f else 0f)
+                                ,
+                                contentScale = ContentScale.Fit,
+                            )
+                            OriginalButton(
+                                resId = R.drawable.ic_show_ui_original,
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(bottom = 16.dp, end = 16.dp)
+                            ) {
+                                viewmodel.updateIsOriginal(it)
                             }
                         }
                     }
@@ -171,30 +141,5 @@ class AIEnhanceActivity : BaseActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun ItemSelected(imageUrl: String) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .border(
-                width = 1.5.dp,
-                color = AppColor.Primary500,
-                shape = RoundedCornerShape(12.dp)
-            )
-    ) {
-        LoadImage(
-            model = imageUrl,
-            contentDescription = null,
-            modifier = Modifier
-                .width(40.dp)
-                .height(40.dp)
-                .padding(2.dp)
-                .clip(RoundedCornerShape(10.dp))
-                ,
-            contentScale = ContentScale.Crop
-        )
     }
 }

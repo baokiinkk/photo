@@ -25,6 +25,7 @@ fun LoadImage(
     placeholder: Painter? = null,
     contentDescription: String? = null,
     colorFilter: ColorFilter? = null,
+    onSuccess: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
 
@@ -42,7 +43,10 @@ fun LoadImage(
         placeholder = if (imageDefault == null) placeholder else painterResource(id = imageDefault),
         contentScale = contentScale,
         modifier = modifier,
-        colorFilter = colorFilter
+        colorFilter = colorFilter,
+        onSuccess = {
+            onSuccess?.invoke()
+        }
     )
 }
 

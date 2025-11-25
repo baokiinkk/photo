@@ -51,7 +51,7 @@ interface CollageApiService {
     suspend fun getTemplates(): Response<ResponseBody>
 
 
-    @POST("/v5/tools/remove-object-manual")
+    @POST("v5/tools/remove-object-manual")
     suspend fun genRemoveObject(
         @Body data: DataEncrypt,
         @Header("Authorization") token: String?
@@ -64,11 +64,9 @@ interface CollageApiService {
         @Header("Authorization") token: String?
     ): String
 
-    @Multipart
-    @POST("https://proxy-future-self.footballtv.info/v3/tools/enhance-image")
+    @POST("v5/tools/enhance-image")
     suspend fun genAiEnhance(
-        @Part file: MultipartBody.Part?,
-        @Part data: MultipartBody.Part?,
+        @Body data: DataEncrypt,
         @Header("Authorization") token: String?
     ): String
 
@@ -79,19 +77,25 @@ interface CollageApiService {
         @Body filePart: RequestBody,
     ): Response<ResponseBody>
 
-    @POST(" /v5/tools/remove-background/upload-image-status")
+    @POST("v5/tools/remove-background/upload-image-status")
     suspend fun getImageRemoveBackgroundStatus(
         @Body data: DataEncrypt,
         @Header("Authorization") token: String?
     ): String
 
-    @POST("/v5/tools/remove-object-auto-detect/upload-image-status")
+    @POST("v5/tools/enhance-image/upload-image-status")
+    suspend fun getImageAIEnhanceStatus(
+        @Body data: DataEncrypt,
+        @Header("Authorization") token: String?
+    ): String
+
+    @POST("v5/tools/remove-object-auto-detect/upload-image-status")
     suspend fun getImageRemoveObjectStatus(
         @Body data: DataEncrypt,
         @Header("Authorization") token: String?
     ): String
 
-    @POST("/v5/tools/remove-object-manual/upload-image-status")
+    @POST("v5/tools/remove-object-manual/upload-image-status")
     suspend fun getImageRemoveManualObjectStatus(
         @Body data: DataEncrypt,
         @Header("Authorization") token: String?

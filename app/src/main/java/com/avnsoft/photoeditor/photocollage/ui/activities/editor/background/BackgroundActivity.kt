@@ -234,7 +234,6 @@ fun HeaderApply(
         Spacer(modifier = Modifier.weight(1f))
         Text(
             modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 8.dp)
                 .clickableWithAlphaEffect {
                   onSave.invoke()
                 },
