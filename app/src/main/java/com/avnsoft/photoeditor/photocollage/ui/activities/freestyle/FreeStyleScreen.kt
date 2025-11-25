@@ -82,7 +82,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import java.io.File
 
 val toolsFreeStyle = listOf(
     ToolItem(CollageTool.RATIO, R.string.ratio_tool, R.drawable.ic_ratio),
@@ -282,7 +281,7 @@ fun FreeStyleScreen(
                                 )
                                 onDownloadSuccess.invoke(
                                     ExportImageData(
-                                        pathUriMark = uriMark.toString(),
+                                        pathUriMark = uriMark?.toString(),
                                         pathBitmapOriginal = pathBitmap
                                     )
                                 )

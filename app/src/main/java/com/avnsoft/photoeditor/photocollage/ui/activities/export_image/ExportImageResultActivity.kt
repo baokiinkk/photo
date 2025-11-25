@@ -6,12 +6,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,18 +18,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,26 +31,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
+import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
-import com.avnsoft.photoeditor.photocollage.ui.theme.Gray100
-import com.avnsoft.photoeditor.photocollage.ui.theme.Gray500
-import com.avnsoft.photoeditor.photocollage.ui.theme.Gray900
-import com.avnsoft.photoeditor.photocollage.ui.theme.PurpleLight
-import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
@@ -72,7 +59,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
 data class ExportImageData(
-    val pathUriMark: String,
+    val pathUriMark: String?,
     val pathBitmapOriginal: String,
 ) : IScreenData
 
@@ -86,7 +73,7 @@ class ExportImageResultActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        viewmodel.initData(screenInput)
         setContent {
             Scaffold(
                 containerColor = Color.White
@@ -120,6 +107,17 @@ class ExportImageResultActivity : BaseActivity() {
     }
 
     fun navigateToRemoveObject() {
+        if (viewmodel.isMark()) {
+            launchActivity(
+                toActivity = EditorActivity::class.java,
+                input = EditorInput(pathBitmap = screenInput.pathUriMark),
+            )
+        } else {
+            launchActivity(
+                toActivity = RemoveObjectActivity::class.java,
+                input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
+            )
+        }
 
     }
 
@@ -142,7 +140,7 @@ class ExportImageResultActivity : BaseActivity() {
     fun shareImage() {
         if (viewmodel.isMark()) {
             shareFile(
-                uri = screenInput.pathUriMark.toUri()
+                uri = screenInput.pathUriMark?.toUri()
             )
         } else {
             val file = File(screenInput.pathBitmapOriginal)
@@ -187,7 +185,7 @@ fun ExportResultScreen(
             .fillMaxSize()
             .systemBarsPadding()
             .verticalScroll(rememberScrollState())
-            .background(Color.White),
+            .background(AppColor.backgroundAppColor),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Top Bar
@@ -195,12 +193,13 @@ fun ExportResultScreen(
             onBackClick = onBackClick,
             onHomeClick = onHomeClick
         )
+        Spacer(modifier = Modifier.height(16.dp))
         // Image Preview (Collage)
         ImageCollagePreview(
             imageUrl = uiState.imageUrl
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         // New Edit and Share Buttons
         Row(
@@ -210,19 +209,16 @@ fun ExportResultScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ActionButton(
-                text = "+ New Edit",
+                iconRes = R.drawable.ic_add_24_24,
+                text = stringResource(R.string.new_edit),
                 onClick = onNewEditClick,
-                backgroundColor = PurpleLight,
-                textColor = Color(0xFF354CC4),
                 modifier = Modifier.weight(1f)
             )
 
             ActionButton(
-                text = "Share",
+                text = stringResource(R.string.share),
+                iconRes = R.drawable.ic_share,
                 onClick = onShareClick,
-                backgroundColor = PurpleLight,
-                textColor = Color(0xFF354CC4),
-                icon = Icons.Default.Share,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -231,14 +227,14 @@ fun ExportResultScreen(
 
         // Remove Watermark Button
         GradientButton(
-            text = "✨ Remove Watermark",
+            text = stringResource(R.string.remove_watermark),
             onClick = onRemoveWatermarkClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         // AI Tools Section
         AIToolsSection(
@@ -288,87 +284,38 @@ fun HeaderExportImageResult(
 }
 
 @Composable
-fun SavedStatusBadge() {
-    Row(
-        modifier = Modifier
-            .background(Color.White, RoundedCornerShape(24.dp))
-            .border(1.dp, Gray100, RoundedCornerShape(24.dp))
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Box(
-            modifier = Modifier
-                .size(20.dp)
-                .background(Color(0xFF4CAF50), CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "Success",
-                tint = Color.White,
-                modifier = Modifier.size(14.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Text(
-            text = "Saved to Device",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = Gray900
-        )
-    }
-}
-
-@Composable
 fun ImageCollagePreview(
     imageUrl: String?
 ) {
-    Box(
+    Card(
         modifier = Modifier
-            .size(240.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(Gray100)
-            .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(16.dp)),
-        contentAlignment = Alignment.Center
+            .size(220.dp),
+        shape = RectangleShape,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        )
     ) {
         LoadImage(
+            modifier = Modifier.fillMaxSize(),
             model = imageUrl,
-            modifier = Modifier
-                .fillMaxSize()
+            contentScale = ContentScale.Crop
         )
     }
-}
 
-@Composable
-fun CollageImagePlaceholder(
-    modifier: Modifier = Modifier,
-    color: Color
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .clip(RoundedCornerShape(8.dp))
-            .background(color)
-    )
 }
 
 @Composable
 fun ActionButton(
     text: String,
     onClick: () -> Unit,
-    backgroundColor: Color,
-    textColor: Color,
-    icon: ImageVector? = null,
+    iconRes: Int,
     modifier: Modifier = Modifier
 ) {
     Button(
         onClick = onClick,
         modifier = modifier.height(48.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = backgroundColor
+            containerColor = Color(0xFFEEECFE)
         ),
         shape = RoundedCornerShape(12.dp),
         elevation = ButtonDefaults.buttonElevation(0.dp)
@@ -377,20 +324,13 @@ fun ActionButton(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (icon != null) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = textColor,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-            }
+            ImageWidget(
+                resId = iconRes
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = text,
-                color = textColor,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold
+                style = AppStyle.buttonMedium().semibold().primary500()
             )
         }
     }
@@ -402,34 +342,34 @@ fun GradientButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Button(
-        onClick = onClick,
-        modifier = modifier.height(56.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent
-        ),
-        contentPadding = PaddingValues(),
-        shape = RoundedCornerShape(16.dp),
-        elevation = ButtonDefaults.buttonElevation(0.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(Color(0xFF6425F3), Color(0xFF9C27B0))
-                    ),
-                    shape = RoundedCornerShape(16.dp)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = text,
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+    Row(
+        modifier = modifier
+            .shadow(
+                elevation = 16.dp,
+                shape = RoundedCornerShape(12.dp),
+                spotColor = Color(0x666425F3),
+                ambientColor = Color(0x666425F3)
             )
-        }
+            .height(48.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color(0xFFF7ACEF),
+                        Color(0xFF6425F3)
+                    )
+                )
+            )
+            .clickableWithAlphaEffect(onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        ImageWidget(resId = R.drawable.ic_store_star)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = text,
+            style = AppStyle.buttonLarge().semibold().white(),
+        )
     }
 }
 
@@ -445,35 +385,33 @@ fun AIToolsSection(
             .padding(horizontal = 16.dp)
     ) {
         Text(
-            text = "AI Tools",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Gray900
+            text = stringResource(R.string.ai_tools),
+            style = AppStyle.title1().bold().Color_101828()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AIToolCard(
-                title = "Remove Object",
+                title = stringResource(R.string.remove_object),
                 iconRes = R.drawable.ic_remove_object,
                 onClick = onRemoveObjectClick,
                 modifier = Modifier.weight(1f)
             )
 
             AIToolCard(
-                title = "AI Enhance",
-                iconRes = R.drawable.ic_ai_enhance,
+                title = stringResource(R.string.ai_enhance),
+                iconRes = R.drawable.ic_enhance_yellow,
                 onClick = onAiEnhanceClick,
                 modifier = Modifier.weight(1f)
             )
 
             AIToolCard(
-                title = "Remove BG",
-                iconRes = R.drawable.ic_background,
+                title = stringResource(R.string.remove_bg),
+                iconRes = R.drawable.ic_remove_bg_green,
                 onClick = onRemoveBgClick,
                 modifier = Modifier.weight(1f)
             )
@@ -490,34 +428,23 @@ fun AIToolCard(
 ) {
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(Gray100)
-            .clickable(onClick = onClick)
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color.White)
+            .clickableWithAlphaEffect(onClick = onClick)
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color.White),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = iconRes),
-                contentDescription = title,
-                modifier = Modifier.size(28.dp)
-            )
-        }
-
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = title,
+            modifier = Modifier.size(24.dp)
+        )
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = title,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-            color = Gray900,
-            textAlign = TextAlign.Center
+            style = AppStyle.caption1().semibold().Color_1D2939()
         )
     }
 }
