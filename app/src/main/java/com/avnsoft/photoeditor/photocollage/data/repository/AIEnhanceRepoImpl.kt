@@ -6,9 +6,7 @@ import com.android.amg.AMGUtil
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
 import com.avnsoft.photoeditor.photocollage.data.model.ai_enhance.AIEnhanceResponse
 import com.avnsoft.photoeditor.photocollage.data.model.ai_enhance.ProcessAiEnhanceResponse
-import com.avnsoft.photoeditor.photocollage.data.model.remove_background.RemoveBackgroundResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GetTokenFirebaseResponse
-import com.avnsoft.photoeditor.photocollage.data.model.remove_object.ImageSuccessResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.TierUtil
 import com.basesource.base.network.CollageApiService
 import com.basesource.base.network.model.DataEncrypt

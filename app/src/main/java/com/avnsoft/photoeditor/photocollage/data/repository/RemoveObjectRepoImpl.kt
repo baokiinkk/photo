@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.android.amg.AMGUtil
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
-import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GenAutoDetectResponse
+import com.avnsoft.photoeditor.photocollage.data.model.remove_background.AIDetectResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GenRemoveObjectResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GetTokenFirebaseResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.ImageSuccessResponse
@@ -12,13 +12,11 @@ import com.avnsoft.photoeditor.photocollage.data.model.remove_object.RemoveObjRe
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.ResponseObjAuto
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.TierUtil
 import com.basesource.base.network.CollageApiService
+import com.basesource.base.network.RemoveBackgroundRequest
 import com.basesource.base.network.model.DataEncrypt
 import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.gson
 import com.basesource.base.utils.toJson
-import com.google.gson.Gson
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -33,38 +31,39 @@ class RemoveObjectRepoImpl(
     private val editorSharedPref: EditorSharedPref
 ) {
 
-    suspend fun genAutoDetect(fileOrigin: File): GenAutoDetectResponse {
-        val requestFile = fileOrigin.asRequestBody("image/jpeg".toMediaTypeOrNull())
-        val originFile = MultipartBody.Part.createFormData(
-            "image_original", fileOrigin.name, requestFile
-        )
-
-        val json = gson.toJson(
-            RemoveObjRequestBody(
-                tier = TierUtil.getTearUser(context)
-            )
-        )
-
-        val encrypt = AMGUtil.encryptFile(
-            context,
-            json,
-            fileOrigin,
-            "firebaseToken"
-        )
-
-        Log.i("TAG", "requestAiArtaerg: ${encrypt}")
-        val data = MultipartBody.Part.createFormData(
-            "data", encrypt
-        )
+    suspend fun genAutoDetect(jpegFile: File): AIDetectResponse {
         return try {
             val token = "Bearer " + editorSharedPref.getAccessToken()
-            val data = api.genAutoDetect(originFile, data, token)
-            val cleanResponseBody = data.replace("\"", "")
-            val decryptedResponse = AMGUtil.decrypt(context, cleanResponseBody)
-            Log.d("TAG", "Decrypted response genAutoDetect: $decryptedResponse")
+
+            val tier = Tier(TierUtil.getTearUser(context).toInt())
+            val request = RemoveBackgroundRequest(
+                tier = tier.tier.toString(),
+                type = "1",
+                originalName = listOf(jpegFile.getName())
+            )
+            val jsonStr = gson.toJson(request)
+            Log.e("genAutoDetect", "request : $jsonStr")
+
+            val dataPush: String = AMGUtil.encryptFile(
+                context,
+                jsonStr,
+                jpegFile,
+                "TokenFirbaseTest"
+            )
+            val dataEncrypt = DataEncrypt(
+                data = dataPush
+            )
+            Log.e("genAutoDetect", "request to server: ${dataEncrypt.toJson()}")
+            val response = api.genAutoDetect(
+                data = dataEncrypt,
+                token = token
+            )
+            Log.e("genAutoDetect", "response server: ${response.toJson()}")
+            val cleanResponseBody: String = response.replace("\"", "")
+            val decryptedResponse: String = AMGUtil.decrypt(context, cleanResponseBody)
             val responsePostAI =
-                gson.fromJson(decryptedResponse, GenAutoDetectResponse::class.java)
-            Log.d("TAG", "id response:  ${responsePostAI.id}")
+                gson.fromJson(decryptedResponse, AIDetectResponse::class.java)
+            Log.e("genAutoDetect", "onSuccess: $decryptedResponse")
             responsePostAI
         } catch (ex: Exception) {
             when (ex) {
@@ -83,24 +82,87 @@ class RemoveObjectRepoImpl(
         }
     }
 
-    suspend fun getProgress(
-        id: String
+    suspend fun uploadFileToS3(
+        uploadUrl: String,
+        file: File,
+    ): String {
+        Log.d("uploadFileToS3", "uploadFileToS3: $uploadUrl")
+        val requestFile = file.asRequestBody("application/octet-stream".toMediaTypeOrNull())
+        val response = api.uploadFileToS3(
+            uploadUrl = uploadUrl,
+            filePart = requestFile
+        )
+        if (response.isSuccessful) {
+            return uploadUrl
+        } else {
+            throw Exception("Failed to upload file to S3")
+        }
+    }
+
+    suspend fun getImageRemoveObjectStatus(
+        id: String,
+        status: UPLOAD_TYPE_STATUS
     ): ResponseObjAuto {
-        val data = api.getProgress(
+        val request = ImageStatusRequest(
             id = id,
+            status = status.value
+        )
+        Log.d("getImageStatus", "request: ${request.toJson()}")
+        val dataPush: String = AMGUtil.encrypt(
+            context,
+            request.toJson(),
+            "TokenFirbaseTest"
+        )
+        val dataEncrypt = DataEncrypt(
+            data = dataPush
+        )
+        Log.d("getImageStatus", "dataEncrypt: ${dataEncrypt.toJson()}")
+        val response = api.getImageRemoveObjectStatus(
+            data = dataEncrypt,
             token = "Bearer " + editorSharedPref.getAccessToken()
         )
-
-        Log.d("TAG", "onViewReady: $data")
-        val cleanResponseBody = data.replace("\"", "")
+        Log.d("getImageStatus", "response: ${response.toJson()}")
+        Log.d("getImageStatus", "onViewReady: $response")
+        val cleanResponseBody = response.replace("\"", "")
         val decryptedResponse = AMGUtil.decrypt(context, cleanResponseBody)
-        Log.d("TAG", "Decrypted response getProgress: $decryptedResponse")
-        if (decryptedResponse.equals("null")) {
-            throw Exception("Data is null")
-        }
+        Log.d("getImageStatus", "Decrypted response getProgress: $decryptedResponse")
         val responsePostAI = gson.fromJson(
             decryptedResponse,
             ResponseObjAuto::class.java
+        )
+        return responsePostAI
+    }
+
+    suspend fun getImageManualStatus(
+        id: String,
+        status: UPLOAD_TYPE_STATUS
+    ): ImageSuccessResponse {
+        val request = ImageStatusRequest(
+            id = id,
+            status = status.value
+        )
+        Log.d("getImageStatus", "request: ${request.toJson()}")
+        val dataPush: String = AMGUtil.encrypt(
+            context,
+            request.toJson(),
+            "TokenFirbaseTest"
+        )
+        val dataEncrypt = DataEncrypt(
+            data = dataPush
+        )
+        Log.d("getImageStatus", "dataEncrypt: ${dataEncrypt.toJson()}")
+        val response = api.getImageRemoveManualObjectStatus(
+            data = dataEncrypt,
+            token = "Bearer " + editorSharedPref.getAccessToken()
+        )
+        Log.d("getImageStatus", "response: ${response.toJson()}")
+        Log.d("getImageStatus", "onViewReady: $response")
+        val cleanResponseBody = response.replace("\"", "")
+        val decryptedResponse = AMGUtil.decrypt(context, cleanResponseBody)
+        Log.d("getImageStatus", "Decrypted response getProgress: $decryptedResponse")
+        val responsePostAI = gson.fromJson(
+            decryptedResponse,
+            ImageSuccessResponse::class.java
         )
         return responsePostAI
     }
@@ -122,40 +184,90 @@ class RemoveObjectRepoImpl(
     }
 
     suspend fun genRemoveObject(
+        fileOrigin: File,
         fileMask: File,
-        fileOrigin: File
-    ): GenRemoveObjectResponse {
-        val requestMaskFile = fileMask.asRequestBody("image/jpeg".toMediaTypeOrNull())
-        val maskFile =
-            MultipartBody.Part.createFormData("mask_file", fileMask.name, requestMaskFile)
+    ): AIDetectResponse {
+        return try {
+            val token = "Bearer " + editorSharedPref.getAccessToken()
 
-        val requestFile = fileOrigin.asRequestBody("image/jpeg".toMediaTypeOrNull())
-        val originFile =
-            MultipartBody.Part.createFormData("file", fileOrigin.name, requestFile)
-
-        val json = gson.toJson(
-            RemoveObjRequestBody(
-                tier = TierUtil.getTearUser(context)
+            val tier = Tier(TierUtil.getTearUser(context).toInt())
+            val request = RemoveBackgroundRequest(
+                tier = tier.tier.toString(),
+                type = "1",
+                isInpain = 0,
+                promptUser = "Long Layered Waves Honey Blonde",
+                originalName = listOf(fileOrigin.getName(), fileMask.getName())
             )
-        )
+            val jsonStr = gson.toJson(request)
+            Log.e("genAutoDetect", "request : $jsonStr")
 
-        val encrypt = AMGUtil.encryptFile(context, json, fileOrigin, "firebaseToken")
+            val dataPush: String = AMGUtil.encryptFile(
+                context,
+                jsonStr,
+                fileOrigin,
+                "TokenFirbaseTest"
+            )
+            val dataEncrypt = DataEncrypt(
+                data = dataPush
+            )
+            Log.e("genAutoDetect", "request to server: ${dataEncrypt.toJson()}")
+            val response = api.genRemoveObject(
+                data = dataEncrypt,
+                token = token
+            )
+            Log.e("genAutoDetect", "response server: ${response.toJson()}")
+            val cleanResponseBody: String = response.replace("\"", "")
+            val decryptedResponse: String = AMGUtil.decrypt(context, cleanResponseBody)
+            val responsePostAI =
+                gson.fromJson(decryptedResponse, AIDetectResponse::class.java)
+            Log.e("genAutoDetect", "onSuccess: $decryptedResponse")
+            responsePostAI
+        } catch (ex: Exception) {
+            when (ex) {
+                is retrofit2.HttpException -> {
+                    val codeHTTPException = ex.code()
+                    if (codeHTTPException == 401) {
+                        getTokenFirebase()
+                    }
+                }
 
-        val dataRequest = MultipartBody.Part.createFormData("data", encrypt)
-        Log.e("", "removeObj: ")
-        val data = api.genRemoveObject(
-            maskFile,
-            originFile, dataRequest, "Bearer " + editorSharedPref.getAccessToken()
-        )
+                else -> {
 
-        Log.d("TAG", "onViewReady: $data")
-        val cleanResponseBody = data.replace("\"", "")
-        val decryptedResponse = AMGUtil.decrypt(context, cleanResponseBody)
-        Log.d("TAG", "Decrypted response: $decryptedResponse")
-        val responsePostAI =
-            gson.fromJson(decryptedResponse, GenRemoveObjectResponse::class.java)
-        Log.d("TAG", "id response:  ${responsePostAI.id}")
-        return responsePostAI
+                }
+            }
+            throw ex
+        }
+//        val requestMaskFile = fileMask.asRequestBody("image/jpeg".toMediaTypeOrNull())
+//        val maskFile =
+//            MultipartBody.Part.createFormData("mask_file", fileMask.name, requestMaskFile)
+//
+//        val requestFile = fileOrigin.asRequestBody("image/jpeg".toMediaTypeOrNull())
+//        val originFile =
+//            MultipartBody.Part.createFormData("file", fileOrigin.name, requestFile)
+//
+//        val json = gson.toJson(
+//            RemoveObjRequestBody(
+//                tier = TierUtil.getTearUser(context)
+//            )
+//        )
+//
+//        val encrypt = AMGUtil.encryptFile(context, json, fileOrigin, "firebaseToken")
+//
+//        val dataRequest = MultipartBody.Part.createFormData("data", encrypt)
+//        Log.e("", "removeObj: ")
+//        val data = api.genRemoveObject(
+//            maskFile,
+//            originFile, dataRequest, "Bearer " + editorSharedPref.getAccessToken()
+//        )
+//
+//        Log.d("TAG", "onViewReady: $data")
+//        val cleanResponseBody = data.replace("\"", "")
+//        val decryptedResponse = AMGUtil.decrypt(context, cleanResponseBody)
+//        Log.d("TAG", "Decrypted response: $decryptedResponse")
+//        val responsePostAI =
+//            gson.fromJson(decryptedResponse, GenRemoveObjectResponse::class.java)
+//        Log.d("TAG", "id response:  ${responsePostAI.id}")
+//        return responsePostAI
     }
 
     suspend fun getProgressRemoveObject(

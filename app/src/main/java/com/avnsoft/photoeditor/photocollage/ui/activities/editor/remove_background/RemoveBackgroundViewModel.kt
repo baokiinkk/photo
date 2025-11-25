@@ -3,16 +3,15 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_backgro
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import androidx.lifecycle.viewModelScope
-import com.avnsoft.photoeditor.photocollage.data.model.remove_background.RemoveBackgroundResponse
+import com.avnsoft.photoeditor.photocollage.BaseApplication
+import com.avnsoft.photoeditor.photocollage.data.model.remove_background.AIDetectResponse
 import com.avnsoft.photoeditor.photocollage.data.repository.RemoveBackgroundRepoImpl
 import com.avnsoft.photoeditor.photocollage.data.repository.UPLOAD_TYPE_STATUS
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.downloadAndSaveToFile
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -20,8 +19,6 @@ import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStream
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -30,9 +27,7 @@ class RemoveBackgroundViewModel(
     private val context: Context,
     private val removeBackgroundRepo: RemoveBackgroundRepoImpl
 ) : BaseViewModel() {
-    companion object {
-        private const val MAX_UPLOAD_DIMENSION = 1504
-    }
+
 
     val uiState = MutableStateFlow(RemoveBackgroundUIState())
 
@@ -63,7 +58,7 @@ class RemoveBackgroundViewModel(
         }
     }
 
-    private suspend fun uploadFileToS3(data: RemoveBackgroundResponse, file: File) {
+    private suspend fun uploadFileToS3(data: AIDetectResponse, file: File) {
         val fileForUpload = ensureUploadConstraints(file)
         try {
             removeBackgroundRepo.uploadFileToS3(
@@ -107,34 +102,6 @@ class RemoveBackgroundViewModel(
         }
     }
 
-    private fun ensureUploadConstraints(sourceFile: File): File {
-        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        BitmapFactory.decodeFile(sourceFile.absolutePath, bounds)
-
-        val maxDimension = max(bounds.outWidth, bounds.outHeight)
-        if (maxDimension <= MAX_UPLOAD_DIMENSION || bounds.outWidth <= 0 || bounds.outHeight <= 0) {
-            return sourceFile
-        }
-
-        val scale = MAX_UPLOAD_DIMENSION.toFloat() / maxDimension
-        val targetWidth = max(1, (bounds.outWidth * scale).roundToInt())
-        val targetHeight = max(1, (bounds.outHeight * scale).roundToInt())
-
-        val bitmap = BitmapFactory.decodeFile(sourceFile.absolutePath) ?: return sourceFile
-        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true)
-
-        val tempFile = File(context.cacheDir, "upload_resized_${System.currentTimeMillis()}.jpg")
-        FileOutputStream(tempFile).use {
-            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 95, it)
-        }
-
-        if (resizedBitmap != bitmap) {
-            resizedBitmap.recycle()
-        }
-        bitmap.recycle()
-
-        return tempFile
-    }
 
     suspend fun saveFileAndReturnPathFile(url: String): String {
         val folderTemp = context.cacheDir.absolutePath + "/ImageRemoveObjTemp"
@@ -165,6 +132,38 @@ class RemoveBackgroundViewModel(
     }
 }
 
+fun ensureUploadConstraints(sourceFile: File, maxUploadSize: Int = 1504): File {
+
+    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+    BitmapFactory.decodeFile(sourceFile.absolutePath, bounds)
+
+    val maxDimension = max(bounds.outWidth, bounds.outHeight)
+    if (maxDimension <= maxUploadSize || bounds.outWidth <= 0 || bounds.outHeight <= 0) {
+        return sourceFile
+    }
+
+    val scale = maxUploadSize.toFloat() / maxDimension
+    val targetWidth = max(1, (bounds.outWidth * scale).roundToInt())
+    val targetHeight = max(1, (bounds.outHeight * scale).roundToInt())
+
+    val bitmap = BitmapFactory.decodeFile(sourceFile.absolutePath) ?: return sourceFile
+    val resizedBitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true)
+
+    val tempFile = File(
+        BaseApplication.getInstanceApp().cacheDir,
+        "upload_resized_${System.currentTimeMillis()}.jpg"
+    )
+    FileOutputStream(tempFile).use {
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 95, it)
+    }
+
+    if (resizedBitmap != bitmap) {
+        resizedBitmap.recycle()
+    }
+    bitmap.recycle()
+
+    return tempFile
+}
 
 data class RemoveBackgroundUIState(
     val imageUrl: String = "",

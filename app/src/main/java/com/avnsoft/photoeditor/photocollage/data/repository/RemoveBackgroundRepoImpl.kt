@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.android.amg.AMGUtil
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
-import com.avnsoft.photoeditor.photocollage.data.model.remove_background.RemoveBackgroundResponse
+import com.avnsoft.photoeditor.photocollage.data.model.remove_background.AIDetectResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.GetTokenFirebaseResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.ImageSuccessResponse
 import com.avnsoft.photoeditor.photocollage.data.model.remove_object.TierUtil
@@ -14,11 +14,8 @@ import com.basesource.base.network.model.DataEncrypt
 import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.gson
 import com.basesource.base.utils.toJson
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.core.annotation.Single
 import java.io.File
@@ -30,7 +27,7 @@ class RemoveBackgroundRepoImpl(
     private val editorSharedPref: EditorSharedPref
 ) {
 
-    suspend fun requestRemoveBg(jpegFile: File): RemoveBackgroundResponse {
+    suspend fun requestRemoveBg(jpegFile: File): AIDetectResponse {
         return try {
             val token = "Bearer " + editorSharedPref.getAccessToken()
 
@@ -61,7 +58,7 @@ class RemoveBackgroundRepoImpl(
             val cleanResponseBody: String = response.replace("\"", "")
             val decryptedResponse: String = AMGUtil.decrypt(context, cleanResponseBody)
             val responsePostAI =
-                gson.fromJson(decryptedResponse, RemoveBackgroundResponse::class.java)
+                gson.fromJson(decryptedResponse, AIDetectResponse::class.java)
             Log.e("requestRemoveBg", "onSuccess: $decryptedResponse")
             responsePostAI
         } catch (ex: Exception) {
@@ -131,7 +128,7 @@ class RemoveBackgroundRepoImpl(
             data = dataPush
         )
         Log.d("getImageStatus", "dataEncrypt: ${dataEncrypt.toJson()}")
-        val response = api.getImageStatus(
+        val response = api.getImageRemoveBackgroundStatus(
             data = dataEncrypt,
             token = "Bearer " + editorSharedPref.getAccessToken()
         )

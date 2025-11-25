@@ -9,7 +9,6 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -30,11 +29,9 @@ interface CollageApiService {
     @GET("mock/frames")
     suspend fun getFrames(): Response<ResponseBody>
 
-    @Multipart
-    @POST("v3/tools/remove-object-auto-detect")
+    @POST("v5/tools/remove-object-auto-detect")
     suspend fun genAutoDetect(
-        @Part file: MultipartBody.Part?,
-        @Part data: MultipartBody.Part?,
+        @Body data: DataEncrypt,
         @Header("Authorization") token: String?
     ): String
 
@@ -54,12 +51,9 @@ interface CollageApiService {
     suspend fun getTemplates(): Response<ResponseBody>
 
 
-    @Multipart
-    @POST("https://proxy-future-self.footballtv.info/v3/tools/remove-object-manual")
+    @POST("/v5/tools/remove-object-manual")
     suspend fun genRemoveObject(
-        @Part fileMask: MultipartBody.Part?,
-        @Part file: MultipartBody.Part?,
-        @Part data: MultipartBody.Part?,
+        @Body data: DataEncrypt,
         @Header("Authorization") token: String?
     ): String
 
@@ -83,10 +77,22 @@ interface CollageApiService {
     suspend fun uploadFileToS3(
         @Url uploadUrl: String,
         @Body filePart: RequestBody,
-    ):  Response<ResponseBody>
+    ): Response<ResponseBody>
 
     @POST(" /v5/tools/remove-background/upload-image-status")
-    suspend fun getImageStatus(
+    suspend fun getImageRemoveBackgroundStatus(
+        @Body data: DataEncrypt,
+        @Header("Authorization") token: String?
+    ): String
+
+    @POST("/v5/tools/remove-object-auto-detect/upload-image-status")
+    suspend fun getImageRemoveObjectStatus(
+        @Body data: DataEncrypt,
+        @Header("Authorization") token: String?
+    ): String
+
+    @POST("/v5/tools/remove-object-manual/upload-image-status")
+    suspend fun getImageRemoveManualObjectStatus(
         @Body data: DataEncrypt,
         @Header("Authorization") token: String?
     ): String
@@ -95,9 +101,15 @@ interface CollageApiService {
 
 
 data class RemoveBackgroundRequest(
+    @SerializedName("tier")
     val tier: String,
+    @SerializedName("type")
     val type: String,
     @SerializedName("original_name")
-    val originalName: List<String>
+    val originalName: List<String>,
+    @SerializedName("is_inpain")
+    val isInpain: Int? = null,
+    @SerializedName("prompt_user")
+    val promptUser: String? = null
 )
 
