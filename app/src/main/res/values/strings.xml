@@ -112,4 +112,11 @@
     <string name="content_magic_ai_is_enhancing">Magic AI is enhancing...</string>
     <string name="save">Save</string>
     <string name="apply">Apply</string>
+    <string name="saved_to_device">Saved to Device</string>
+    <string name="photo_quality">Photo Quality</string>
+    <string name="pick_your_preferred_download_resolution">Pick your preferred download resolution</string>
+    <string name="low">Low</string>
+    <string name="medium">Medium</string>
+    <string name="high">High</string>
+    <string name="download">Download</string>
 </resources>

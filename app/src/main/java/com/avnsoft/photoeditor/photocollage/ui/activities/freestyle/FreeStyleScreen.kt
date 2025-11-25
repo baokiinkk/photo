@@ -2,6 +2,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.freestyle
 
 import android.graphics.Typeface
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,12 +25,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -50,7 +54,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Bac
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.HeaderApply
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerToolPanel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
@@ -63,15 +66,23 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.li
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.FontAsset
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.basesource.base.components.ColorPickerDialog
 import com.basesource.base.utils.clickableWithAlphaEffect
+import dev.shreyaspatil.capturable.capturable
+import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import java.io.File
 
 val toolsFreeStyle = listOf(
     ToolItem(CollageTool.RATIO, R.string.ratio_tool, R.drawable.ic_ratio),
@@ -82,6 +93,7 @@ val toolsFreeStyle = listOf(
     ToolItem(CollageTool.ADD_PHOTO, R.string.add_photo_tool, R.drawable.ic_photo_tool)
 )
 
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class)
 @Composable
 fun FreeStyleScreen(
     modifier: Modifier,
@@ -89,11 +101,17 @@ fun FreeStyleScreen(
     stickerView: FreeStyleStickerView,
     onToolClick: (CollageTool) -> Unit,
     onBack: () -> Unit,
-    onSave: () -> Unit
+    onDownloadSuccess: (ExportImageData) -> Unit
 ) {
+    val captureController = rememberCaptureController()
+    val scope = rememberCoroutineScope()
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+    var showBottomSheetSaveImage by remember { mutableStateOf(false) }
+    var showLoading by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    var pathBitmap by remember { mutableStateOf("") }
     Box(
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier
@@ -106,12 +124,25 @@ fun FreeStyleScreen(
                     .background(Color.White)
                     .padding(horizontal = 16.dp, vertical = 16.dp),
                 onBack = onBack,
-                onActionRight = onSave
+                onActionRight = {
+                    scope.launch {
+                        try {
+                            val bitmapAsync = captureController.captureAsync()
+                            val bitmap = bitmapAsync.await().asAndroidBitmap()
+                            pathBitmap = bitmap.toFile(context)
+                            showBottomSheetSaveImage = true
+                        } catch (ex: Throwable) {
+                            Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+                }
             )
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .clipToBounds()
+                    .capturable(captureController)
             ) {
                 BackgroundLayer(
                     backgroundSelection = uiState.backgroundSelection,
@@ -228,6 +259,49 @@ fun FreeStyleScreen(
             )
         }
 
+        if (showBottomSheetSaveImage) {
+            ExportImageBottomSheet(
+                pathBitmap = pathBitmap,
+                onDismissRequest = {
+                    showBottomSheetSaveImage = false
+                },
+                onDownload = {
+                    if (pathBitmap.isNotEmpty()) {
+                        scope.launch {
+                            try {
+//                                val bitmapAsync = captureController.captureAsync()
+//                                val bitmap = bitmapAsync.await().asAndroidBitmap()
+//                                val pathBitmapOriginal = bitmap.toFile(context)
+                                val bitmap = pathBitmap.toBitmap() ?: return@launch
+                                val bitmapMark =
+                                    FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25);
+                                val uriMark = FileUtil.saveImageToStorageWithQuality(
+                                    context = context,
+                                    quality = it.value,
+                                    bitmap = bitmapMark
+                                )
+                                onDownloadSuccess.invoke(
+                                    ExportImageData(
+                                        pathUriMark = uriMark.toString(),
+                                        pathBitmapOriginal = pathBitmap
+                                    )
+                                )
+                            } catch (ex: Throwable) {
+                                Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, "Save Image Error", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+            )
+        }
+
+        if (showLoading) {
+            LoadingScreen()
+        }
     }
 }
 

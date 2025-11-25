@@ -355,7 +355,7 @@ data class EditorUIState(
     val canRedo: Boolean = false
 )
 
-suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?, maxSize: Int = 1504): String? {
+suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {
     try {
         if (sourceUri == null) return null
         val inputStream =

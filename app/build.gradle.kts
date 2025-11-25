@@ -89,6 +89,9 @@ dependencies {
 
     implementation ("androidx.room:room-runtime:2.7.2")
     kapt ("androidx.room:room-compiler:2.7.2")
+
+    implementation("dev.shreyaspatil:capturable:2.1.0")
+
 }
 
 private fun DependencyHandlerScope.coreAndroid() {
