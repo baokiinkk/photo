@@ -111,7 +111,7 @@ object FileUtil {
     fun getCacheFolder(context: Context): File {
         val folderTemp = context.cacheDir.absolutePath + "/" + FOLDER_SDK
         val folder = File(folderTemp)
-        folder.deleteRecursively()
+//        folder.deleteRecursively()
         if (!folder.exists()) {
             folder.mkdirs()
         }

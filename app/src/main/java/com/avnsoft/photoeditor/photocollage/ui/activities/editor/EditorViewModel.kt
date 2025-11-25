@@ -21,6 +21,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Bac
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.basesource.base.viewmodel.BaseViewModel
 import com.tanishranjan.cropkit.util.MathUtils
 import kotlinx.coroutines.Dispatchers
@@ -361,9 +362,9 @@ suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {
         val inputStream =
             context.contentResolver.openInputStream(sourceUri) ?: return null
         val file = File(
-            context.filesDir,
+            FileUtil.getCacheFolder(context),
             "theme_image_${System.currentTimeMillis()}.png"
-        ) // có thể đổi tên nếu muốn
+        )
         val outputStream = FileOutputStream(file)
 
         inputStream.use { input ->

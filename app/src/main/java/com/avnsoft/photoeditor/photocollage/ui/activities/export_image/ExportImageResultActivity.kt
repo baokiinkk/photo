@@ -38,13 +38,18 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.ai_enhance.AIEnhanceActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
@@ -55,6 +60,7 @@ import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.launchActivity
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
@@ -92,13 +98,13 @@ class ExportImageResultActivity : BaseActivity() {
                         viewmodel.removeWatermarkClick()
                     },
                     onRemoveObjectClick = {
-
+                        navigateToRemoveObject()
                     },
                     onAiEnhanceClick = {
-
+                        navigateToAIEnhance()
                     },
                     onRemoveBgClick = {
-
+                        navigateToRemoveBackground()
                     },
                     viewmodel = viewmodel
                 )
@@ -107,19 +113,59 @@ class ExportImageResultActivity : BaseActivity() {
     }
 
     fun navigateToRemoveObject() {
-        if (viewmodel.isMark()) {
-            launchActivity(
-                toActivity = EditorActivity::class.java,
-                input = EditorInput(pathBitmap = screenInput.pathUriMark),
-            )
-        } else {
-            launchActivity(
-                toActivity = RemoveObjectActivity::class.java,
-                input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
-            )
+        lifecycleScope.launch {
+            if (viewmodel.isMark()) {
+                val uri = screenInput.pathUriMark?.toUri()
+                val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
+                launchActivity(
+                    toActivity = RemoveObjectActivity::class.java,
+                    input = EditorInput(pathBitmap = pathBitmap),
+                )
+            } else {
+                launchActivity(
+                    toActivity = RemoveObjectActivity::class.java,
+                    input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
+                )
+            }
         }
-
     }
+
+    fun navigateToAIEnhance() {
+        lifecycleScope.launch {
+            if (viewmodel.isMark()) {
+                val uri = screenInput.pathUriMark?.toUri()
+                val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
+                launchActivity(
+                    toActivity = AIEnhanceActivity::class.java,
+                    input = EditorInput(pathBitmap = pathBitmap),
+                )
+            } else {
+                launchActivity(
+                    toActivity = AIEnhanceActivity::class.java,
+                    input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
+                )
+            }
+        }
+    }
+
+    fun navigateToRemoveBackground() {
+        lifecycleScope.launch {
+            if (viewmodel.isMark()) {
+                val uri = screenInput.pathUriMark?.toUri()
+                val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
+                launchActivity(
+                    toActivity = RemoveBackgroundActivity::class.java,
+                    input = EditorInput(pathBitmap = pathBitmap),
+                )
+            } else {
+                launchActivity(
+                    toActivity = RemoveBackgroundActivity::class.java,
+                    input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
+                )
+            }
+        }
+    }
+
 
     fun navigateToEdit() {
         if (viewmodel.isMark()) {
@@ -255,8 +301,8 @@ fun HeaderExportImageResult(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .background(Color.White),
+            .background(Color.White)
+            .padding(16.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -444,7 +490,9 @@ fun AIToolCard(
 
         Text(
             text = title,
-            style = AppStyle.caption1().semibold().Color_1D2939()
+            style = AppStyle.caption1().semibold().Color_1D2939(),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

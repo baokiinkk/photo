@@ -59,7 +59,8 @@ class RemoveBackgroundViewModel(
     }
 
     private suspend fun uploadFileToS3(data: AIDetectResponse, file: File) {
-        val fileForUpload = ensureUploadConstraints(file)
+//        val fileForUpload = ensureUploadConstraints(file)
+        val fileForUpload = file
         try {
             removeBackgroundRepo.uploadFileToS3(
                 uploadUrl = data.links.first(),
@@ -77,9 +78,9 @@ class RemoveBackgroundViewModel(
             )
             hideLoading()
         } finally {
-            if (fileForUpload != file && fileForUpload.exists()) {
-                fileForUpload.delete()
-            }
+//            if (fileForUpload != file && fileForUpload.exists()) {
+//                fileForUpload.delete()
+//            }
         }
     }
 
