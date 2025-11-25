@@ -1,7 +1,9 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker
 
+import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.ui.unit.IntSize
+import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.FontAsset
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.FontItem
@@ -33,11 +35,12 @@ class TextStickerViewModel : BaseViewModel() {
     fun addTextSticker(
         index: Int,
         item: FontItem,
+        defaultText: String = "Click to Edit"
     ) {
         val addTextProperties = AddTextProperties.defaultProperties
         addTextProperties.fontName = item.fontPath
         addTextProperties.fontIndex = index
-        addTextProperties.text = "Click to Edit"
+        addTextProperties.text = defaultText
         addTextProperties.textWidth = originTextFieldSize.width
         addTextProperties.textHeight = originTextFieldSize.height
         uiState.update {
@@ -52,12 +55,14 @@ class TextStickerViewModel : BaseViewModel() {
     var originTextFieldSize: IntSize = IntSize.Zero
 
     fun addFirstTextSticker(
-        textFieldSize: IntSize
+        textFieldSize: IntSize,
+        defaultText: String = "Click to Edit"
     ) {
         originTextFieldSize = textFieldSize
         addTextSticker(
             index = 0,
             item = FontAsset.listFonts.first(),
+            defaultText = defaultText
         )
     }
 

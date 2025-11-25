@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -535,6 +536,7 @@ fun BoxAddFirstTextSticker(
     val context = LocalContext.current
 
     var textMeasured by remember { mutableStateOf(false) }
+    val defaultText = stringResource(R.string.click_to_edit)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -548,7 +550,7 @@ fun BoxAddFirstTextSticker(
                         val addTextProperties = AddTextProperties.defaultProperties
                         addTextProperties.fontName = FontAsset.listFonts.first().fontPath
                         addTextProperties.fontIndex = 0
-                        addTextProperties.text = "Click to Edit"
+                        addTextProperties.text = defaultText
                         addTextProperties.textWidth = layoutCoordinates.size.width
                         addTextProperties.textHeight = layoutCoordinates.size.height
                         viewmodel.addTextPropertiesDefault = addTextProperties
@@ -564,7 +566,7 @@ fun BoxAddFirstTextSticker(
             )
 
             Text(
-                text = "Click to Edit",
+                text = defaultText,
                 modifier = Modifier.padding(16.dp),
                 style = TextStyle(
                     fontSize = 18.sp,
@@ -583,19 +585,20 @@ fun EditTextStickerLayer(
     onEditText: (AddTextProperties) -> Unit,
     editTextProperties: AddTextProperties
 ) {
+    val context = LocalContext.current
+    val defaultText = stringResource(R.string.click_to_edit)
     var textFieldValue by remember {
         mutableStateOf(
             TextFieldValue(
-                text = editTextProperties.text.orEmpty().ifEmpty { "Click to Edit" },
+                text = editTextProperties.text.orEmpty().ifEmpty { defaultText },
                 selection = TextRange(
-                    editTextProperties.text.orEmpty().ifEmpty { "Click to Edit" }.length
+                    editTextProperties.text.orEmpty().ifEmpty { defaultText }.length
                 )
             )
         )
     }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
 
@@ -628,7 +631,7 @@ fun EditTextStickerLayer(
                 .alpha(0f)
         ) {
             Text(
-                text = "Click to Edit",
+                text = defaultText,
                 modifier = Modifier.padding(16.dp),
                 style = TextStyle(
                     fontSize = 18.sp,

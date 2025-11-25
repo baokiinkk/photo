@@ -1,8 +1,10 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Shader
 import androidx.core.view.InputDeviceCompat
+import com.avnsoft.photoeditor.photocollage.R
 
 
 class AddTextProperties {
@@ -85,7 +87,8 @@ class AddTextProperties {
                 addTextProperties.fontIndex = 0
                 addTextProperties.isShowBackground = false
                 addTextProperties.backgroundBorder = 8
-                addTextProperties.text = "Click to Edit"
+                // Note: This is a default value, actual text should be set from context
+                addTextProperties.text = "Click to Edit" // TODO: Use context.getString(R.string.click_to_edit) when context is available
                 return addTextProperties
             }
     }

@@ -146,7 +146,7 @@ fun FrameSheet(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Loading frames...",
+                            text = stringResource(R.string.loading_frames),
                             style = AppStyle.body1().medium().gray500()
                         )
                     }
@@ -157,7 +157,7 @@ fun FrameSheet(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Error: $error",
+                            text = stringResource(R.string.error, error.toString()),
                             style = AppStyle.body1().medium().gray500()
                         )
                     }
@@ -168,7 +168,7 @@ fun FrameSheet(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No frames available",
+                            text = stringResource(R.string.no_frames_available),
                             style = AppStyle.body1().medium().gray500()
                         )
                     }
@@ -214,7 +214,7 @@ fun FrameSheet(
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(R.drawable.ic_close),
-                    contentDescription = "Close",
+                    contentDescription = stringResource(R.string.close),
                     tint = Gray500
                 )
             }
@@ -228,7 +228,7 @@ fun FrameSheet(
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(R.drawable.ic_confirm),
-                    contentDescription = "Confirm",
+                    contentDescription = stringResource(R.string.confirm),
                     tint = Gray900
                 )
             }
@@ -301,7 +301,7 @@ private fun FrameItemCard(
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = "PRO",
+                        text = stringResource(R.string.pro),
                         style = AppStyle.title1().medium().white(),
                     )
                 }

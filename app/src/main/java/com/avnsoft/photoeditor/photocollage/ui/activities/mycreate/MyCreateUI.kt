@@ -34,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.Surface
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -108,7 +109,7 @@ fun MyCreateHeader(viewModel: MainViewModel?) {
             contentDescription = ""
         )
         Text(
-            text = "My Creative",
+            text = stringResource(R.string.my_creative),
             style = AppStyle.h5().bold().Color_101828(),
             modifier = Modifier
                 .weight(1f)
@@ -156,7 +157,7 @@ fun MyCreateEmptyState(
         
         // Title
         Text(
-            text = "No creations yet!",
+            text = stringResource(R.string.no_creations_yet),
             style = AppStyle.title1().semibold().Color_101828(),
             modifier = Modifier.padding(bottom = 4.dp)
         )
@@ -164,7 +165,7 @@ fun MyCreateEmptyState(
         // Description
         Text(
             textAlign = TextAlign.Center,
-            text = "Start your first project and let your creativity shine.",
+            text = stringResource(R.string.start_first_project),
             style = AppStyle.body1().medium().Color_667085(),
             modifier = Modifier.padding(bottom = 20.dp)
         )
@@ -187,7 +188,7 @@ fun MyCreateEmptyState(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Start Editing",
+                text = stringResource(R.string.start_editing),
                 style = AppStyle.buttonLarge().semibold().white()
             )
         }

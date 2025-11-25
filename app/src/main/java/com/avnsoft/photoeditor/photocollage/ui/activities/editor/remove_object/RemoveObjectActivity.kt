@@ -132,7 +132,7 @@ class RemoveObjectActivity : BaseNativeActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewmodel.listObjDetected.collect {
-                    binding.tvAll.text = "All" + " (${it.size})"
+                    binding.tvAll.text = getString(R.string.all_with_count, it.size)
                     objAdapter?.differ?.submitList(null)
                     objAdapter?.differ?.submitList(it)
                     Log.d("thanhc", " All ${it.size}")
