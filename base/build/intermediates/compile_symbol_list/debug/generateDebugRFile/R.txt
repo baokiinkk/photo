@@ -10,3 +10,4 @@ int drawable flat_vn 0x0
 int drawable ic_back_24 0x0
 int drawable ic_check 0x0
 int drawable ic_choose_color 0x0
+int drawable ic_left 0x0

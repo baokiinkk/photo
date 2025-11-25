@@ -60,9 +60,9 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -117,8 +117,9 @@ class TextStickerActivity : BaseActivity() {
                 ) { inner ->
                     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
                     var boxBounds by remember { mutableStateOf<Rect?>(null) }
+                    val defaultText = stringResource(R.string.click_to_edit)
                     var textFieldValue by remember {
-                        mutableStateOf(TextFieldValue(text = "Click to Edit"))
+                        mutableStateOf(TextFieldValue(text = defaultText))
                     }
                     var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
                     var isVisibleTextField by remember { mutableStateOf(false) }
@@ -194,7 +195,7 @@ class TextStickerActivity : BaseActivity() {
                                             .onGloballyPositioned { layoutCoordinates ->
                                                 textFieldSize = layoutCoordinates.size
                                                 if (!viewmodel.textMeasured) {
-                                                    viewmodel.addFirstTextSticker(textFieldSize)
+                                                    viewmodel.addFirstTextSticker(textFieldSize, defaultText)
                                                     viewmodel.textMeasured = true
                                                 }
                                             }

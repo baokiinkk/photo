@@ -3,11 +3,11 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,7 +44,6 @@ import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.frame.FrameCategory
 import com.avnsoft.photoeditor.photocollage.data.model.frame.FrameItem
 import com.avnsoft.photoeditor.photocollage.data.repository.FrameRepository
-import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray100
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray500
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
@@ -68,7 +66,7 @@ fun FrameSheet(
     val context = LocalContext.current
     val frameRepository: FrameRepository = koinInject()
 
-    var categories by remember { mutableStateOf<List<FrameCategory>>(emptyList()) }
+    var categories by remember { mutableStateOf<List<FrameCategory>?>(emptyList()) }
     var urlRoot by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -79,9 +77,9 @@ fun FrameSheet(
         error = null
         when (val result = frameRepository.getFrames()) {
             is com.basesource.base.result.Result.Success -> {
-                categories = result.data.categories
-                urlRoot = result.data.urlRoot
-                selectedCategory = result.data.categories.firstOrNull()
+                categories = result.data.data
+                urlRoot = result.data.urlRoot.orEmpty()
+                selectedCategory = result.data.data?.firstOrNull()
                 isLoading = false
             }
             is com.basesource.base.result.Result.Error -> {
@@ -105,40 +103,29 @@ fun FrameSheet(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp)
                 .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // No Frame option
-            Box(
+            Image(
+                painter = painterResource(R.drawable.ic_cancel_frame),
+                contentDescription = "",
                 modifier = Modifier
-                    .background(
-                        if (selectedFrameSelection is FrameSelection.None) Color(0xFF9747FF) else Color(0xFFF3F4F6),
-                        RoundedCornerShape(20.dp)
-                    )
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .size(24.dp)
                     .clickableWithAlphaEffect {
-                        onFrameSelect(FrameSelection.None)
-                    }
-            ) {
+                        onFrameSelect.invoke(FrameSelection.None)
+                    })
+            categories?.forEach { category ->
                 Text(
-                    text = "✕",
-                    style = AppStyle.body2().medium().let {
-                        if (selectedFrameSelection is FrameSelection.None) it.white() else it.gray900()
-                    }
-                )
-            }
-
-            categories.forEach { category ->
-                Text(
-                    text = category.categoryName,
-                    style = AppStyle.body2().medium().let {
-                        if (selectedCategory == category) it.white() else it.gray900()
+                    text = category.categoryName.orEmpty(),
+                    style = AppStyle.caption1().semibold().let {
+                        if (selectedCategory == category) it.white() else it.gray500()
                     },
                     modifier = Modifier
                         .background(
                             if (selectedCategory == category) Color(0xFF9747FF) else Color(0xFFF3F4F6),
                             RoundedCornerShape(20.dp)
                         )
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
                         .clickableWithAlphaEffect {
                             selectedCategory = category
                         }
@@ -150,7 +137,7 @@ fun FrameSheet(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .padding(horizontal = 16.dp)
         ) {
             when {
                 isLoading -> {
@@ -159,7 +146,7 @@ fun FrameSheet(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Loading frames...",
+                            text = stringResource(R.string.loading_frames),
                             style = AppStyle.body1().medium().gray500()
                         )
                     }
@@ -170,7 +157,7 @@ fun FrameSheet(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Error: $error",
+                            text = stringResource(R.string.error, error.toString()),
                             style = AppStyle.body1().medium().gray500()
                         )
                     }
@@ -181,32 +168,34 @@ fun FrameSheet(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No frames available",
+                            text = stringResource(R.string.no_frames_available),
                             style = AppStyle.body1().medium().gray500()
                         )
                     }
                 }
                 else -> {
-                    val frames = selectedCategory!!.content
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(400.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(frames) { frame ->
-                            FrameItemCard(
-                                frameItem = frame,
-                                frameCategory = selectedCategory!!,
-                                urlRoot = urlRoot,
-                                isSelected = selectedFrameSelection is FrameSelection.Frame &&
-                                        (selectedFrameSelection as FrameSelection.Frame).item.name == frame.name,
-                                onFrameSelect = { item, category ->
-                                    onFrameSelect(FrameSelection.Frame(item, category, urlRoot))
-                                }
-                            )
+                    val frames = selectedCategory?.content
+                    if (frames?.isNotEmpty() == true) {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(3),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(160.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(frames) { frame ->
+                                FrameItemCard(
+                                    frameItem = frame,
+                                    frameCategory = selectedCategory!!,
+                                    urlRoot = urlRoot,
+                                    isSelected = selectedFrameSelection is FrameSelection.Frame &&
+                                            selectedFrameSelection.item.name == frame.name,
+                                    onFrameSelect = { item, category ->
+                                        onFrameSelect(FrameSelection.Frame(item, category, urlRoot))
+                                    }
+                                )
+                            }
                         }
                     }
                 }
@@ -225,7 +214,7 @@ fun FrameSheet(
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(R.drawable.ic_close),
-                    contentDescription = "Close",
+                    contentDescription = stringResource(R.string.close),
                     tint = Gray500
                 )
             }
@@ -239,7 +228,7 @@ fun FrameSheet(
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(R.drawable.ic_confirm),
-                    contentDescription = "Confirm",
+                    contentDescription = stringResource(R.string.confirm),
                     tint = Gray900
                 )
             }
@@ -257,7 +246,7 @@ private fun FrameItemCard(
 ) {
     val context = LocalContext.current
     val imageUri = remember(frameItem.urlThumb, urlRoot) {
-        if (frameItem.urlThumb.startsWith("http://") || frameItem.urlThumb.startsWith("https://")) {
+        if (frameItem.urlThumb?.startsWith("http://") == true || frameItem.urlThumb?.startsWith("https://") == true) {
             frameItem.urlThumb
         } else {
             "$urlRoot${frameItem.urlThumb}"
@@ -266,12 +255,12 @@ private fun FrameItemCard(
 
     Column(
         modifier = Modifier
-            .width(100.dp),
+            .width(76.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
-                .size(100.dp)
+                .size(76.dp)
                 .background(
                     color = Color.White,
                     shape = RoundedCornerShape(12.dp)
@@ -300,7 +289,7 @@ private fun FrameItemCard(
             )
 
             // Show PRO badge if needed
-            if (frameCategory.isPro || frameItem.isPro == true) {
+            if (frameCategory.isPro == true || frameItem.isPro == true) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -312,7 +301,7 @@ private fun FrameItemCard(
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = "PRO",
+                        text = stringResource(R.string.pro),
                         style = AppStyle.title1().medium().white(),
                     )
                 }
@@ -321,7 +310,7 @@ private fun FrameItemCard(
 
         // Frame title below
         Text(
-            text = frameItem.title,
+            text = frameItem.title.orEmpty(),
             style = AppStyle.body2().medium().gray900(),
             modifier = Modifier.padding(top = 8.dp)
         )

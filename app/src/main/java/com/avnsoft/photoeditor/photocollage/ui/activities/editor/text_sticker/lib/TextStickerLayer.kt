@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerComposeView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerViewModel
@@ -51,14 +53,15 @@ fun TextStickerLayer(
     isShowToolPanel: Boolean,
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val defaultText = stringResource(R.string.click_to_edit)
     var textFieldValue by remember {
-        mutableStateOf(TextFieldValue(text = "Click to Edit"))
+        mutableStateOf(TextFieldValue(text = defaultText))
     }
     var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
     var isVisibleTextField by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     Box(
@@ -91,7 +94,7 @@ fun TextStickerLayer(
                 .onGloballyPositioned { layoutCoordinates ->
                     textFieldSize = layoutCoordinates.size
                     if (!viewmodel.textMeasured && isShowToolPanel) {
-                        viewmodel.addFirstTextSticker(textFieldSize)
+                        viewmodel.addFirstTextSticker(textFieldSize, defaultText)
                         viewmodel.textMeasured = true
                     }
                 }

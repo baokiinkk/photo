@@ -183,7 +183,7 @@ fun BackgroundSheet(
                     }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_arrow_left),
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                             tint = Gray900
                         )
                     }
@@ -302,7 +302,7 @@ fun BackgroundSheet(
                     Icon(
                         modifier = Modifier.size(28.dp),
                         painter = painterResource(R.drawable.ic_close),
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.close),
                         tint = Gray500
                     )
                 }
@@ -316,7 +316,7 @@ fun BackgroundSheet(
                     Icon(
                         modifier = Modifier.size(28.dp),
                         painter = painterResource(R.drawable.ic_confirm),
-                        contentDescription = "Confirm",
+                        contentDescription = stringResource(R.string.confirm),
                         tint = Gray900
                     )
                 }
@@ -416,7 +416,7 @@ private fun SolidColorSwatch(
         if (isSelected) {
             Icon(
                 imageVector = Icons.Default.Check,
-                contentDescription = "Selected",
+                contentDescription = stringResource(R.string.selected),
                 tint = if (color.toArgb() == Color.White.toArgb() || color.toArgb() == Color(
                         0xFFE5E7EB
                     ).toArgb()
@@ -489,7 +489,7 @@ private fun PatternBackgroundTab(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Loading patterns...",
+                        text = stringResource(R.string.loading_patterns),
                         style = AppStyle.body1().medium().gray600()
                     )
                 }
@@ -501,7 +501,7 @@ private fun PatternBackgroundTab(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Error: $error",
+                        text = stringResource(R.string.error, error.toString()),
                         style = AppStyle.body1().medium().gray600()
                     )
                 }
@@ -513,7 +513,7 @@ private fun PatternBackgroundTab(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No patterns available",
+                        text = stringResource(R.string.no_patterns_available),
                         style = AppStyle.body1().medium().gray600()
                     )
                 }
@@ -622,7 +622,7 @@ private fun PatternGroupCard(
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = "PRO",
+                        text = stringResource(R.string.pro),
                         style = AppStyle.body2().medium().white()
                     )
                 }
@@ -716,7 +716,7 @@ private fun PatternItemCard(
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = "PRO",
+                        text = stringResource(R.string.pro),
                         style = AppStyle.title1().medium().white(),
                     )
                 }
@@ -777,7 +777,7 @@ private fun GradientBackgroundTab(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Loading gradients...",
+                        text = stringResource(R.string.loading_gradients),
                         style = AppStyle.body1().medium().gray500()
                     )
                 }
@@ -789,7 +789,7 @@ private fun GradientBackgroundTab(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Error: $error",
+                        text = stringResource(R.string.error, error.toString()),
                         style = AppStyle.body1().medium().gray500()
                     )
                 }
@@ -801,7 +801,7 @@ private fun GradientBackgroundTab(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No gradients available",
+                        text = stringResource(R.string.no_gradients_available),
                         style = AppStyle.body1().medium().gray500()
                     )
                 }
@@ -886,7 +886,7 @@ private fun GradientItemCard(
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = "PRO",
+                        text = stringResource(R.string.pro),
                         style = AppStyle.title1().medium().white(),
                     )
                 }

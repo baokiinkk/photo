@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.ui.activities.discover.DiscoverUI
+import com.avnsoft.photoeditor.photocollage.ui.activities.mycreate.MyCreateUI
 
 @Composable
 fun MainScreenUI(
@@ -24,19 +25,12 @@ fun MainScreenUI(
         ) {
             when (selectedTab) {
                 TabType.DISCOVER -> {
-                    if (!isPreview) {
-                        DiscoverUI(viewModel)
-                    } else {
-                        DiscoverUI(viewModel)
-                    }
+                    DiscoverUI(viewModel)
+
                 }
+                TabType.MY_CREATE -> {
+                    MyCreateUI(mainViewModel = viewModel)
 
-                TabType.CUSTOMIZE -> {
-                    if (!isPreview) {
-
-                    } else {
-
-                    }
                 }
             }
         }

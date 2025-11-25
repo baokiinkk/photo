@@ -27,6 +27,7 @@ val PurpleLight = Color(0xFFEBEDF9)
 // Background Colors
 val BackgroundLight = Color(0xFFF3F7FA)
 val BackgroundWhite = Color.White
+val BackgroundGray = Color(0xFFF8FAFC)
 
 // Text Colors
 val TextPrimary = Color.Black

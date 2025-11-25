@@ -101,7 +101,7 @@ fun GridsSheet(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = "Layout",
+                text = stringResource(R.string.layout),
                 style = AppStyle.body2().medium().let {
                     if (selectedTab == GridsTab.LAYOUT) it.white() else it.gray900()
                 },
@@ -115,7 +115,7 @@ fun GridsSheet(
                     })
 
             Text(
-                text = "Margin",
+                text = stringResource(R.string.margin),
                 style = AppStyle.body2().medium().let {
                     if (selectedTab == GridsTab.MARGIN) it.white() else it.gray900()
                 },

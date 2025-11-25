@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.R
@@ -64,7 +65,7 @@ fun DiscoverUI(viewModel: MainViewModel? = null) {
             }
         )
         DiscoverTemplates()
-        DiscoverQuickEdits(){}
+        DiscoverQuickEdits{}
     }
 }
 
@@ -89,7 +90,7 @@ fun DiscoverHeader(
             contentDescription = ""
         )
         Text(
-            text = "Collage Maker",
+            text = stringResource(R.string.collage_maker),
             style = AppStyle.h5().bold().white(),
             modifier = Modifier
                 .weight(1f)
@@ -103,7 +104,9 @@ fun DiscoverHeader(
             contentDescription = ""
         )
         Image(
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(24.dp).clickableWithAlphaEffect{
+                viewModel?.navigateFeature(FeatureType.STORE)
+            },
             painter = painterResource(R.drawable.ic_market),
             contentDescription = ""
         )
@@ -165,7 +168,7 @@ fun DiscoverFunctionCards(
                 )
                 Text(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    text = "Collage",
+                    text = stringResource(R.string.grids),
                     style = AppStyle.title2().semibold().white()
                 )
             }
@@ -198,7 +201,7 @@ fun DiscoverFunctionCards(
                 )
                 Text(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    text = "Free Style",
+                    text = stringResource(R.string.free_style),
                     style = AppStyle.title2().semibold().white()
                 )
             }

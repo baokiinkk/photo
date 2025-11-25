@@ -31,7 +31,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
 import com.basesource.base.ui.base.BaseActivity
-import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.fromJsonTypeToken
 import com.basesource.base.utils.launchActivity
 import kotlinx.coroutines.launch
@@ -98,6 +97,10 @@ class MainActivity : BaseActivity() {
                                 gotoFreeStyle()
                             }
 
+                            FeatureType.STORE -> {
+                                gotoStore()
+                            }
+
                             else -> {}
                         }
                     }
@@ -125,14 +128,17 @@ class MainActivity : BaseActivity() {
             }
         }
     }
+    private fun gotoStore() {
+        launchActivity(toActivity = StoreActivity::class.java)
+    }
 
     private fun gotoEditPhoto() {
         launchActivity(
             toActivity = ImagePickerActivity::class.java,
             ImageRequest(TypeSelect.SINGLE)
         ) { result ->
-            val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
-            result?.let {
+            val data: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+            data?.firstOrNull()?.let {
                 launchActivity(
                     toActivity = EditorActivity::class.java,
                     input = EditorInput(pathBitmap = it),
@@ -150,10 +156,10 @@ class MainActivity : BaseActivity() {
             toActivity = ImagePickerActivity::class.java,
             ImageRequest(TypeSelect.SINGLE)
         ) { result ->
-            val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
-            result?.let {
+            val data: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+            data?.firstOrNull()?.let {
                 lifecycleScope.launch {
-                    val pathBitmap = copyImageToAppStorage(this@MainActivity, result.toUri())
+                    val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
                     launchActivity(
                         toActivity = RemoveObjectActivity::class.java,
                         input = ToolInput(pathBitmap = pathBitmap),
@@ -168,10 +174,10 @@ class MainActivity : BaseActivity() {
             toActivity = ImagePickerActivity::class.java,
             ImageRequest(TypeSelect.SINGLE)
         ) { result ->
-            val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
-            result?.let {
+            val data: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+            data?.firstOrNull()?.let {
                 lifecycleScope.launch {
-                    val pathBitmap = copyImageToAppStorage(this@MainActivity, result.toUri())
+                    val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
                     launchActivity(
                         toActivity = RemoveBackgroundActivity::class.java,
                         input = ToolInput(pathBitmap = pathBitmap),
@@ -186,10 +192,10 @@ class MainActivity : BaseActivity() {
             toActivity = ImagePickerActivity::class.java,
             ImageRequest(TypeSelect.SINGLE)
         ) { result ->
-            val result: String? = result.data?.getStringExtra(RESULT_URI)?.fromJson()
-            result?.let {
+            val data: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+            data?.firstOrNull()?.let {
                 lifecycleScope.launch {
-                    val pathBitmap = copyImageToAppStorage(this@MainActivity, result.toUri())
+                    val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
                     launchActivity(
                         toActivity = AIEnhanceActivity::class.java,
                         input = ToolInput(pathBitmap = pathBitmap),
@@ -197,12 +203,6 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
-    }
-
-    private fun gotoStorePhoto() {
-        launchActivity(
-            toActivity = StoreActivity::class.java,
-        )
     }
 
     private fun getSignature() {

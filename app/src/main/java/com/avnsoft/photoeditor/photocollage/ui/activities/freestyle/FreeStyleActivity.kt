@@ -110,6 +110,10 @@ class FreeStyleActivity : BaseActivity() {
                         },
                         onToolClick = {
                             when (it) {
+                                CollageTool.RATIO -> {
+                                    viewmodel.showRatioTool()
+                                }
+
                                 CollageTool.STICKER -> {
                                     viewmodel.showStickerTool()
                                 }
@@ -122,12 +126,14 @@ class FreeStyleActivity : BaseActivity() {
                                     viewmodel.showBackgroundTool()
                                 }
 
+                                CollageTool.FRAME -> {
+                                    viewmodel.showFrameTool()
+                                }
+
                                 CollageTool.ADD_PHOTO -> {
                                     launchActivity(toActivity = ImagePickerActivity::class.java) { result ->
-                                        val result: List<String>? =
-                                            result.data?.getStringExtra(RESULT_URI)
-                                                ?.fromJsonTypeToken()
-                                        viewmodel.addMorePhoto(result)
+                                        val data: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+                                        viewmodel.addMorePhoto(data)
                                     }
                                 }
 

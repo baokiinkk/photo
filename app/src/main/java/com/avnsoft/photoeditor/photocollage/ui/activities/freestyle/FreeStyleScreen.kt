@@ -8,6 +8,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,10 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -37,6 +43,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -53,6 +60,9 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Bac
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSheet
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.RatioSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerToolPanel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerViewModel
@@ -139,8 +149,26 @@ fun FreeStyleScreen(
                 }
             )
             Box(
-                modifier = Modifier
-                    .weight(1f)
+                modifier = Modifier.weight(1f)
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 80.dp, bottom = 175.dp)
+                    .then(
+                        remember(uiState.ratio) {
+                            val aspectRatioValue = when (uiState.ratio) {
+                                "Original" -> null
+                                "1:1" -> 1f
+                                "4:5" -> 4f / 5f
+                                "5:4" -> 5f / 4f
+                                "3:4" -> 3f / 4f
+                                else -> null
+                            }
+                            if (aspectRatioValue != null) {
+                                Modifier.aspectRatio(aspectRatioValue)
+                            } else {
+                                Modifier
+                            }
+                        }
+                    )
                     .clipToBounds()
                     .capturable(captureController)
             ) {
@@ -149,10 +177,32 @@ fun FreeStyleScreen(
                     modifier = Modifier.fillMaxSize()
                 )
                 FreeStyleStickerComposeView(
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     view = stickerView
                 )
+                uiState.frameSelection?.let { frame ->
+                    when (frame) {
+                        is FrameSelection.Frame -> {
+                            val context = LocalContext.current
+                            val data = frame as FrameSelection.Frame
+                            val url = if (data.item.urlThumb?.startsWith("http://") == true || data.item.urlThumb?.startsWith("https://") == true) {
+                                data.item.urlThumb
+                            } else {
+                                "${data.urlRoot}${data.item.urlThumb}"
+                            }
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(url)
+                                    .build(),
+                                contentDescription = "",
+                                contentScale = ContentScale.FillBounds,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                        else -> {}
+                    }
+                }
+
             }
 
             FeatureBottomTools(
@@ -229,6 +279,44 @@ fun FreeStyleScreen(
                     },
                     onConfirm = {
                         viewmodel.applyBackgroundTool()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .align(Alignment.BottomCenter)
+                )
+            }
+
+            uiState.isShowRatioTool -> {
+                RatioSheet(
+                    selectedRatio = uiState.ratio,
+                    onRatioSelect = { aspect ->
+                        viewmodel.updateRatio(aspect.label)
+                    },
+                    onClose = {
+                        viewmodel.cancelRatioTool()
+                    },
+                    onConfirm = {
+                        viewmodel.applyRatioTool()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .align(Alignment.BottomCenter)
+                )
+            }
+
+            uiState.isShowFrameTool -> {
+                FrameSheet(
+                    selectedFrameSelection = uiState.frameSelection,
+                    onFrameSelect = { selection ->
+                        viewmodel.updateFrame(selection)
+                    },
+                    onClose = {
+                        viewmodel.cancelFrameTool()
+                    },
+                    onConfirm = {
+                        viewmodel.applyFrameTool()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -332,9 +420,6 @@ fun StickerFooterTool(
                     DrawableSticker(bitmap?.toDrawable(stickerView.resources))
                 )
             }
-//            stickerView.addSticker(
-//                DrawableSticker(bitmap?.toDrawable(stickerView.resources))
-//            )
         }
     }
 
@@ -375,9 +460,6 @@ fun StickerFooterTool(
                             DrawableSticker(bitmap?.toDrawable(stickerView.resources))
                         )
                     }
-//                    stickerView.addSticker(
-//                        DrawableSticker(bitmap?.toDrawable(stickerView.resources))
-//                    )
                 }
             }
         },
@@ -402,7 +484,7 @@ fun TextStickerFooterTool(
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    var opacityColor by remember { mutableStateOf(0f) }
+    var opacityColor by remember { mutableFloatStateOf(0f) }
     var showColorWheel by remember { mutableStateOf(false) }
     var currentSelectedColor by remember {
         mutableStateOf(
@@ -450,10 +532,9 @@ fun TextStickerFooterTool(
             },
             uiState = uiState,
             onSelectedColor = { color ->
-                stickerView?.getCurrentTextSticker()
-                    ?.getAddTextProperties()?.textColor = color.toArgb()
-                stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
-                    stickerView?.replace(
+                stickerView.getCurrentTextSticker()?.getAddTextProperties()?.textColor = color.toArgb()
+                stickerView.getCurrentTextSticker()?.getAddTextProperties()?.let {
+                    stickerView.replace(
                         TextSticker(
                             context,
                             it
@@ -464,10 +545,10 @@ fun TextStickerFooterTool(
             opacityColorValue = opacityColor,
             onOpacityColor = {
                 opacityColor = it
-                stickerView?.getCurrentTextSticker()
+                stickerView.getCurrentTextSticker()
                     ?.getAddTextProperties()?.textAlpha = (255 - it).toInt()
-                stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
-                    stickerView?.replace(
+                stickerView.getCurrentTextSticker()?.getAddTextProperties()?.let {
+                    stickerView.replace(
                         TextSticker(
                             context,
                             it
@@ -478,15 +559,15 @@ fun TextStickerFooterTool(
             onAlign = {
                 when (it) {
                     TEXT_ALIGN.START -> {
-                        stickerView?.setStickerHorizontalPosition(Sticker.Position.LEFT)
+                        stickerView.setStickerHorizontalPosition(Sticker.Position.LEFT)
                     }
 
                     TEXT_ALIGN.CENTER -> {
-                        stickerView?.setStickerHorizontalPosition(Sticker.Position.CENTER)
+                        stickerView.setStickerHorizontalPosition(Sticker.Position.CENTER)
                     }
 
                     TEXT_ALIGN.END -> {
-                        stickerView?.setStickerHorizontalPosition(Sticker.Position.RIGHT)
+                        stickerView.setStickerHorizontalPosition(Sticker.Position.RIGHT)
                     }
                 }
             },
@@ -500,10 +581,9 @@ fun TextStickerFooterTool(
                 selectedColor = currentSelectedColor,
                 onColorSelected = { color ->
                     currentSelectedColor = color
-                    stickerView?.getCurrentTextSticker()
-                        ?.getAddTextProperties()?.textColor = color.toArgb()
-                    stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
-                        stickerView?.replace(
+                    stickerView.getCurrentTextSticker()?.getAddTextProperties()?.textColor = color.toArgb()
+                    stickerView.getCurrentTextSticker()?.getAddTextProperties()?.let {
+                        stickerView.replace(
                             TextSticker(
                                 context,
                                 it
@@ -530,6 +610,7 @@ fun BoxAddFirstTextSticker(
     val context = LocalContext.current
 
     var textMeasured by remember { mutableStateOf(false) }
+    val defaultText = stringResource(R.string.click_to_edit)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -543,7 +624,7 @@ fun BoxAddFirstTextSticker(
                         val addTextProperties = AddTextProperties.defaultProperties
                         addTextProperties.fontName = FontAsset.listFonts.first().fontPath
                         addTextProperties.fontIndex = 0
-                        addTextProperties.text = "Click to Edit"
+                        addTextProperties.text = defaultText
                         addTextProperties.textWidth = layoutCoordinates.size.width
                         addTextProperties.textHeight = layoutCoordinates.size.height
                         viewmodel.addTextPropertiesDefault = addTextProperties
@@ -559,7 +640,7 @@ fun BoxAddFirstTextSticker(
             )
 
             Text(
-                text = "Click to Edit",
+                text = defaultText,
                 modifier = Modifier.padding(16.dp),
                 style = TextStyle(
                     fontSize = 18.sp,
@@ -578,19 +659,20 @@ fun EditTextStickerLayer(
     onEditText: (AddTextProperties) -> Unit,
     editTextProperties: AddTextProperties
 ) {
+    val context = LocalContext.current
+    val defaultText = stringResource(R.string.click_to_edit)
     var textFieldValue by remember {
         mutableStateOf(
             TextFieldValue(
-                text = editTextProperties.text.orEmpty().ifEmpty { "Click to Edit" },
+                text = editTextProperties.text.orEmpty().ifEmpty { defaultText },
                 selection = TextRange(
-                    editTextProperties.text.orEmpty().ifEmpty { "Click to Edit" }.length
+                    editTextProperties.text.orEmpty().ifEmpty { defaultText }.length
                 )
             )
         )
     }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
 
@@ -610,7 +692,7 @@ fun EditTextStickerLayer(
     ) {
         val typeface = Typeface.createFromAsset(
             context.assets,
-            editTextProperties?.fontName!!
+            editTextProperties.fontName!!
         )
 
         Box(
@@ -623,7 +705,7 @@ fun EditTextStickerLayer(
                 .alpha(0f)
         ) {
             Text(
-                text = "Click to Edit",
+                text = defaultText,
                 modifier = Modifier.padding(16.dp),
                 style = TextStyle(
                     fontSize = 18.sp,
@@ -648,7 +730,7 @@ fun EditTextStickerLayer(
                 },
                 textStyle = TextStyle(
                     fontFamily = FontFamily(typeface),
-                    color = Color(editTextProperties.textColor!!),
+                    color = Color(editTextProperties.textColor),
                     textAlign = TextAlign.Center,
                 ),
                 decorationBox = { innerTextField ->

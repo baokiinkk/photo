@@ -41,7 +41,9 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.language.LanguageUiSta
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Purple50
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Purple500
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundLight
+import com.basesource.base.components.NavigationBar
 import com.basesource.base.utils.LanguageType
 import com.basesource.base.utils.clickableWithAlphaEffect
 
@@ -54,7 +56,7 @@ fun LanguageSelectionScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(BackgroundLight)
+            .background(BackgroundGray)
     ) {
         // Content
         Column(
@@ -62,32 +64,21 @@ fun LanguageSelectionScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            Box(modifier = Modifier.padding(horizontal = 16.dp).statusBarsPadding()) {
-                Text(
-                    text = stringResource(R.string.choose_language),
-                    style = AppStyle.title1().semibold().grayScale09(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 14.dp),
-                    textAlign = TextAlign.Center
-                )
-                Image(
-                    painterResource(R.drawable.ic_check_active),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterEnd)
-                        .clickableWithAlphaEffect {
-                            listener.onLanguageChanged(uiState.currentLanguage)
-                        }
-                )
+            NavigationBar(
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 16.dp),
+                title = stringResource(R.string.language),
+                titleStyle = AppStyle.title1().bold().Color_101828(),
+            ) {
+                listener.onBackClicked()
             }
-            Spacer(Modifier.height(8.dp))
 
             // Language List
             LanguageList(
                 currentLanguage = uiState.currentLanguage,
-                onLanguageSelected = { listener.onLanguageSelected(it) }
+                onLanguageSelected = {
+                    listener.onLanguageChanged(it)
+                }
             )
         }
     }
@@ -133,14 +124,14 @@ private fun LanguageItem(
                 .padding(horizontal = 16.dp)
                 .background(
                     color = backgroundColor,
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(16.dp)
                 )
                 .then(
                     borderColor?.let {
                         Modifier.border(
                             2.dp,
                             color = borderColor,
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(16.dp)
                         )
                     } ?: run {
                         Modifier.padding(2.dp)
@@ -154,7 +145,9 @@ private fun LanguageItem(
             Image(
                 painterResource(language.flag),
                 contentDescription = "",
-                modifier = Modifier.size(32.dp).padding(end = 10.dp)
+                modifier = Modifier
+                    .size(32.dp)
+                    .padding(end = 10.dp)
             )
             Text(
                 modifier = Modifier.weight(1f),

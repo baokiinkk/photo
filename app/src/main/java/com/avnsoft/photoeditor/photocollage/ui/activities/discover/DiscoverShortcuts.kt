@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.R
@@ -37,20 +38,20 @@ fun DiscoverShortcuts(
     ) {
         ShortcutButton(
             modifier = Modifier.weight(1f),
-            text = "Remove Object",
+            text = stringResource(R.string.remove_object),
             onClick = onRemoveObject,
             icon = R.drawable.ic_remove_object
         )
         ShortcutButton(
             modifier = Modifier.weight(1f),
-            text = "AI Enhance",
+            text = stringResource(R.string.ai_enhance),
             onClick = onAIEnhance,
             icon = R.drawable.ic_enhance
 
         )
         ShortcutButton(
             modifier = Modifier.weight(1f),
-            text = "Remove BG",
+            text = stringResource(R.string.remove_bg),
             onClick = onRemoveBG,
             icon = R.drawable.ic_remove_bg
         )

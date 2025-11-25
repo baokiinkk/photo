@@ -9,27 +9,17 @@ import com.basesource.base.network.safeApiCall
 import com.basesource.base.result.Result
 import org.koin.core.annotation.Single
 
-data class FramesResult(
-    val categories: List<FrameCategory>,
-    val urlRoot: String
-)
-
 @Single
 class FrameRepository(
     private val context: Context,
     private val api: CollageApiService
 ) {
-    suspend fun getFrames(): Result<FramesResult> {
+    suspend fun getFrames(): Result<FrameResponse> {
         return safeApiCall<FrameResponse>(
             context = context,
             apiCallMock = { api.getFrames() },
             apiCall = { api.getFrames() }
-        ).map { resp ->
-            FramesResult(
-                categories = resp.data,
-                urlRoot = resp.urlRoot
-            )
-        }
+        )
     }
 }
 

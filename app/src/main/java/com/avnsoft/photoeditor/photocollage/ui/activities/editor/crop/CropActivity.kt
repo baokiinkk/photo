@@ -131,7 +131,7 @@ class CropActivity : BaseActivity() {
                                 intent.putExtra("pathBitmap", it)
                                 setResult(RESULT_OK, intent)
                                 finish()
-                                Toast.makeText(this@CropActivity, "Image Saved", Toast.LENGTH_SHORT)
+                                Toast.makeText(this@CropActivity, getString(R.string.image_saved), Toast.LENGTH_SHORT)
                                     .show()
                             }
                         )
@@ -155,7 +155,7 @@ fun PickImageFromGallery(onImagePicked: (Uri) -> Unit) {
     }
 
     Button(onClick = { launcher.launch("image/*") }) {
-        Text("Chọn ảnh từ thư viện")
+        Text(stringResource(R.string.select_image_from_gallery))
     }
 }
 

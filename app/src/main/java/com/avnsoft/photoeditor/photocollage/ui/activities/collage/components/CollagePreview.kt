@@ -176,6 +176,7 @@ fun CollagePreview(
     topMargin: Float = 0f,
     onImageClick: ((Uri) -> Unit)? = null,
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)? = null,
+    unselectAllTrigger: Int = 0,
     modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -228,6 +229,18 @@ fun CollagePreview(
 
         // Lưu imageStates với key là template.id để không bị reset khi gap/corner thay đổi
         val imageStates = remember(template.id) { mutableStateMapOf<Int, Pair<ImageTransformState, Boolean>>() }
+        
+        // Listen for unselect all trigger
+        LaunchedEffect(unselectAllTrigger) {
+            if (unselectAllTrigger > 0) {
+                // Unselect all images
+                imageStates.keys.forEach { key ->
+                    val currentState = imageStates[key]
+                    val (existingTransform, _) = currentState ?: (ImageTransformState() to false)
+                    imageStates[key] = existingTransform to false
+                }
+            }
+        }
 
         LaunchedEffect(processedCells, imageTransforms) {
             if (imageTransforms.isEmpty() && processedCells.isNotEmpty()) {
