@@ -98,6 +98,8 @@
         <activity android:name=".ui.activities.freestyle.FreeStyleActivity" />
 
         <activity android:name=".ui.activities.export_image.ExportImageResultActivity" />
+
+        <activity android:name=".ui.activities.editor.remove_background.RemoveBackgroundResultActivity"/>
     </application>
 
 </manifest>

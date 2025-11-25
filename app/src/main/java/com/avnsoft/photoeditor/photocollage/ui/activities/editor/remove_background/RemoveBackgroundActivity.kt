@@ -97,7 +97,7 @@ class RemoveBackgroundActivity : BaseActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewmodel.removeBgState.collect { imageUrl ->
                     launchActivity(
-                        toActivity = BackgroundActivity::class.java,
+                        toActivity = RemoveBackgroundResultActivity::class.java,
                         input = ToolInput(
                             pathBitmap = imageUrl,
                             isBackgroundTransparent = true,

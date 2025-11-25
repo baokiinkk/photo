@@ -110,51 +110,6 @@ class BackgroundActivity : BaseActivity() {
                     Column(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        if (screenInput?.isBackgroundTransparent == true) {
-                            HeaderApply(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(Color.White)
-                                    .padding(horizontal = 16.dp, vertical = 16.dp)
-                                  ,
-                                onBack = {
-                                    finish()
-                                },
-                                onSave = {
-                                    when(screenInput?.type) {
-                                        ToolInput.TYPE.NEW ->{
-                                            val file = File(screenInput?.pathBitmap.orEmpty())
-                                            val uri = file.toUri()
-                                            val intent =
-                                                Intent(this@BackgroundActivity, EditorActivity::class.java)
-                                            val input = EditorInput(
-                                                pathBitmap = uri.toString(),
-                                            )
-                                            intent.putExtra("arg", input.toJson())
-                                            intent.putExtra(
-                                                "backgroundSelection",
-                                                Json.encodeToString(uiState.backgroundSelection)
-                                            )
-                                            startActivity(intent)
-                                            finish()
-                                        }
-
-                                        ToolInput.TYPE.BACK_AND_RETURN -> {
-                                            val intent = Intent()
-                                            intent.putExtra(
-                                                "backgroundSelection",
-                                                Json.encodeToString(uiState.backgroundSelection)
-                                            )
-                                            setResult(RESULT_OK, intent)
-                                            finish()
-                                        }
-                                        else -> {
-
-                                        }
-                                    }
-                                }
-                            )
-                        }
                         Spacer(modifier = Modifier.height(24.dp))
                         uiState.originBitmap?.let {
                             Box(
@@ -213,34 +168,6 @@ class BackgroundActivity : BaseActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun HeaderApply(
-    modifier: Modifier,
-    onBack: () -> Unit,
-    onSave: () -> Unit,
-    textRight: String = stringResource(R.string.apply)
-) {
-    Row(
-        modifier = modifier,
-    ) {
-        ImageWidget(
-            modifier = Modifier
-                .clickableWithAlphaEffect(onClick = onBack),
-            resId = R.drawable.ic_arrow_left
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            modifier = Modifier
-                .clickableWithAlphaEffect {
-                  onSave.invoke()
-                },
-            text = textRight,
-            textAlign = TextAlign.Center,
-            style = AppStyle.buttonMedium().semibold().primary500()
-        )
     }
 }
 
