@@ -4,6 +4,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Bac
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 
 /**
  * State object chứa toàn bộ state của collage editor
@@ -24,6 +25,7 @@ data class CollageState(
 
     // Frame tool
     val frameSelection: FrameSelection? = null,
+    val stickerView: FreeStyleStickerView? = null,
 
     // Text tool
     val texts: List<TextState> = emptyList(),

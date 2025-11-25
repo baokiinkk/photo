@@ -149,7 +149,7 @@ fun BottomTabBarTrendingPreview() {
             iconDisabled = R.drawable.ic_home_unselect,
         ),
         TabItem(
-            type = TabType.CUSTOMIZE,
+            type = TabType.MY_CREATE,
             title = stringResource(id = R.string.my_creative),
             iconEnabled = R.drawable.ic_creative_selected,
             iconDisabled = R.drawable.ic_create_unselect,
@@ -174,7 +174,7 @@ fun BottomTabBarGesturePreview() {
             iconDisabled = R.drawable.ic_home_tab_trending_disable,
         ),
         TabItem(
-            type = TabType.CUSTOMIZE,
+            type = TabType.MY_CREATE,
             title = stringResource(id = R.string.my_creative),
             iconEnabled = R.drawable.ic_home_tab_custumize_enable,
             iconDisabled = R.drawable.ic_home_tab_custumize_disable,
@@ -199,7 +199,7 @@ fun BottomTabBarCustomizePreview() {
             iconDisabled = R.drawable.ic_home_tab_trending_disable,
         ),
         TabItem(
-            type = TabType.CUSTOMIZE,
+            type = TabType.MY_CREATE,
             title = stringResource(id = R.string.my_creative),
             iconEnabled = R.drawable.ic_home_tab_custumize_enable,
             iconDisabled = R.drawable.ic_home_tab_custumize_disable,
@@ -208,7 +208,7 @@ fun BottomTabBarCustomizePreview() {
 
     BottomTabBar(
         tabs = mockTabs,
-        selected = TabType.CUSTOMIZE,
+        selected = TabType.MY_CREATE,
         onTabSelected = { /* Preview không cần action */ }
     )
 }
@@ -224,7 +224,7 @@ fun BottomTabBarDarkBackgroundPreview() {
             iconDisabled = R.drawable.ic_home_tab_trending_disable,
         ),
         TabItem(
-            type = TabType.CUSTOMIZE,
+            type = TabType.MY_CREATE,
             title = stringResource(id = R.string.my_creative),
             iconEnabled = R.drawable.ic_home_tab_custumize_enable,
             iconDisabled = R.drawable.ic_home_tab_custumize_disable,

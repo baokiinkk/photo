@@ -481,6 +481,11 @@ class AppColor(private val textStyle: TextStyle) {
             color = Color(0xFF1D2939)
         )
     }
+    fun Color_667085(): TextStyle {
+        return textStyle.copy(
+            color = Color(0xFF667085)
+        )
+    }
 
     fun Color_101828(): TextStyle {
         return textStyle.copy(

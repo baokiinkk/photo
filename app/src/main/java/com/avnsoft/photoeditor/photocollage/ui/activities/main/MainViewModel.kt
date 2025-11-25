@@ -67,7 +67,7 @@ class MainViewModel(
                 iconDisabled = R.drawable.ic_home_unselect,
             ),
             TabItem(
-                type = TabType.CUSTOMIZE,
+                type = TabType.MY_CREATE,
                 title = stringResource(id = R.string.my_creative),
                 iconEnabled = R.drawable.ic_creative_selected,
                 iconDisabled = R.drawable.ic_create_unselect,
@@ -114,7 +114,7 @@ sealed class MainScreenEvent {
 }
 
 enum class TabType {
-    DISCOVER, CUSTOMIZE
+    DISCOVER, MY_CREATE
 }
 
 enum class FeatureType {
