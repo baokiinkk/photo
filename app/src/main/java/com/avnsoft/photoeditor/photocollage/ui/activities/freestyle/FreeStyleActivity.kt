@@ -2,9 +2,11 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.freestyle
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,8 +18,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,6 +33,8 @@ import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import coil.ImageLoader
+import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageActivity.Companion.EXTRA_URIS
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
@@ -33,18 +43,24 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Dra
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageResultActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity.Companion.RESULT_URI
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.fromJsonTypeToken
 import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.toJson
+import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -85,6 +101,12 @@ class FreeStyleActivity : BaseActivity() {
                         stickerView = stickerView,
                         onBack = {
                             finish()
+                        },
+                        onDownloadSuccess = {
+                            launchActivity(
+                                toActivity = ExportImageResultActivity::class.java,
+                                input = it
+                            )
                         },
                         onToolClick = {
                             when (it) {
@@ -209,6 +231,7 @@ class FreeStyleActivity : BaseActivity() {
         })
     }
 }
+
 
 @Composable
 fun HeaderSave(

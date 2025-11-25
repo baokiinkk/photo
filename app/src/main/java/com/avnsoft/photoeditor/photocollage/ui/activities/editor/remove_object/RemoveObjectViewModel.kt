@@ -12,17 +12,19 @@ import android.util.Log
 import androidx.core.graphics.createBitmap
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.model.remove_background.AIDetectResponse
 import com.avnsoft.photoeditor.photocollage.data.repository.RemoveObjectRepoImpl
+import com.avnsoft.photoeditor.photocollage.data.repository.UPLOAD_TYPE_STATUS
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.DrawingView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.ObjAuto
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.RemoveObjState
-import com.basesource.base.utils.toJson
 import com.basesource.base.viewmodel.BaseViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -168,14 +170,13 @@ class RemoveObjectViewModel(
                 try {
                     val fileOrigin = File(listPathImgRemoved[currIndexImg])
                     val response = removeObjectRepoImpl.genAutoDetect(fileOrigin)
-                    Log.d("aaa", "${response.toJson()}")
-                    resquestResponseAutoDetech(
-                        id = response.id,
+                    uploadFileToS3(
+                        data = response,
+                        files = listOf(fileOrigin),
                         drawingView = drawingView,
+                        type = AIType.AUTO
                     )
                 } catch (e: Exception) {
-                    Log.i("TAG", "requestImagsdfesdfsdf: 2 $e ")
-//                    sendEvent("Auto", "fail", start)
                     _removeObjState.value = RemoveObjState.Error(e)
                     cancel()
                 }
@@ -183,124 +184,192 @@ class RemoveObjectViewModel(
         }
     }
 
-    private fun resquestResponseAutoDetech(
-        id: String,
+    enum class AIType {
+        AUTO,
+        MANUAL
+    }
+
+    private suspend fun uploadFileToS3(
+        data: AIDetectResponse,
+        files: List<File>,
         drawingView: DrawingView,
+        type: AIType = AIType.AUTO
     ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val gson = Gson()
-            val bitmapOriginal = listPathImgRemoved[currIndexImg].getBitmapOriginal()
-            val canvas = Canvas()
-            var continueRequest = true
-
-            while (continueRequest) {
-                try {
-                    val responsePostAI = removeObjectRepoImpl.getProgress(id)
-                    val startDownload = System.currentTimeMillis()
-                    continueRequest = false
-                    launch {
-                        buildList {
-                            val matrix = Matrix()
-                            List(responsePostAI.result.size) { index ->
-                                val result = responsePostAI.result[index]
-                                launch {
-                                    context.getBitmapFromUrl(
-                                        result.maskImg
-                                    )?.let { bitmapMask ->
-                                        val bitmapDraw = createBitmap(
-                                            bitmapOriginal.width,
-                                            bitmapOriginal.height,
-                                            bitmapOriginal.config!!
-                                        )
-
-                                        canvas.setBitmap(bitmapDraw)
-                                        canvas.drawBitmap(
-                                            bitmapMask,
-                                            result.boxRect[0].toFloat(),
-                                            result.boxRect[1].toFloat(),
-                                            null
-                                        )
-                                        val bitmapMaskScale =
-                                            Bitmap.createScaledBitmap(
-                                                bitmapDraw,
-                                                drawingView.widthImg,
-                                                drawingView.heightImg,
-                                                true
-                                            )
-
-                                        val bitmapMaskPreview =
-                                            Bitmap.createBitmap(
-                                                bitmapOriginal,
-                                                result.boxRect[0],
-                                                result.boxRect[1],
-                                                result.boxRect[2] - result.boxRect[0],
-                                                result.boxRect[3] - result.boxRect[1]
-                                            )
-
-                                        bitmapDraw.recycle()
-
-                                        val scaleX =
-                                            bitmapMaskScale.width.toFloat() / bitmapOriginal.width.toFloat()
-                                        val scaleY =
-                                            bitmapMaskScale.height.toFloat() / bitmapOriginal.height.toFloat()
-                                        val rectBitmapMaskScale = RectF(
-                                            result.boxRect[0].toFloat() * scaleX,
-                                            result.boxRect[1].toFloat() * scaleY,
-                                            result.boxRect[2].toFloat() * scaleX,
-                                            result.boxRect[3].toFloat() * scaleY
-                                        )
-
-                                        matrix.reset()
-                                        matrix.setTranslate(
-                                            drawingView.minx.toFloat(),
-                                            drawingView.miny.toFloat()
-                                        )
-                                        matrix.mapRect(rectBitmapMaskScale)
-
-                                        add(
-                                            ObjAuto(
-                                                nameObj = result.objName,
-                                                bitmapMask = bitmapMaskScale,
-                                                rectBitmapMask = rectBitmapMaskScale,
-                                                bitmapMaskPreview = bitmapMaskPreview
-                                            )
-                                        )
-                                    }
-                                }
-
-                            }.joinAll()
-                        }.let {
-
-                            _listObjDetected.value = it
-                        }
-
-
-                        Log.i(
-                            "TAG_REMOVE_OBJ_AUTO",
-                            "time downloaded: ${
-                                (System.currentTimeMillis() - startDownload)
-//                                    / 1000
-                            }"
-                        )
-
-                        _removeObjState.value = RemoveObjState.DoneScanning
-                        cancel()
-                    }
-                } catch (ex: Exception) {
-//                    continueRequest = false
-//                    _removeObjState.value = RemoveObjState.Error(ex)
+        try {
+            when (type) {
+                AIType.AUTO -> {
+                    removeObjectRepoImpl.uploadFileToS3(
+                        uploadUrl = data.links.first(),
+                        file = files.first()
+                    )
+                    getImageAutoStatus(
+                        id = data.id,
+                        status = UPLOAD_TYPE_STATUS.SUCCESS,
+                        drawingView = drawingView
+                    )
                 }
-                if (continueRequest) {
-                    delay(4000)
+
+                AIType.MANUAL -> {
+                    viewModelScope.launch {
+                        val api1 = async {
+                            removeObjectRepoImpl.uploadFileToS3(
+                                uploadUrl = data.links[0],
+                                file = files[0]
+                            )
+                        }
+                        val api2 = async {
+                            removeObjectRepoImpl.uploadFileToS3(
+                                uploadUrl = data.links[1],
+                                file = files[1]
+                            )
+                        }
+                        val results = awaitAll(api1, api2)
+                        getImageManualStatus(
+                            id = data.id,
+                            status = UPLOAD_TYPE_STATUS.SUCCESS,
+                        )
+                    }
                 }
             }
 
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+//            getImageStatus(
+//                id = data.id,
+//                status = UPLOAD_TYPE_STATUS.FAILED,
+//                drawingView =drawingView
+//            )
+        } finally {
+//            if (fileForUpload != file && fileForUpload.exists()) {
+//                fileForUpload.delete()
+//            }
         }
     }
 
-    fun refreshTokenFirebase() {
+    private suspend fun getImageManualStatus(
+        id: String,
+        status: UPLOAD_TYPE_STATUS,
+    ) {
+        try {
+            val responsePostAI = removeObjectRepoImpl.getImageManualStatus(id, status)
+            val pathSave = folderTemp + "/${System.currentTimeMillis()}.jpeg"
+            responsePostAI.result.url.downloadAndSaveToFile(pathSave)
+            val bitmapRemoved = pathSave.getBitmapOriginal()
+            listPathImgRemoved.add(pathSave)
+            currIndexImg = listPathImgRemoved.size - 1
+            _buttonState.value = ButtonState.CAN_SAVE
+            delay(100)
+            _buttonState.value = ButtonState.CAN_PREV
+            _removeObjState.value = RemoveObjState.DoneRemoving(bitmapRemoved)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            _removeObjState.value = RemoveObjState.Error(ex)
+        }
+    }
+
+    private fun getImageAutoStatus(
+        id: String,
+        status: UPLOAD_TYPE_STATUS,
+        drawingView: DrawingView,
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
-            removeObjectRepoImpl.getTokenFirebase()
+            val bitmapOriginal = listPathImgRemoved[currIndexImg].getBitmapOriginal()
+            val canvas = Canvas()
+            try {
+                val responsePostAI = removeObjectRepoImpl.getImageRemoveObjectStatus(id, status)
+                val startDownload = System.currentTimeMillis()
+                launch {
+                    buildList {
+                        val matrix = Matrix()
+                        List(responsePostAI.result.size) { index ->
+                            val result = responsePostAI.result[index]
+                            launch {
+                                context.getBitmapFromUrl(
+                                    result.maskImg
+                                )?.let { bitmapMask ->
+                                    val bitmapDraw = createBitmap(
+                                        bitmapOriginal.width,
+                                        bitmapOriginal.height,
+                                        bitmapOriginal.config!!
+                                    )
+
+                                    canvas.setBitmap(bitmapDraw)
+                                    canvas.drawBitmap(
+                                        bitmapMask,
+                                        result.boxRect[0].toFloat(),
+                                        result.boxRect[1].toFloat(),
+                                        null
+                                    )
+                                    val bitmapMaskScale =
+                                        Bitmap.createScaledBitmap(
+                                            bitmapDraw,
+                                            drawingView.widthImg,
+                                            drawingView.heightImg,
+                                            true
+                                        )
+
+                                    val bitmapMaskPreview =
+                                        Bitmap.createBitmap(
+                                            bitmapOriginal,
+                                            result.boxRect[0],
+                                            result.boxRect[1],
+                                            result.boxRect[2] - result.boxRect[0],
+                                            result.boxRect[3] - result.boxRect[1]
+                                        )
+
+                                    bitmapDraw.recycle()
+
+                                    val scaleX =
+                                        bitmapMaskScale.width.toFloat() / bitmapOriginal.width.toFloat()
+                                    val scaleY =
+                                        bitmapMaskScale.height.toFloat() / bitmapOriginal.height.toFloat()
+                                    val rectBitmapMaskScale = RectF(
+                                        result.boxRect[0].toFloat() * scaleX,
+                                        result.boxRect[1].toFloat() * scaleY,
+                                        result.boxRect[2].toFloat() * scaleX,
+                                        result.boxRect[3].toFloat() * scaleY
+                                    )
+
+                                    matrix.reset()
+                                    matrix.setTranslate(
+                                        drawingView.minx.toFloat(),
+                                        drawingView.miny.toFloat()
+                                    )
+                                    matrix.mapRect(rectBitmapMaskScale)
+
+                                    add(
+                                        ObjAuto(
+                                            nameObj = result.objName,
+                                            bitmapMask = bitmapMaskScale,
+                                            rectBitmapMask = rectBitmapMaskScale,
+                                            bitmapMaskPreview = bitmapMaskPreview
+                                        )
+                                    )
+                                }
+                            }
+
+                        }.joinAll()
+                    }.let {
+
+                        _listObjDetected.value = it
+                    }
+
+
+                    Log.i(
+                        "TAG_REMOVE_OBJ_AUTO",
+                        "time downloaded: ${
+                            (System.currentTimeMillis() - startDownload)
+//                                    / 1000
+                        }"
+                    )
+
+                    _removeObjState.value = RemoveObjState.DoneScanning
+                    cancel()
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                _removeObjState.value = RemoveObjState.Error(ex)
+            }
         }
     }
 
@@ -348,11 +417,17 @@ class RemoveObjectViewModel(
                 val fileOrigin = File(listPathImgRemoved[currIndexImg])
 
                 val response = removeObjectRepoImpl.genRemoveObject(
+                    fileOrigin = fileOrigin,
                     fileMask = fileMask,
-                    fileOrigin = fileOrigin
                 )
-
-                resquestResponseRemoveObj(response.id)
+                uploadFileToS3(
+                    data = response,
+                    files = listOf(
+                        fileOrigin, fileMask
+                    ),
+                    drawingView = drawingView,
+                    type = AIType.MANUAL
+                )
             } catch (e: Exception) {
                 Log.i("TAG", "requestImagesdfsdf: 2 $e ")
                 _removeObjState.value = RemoveObjState.Error(e)
@@ -361,35 +436,6 @@ class RemoveObjectViewModel(
         }
     }
 
-
-    private fun resquestResponseRemoveObj(
-        id: String,
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            var continueRequest = true
-            while (continueRequest) {
-                try {
-                    val responsePostAI = removeObjectRepoImpl.getProgressRemoveObject(id)
-                    continueRequest = false
-                    val pathSave = folderTemp + "/${System.currentTimeMillis()}.jpeg"
-                    responsePostAI.result.url.downloadAndSaveToFile(pathSave)
-                    val bitmapRemoved = pathSave.getBitmapOriginal()
-                    listPathImgRemoved.add(pathSave)
-                    currIndexImg = listPathImgRemoved.size - 1
-                    _buttonState.value = ButtonState.CAN_SAVE
-                    delay(100)
-                    _buttonState.value = ButtonState.CAN_PREV
-                    _removeObjState.value = RemoveObjState.DoneRemoving(bitmapRemoved)
-                    cancel()
-                } catch (ex: Exception) {
-
-                }
-                if (continueRequest) {
-                    delay(4000)
-                }
-            }
-        }
-    }
 
     fun updateListObjDetected(listObjSelected: List<ObjAuto>?) {
         listObjSelected?.let { listObjAuto ->

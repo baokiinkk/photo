@@ -110,12 +110,12 @@
     <string name="content_magic_ai_is_enhancing">Magic AI is enhancing...</string>
     <string name="save">Save</string>
     <string name="apply">Apply</string>
-    
+
     <!-- My Create Screen -->
     <string name="no_creations_yet">No creations yet!</string>
     <string name="start_first_project">Start your first project and let your creativity shine.</string>
     <string name="start_editing">Start Editing</string>
-    
+
     <!-- Discover Screen -->
     <string name="collage_maker">Collage Maker</string>
     <string name="free_style">Free Style</string>
@@ -124,7 +124,7 @@
     <string name="quick_edits">Quick Edits</string>
     <string name="remove_object">Remove Object</string>
     <string name="ai_enhance">AI Enhance</string>
-    
+
     <!-- Common -->
     <string name="close">Close</string>
     <string name="back">Back</string>
@@ -137,24 +137,37 @@
     <string name="no_gradients_available">No gradients available</string>
     <string name="pro">PRO</string>
     <string name="selected">Selected</string>
-    
+
     <!-- Collage Tools -->
     <string name="layout">Layout</string>
     <string name="margin">Margin</string>
-    
+
     <!-- Text Sticker -->
     <string name="click_to_edit">Click to Edit</string>
-    
+
     <!-- Image Picker -->
     <string name="select_photos">Select 1-10 photos</string>
     <string name="next">Next</string>
     <string name="all">All</string>
     <string name="all_with_count">All (%1$d)</string>
-    
+
     <!-- Crop -->
     <string name="image_saved">Image Saved</string>
     <string name="select_image_from_gallery">Chọn ảnh từ thư viện</string>
-    
+
     <!-- Remove Object -->
     <string name="remove">Remove</string>
+    <string name="saved_to_device">Saved to Device</string>
+    <string name="photo_quality">Photo Quality</string>
+    <string name="pick_your_preferred_download_resolution">Pick your preferred download resolution</string>
+    <string name="low">Low</string>
+    <string name="medium">Medium</string>
+    <string name="high">High</string>
+    <string name="download">Download</string>
+    <string name="new_edit">New Edit</string>
+    <string name="share">Share</string>
+    <string name="remove_watermark">Remove Watermark</string>
+    <string name="ai_tools">AI Tools</string>
+    <string name="remove_object">Remove Object</string>
+    <string name="ai_enhance">AI Enhance</string>
 </resources>

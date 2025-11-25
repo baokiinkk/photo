@@ -13,7 +13,6 @@ import android.widget.ImageView
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -26,7 +25,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -51,7 +49,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.DrawActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
@@ -229,25 +226,25 @@ class EditorActivity : BaseActivity() {
                             )
                         }
 
-                        CollageTool.REMOVE -> {
-                            launchActivity(
-                                toActivity = RemoveObjectActivity::class.java,
-                                input = ToolInput(
-                                    pathBitmap = viewmodel.pathBitmapResult,
-                                    type = ToolInput.TYPE.BACK_AND_RETURN
-                                ),
-                                callback = { result ->
-                                    if (result.resultCode == RESULT_OK) {
-                                        val pathBitmap =
-                                            result.data?.getStringExtra("pathBitmap")
-                                        viewmodel.updateBitmap(
-                                            pathBitmap = pathBitmap,
-                                            bitmap = pathBitmap.toBitmap()
-                                        )
-                                    }
-                                }
-                            )
-                        }
+//                        CollageTool.REMOVE -> {
+//                            launchActivity(
+//                                toActivity = RemoveObjectActivity::class.java,
+//                                input = ToolInput(
+//                                    pathBitmap = viewmodel.pathBitmapResult,
+//                                    type = ToolInput.TYPE.BACK_AND_RETURN
+//                                ),
+//                                callback = { result ->
+//                                    if (result.resultCode == RESULT_OK) {
+//                                        val pathBitmap =
+//                                            result.data?.getStringExtra("pathBitmap")
+//                                        viewmodel.updateBitmap(
+//                                            pathBitmap = pathBitmap,
+//                                            bitmap = pathBitmap.toBitmap()
+//                                        )
+//                                    }
+//                                }
+//                            )
+//                        }
 
                         CollageTool.BACKGROUND -> {
                             launchActivity(

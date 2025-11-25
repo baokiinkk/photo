@@ -34,6 +34,15 @@ object AppStyle {
         return BaseStyle(style)
     }
 
+    fun title3(): BaseStyle {
+        val style = TextStyle(
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
+            fontFamily = fontFamily,
+        )
+        return BaseStyle(style)
+    }
+
     fun body1(): BaseStyle {
         val style = TextStyle(
             fontSize = 14.sp,
