@@ -51,6 +51,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterAc
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerActivity
+import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
@@ -254,8 +255,9 @@ class EditorActivity : BaseActivity() {
                                 ),
                                 callback = { result ->
                                     if (result.resultCode == RESULT_OK) {
-                                        val json = result.data?.getStringExtra("backgroundSelection")
-                                            ?: return@launchActivity
+                                        val json =
+                                            result.data?.getStringExtra("backgroundSelection")
+                                                ?: return@launchActivity
                                         val data = Json.decodeFromString<BackgroundSelection>(json)
 
                                         val pathBitmap =
@@ -367,10 +369,20 @@ class EditorActivity : BaseActivity() {
                                 bottom = inner.calculateBottomPadding()
                             ),
                         onBack = {
-                            finish()
+                            viewmodel.showDiscardDialog()
                         },
                         onToolClick = {
                             viewmodel.onToolClick(it)
+                        }
+                    )
+
+                    DiscardChangesDialog(
+                        isVisible = uiState.showDiscardDialog,
+                        onDiscard = {
+                            finish()
+                        },
+                        onCancel = {
+                            viewmodel.hideDiscardDialog()
                         }
                     )
                 }

@@ -137,6 +137,7 @@ fun FreeStyleScreen(
                 onActionRight = {
                     scope.launch {
                         try {
+                            stickerView.setShowFocus(false)
                             val bitmapAsync = captureController.captureAsync()
                             val bitmap = bitmapAsync.await().asAndroidBitmap()
                             pathBitmap = bitmap.toFile(context)
