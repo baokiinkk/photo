@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.ai_enhance
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -10,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -17,16 +21,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.adjust.OriginalButton
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.HeaderApply
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.LoadingAnimation
+import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.image.LoadImage
+import com.basesource.base.utils.toJson
+import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 
 class AIEnhanceActivity : BaseActivity() {
 
@@ -39,6 +50,7 @@ class AIEnhanceActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         viewmodel.initData(screenInput?.pathBitmap)
         setContent {
+            var showDiscardDialog by remember { mutableStateOf(false) }
             Scaffold(
                 containerColor = Color.White
             ) { inner ->
@@ -63,10 +75,21 @@ class AIEnhanceActivity : BaseActivity() {
                                 .background(Color.White)
                                 .padding(horizontal = 16.dp, vertical = 16.dp),
                             onBack = {
-                                finish()
+                                showDiscardDialog = true
                             },
                             onSave = {
-
+                                val file = File(uiState.imageUrl)
+                                val uri = file.toUri()
+                                val intent = Intent(
+                                        this@AIEnhanceActivity,
+                                        EditorActivity::class.java
+                                    )
+                                val input = EditorInput(
+                                    pathBitmap = uri.toString(),
+                                )
+                                intent.putExtra("arg", input.toJson())
+                                startActivity(intent)
+                                finish()
                             }
                         )
                         Box(
@@ -113,6 +136,16 @@ class AIEnhanceActivity : BaseActivity() {
                         isCancel = true,
                         onCancel = {
                             finish()
+                        }
+                    )
+
+                    DiscardChangesDialog(
+                        isVisible = showDiscardDialog,
+                        onDiscard = {
+                            finish()
+                        },
+                        onCancel = {
+                            showDiscardDialog = false
                         }
                     )
                 }

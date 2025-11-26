@@ -6,6 +6,9 @@ import com.avnsoft.photoeditor.photocollage.data.model.remove_background.AIDetec
 import com.avnsoft.photoeditor.photocollage.data.repository.AIEnhanceRepoImpl
 import com.avnsoft.photoeditor.photocollage.data.repository.UPLOAD_TYPE_STATUS
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.ensureUploadConstraints
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.downloadAndSaveToFile
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.saveFileAndReturnPathFile
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,7 +65,8 @@ class AIEnhanceViewModel(
                 status = UPLOAD_TYPE_STATUS.FAILED
             )
             hideLoading()
-        } finally {
+        }
+        finally {
             if (fileForUpload != file && fileForUpload.exists()) {
                 fileForUpload.delete()
             }
@@ -77,9 +81,13 @@ class AIEnhanceViewModel(
             id = id,
             status = status
         )
+        val pathImage = saveFileAndReturnPathFile(
+            context = context,
+            url = response.result.origin
+        )
         uiState.update {
             it.copy(
-                imageUrl = response.result.origin,
+                imageUrl = pathImage,
             )
         }
     }

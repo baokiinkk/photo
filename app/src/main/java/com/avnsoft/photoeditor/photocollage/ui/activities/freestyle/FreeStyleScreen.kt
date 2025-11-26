@@ -358,9 +358,6 @@ fun FreeStyleScreen(
                     if (pathBitmap.isNotEmpty()) {
                         scope.launch {
                             try {
-//                                val bitmapAsync = captureController.captureAsync()
-//                                val bitmap = bitmapAsync.await().asAndroidBitmap()
-//                                val pathBitmapOriginal = bitmap.toFile(context)
                                 val bitmap = pathBitmap.toBitmap() ?: return@launch
                                 val bitmapMark =
                                     FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25);

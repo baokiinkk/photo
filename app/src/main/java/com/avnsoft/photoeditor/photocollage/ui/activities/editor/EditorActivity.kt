@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
@@ -21,13 +22,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.core.net.toUri
@@ -51,12 +60,20 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterAc
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageResultActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.launchActivity
+import dev.shreyaspatil.capturable.capturable
+import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -373,13 +390,19 @@ class EditorActivity : BaseActivity() {
                         },
                         onToolClick = {
                             viewmodel.onToolClick(it)
+                        },
+                        onDownloadSuccess = {
+                            launchActivity(
+                                toActivity = ExportImageResultActivity::class.java,
+                                input = it
+                            )
                         }
                     )
 
                     DiscardChangesDialog(
                         isVisible = uiState.showDiscardDialog,
                         onDiscard = {
-                            finish()
+                            MainActivity.newScreen(this@EditorActivity)
                         },
                         onCancel = {
                             viewmodel.hideDiscardDialog()
@@ -399,107 +422,61 @@ class EditorActivity : BaseActivity() {
 }
 
 
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class)
 @Composable
 fun EditorScreen(
     modifier: Modifier = Modifier,
     viewmodel: EditorViewModel,
     onBack: () -> Unit,
     onToolClick: (CollageTool) -> Unit,
-    blurView: BlurView
+    blurView: BlurView,
+    onDownloadSuccess: (ExportImageData) -> Unit
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+    val captureController = rememberCaptureController()
+    val scope = rememberCoroutineScope()
+    var pathBitmap by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    var showBottomSheetSaveImage by remember { mutableStateOf(false) }
 
-    Column(modifier) {
-        FeaturePhotoHeader(
-            onBack = onBack,
-            onUndo = {
-                viewmodel.undo()
-            },
-            onRedo = {
-                viewmodel.redo()
-            },
-            onSave = { /* TODO */ },
-            canUndo = uiState.canUndo,
-            canRedo = uiState.canRedo
-        )
-        if (uiState.isOriginal) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(top = 20.dp, bottom = 23.dp)
-                    .onSizeChanged { layout ->
-                        viewmodel.canvasSize = layout.toSize()
-                        viewmodel.scaleBitmapToBox(layout.toSize())
-//                        val newSize = layout
-//                        if (newSize != boxSize) {
-//                            boxSize = newSize
-//                            // Báo kích thước Box lên ViewModel
-//                            viewmodel.scaleBitmapToBox(newSize.toSize())
-//                        }
+    Box(modifier) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            FeaturePhotoHeader(
+                onBack = onBack,
+                onUndo = {
+                    viewmodel.undo()
+                },
+                onRedo = {
+                    viewmodel.redo()
+                },
+                onSave = {
+                    scope.launch {
+                        try {
+                            val bitmapAsync = captureController.captureAsync()
+                            val bitmap = bitmapAsync.await().asAndroidBitmap()
+                            pathBitmap = bitmap.toFile(context)
+                            showBottomSheetSaveImage = true
+                        } catch (ex: Throwable) {
+                            Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     }
-            ) {
-//                Canvas(modifier = Modifier.fillMaxSize()) {
-//                    uiState.bitmap?.let { bmp ->
-//                        drawImage(
-//                            image = bmp.asImageBitmap(),
-//                            topLeft = Offset(
-//                                (size.width - bmp.width) / 2,
-//                                (size.height - bmp.height) / 2
-//                            )
-//                        )
-//                    }
-//                }
-                uiState.bitmap?.let {
-                    Image(
-                        bitmap = it.asImageBitmap(),
-                        contentDescription = null,
-                        contentScale = ContentScale.None,
-                        alignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                    )
-                }
-            }
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(top = 20.dp, bottom = 23.dp)
-            ) {
+                },
+                canUndo = uiState.canUndo,
+                canRedo = uiState.canRedo
+            )
+            if (uiState.isOriginal) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .aspectRatio(1f)
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(top = 20.dp, bottom = 23.dp)
                         .onSizeChanged { layout ->
                             viewmodel.canvasSize = layout.toSize()
                             viewmodel.scaleBitmapToBox(layout.toSize())
-//                            val newSize = layout
-//                            if (newSize != boxSize) {
-//                                boxSize = newSize
-//                                // Báo kích thước Box lên ViewModel
-//                                viewmodel.scaleBitmapToBox(newSize.toSize())
-//                            }
                         }
+                        .capturable(captureController)
                 ) {
-                    uiState.originBitmap?.let {
-                        Image(
-                            bitmap = it.asImageBitmap(),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxSize()
-                        )
-                        BlurView(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            blurView = blurView,
-                            bitmap = it,
-                            intensity = 30f,
-                            scaleType = ImageView.ScaleType.CENTER_CROP
-                        )
-                    }
                     uiState.bitmap?.let {
                         Image(
                             bitmap = it.asImageBitmap(),
@@ -511,13 +488,95 @@ fun EditorScreen(
                         )
                     }
                 }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(top = 20.dp, bottom = 23.dp)
+                        .capturable(captureController)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .aspectRatio(1f)
+                            .onSizeChanged { layout ->
+                                viewmodel.canvasSize = layout.toSize()
+                                viewmodel.scaleBitmapToBox(layout.toSize())
+                            }
+                    ) {
+                        uiState.originBitmap?.let {
+                            Image(
+                                bitmap = it.asImageBitmap(),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                            )
+                            BlurView(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                blurView = blurView,
+                                bitmap = it,
+                                intensity = 30f,
+                                scaleType = ImageView.ScaleType.CENTER_CROP
+                            )
+                        }
+                        uiState.bitmap?.let {
+                            Image(
+                                bitmap = it.asImageBitmap(),
+                                contentDescription = null,
+                                contentScale = ContentScale.None,
+                                alignment = Alignment.Center,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                            )
+                        }
+                    }
+                }
             }
-        }
 
-        FeatureBottomTools(
-            tools = uiState.items,
-            onToolClick = onToolClick
-        )
+            FeatureBottomTools(
+                tools = uiState.items,
+                onToolClick = onToolClick
+            )
+        }
+        if (showBottomSheetSaveImage) {
+            ExportImageBottomSheet(
+                pathBitmap = pathBitmap,
+                onDismissRequest = {
+                    showBottomSheetSaveImage = false
+                },
+                onDownload = {
+                    if (pathBitmap.isNotEmpty()) {
+                        scope.launch {
+                            try {
+                                val bitmap = pathBitmap.toBitmap() ?: return@launch
+                                val bitmapMark =
+                                    FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25);
+                                val uriMark = FileUtil.saveImageToStorageWithQuality(
+                                    context = context,
+                                    quality = it.value,
+                                    bitmap = bitmapMark
+                                )
+                                onDownloadSuccess.invoke(
+                                    ExportImageData(
+                                        pathUriMark = uriMark?.toString(),
+                                        pathBitmapOriginal = pathBitmap
+                                    )
+                                )
+                            } catch (ex: Throwable) {
+                                Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, "Save Image Error", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+            )
+        }
     }
 }
 

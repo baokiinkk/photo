@@ -137,21 +137,21 @@ fun DiscardChangesDialog(
                         }
 
                         // Cancel button (purple)
-                        CustomButton(
-                            text = stringResource(R.string.cancel),
-                            onClick = {
-                                onCancel()
-                            },
-                            modifier = Modifier.weight(1f),
-                            colors = listOf(
-                                Primary500,
-                                Primary500,
-                                Primary500
-                            ),
-                            height = 48.dp,
-                            cornerRadius = 12.dp,
-                            textStyle = AppStyle.button16().semibold().white()
-                        )
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(48.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Primary500)
+                                .clickableWithAlphaEffect(onClick = onCancel),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.cancel),
+                                style = AppStyle.button16().semibold().white()
+                            )
+                        }
+
                     }
                 }
             }
