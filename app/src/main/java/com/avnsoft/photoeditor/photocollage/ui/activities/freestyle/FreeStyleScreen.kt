@@ -79,6 +79,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
+import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
@@ -117,9 +118,9 @@ fun FreeStyleScreen(
     val scope = rememberCoroutineScope()
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     var showBottomSheetSaveImage by remember { mutableStateOf(false) }
-    var showLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var pathBitmap by remember { mutableStateOf("") }
+
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -383,10 +384,6 @@ fun FreeStyleScreen(
 
                 }
             )
-        }
-
-        if (showLoading) {
-            LoadingScreen()
         }
     }
 }

@@ -62,22 +62,23 @@ fun DiscardChangesDialog(
                     .fillMaxWidth()
                     .background(
                         color = BackgroundWhite,
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(20.dp)
                     ),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
                 )
             ) {
-                Column(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // Close button
                     Box(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp, end = 12.dp)
+                            .align(Alignment.TopEnd)
                     ) {
                         Image(
                             painter = painterResource(R.drawable.ic_close),
@@ -90,68 +91,72 @@ fun DiscardChangesDialog(
                                 }
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Title
-                    Text(
-                        text = stringResource(R.string.discard_changes),
-                        style = AppStyle.title2().semibold().grayScale09(),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Message
-                    Text(
-                        text = stringResource(R.string.discard_changes_message),
-                        style = AppStyle.body1().regular().gray400(),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // Action buttons
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Discard button (gray with dark text)
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(48.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(Color(0xFFE5E7EB))
-                                .clickableWithAlphaEffect {
-                                    onDiscard()
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = stringResource(R.string.discard),
-                                style = AppStyle.button16().semibold().grayScale09()
-                            )
-                        }
+                        // Title
+                        Text(
+                            text = stringResource(R.string.discard_changes),
+                            style = AppStyle.title1().bold().Color_101828(),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                        // Cancel button (purple)
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(48.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(Primary500)
-                                .clickableWithAlphaEffect(onClick = onCancel),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = stringResource(R.string.cancel),
-                                style = AppStyle.button16().semibold().white()
-                            )
-                        }
+                        Spacer(modifier = Modifier.height(8.dp))
 
+                        // Message
+                        Text(
+                            text = stringResource(R.string.discard_changes_message),
+                            style = AppStyle.body1().medium().gray500(),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        // Action buttons
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            // Discard button (gray with dark text)
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(48.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(Color(0xFFF2F4F7))
+                                    .clickableWithAlphaEffect {
+                                        onDiscard()
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.discard),
+                                    style = AppStyle.buttonMedium().bold().gray800()
+                                )
+                            }
+
+                            // Cancel button (purple)
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(48.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(Primary500)
+                                    .clickableWithAlphaEffect(onClick = onCancel),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.cancel),
+                                    style = AppStyle.buttonMedium().bold().white()
+                                )
+                            }
+
+                        }
                     }
                 }
             }
