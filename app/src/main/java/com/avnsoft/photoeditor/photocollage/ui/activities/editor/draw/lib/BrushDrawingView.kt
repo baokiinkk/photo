@@ -30,6 +30,10 @@ interface BrushViewChangeListener {
     fun onViewAdd(brushDrawingView: BrushDrawingView?)
 
     fun onViewRemoved(brushDrawingView: BrushDrawingView?)
+
+    fun onUndo(isUndo: Boolean)
+
+    fun onRedo(isRedo: Boolean)
 }
 
 class Point {

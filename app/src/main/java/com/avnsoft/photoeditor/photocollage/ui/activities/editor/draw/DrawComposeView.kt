@@ -1,13 +1,16 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.viewinterop.AndroidView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.BrushDrawingView
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.BrushViewChangeListener
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.DrawAsset
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.DrawBitmapModel
+import com.basesource.base.utils.toJson
 
 interface DrawInput
 
@@ -30,20 +33,22 @@ data class DrawNeon(
     val size: Float = 20f
 ) : DrawInput
 
-data object Undo : DrawInput
+data class Undo(val time: Long = System.currentTimeMillis()) : DrawInput
 
-data object Redo : DrawInput
+data class Redo(val time: Long = System.currentTimeMillis()) : DrawInput
 
 @Composable
 fun DrawComposeView(
     modifier: Modifier,
-    drawInput: DrawInput
+    drawInput: DrawInput,
+    listener: BrushViewChangeListener
 ) {
     AndroidView(
         modifier = modifier,
         factory = { context ->
             val view = BrushDrawingView(context)
             view.brushDrawingMode = true
+            view.setBrushViewChangeListener(listener)
             view
         },
         update = { view ->
@@ -67,11 +72,15 @@ fun DrawComposeView(
                 }
 
                 is Undo -> {
-                    view.undo()
+                    Log.d("aaaa", "undo")
+                    val canUndo = view.undo()
+                    listener.onUndo(canUndo)
                 }
 
                 is Redo -> {
-                    view.redo()
+                    Log.d("aaaa", "redo")
+                    val canRedo = view.redo()
+                    listener.onRedo(canRedo)
                 }
 
                 else -> {
