@@ -160,7 +160,7 @@ class DrawViewModel : BaseViewModel() {
     fun undo() {
         uiState.update {
             it.copy(
-                drawInput = Undo
+                drawInput = Undo()
             )
         }
     }
@@ -168,11 +168,35 @@ class DrawViewModel : BaseViewModel() {
     fun redo() {
         uiState.update {
             it.copy(
-                drawInput = Redo
+                drawInput =  Redo()
+            )
+        }
+    }
+
+    val undoAndRedoState = MutableStateFlow(UndoAndRedoState())
+
+    fun canUndo(isUndo: Boolean) {
+        undoAndRedoState.update {
+            it.copy(
+                canUndo = isUndo,
+            )
+        }
+    }
+
+    fun canRedo(isRedo: Boolean) {
+        undoAndRedoState.update {
+            it.copy(
+                canRedo = isRedo
             )
         }
     }
 }
+
+data class UndoAndRedoState(
+    val canUndo: Boolean = false,
+    val canRedo: Boolean = false
+)
+
 
 data class DrawUIState(
     val originBitmap: Bitmap? = null,
@@ -184,7 +208,10 @@ data class DrawUIState(
     val drawNeon: DrawNeon = DrawNeon(),
     val drawInput: DrawInput = drawColor,
     val patterns: List<DrawBitmapModel> = emptyList(),
-    val patternSelected: Int = DrawAsset.lstDrawBitmapModel().first().mainIcon
+    val patternSelected: Int = DrawAsset.lstDrawBitmapModel().first().mainIcon,
+
+    val undo: Undo = Undo(),
+    val redo: Redo = Redo()
 )
 
 data class DrawTabData(

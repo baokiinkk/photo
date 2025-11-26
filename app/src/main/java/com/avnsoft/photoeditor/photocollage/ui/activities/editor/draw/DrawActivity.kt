@@ -42,6 +42,8 @@ import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BrushShapeSlider
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.BrushDrawingView
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.BrushViewChangeListener
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.DrawBitmapModel
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
@@ -86,21 +88,11 @@ class DrawActivity : BaseActivity() {
                         )
                         .background(Color(0xFFF2F4F8))
                 ) {
-                    FeaturePhotoHeader(
+                    HeaderDraw(
+                        viewmodel = viewmodel,
                         onBack = {
                             finish()
-                        },
-                        onUndo = {
-                            viewmodel.undo()
-                        },
-                        onRedo = {
-                            viewmodel.redo()
-                        },
-                        onSave = {
-
-                        },
-                        canUndo = true,
-                        canRedo = true
+                        }
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     uiState.originBitmap?.let {
@@ -125,7 +117,32 @@ class DrawActivity : BaseActivity() {
                                 DrawComposeView(
                                     modifier = Modifier
                                         .fillMaxSize(),
-                                    drawInput = uiState.drawInput
+                                    drawInput = uiState.drawInput,
+                                    listener = object : BrushViewChangeListener {
+                                        override fun onStartDrawing() {
+                                        }
+
+                                        override fun onStopDrawing() {
+                                            viewmodel.canUndo(true)
+                                        }
+
+                                        override fun onViewAdd(brushDrawingView: BrushDrawingView?) {
+                                        }
+
+                                        override fun onViewRemoved(brushDrawingView: BrushDrawingView?) {
+                                        }
+
+                                        override fun onUndo(isUndo: Boolean) {
+                                            viewmodel.canUndo(isUndo)
+                                            viewmodel.canRedo(true)
+                                        }
+
+                                        override fun onRedo(isRedo: Boolean) {
+                                            viewmodel.canRedo(isRedo)
+                                            viewmodel.canUndo(true)
+                                        }
+
+                                    }
                                 )
                             }
                         }
@@ -172,6 +189,28 @@ class DrawActivity : BaseActivity() {
             }
         }
     }
+}
+
+@Composable
+fun HeaderDraw(
+    viewmodel: DrawViewModel,
+    onBack: () -> Unit
+) {
+    val undoAndRedoState by viewmodel.undoAndRedoState.collectAsStateWithLifecycle()
+    FeaturePhotoHeader(
+        onBack = onBack,
+        onUndo = {
+            viewmodel.undo()
+        },
+        onRedo = {
+            viewmodel.redo()
+        },
+        onSave = {
+
+        },
+        canUndo = undoAndRedoState.canUndo,
+        canRedo = undoAndRedoState.canRedo
+    )
 }
 
 @Composable
