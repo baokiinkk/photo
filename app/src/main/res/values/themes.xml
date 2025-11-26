@@ -12,6 +12,8 @@
         <item name="android:fitsSystemWindows">false</item>
         <!-- Status bar content color - dark content on light background -->
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowDisablePreview">true</item>
     </style>
 
     <style name="Theme.MyApp.Material" parent="Theme.MaterialComponents.DayNight.NoActionBar">

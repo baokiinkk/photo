@@ -325,6 +325,22 @@ class EditorViewModel(
             _navigation.send(tool)
         }
     }
+
+    fun showDiscardDialog() {
+        uiState.update {
+            it.copy(
+                showDiscardDialog = true
+            )
+        }
+    }
+
+    fun hideDiscardDialog() {
+        uiState.update {
+            it.copy(
+                showDiscardDialog = false
+            )
+        }
+    }
 }
 
 sealed class StackData {
@@ -353,7 +369,8 @@ data class EditorUIState(
     val isOriginal: Boolean = false,
     val backgroundColor: BackgroundSelection? = null,
     val canUndo: Boolean = false,
-    val canRedo: Boolean = false
+    val canRedo: Boolean = false,
+    val showDiscardDialog: Boolean = false
 )
 
 suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {

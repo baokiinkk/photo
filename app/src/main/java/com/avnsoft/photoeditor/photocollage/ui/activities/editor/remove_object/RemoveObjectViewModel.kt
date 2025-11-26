@@ -503,6 +503,18 @@ class RemoveObjectViewModel(
 
 }
 
+suspend fun saveFileAndReturnPathFile(context: Context,url: String): String {
+    val folderTemp = context.cacheDir.absolutePath + "/ImageRemoveObjTemp"
+    val folder = File(folderTemp)
+    folder.deleteRecursively()
+    if (!folder.exists()) {
+        folder.mkdirs()
+    }
+    val pathSave = folderTemp + "/${System.currentTimeMillis()}.jpeg"
+    url.downloadAndSaveToFile(pathSave)
+    return pathSave
+}
+
 suspend fun String.downloadAndSaveToFile(pathSave: String) = withContext(Dispatchers.IO) {
     val url = URL(this@downloadAndSaveToFile)
     val connection = url.openConnection()

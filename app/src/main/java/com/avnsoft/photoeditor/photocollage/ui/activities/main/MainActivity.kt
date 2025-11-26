@@ -1,5 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.main
 
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -39,6 +41,16 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
 class MainActivity : BaseActivity() {
+
+    companion object {
+        fun newScreen(context: Context) {
+            val intent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            context.startActivity(intent)
+        }
+    }
+
     private val viewModel: MainViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,6 +140,7 @@ class MainActivity : BaseActivity() {
             }
         }
     }
+
     private fun gotoStore() {
         launchActivity(toActivity = StoreActivity::class.java)
     }

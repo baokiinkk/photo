@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -51,6 +53,8 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.l
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.ObjAuto
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.RemoveObjState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.Type
+import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
+import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
@@ -377,45 +381,57 @@ class RemoveObjectActivity : BaseNativeActivity() {
         binding.composeHeader.setContent {
             val undoRedoState by viewmodel.undoRedoState.collectAsStateWithLifecycle()
             val canSaveState by viewmodel.canSaveState.collectAsStateWithLifecycle()
+            var showDiscardDialog by remember { mutableStateOf(false) }
 
-            FeaturePhotoHeader(
-                onBack = {
-                    finish()
-                },
-                onUndo = {
-                    viewmodel.setCurrImageIndex(false) { bm ->
-                        binding.viewRemoveObject.drawingView?.setBitmapDraw(bm)
-                    }
-
-                },
-                onRedo = {
-                    viewmodel.setCurrImageIndex(true) { bm ->
-                        binding.viewRemoveObject.drawingView?.setBitmapDraw(bm)
-                    }
-                },
-                onSave = {
-                    viewmodel.saveImg { pathSave ->
-                        Log.d("aaa", "----- $pathSave")
-                        if (pathSave != null) {
-                            returnToData(
-                                type = screenInput?.type ?: ToolInput.TYPE.NEW,
-                                pathBitmap = pathSave
-                            )
-//                            val intent = Intent()
-//                            intent.putExtra("pathBitmap", "$pathSave")
-//                            setResult(RESULT_OK, intent)
-//                            finish()
-                        } else {
-                            finish()
+            Box {
+                FeaturePhotoHeader(
+                    onBack = {
+                        showDiscardDialog = true
+                    },
+                    onUndo = {
+                        viewmodel.setCurrImageIndex(false) { bm ->
+                            binding.viewRemoveObject.drawingView?.setBitmapDraw(bm)
                         }
+
+                    },
+                    onRedo = {
+                        viewmodel.setCurrImageIndex(true) { bm ->
+                            binding.viewRemoveObject.drawingView?.setBitmapDraw(bm)
+                        }
+                    },
+                    onSave = {
+                        viewmodel.saveImg { pathSave ->
+                            Log.d("aaa", "----- $pathSave")
+                            if (pathSave != null) {
+                                val intent =
+                                    Intent(this@RemoveObjectActivity, EditorActivity::class.java)
+                                val file = File(pathSave)
+                                val input = EditorInput(pathBitmap = file.toUri().toString())
+                                intent.putExtra("arg", input.toJson())
+                                startActivity(intent)
+                                finish()
+                            } else {
+                                finish()
+                            }
+                        }
+                    },
+                    canUndo = undoRedoState.canUndo,
+                    canRedo = undoRedoState.canRedo,
+                    type = TEXT_TYPE.TEXT,
+                    canSave = canSaveState,
+                    textRight = stringResource(R.string.apply)
+                )
+
+                DiscardChangesDialog(
+                    isVisible = showDiscardDialog,
+                    onDiscard = {
+                        finish()
+                    },
+                    onCancel = {
+                        showDiscardDialog = false
                     }
-                },
-                canUndo = undoRedoState.canUndo,
-                canRedo = undoRedoState.canRedo,
-                type = TEXT_TYPE.TEXT,
-                canSave = canSaveState,
-                textRight = stringResource(R.string.apply)
-            )
+                )
+            }
         }
     }
 
@@ -579,28 +595,5 @@ fun RemoveObjectTab(
             style = if (isSelected) AppStyle.caption2().medium()
                 .primary500() else AppStyle.caption2().medium().Color_1D2939(),
         )
-    }
-}
-
-fun BaseNativeActivity.returnToData(
-    type: ToolInput.TYPE,
-    pathBitmap: String?
-) {
-    when (type) {
-        ToolInput.TYPE.NEW -> {
-            val intent = Intent(this, EditorActivity::class.java)
-            val file = File(pathBitmap.orEmpty())
-            val input = EditorInput(pathBitmap = file.toUri().toString())
-            intent.putExtra("arg", input.toJson())
-            startActivity(intent)
-            finish()
-        }
-
-        ToolInput.TYPE.BACK_AND_RETURN -> {
-            val intent = Intent()
-            intent.putExtra("pathBitmap", "$pathBitmap")
-            setResult(RESULT_OK, intent)
-            finish()
-        }
     }
 }

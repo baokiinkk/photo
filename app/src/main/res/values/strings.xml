@@ -168,6 +168,9 @@
     <string name="share">Share</string>
     <string name="remove_watermark">Remove Watermark</string>
     <string name="ai_tools">AI Tools</string>
-    <string name="remove_object">Remove Object</string>
-    <string name="ai_enhance">AI Enhance</string>
+    
+    <!-- Confirm Save Image Dialog -->
+    <string name="discard_changes">Discard Changes</string>
+    <string name="discard_changes_message">Changes will not be saved. Are you sure you want to proceed?</string>
+    <string name="discard">Discard</string>
 </resources>

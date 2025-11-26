@@ -50,6 +50,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyl
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity.Companion.RESULT_URI
+import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
@@ -91,6 +92,8 @@ class FreeStyleActivity : BaseActivity() {
             Scaffold(
                 containerColor = Color.White
             ) { inner ->
+                var showDiscardDialog by remember { mutableStateOf(false) }
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -100,7 +103,7 @@ class FreeStyleActivity : BaseActivity() {
                         viewmodel = viewmodel,
                         stickerView = stickerView,
                         onBack = {
-                            finish()
+                            showDiscardDialog = true
                         },
                         onDownloadSuccess = {
                             launchActivity(
@@ -132,7 +135,9 @@ class FreeStyleActivity : BaseActivity() {
 
                                 CollageTool.ADD_PHOTO -> {
                                     launchActivity(toActivity = ImagePickerActivity::class.java) { result ->
-                                        val data: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+                                        val data: List<String>? =
+                                            result.data?.getStringExtra(RESULT_URI)
+                                                ?.fromJsonTypeToken()
                                         viewmodel.addMorePhoto(data)
                                     }
                                 }
@@ -142,6 +147,16 @@ class FreeStyleActivity : BaseActivity() {
                                 }
                             }
                         },
+                    )
+
+                    DiscardChangesDialog(
+                        isVisible = showDiscardDialog,
+                        onDiscard = {
+                            finish()
+                        },
+                        onCancel = {
+                            showDiscardDialog = false
+                        }
                     )
                 }
             }

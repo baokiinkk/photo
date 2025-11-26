@@ -51,6 +51,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppS
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
@@ -87,7 +88,9 @@ class ExportImageResultActivity : BaseActivity() {
 
                 ExportResultScreen(
                     onBackClick = { finish() },
-                    onHomeClick = { finish() },
+                    onHomeClick = {
+                        MainActivity.newScreen(this)
+                    },
                     onNewEditClick = {
                         navigateToEdit()
                     },

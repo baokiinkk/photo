@@ -9,6 +9,7 @@ import com.avnsoft.photoeditor.photocollage.data.model.remove_background.AIDetec
 import com.avnsoft.photoeditor.photocollage.data.repository.RemoveBackgroundRepoImpl
 import com.avnsoft.photoeditor.photocollage.data.repository.UPLOAD_TYPE_STATUS
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.downloadAndSaveToFile
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.saveFileAndReturnPathFile
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -93,7 +94,7 @@ class RemoveBackgroundViewModel(
             id = id,
             status = status
         )
-        val pathFile = saveFileAndReturnPathFile(response.result.url)
+        val pathFile = saveFileAndReturnPathFile(context,response.result.url)
         hideLoading()
         _removeBgState.send(pathFile)
         uiState.update {
@@ -101,19 +102,6 @@ class RemoveBackgroundViewModel(
                 imageUrl = pathFile
             )
         }
-    }
-
-
-    suspend fun saveFileAndReturnPathFile(url: String): String {
-        val folderTemp = context.cacheDir.absolutePath + "/ImageRemoveObjTemp"
-        val folder = File(folderTemp)
-        folder.deleteRecursively()
-        if (!folder.exists()) {
-            folder.mkdirs()
-        }
-        val pathSave = folderTemp + "/${System.currentTimeMillis()}.jpeg"
-        url.downloadAndSaveToFile(pathSave)
-        return pathSave
     }
 
     fun showLoading() {

@@ -61,7 +61,7 @@ import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 
 enum class Quality(val value: Int) {
-    LOW(60), MEDIUM(90), HIGH(100)
+    LOW(60), MEDIUM(90), HIGH(100), NONE(0)
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeApi::class)
@@ -94,7 +94,7 @@ fun ExportImageScreen(
     onDownload: (Quality) -> Unit,
     onClose: () -> Unit,
 ) {
-    var selectedQuality by remember { mutableStateOf(Quality.MEDIUM) }
+    var selectedQuality by remember { mutableStateOf(Quality.NONE) }
 
     val scrollState = rememberScrollState()
     val context = LocalContext.current
@@ -204,7 +204,9 @@ fun ExportImageScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         // Download Button
+
         Button(
+            enabled = selectedQuality != Quality.NONE,
             onClick = {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
                     onDownload(selectedQuality)
@@ -216,24 +218,27 @@ fun ExportImageScreen(
                 .fillMaxWidth()
                 .height(56.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
+                containerColor = if (selectedQuality != Quality.NONE) {
+                    Color(0xFF6425F3)
+                } else {
+                    Color(0xFFF2F4F7)
+                }
             ),
             contentPadding = PaddingValues(),
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(12.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .background(
-                        color = Color(0xFF6425F3),
-                        shape = RoundedCornerShape(12.dp)
-                    ),
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = stringResource(R.string.download),
-                    style = AppStyle.buttonLarge().semibold().white()
+                    style = if (selectedQuality != Quality.NONE) {
+                        AppStyle.buttonLarge().semibold().white()
+                    } else {
+                        AppStyle.buttonLarge().semibold().gray300()
+                    }
                 )
             }
         }

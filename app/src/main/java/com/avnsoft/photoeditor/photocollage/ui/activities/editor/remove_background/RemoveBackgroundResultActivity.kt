@@ -19,6 +19,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +38,8 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
+import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
@@ -70,6 +75,7 @@ class RemoveBackgroundResultActivity : BaseActivity() {
                 }
             ) { inner ->
                 val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+                var showDiscardDialog by remember { mutableStateOf(false) }
 
                 Box(
                     modifier = Modifier
@@ -94,7 +100,7 @@ class RemoveBackgroundResultActivity : BaseActivity() {
                                 .background(Color.White)
                                 .padding(horizontal = 16.dp, vertical = 16.dp),
                             onBack = {
-                                finish()
+                                showDiscardDialog = true
                             },
                             onSave = {
                                 val file = File(screenInput?.pathBitmap.orEmpty())
@@ -155,6 +161,16 @@ class RemoveBackgroundResultActivity : BaseActivity() {
                             )
                         }
                     }
+
+                    DiscardChangesDialog(
+                        isVisible = showDiscardDialog,
+                        onDiscard = {
+                            finish()
+                        },
+                        onCancel = {
+                            showDiscardDialog = false
+                        }
+                    )
                 }
             }
         }
