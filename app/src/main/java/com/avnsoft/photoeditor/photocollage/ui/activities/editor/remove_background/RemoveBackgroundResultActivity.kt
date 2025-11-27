@@ -75,7 +75,6 @@ class RemoveBackgroundResultActivity : BaseActivity() {
                 }
             ) { inner ->
                 val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
-                var showDiscardDialog by remember { mutableStateOf(false) }
 
                 Box(
                     modifier = Modifier
@@ -100,7 +99,7 @@ class RemoveBackgroundResultActivity : BaseActivity() {
                                 .background(Color.White)
                                 .padding(horizontal = 16.dp, vertical = 16.dp),
                             onBack = {
-                                showDiscardDialog = true
+                               viewmodel.showDiscardDialog()
                             },
                             onSave = {
                                 val file = File(screenInput?.pathBitmap.orEmpty())
@@ -163,12 +162,12 @@ class RemoveBackgroundResultActivity : BaseActivity() {
                     }
 
                     DiscardChangesDialog(
-                        isVisible = showDiscardDialog,
+                        isVisible = uiState.showDiscardDialog,
                         onDiscard = {
                             finish()
                         },
                         onCancel = {
-                            showDiscardDialog = false
+                           viewmodel.hideDiscardDialog()
                         }
                     )
                 }

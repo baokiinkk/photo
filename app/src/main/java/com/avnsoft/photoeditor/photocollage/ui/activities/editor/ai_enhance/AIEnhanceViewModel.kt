@@ -65,8 +65,7 @@ class AIEnhanceViewModel(
                 status = UPLOAD_TYPE_STATUS.FAILED
             )
             hideLoading()
-        }
-        finally {
+        } finally {
             if (fileForUpload != file && fileForUpload.exists()) {
                 fileForUpload.delete()
             }
@@ -132,12 +131,29 @@ class AIEnhanceViewModel(
             )
         }
     }
+
+    fun showDiscardDialog() {
+        uiState.update {
+            it.copy(
+                showDiscardDialog = true
+            )
+        }
+    }
+
+    fun hideDiscardDialog() {
+        uiState.update {
+            it.copy(
+                showDiscardDialog = false
+            )
+        }
+    }
 }
 
 data class AIEnhanceUIState(
     val imageUrl: String = "",
     val isShowLoading: Boolean = true,
-    val showOriginal: Boolean = true
+    val showOriginal: Boolean = true,
+    val showDiscardDialog: Boolean = false
 )
 
 data class AIEnhanceResult(

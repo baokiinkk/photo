@@ -221,6 +221,22 @@ class FreeStyleViewModel(
             )
         }
     }
+
+    fun showDiscardDialog() {
+        uiState.update {
+            it.copy(
+                showDiscardDialog = true
+            )
+        }
+    }
+
+    fun hideDiscardDialog() {
+        uiState.update {
+            it.copy(
+                showDiscardDialog = false
+            )
+        }
+    }
 }
 
 data class FreeStyleUIState(
@@ -236,7 +252,8 @@ data class FreeStyleUIState(
     val isShowFrameTool: Boolean = false,
     val frameSelection: FrameSelection? = null,
     val canUndo: Boolean = false,
-    val canRedo: Boolean = false
+    val canRedo: Boolean = false,
+    val showDiscardDialog: Boolean = false
 )
 
 sealed class StackFreeStyle(
