@@ -1,17 +1,14 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.main
 
-import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
-import com.android.amg.AMGUtil
-import com.avnsoft.photoeditor.photocollage.BaseApplication
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
 import com.avnsoft.photoeditor.photocollage.data.repository.PatternRepository
 import com.avnsoft.photoeditor.photocollage.data.repository.RemoveObjectRepoImpl
 import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -41,9 +38,9 @@ class MainViewModel(
         initAppData()
     }
 
-    fun navigateFeature(type: FeatureType) {
+    fun navigateFeature(type: FeatureType, tool: CollageTool? = null) {
         viewModelScope.launch {
-            _events.emit(MainScreenEvent.NavigateTo(type))
+            _events.emit(MainScreenEvent.NavigateTo(type, tool))
         }
     }
 
@@ -110,7 +107,7 @@ class MainViewModel(
 sealed class MainScreenEvent {
     data class NavigateToTab(val tabType: TabType) : MainScreenEvent()
 
-    data class NavigateTo(val type: FeatureType) : MainScreenEvent()
+    data class NavigateTo(val type: FeatureType, val tool: CollageTool? = null) : MainScreenEvent()
 }
 
 enum class TabType {

@@ -65,7 +65,9 @@ fun DiscoverUI(viewModel: MainViewModel? = null) {
             }
         )
         DiscoverTemplates()
-        DiscoverQuickEdits{}
+        DiscoverQuickEdits {
+            viewModel?.navigateFeature(FeatureType.EDIT_PHOTO, it.tool)
+        }
     }
 }
 
@@ -104,9 +106,11 @@ fun DiscoverHeader(
             contentDescription = ""
         )
         Image(
-            modifier = Modifier.size(24.dp).clickableWithAlphaEffect{
-                viewModel?.navigateFeature(FeatureType.STORE)
-            },
+            modifier = Modifier
+                .size(24.dp)
+                .clickableWithAlphaEffect {
+                    viewModel?.navigateFeature(FeatureType.STORE)
+                },
             painter = painterResource(R.drawable.ic_market),
             contentDescription = ""
         )

@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.ai_enhance.AIEnhanceActivity
@@ -98,7 +99,7 @@ class MainActivity : BaseActivity() {
                             }
 
                             FeatureType.EDIT_PHOTO -> {
-                                gotoEditPhoto()
+                                gotoEditPhoto(event.tool)
                             }
 
                             FeatureType.SETTING -> {
@@ -145,7 +146,7 @@ class MainActivity : BaseActivity() {
         launchActivity(toActivity = StoreActivity::class.java)
     }
 
-    private fun gotoEditPhoto() {
+    private fun gotoEditPhoto(tool: CollageTool? = null) {
         launchActivity(
             toActivity = ImagePickerActivity::class.java,
             ImageRequest(TypeSelect.SINGLE)
@@ -154,7 +155,7 @@ class MainActivity : BaseActivity() {
             data?.firstOrNull()?.let {
                 launchActivity(
                     toActivity = EditorActivity::class.java,
-                    input = EditorInput(pathBitmap = it),
+                    input = EditorInput(pathBitmap = it, tool = tool),
                 )
             }
         }
