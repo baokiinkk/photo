@@ -339,13 +339,17 @@ fun HeaderExportImageResult(
 fun ImageCollagePreview(
     imageUrl: String?
 ) {
-    Card(
+    Box(
         modifier = Modifier
-            .size(220.dp),
-        shape = RectangleShape,
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
-        )
+            .size(220.dp)
+            .figmaShadow(
+                color = Color(0x0000000D),
+                alpha = 0.15f,
+                cornerRadius = 0.dp,
+                x = 0.dp,
+                y = 0.98.dp,
+                blur = 9.76.dp
+            )
     ) {
         LoadImage(
             modifier = Modifier.fillMaxSize(),
@@ -353,7 +357,20 @@ fun ImageCollagePreview(
             contentScale = ContentScale.Crop
         )
     }
-
+//    Card(
+//        modifier = Modifier
+//            .size(220.dp),
+//        shape = RectangleShape,
+//        elevation = CardDefaults.cardElevation(
+//            defaultElevation = 4.dp
+//        )
+//    ) {
+//        LoadImage(
+//            modifier = Modifier.fillMaxSize(),
+//            model = imageUrl,
+//            contentScale = ContentScale.Crop
+//        )
+//    }
 }
 
 @Composable
@@ -496,8 +513,7 @@ fun AIToolCard(
             .clip(RoundedCornerShape(12.dp))
             .background(Color.White)
             .padding(16.dp)
-            .clickableWithAlphaEffect(onClick = onClick)
-            ,
+            .clickableWithAlphaEffect(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
