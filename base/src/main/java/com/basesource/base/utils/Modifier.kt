@@ -129,14 +129,16 @@ fun pixelToDpConverter(pixelValue: Int): Dp {
 
 
 enum class Effects(val offsetX: Dp, val offsetY: Dp, val blur: Dp) {
-    DROP_SHADOW(2.dp, 4.dp, 16.dp)
+    DROP_SHADOW(2.dp, 2.dp, 16.dp)
 }
 
 fun Modifier.figmaShadow(
     color: Color,
     alpha: Float = 0.4f,
     cornerRadius: Dp = 0.dp,
-    effects: Effects
+    x: Dp = 2.dp,
+    y: Dp = 2.dp,
+    blur: Dp = 16.dp,
 ): Modifier = this.then(
     Modifier.drawBehind {
 
@@ -144,9 +146,9 @@ fun Modifier.figmaShadow(
             isAntiAlias = true
             this.color = android.graphics.Color.TRANSPARENT
             setShadowLayer(
-                effects.blur.toPx(),
-                effects.offsetX.toPx(),
-                effects.offsetY.toPx(),
+                blur.toPx(),
+                x.toPx(),
+                y.toPx(),
                 color.copy(alpha = alpha).toArgb()
             )
         }

@@ -135,7 +135,6 @@ class StoreBackgroundDetailActivity : BaseActivity() {
                                             color = Color(0xFF6425F3),
                                             alpha = 0.4f,
                                             cornerRadius = 12.dp,
-                                            effects = Effects.DROP_SHADOW
                                         )
                                         .align(Alignment.BottomCenter)
                                         .clickableWithAlphaEffect {
