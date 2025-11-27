@@ -96,7 +96,6 @@ class BlurActivity : BaseActivity() {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(
-                            top = inner.calculateTopPadding(),
                             bottom = inner.calculateBottomPadding()
                         )
                         .background(Color(0xFFF2F4F8))

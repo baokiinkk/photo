@@ -1,6 +1,8 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,21 +27,27 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BrushShapeSlider
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.BrushDrawingView
@@ -47,11 +55,15 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.BrushV
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.lib.DrawBitmapModel
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.components.ColorPickerDialog
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
+import dev.shreyaspatil.capturable.capturable
+import dev.shreyaspatil.capturable.controller.rememberCaptureController
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DrawActivity : BaseActivity() {
@@ -62,6 +74,7 @@ class DrawActivity : BaseActivity() {
         intent.getInput()
     }
 
+    @OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewmodel.getConfig(screenInput?.getBitmap(this))
@@ -78,12 +91,15 @@ class DrawActivity : BaseActivity() {
                         Color.White
                     )
                 }
+                val captureController = rememberCaptureController()
+                val scope = rememberCoroutineScope()
+                val context = LocalContext.current
+
 
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(
-                            top = inner.calculateTopPadding(),
                             bottom = inner.calculateBottomPadding()
                         )
                         .background(Color(0xFFF2F4F8))
@@ -92,6 +108,26 @@ class DrawActivity : BaseActivity() {
                         viewmodel = viewmodel,
                         onBack = {
                             finish()
+                        },
+                        onSave = {
+                            scope.launch {
+                                try {
+                                    val bitmapAsync = captureController.captureAsync()
+                                    val bitmap = bitmapAsync.await().asAndroidBitmap()
+                                    val pathBitmap = bitmap.toFile(context)
+                                    val intent = Intent()
+                                    intent.putExtra(EditorActivity.PATH_BITMAP, "$pathBitmap")
+                                    setResult(RESULT_OK, intent)
+                                    finish()
+                                } catch (ex: Throwable) {
+                                    Toast.makeText(
+                                        context,
+                                        "Error ${ex.message}",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                            }
                         }
                     )
                     Spacer(modifier = Modifier.height(24.dp))
@@ -100,13 +136,13 @@ class DrawActivity : BaseActivity() {
                             Modifier
                                 .fillMaxWidth()
                                 .weight(1f)
+                                .capturable(captureController)
                         ) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .aspectRatio(it.width / it.height.toFloat())
                                     .align(Alignment.Center)
-
                             ) {
                                 Image(
                                     bitmap = it.asImageBitmap(),
@@ -194,7 +230,8 @@ class DrawActivity : BaseActivity() {
 @Composable
 fun HeaderDraw(
     viewmodel: DrawViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onSave: () -> Unit
 ) {
     val undoAndRedoState by viewmodel.undoAndRedoState.collectAsStateWithLifecycle()
     FeaturePhotoHeader(
@@ -205,9 +242,7 @@ fun HeaderDraw(
         onRedo = {
             viewmodel.redo()
         },
-        onSave = {
-
-        },
+        onSave = onSave,
         canUndo = undoAndRedoState.canUndo,
         canRedo = undoAndRedoState.canRedo
     )

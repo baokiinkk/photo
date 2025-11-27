@@ -99,7 +99,9 @@
 
         <activity android:name=".ui.activities.export_image.ExportImageResultActivity" />
 
-        <activity android:name=".ui.activities.editor.remove_background.RemoveBackgroundResultActivity"/>
+        <activity android:name=".ui.activities.editor.remove_background.RemoveBackgroundResultActivity" />
+
+        <activity android:name=".ui.activities.editor.frame.FrameActivity" />
     </application>
 
 </manifest>

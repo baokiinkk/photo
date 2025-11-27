@@ -62,6 +62,7 @@ class EditorViewModel(
         ToolItem(CollageTool.STICKER, R.string.sticker_tool, R.drawable.ic_sticker_tool),
         ToolItem(CollageTool.TEXT, R.string.text_tool, R.drawable.ic_text_tool),
         ToolItem(CollageTool.DRAW, R.string.draw, R.drawable.ic_draw),
+        ToolItem(CollageTool.FRAME, R.string.frame_tool, R.drawable.ic_frame_tool),
     )
 
 
