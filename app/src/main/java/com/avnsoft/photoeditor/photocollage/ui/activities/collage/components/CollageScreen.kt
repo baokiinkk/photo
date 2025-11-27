@@ -1,6 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -15,16 +16,20 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +44,9 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sti
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerLib
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextStickerLib
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.EditTextStickerLayer
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleStickerComposeView
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleViewModel
@@ -47,8 +55,14 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.TextStickerF
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
+import dev.shreyaspatil.capturable.capturable
+import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalComposeApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CollageScreen(
     uris: List<Uri>,
@@ -56,6 +70,7 @@ fun CollageScreen(
     freeStyleViewModel: FreeStyleViewModel,
     stickerView: FreeStyleStickerView,
     onBack: () -> Unit,
+    onDownloadSuccess: (ExportImageData) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -111,6 +126,11 @@ fun CollageScreen(
         vm.confirmImageTransformChanges()
     }
 
+    val captureController = rememberCaptureController()
+    val scope = rememberCoroutineScope()
+    var pathBitmap by remember { mutableStateOf("") }
+    var showBottomSheetSaveImage by remember { mutableStateOf(false) }
+
     // Observe state from ViewModel
     val templates by vm.templates.collectAsState()
     val collageState by vm.collageState.collectAsState()
@@ -145,7 +165,20 @@ fun CollageScreen(
             onBack = onBack,
             onUndo = { vm.undo() },
             onRedo = { vm.redo() },
-            onSave = { /* TODO */ },
+            onSave = {
+                scope.launch {
+                    try {
+                        stickerView.setShowFocus(false)
+                        val bitmapAsync = captureController.captureAsync()
+                        val bitmap = bitmapAsync.await().asAndroidBitmap()
+                        pathBitmap = bitmap.toFile(context)
+                        showBottomSheetSaveImage = true
+                    } catch (ex: Throwable) {
+                        Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            },
             canUndo = canUndo && !showGridsSheet && !showRatioSheet,
             canRedo = canRedo && !showGridsSheet && !showRatioSheet
         )
@@ -177,11 +210,12 @@ fun CollageScreen(
                         }
                     )
                     .background(BackgroundWhite)
+                    .capturable(captureController)
 
             )
             {
                 val templateToUse = template
-                ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
+                    ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
                 // Map slider values to Dp
                 val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
                 val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
@@ -199,7 +233,7 @@ fun CollageScreen(
                         resetImageTransforms(templateToUse, canvasWidth, canvasHeight, topMargin)
                     }
                 }
-                Box(modifier = Modifier.wrapContentSize()){
+                Box(modifier = Modifier.wrapContentSize()) {
                     CollagePreview(
                         images = currentUris,
                         template = templateToUse,
@@ -219,8 +253,8 @@ fun CollageScreen(
                         },
                         unselectAllTrigger = unselectAllImagesTrigger
                     )
-                    collageState.frameSelection?.takeIf { it is FrameSelection.Frame }?.let { frame->
-                        val data  =  frame as FrameSelection.Frame
+                    collageState.frameSelection?.takeIf { it is FrameSelection.Frame }?.let { frame ->
+                        val data = frame as FrameSelection.Frame
                         val url = if (data.item.urlThumb?.startsWith("http://") == true || data.item.urlThumb?.startsWith("https://") == true) {
                             data.item.urlThumb
                         } else {
@@ -246,7 +280,7 @@ fun CollageScreen(
             )
 
             Box(modifier = Modifier.align(Alignment.BottomCenter)) {
-                if(!showTextSheet) {
+                if (!showTextSheet) {
                     FeatureBottomTools(
                         tools = toolsCollage,
                         onToolClick = { tool ->
@@ -496,6 +530,42 @@ fun CollageScreen(
                     )
                 }
             }
+        }
+        if (showBottomSheetSaveImage) {
+            ExportImageBottomSheet(
+                pathBitmap = pathBitmap,
+                onDismissRequest = {
+                    showBottomSheetSaveImage = false
+                },
+                onDownload = {
+                    if (pathBitmap.isNotEmpty()) {
+                        scope.launch {
+                            try {
+                                val bitmap = pathBitmap.toBitmap() ?: return@launch
+                                val bitmapMark =
+                                    FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25);
+                                val uriMark = FileUtil.saveImageToStorageWithQuality(
+                                    context = context,
+                                    quality = it.value,
+                                    bitmap = bitmapMark
+                                )
+                                onDownloadSuccess.invoke(
+                                    ExportImageData(
+                                        pathUriMark = uriMark?.toString(),
+                                        pathBitmapOriginal = pathBitmap
+                                    )
+                                )
+                            } catch (ex: Throwable) {
+                                Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, "Save Image Error", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+            )
         }
     }
 }

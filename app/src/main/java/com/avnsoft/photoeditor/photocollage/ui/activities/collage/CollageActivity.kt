@@ -11,11 +11,13 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Dra
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageResultActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.utils.launchActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CollageActivity : BaseActivity() {
@@ -38,8 +40,11 @@ class CollageActivity : BaseActivity() {
                     vm,
                     freeStyleViewModel = freeStyleViewModel,
                     stickerView = stickerView,
-                    onBack = { finish() },
-
+                    onBack = { finish() }, onDownloadSuccess = {
+                        launchActivity(
+                            toActivity = ExportImageResultActivity::class.java, input = it
+                        )
+                    }
                     )
             }
         }

@@ -362,8 +362,11 @@ class CollageViewModel(
     }
 
     private fun push(state: CollageState) {
+        // Luôn push state vào undo stack khi confirm
+        // Chỉ skip duplicate nếu đã có nhiều hơn 1 state (tránh skip lần confirm đầu tiên)
         val lastState = undoStack.lastOrNull()
-        if (lastState != null && lastState == state) {
+        if (lastState != null && lastState == state && undoStack.size > 1) {
+            // Chỉ skip duplicate nếu không phải lần confirm đầu tiên
             return
         }
         
@@ -372,11 +375,6 @@ class CollageViewModel(
         _canUndo.value = undoStack.size >= 2
         _canRedo.value = false
         redoStack.clear()
-        
-        // Nếu đây là lần push đầu tiên (sau initial state), đảm bảo canUndo = true
-        if (undoStack.size == 2) {
-            _canUndo.value = true
-        }
     }
 
     fun undo() {

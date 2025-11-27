@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -269,7 +268,7 @@ fun QualityOption(
             .clip(RoundedCornerShape(12.dp))
             .background(backgroundColor)
             .border(1.dp, borderColor, RoundedCornerShape(12.dp))
-            .clickable { onClick() },
+            .clickableWithAlphaEffect { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Text(
