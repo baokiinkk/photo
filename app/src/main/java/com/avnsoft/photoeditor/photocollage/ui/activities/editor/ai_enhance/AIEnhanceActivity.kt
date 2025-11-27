@@ -46,11 +46,14 @@ class AIEnhanceActivity : BaseActivity() {
     }
     private val viewmodel: AIEnhanceViewModel by viewModel()
 
+    override fun onBackPressed() {
+        viewmodel.showDiscardDialog()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewmodel.initData(screenInput?.pathBitmap)
         setContent {
-            var showDiscardDialog by remember { mutableStateOf(false) }
             Scaffold(
                 containerColor = Color.White
             ) { inner ->
@@ -75,7 +78,7 @@ class AIEnhanceActivity : BaseActivity() {
                                 .background(Color.White)
                                 .padding(horizontal = 16.dp, vertical = 16.dp),
                             onBack = {
-                                showDiscardDialog = true
+                                viewmodel.showDiscardDialog()
                             },
                             onSave = {
                                 val file = File(uiState.imageUrl)
@@ -140,12 +143,12 @@ class AIEnhanceActivity : BaseActivity() {
                     )
 
                     DiscardChangesDialog(
-                        isVisible = showDiscardDialog,
+                        isVisible = uiState.showDiscardDialog,
                         onDiscard = {
                             finish()
                         },
                         onCancel = {
-                            showDiscardDialog = false
+                           viewmodel.hideDiscardDialog()
                         }
                     )
                 }

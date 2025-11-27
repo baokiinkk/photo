@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import coil.ImageLoader
@@ -82,6 +83,9 @@ class FreeStyleActivity : BaseActivity() {
         intent.getParcelableArrayListExtra<Uri>(EXTRA_URIS) ?: arrayListOf()
     }
 
+    override fun onBackPressed() {
+        viewmodel.showDiscardDialog()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,8 +96,7 @@ class FreeStyleActivity : BaseActivity() {
             Scaffold(
                 containerColor = Color.White
             ) { inner ->
-                var showDiscardDialog by remember { mutableStateOf(false) }
-
+                val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -103,7 +106,7 @@ class FreeStyleActivity : BaseActivity() {
                         viewmodel = viewmodel,
                         stickerView = stickerView,
                         onBack = {
-                            showDiscardDialog = true
+                            viewmodel.showDiscardDialog()
                         },
                         onDownloadSuccess = {
                             launchActivity(
@@ -150,12 +153,12 @@ class FreeStyleActivity : BaseActivity() {
                     )
 
                     DiscardChangesDialog(
-                        isVisible = showDiscardDialog,
+                        isVisible = uiState.showDiscardDialog,
                         onDiscard = {
                             finish()
                         },
                         onCancel = {
-                            showDiscardDialog = false
+                            viewmodel.hideDiscardDialog()
                         }
                     )
                 }

@@ -94,6 +94,10 @@ class RemoveObjectActivity : BaseNativeActivity() {
     var removingDialog: DialogAIGenerate = DialogAIGenerate()
 
 
+    override fun onBackPressed() {
+        viewmodel.showDiscardDialog()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewmodel.setOriginalBitmap(
@@ -381,12 +385,12 @@ class RemoveObjectActivity : BaseNativeActivity() {
         binding.composeHeader.setContent {
             val undoRedoState by viewmodel.undoRedoState.collectAsStateWithLifecycle()
             val canSaveState by viewmodel.canSaveState.collectAsStateWithLifecycle()
-            var showDiscardDialog by remember { mutableStateOf(false) }
+            val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
 
             Box {
                 FeaturePhotoHeader(
                     onBack = {
-                        showDiscardDialog = true
+                        viewmodel.showDiscardDialog()
                     },
                     onUndo = {
                         viewmodel.setCurrImageIndex(false) { bm ->
@@ -423,12 +427,12 @@ class RemoveObjectActivity : BaseNativeActivity() {
                 )
 
                 DiscardChangesDialog(
-                    isVisible = showDiscardDialog,
+                    isVisible = uiState.showDiscardDialog,
                     onDiscard = {
                         finish()
                     },
                     onCancel = {
-                        showDiscardDialog = false
+                        viewmodel.hideDiscardDialog()
                     }
                 )
             }

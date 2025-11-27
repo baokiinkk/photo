@@ -36,9 +36,22 @@ class BackgroundViewModel : BaseViewModel() {
             )
         }
     }
+
+    fun showDiscardDialog() {
+        uiState.update {
+            it.copy(showDiscardDialog = true)
+        }
+    }
+
+    fun hideDiscardDialog() {
+        uiState.update {
+            it.copy(showDiscardDialog = false)
+        }
+    }
 }
 
 data class BackgroundUIState(
     val originBitmap: Bitmap? = null,
     val backgroundSelection: BackgroundSelection? = null,
+    val showDiscardDialog: Boolean = false
 )

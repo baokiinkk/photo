@@ -94,6 +94,26 @@ class StoreBackgroundDetailActivity : BaseActivity() {
                                 .weight(1f)
                                 .background(Color(0xFFF8FAFC))
                         ) {
+                            LazyVerticalGrid(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                columns = GridCells.Fixed(2),
+                                verticalArrangement = Arrangement.spacedBy(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                contentPadding = PaddingValues(vertical = 16.dp)
+                            ) {
+                                uiState.item?.let { data ->
+                                    items(data.content) { item ->
+                                        LoadImage(
+                                            model = item.urlThumb,
+                                            modifier = Modifier
+                                                .aspectRatio(1f)
+                                                .clip(RoundedCornerShape(20.dp)),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    }
+                                }
+                            }
                             if (uiState.item?.isUsed == true) {
                                 ButtonUsePack(
                                     modifier = Modifier
@@ -115,7 +135,6 @@ class StoreBackgroundDetailActivity : BaseActivity() {
                                             color = Color(0xFF6425F3),
                                             alpha = 0.4f,
                                             cornerRadius = 12.dp,
-                                            effects = Effects.DROP_SHADOW
                                         )
                                         .align(Alignment.BottomCenter)
                                         .clickableWithAlphaEffect {

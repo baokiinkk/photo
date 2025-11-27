@@ -56,6 +56,8 @@ class RemoveObjectViewModel(
 
     val canSaveState = MutableStateFlow(false)
 
+    val uiState = MutableStateFlow(RemoveObjectUIState())
+
     val tabs = listOf(
         RemoveObjectTab(
             tab = RemoveObjectTab.TAB.AUTO,
@@ -501,9 +503,25 @@ class RemoveObjectViewModel(
 //        }
     }
 
+    fun showDiscardDialog() {
+        uiState.update {
+            it.copy(showDiscardDialog = true)
+        }
+    }
+
+    fun hideDiscardDialog() {
+        uiState.update {
+            it.copy(showDiscardDialog = false)
+        }
+    }
+
 }
 
-suspend fun saveFileAndReturnPathFile(context: Context,url: String): String {
+data class RemoveObjectUIState(
+    val showDiscardDialog: Boolean = false
+)
+
+suspend fun saveFileAndReturnPathFile(context: Context, url: String): String {
     val folderTemp = context.cacheDir.absolutePath + "/ImageRemoveObjTemp"
     val folder = File(folderTemp)
     folder.deleteRecursively()
@@ -539,7 +557,7 @@ data class UndoRedoState(
 data class RemoveObjectComposeUIState(
     val blurBrush: Float = 50f,
     val tabs: List<RemoveObjectTab> = emptyList(),
-    val tab: RemoveObjectTab.TAB = RemoveObjectTab.TAB.BRUSH
+    val tab: RemoveObjectTab.TAB = RemoveObjectTab.TAB.BRUSH,
 )
 
 data class RemoveObjectTab(

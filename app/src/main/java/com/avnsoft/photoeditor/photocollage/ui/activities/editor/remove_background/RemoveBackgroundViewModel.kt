@@ -87,7 +87,7 @@ class RemoveBackgroundViewModel(
             id = id,
             status = status
         )
-        val pathFile = saveFileAndReturnPathFile(context,response.result.url)
+        val pathFile = saveFileAndReturnPathFile(context, response.result.url)
         hideLoading()
         _removeBgState.send(pathFile)
         uiState.update {
@@ -110,6 +110,18 @@ class RemoveBackgroundViewModel(
             it.copy(
                 isShowLoading = false
             )
+        }
+    }
+
+    fun showDiscardDialog() {
+        uiState.update {
+            it.copy(showDiscardDialog = true)
+        }
+    }
+
+    fun hideDiscardDialog() {
+        uiState.update {
+            it.copy(showDiscardDialog = false)
         }
     }
 }
@@ -149,5 +161,6 @@ fun ensureUploadConstraints(sourceFile: File, maxUploadSize: Int = 1504): File {
 
 data class RemoveBackgroundUIState(
     val imageUrl: String = "",
-    val isShowLoading: Boolean = true
+    val isShowLoading: Boolean = true,
+    val showDiscardDialog: Boolean = false
 )

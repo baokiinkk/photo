@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -58,8 +59,10 @@ import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.ui.image.LoadImage
+import com.basesource.base.utils.Effects
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.figmaShadow
 import com.basesource.base.utils.launchActivity
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -391,34 +394,38 @@ fun GradientButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
+
+    Box(
         modifier = modifier
-            .shadow(
-                elevation = 16.dp,
-                shape = RoundedCornerShape(12.dp),
-                spotColor = Color(0x666425F3),
-                ambientColor = Color(0x666425F3)
-            )
-            .height(48.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFFF7ACEF),
-                        Color(0xFF6425F3)
-                    )
-                )
-            )
-            .clickableWithAlphaEffect(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+            .fillMaxWidth()
+//            .figmaShadow(
+//                color = Color(0xFF6425F3),
+//                alpha = 0.4f,
+//                cornerRadius = 12.dp,
+//                effects = Effects.DROP_SHADOW
+//            )
+            .clickableWithAlphaEffect(onClick = onClick)
     ) {
-        ImageWidget(resId = R.drawable.ic_store_star)
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = text,
-            style = AppStyle.buttonLarge().semibold().white(),
+        ImageWidget(
+            resId = R.drawable.button_remove_watermark,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(69.11.dp),
         )
+        Row(
+            modifier = modifier
+                .height(48.dp)
+                .padding(top = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            ImageWidget(resId = R.drawable.ic_store_star)
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = text,
+                style = AppStyle.buttonLarge().semibold().white(),
+            )
+        }
     }
 }
 
@@ -448,7 +455,8 @@ fun AIToolsSection(
                 title = stringResource(R.string.remove_object),
                 iconRes = R.drawable.ic_remove_object,
                 onClick = onRemoveObjectClick,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
             )
 
             AIToolCard(
@@ -477,10 +485,19 @@ fun AIToolCard(
 ) {
     Column(
         modifier = modifier
+            .figmaShadow(
+                color = Color(0x0000000D),
+                alpha = 0.05f,
+                cornerRadius = 12.dp,
+                x = 0.dp,
+                y = 0.dp,
+                blur = 20.dp
+            )
             .clip(RoundedCornerShape(12.dp))
             .background(Color.White)
+            .padding(16.dp)
             .clickableWithAlphaEffect(onClick = onClick)
-            .padding(16.dp),
+            ,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
