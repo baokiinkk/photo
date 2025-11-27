@@ -1,7 +1,11 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import android.net.Uri
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -174,7 +178,8 @@ fun CollagePreview(
     backgroundSelection: BackgroundSelection? = null,
     imageTransforms: Map<Int, ImageTransformState> = emptyMap(),
     topMargin: Float = 0f,
-    onImageClick: ((Uri) -> Unit)? = null,
+    imageBitmaps: Map<Int, Bitmap> = emptyMap(),  // Bitmap từ state
+    onImageClick: ((Int, Uri) -> Unit)? = null,
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)? = null,
     unselectAllTrigger: Int = 0,
     modifier: Modifier = Modifier
@@ -202,11 +207,12 @@ fun CollagePreview(
 
         var processedCells by remember { mutableStateOf<List<ProcessedCellData>>(emptyList()) }
 
-        LaunchedEffect(template, images, effectiveCanvasWidth, effectiveCanvasHeight) {
+        LaunchedEffect(template, images, imageBitmaps, effectiveCanvasWidth, effectiveCanvasHeight) {
             processedCells = withContext(Dispatchers.IO) {
                 CollagePreviewDataProcessor.processTemplate(
                     template = template,
                     images = images,
+                    imageBitmaps = imageBitmaps,
                     canvasWidth = effectiveCanvasWidth,
                     canvasHeight = effectiveCanvasHeight
                 )
@@ -302,7 +308,7 @@ private fun CollageContent(
     cornerRadiusPx: Float,
     density: Density,
     imageStates: @JvmSuppressWildcards MutableMap<Int, Pair<ImageTransformState, Boolean>>,
-    onImageClick: ((Uri) -> Unit)?,
+    onImageClick: ((Int, Uri) -> Unit)?,
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)?
 ) {
     val gapPx = with(density) { gap.toPx() }
@@ -343,7 +349,7 @@ private fun CollageImageCell(
     density: Density,
     imageStates: @JvmSuppressWildcards MutableMap<Int, Pair<ImageTransformState, Boolean>>,
     index: Int,
-    onImageClick: ((Uri) -> Unit)?,
+    onImageClick: ((Int, Uri) -> Unit)?,
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)?
 ) {
     val shouldShowBorder = isSelected || cellData.imageUri.toString().contains("true")
@@ -413,21 +419,40 @@ private fun CollageImageCell(
 
         val currentTransform = imageStates[index]?.first ?: ImageTransformState()
 
-        AsyncImage(
-            model = cellData.imageUri,
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer {
-                    translationX = currentTransform.offset.x
-                    translationY = currentTransform.offset.y
-                    scaleX = currentTransform.scale
-                    scaleY = currentTransform.scale
-                    transformOrigin = TransformOrigin.Center
-                    clip = true
-                },
-            error = painterResource(R.drawable.ic_empty_image)
-        )
+        // Ưu tiên dùng bitmap từ state, nếu không có thì dùng URI
+        if (cellData.imageBitmap != null) {
+            Image(
+                bitmap = cellData.imageBitmap.asImageBitmap(),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        translationX = currentTransform.offset.x
+                        translationY = currentTransform.offset.y
+                        scaleX = currentTransform.scale
+                        scaleY = currentTransform.scale
+                        transformOrigin = TransformOrigin.Center
+                        clip = true
+                    },
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            AsyncImage(
+                model = cellData.imageUri,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        translationX = currentTransform.offset.x
+                        translationY = currentTransform.offset.y
+                        scaleX = currentTransform.scale
+                        scaleY = currentTransform.scale
+                        transformOrigin = TransformOrigin.Center
+                        clip = true
+                    },
+                error = painterResource(R.drawable.ic_empty_image)
+            )
+        }
     }
 }
 
@@ -480,7 +505,7 @@ private fun transformGestureModifier(
 private fun selectGestureModifier(
     index: Int,
     imageStates: @JvmSuppressWildcards MutableMap<Int, Pair<ImageTransformState, Boolean>>,
-    onImageClick: ((Uri) -> Unit)?,
+    onImageClick: ((Int, Uri) -> Unit)?,
     imageUri: Uri,
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)?
 ): Modifier {
@@ -502,7 +527,7 @@ private fun selectGestureModifier(
                 }
                 val (existingTransform, _) = currentState ?: (ImageTransformState() to false)
                 imageStates[index] = existingTransform to true
-                onImageClick?.invoke(imageUri)
+                onImageClick?.invoke(index, imageUri)
             }
         }
     }

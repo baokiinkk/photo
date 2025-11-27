@@ -1,5 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.data.model.collage
 
+import android.graphics.Bitmap
+import android.net.Uri
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState
@@ -17,6 +19,12 @@ data class CollageState(
     val topMargin: Float = 0f,        // 0-1
     val columnMargin: Float = 0f,     // 0-1 (map to gap)
     val cornerRadius: Float = 0f,     // 0-1
+
+    // Image URIs - danh sách ảnh trong collage (URIs ban đầu)
+    val imageUris: List<Uri> = emptyList(),
+    
+    // Image Bitmaps - lưu bitmap trực tiếp sau khi transform
+    val imageBitmaps: Map<Int, Bitmap> = emptyMap(),  // Map<imageIndex, Bitmap>
 
     // Ratio tool
     val ratio: String? = null,        // e.g., "1:1", "4:3", "16:9"

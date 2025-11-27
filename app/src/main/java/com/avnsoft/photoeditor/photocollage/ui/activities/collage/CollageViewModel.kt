@@ -1,5 +1,12 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageState
@@ -10,14 +17,23 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sti
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.FontAsset
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.basesource.base.result.Result
+import com.tanishranjan.cropkit.CropController
+import com.tanishranjan.cropkit.CropDefaults
+import com.tanishranjan.cropkit.CropOptions
+import com.tanishranjan.cropkit.CropShape
+import com.tanishranjan.cropkit.CropColors
+import com.tanishranjan.cropkit.GridLinesVisibility
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
+import androidx.core.net.toUri
 import java.util.Stack
 
 @KoinViewModel
@@ -444,6 +460,199 @@ class CollageViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val currentState = _collageState.value
             tempImageTransforms = null // Clear temp transforms sau khi confirm
+        }
+    }
+
+    // Image URIs management - tất cả đều push vào collageState
+    // Load bitmap ban đầu vào state khi set URIs
+    fun setImageUris(context: Context, uris: List<Uri>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val newBitmaps = mutableMapOf<Int, Bitmap>()
+            uris.forEachIndexed { index, uri ->
+                uriToBitmap(context, uri)?.let { bitmap ->
+                    newBitmaps[index] = bitmap
+                }
+            }
+            _collageState.update { 
+                it.copy(
+                    imageUris = uris,
+                    imageBitmaps = newBitmaps
+                )
+            }
+        }
+    }
+
+    fun addImageUri(context: Context, uri: Uri) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            val newIndex = currentState.imageUris.size
+            val newBitmaps = currentState.imageBitmaps.toMutableMap()
+            uriToBitmap(context, uri)?.let { bitmap ->
+                newBitmaps[newIndex] = bitmap
+            }
+            _collageState.update { 
+                it.copy(
+                    imageUris = it.imageUris + uri,
+                    imageBitmaps = newBitmaps
+                )
+            }
+        }
+    }
+
+    // Image transformation methods - sử dụng CropController như CropActivity
+    // Lưu bitmap trực tiếp vào state thay vì chỉ lưu path
+    fun rotateImage(context: Context, index: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            // Lấy bitmap từ state hoặc load từ URI
+            val bitmap = currentState.imageBitmaps[index] 
+                ?: (if (index < currentState.imageUris.size) {
+                    uriToBitmap(context, currentState.imageUris[index])
+                } else null)
+            
+            bitmap?.let {
+                // Tạo CropController với bitmap hiện tại
+                val cropController = CropController(
+                    bitmap = it,
+                    cropOptions = CropDefaults.cropOptions(
+                        cropShape = CropShape.FreeForm,
+                        gridLinesVisibility = GridLinesVisibility.NEVER,
+                        touchPadding = 0.dp,
+                        initialPadding = 0.dp,
+                        zoomScale = null,
+                        rotationZBitmap = null
+                    ),
+                    cropColors = CropColors(
+                        overlay = Color.Transparent,
+                        overlayActive = Color.Transparent,
+                        gridlines = Color.Transparent,
+                        cropRectangle = Color.Transparent,
+                        handle = Color.Transparent
+                    )
+                )
+                
+                // Sử dụng rotateClockwise từ CropController
+                cropController.rotateClockwise { newBitmap ->
+                    // Lưu bitmap trực tiếp vào state
+                    _collageState.update { state ->
+                        val newBitmaps = state.imageBitmaps.toMutableMap()
+                        newBitmaps[index] = newBitmap
+                        state.copy(imageBitmaps = newBitmaps)
+                    }
+                }
+            }
+        }
+    }
+
+    fun flipImageHorizontal(context: Context, index: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            // Lấy bitmap từ state hoặc load từ URI
+            val bitmap = currentState.imageBitmaps[index] 
+                ?: (if (index < currentState.imageUris.size) {
+                    uriToBitmap(context, currentState.imageUris[index])
+                } else null)
+            
+            bitmap?.let {
+                // Tạo CropController với bitmap hiện tại
+                val cropController = CropController(
+                    bitmap = it,
+                    cropOptions = CropDefaults.cropOptions(
+                        cropShape = CropShape.FreeForm,
+                        gridLinesVisibility = GridLinesVisibility.NEVER,
+                        touchPadding = 0.dp,
+                        initialPadding = 0.dp,
+                        zoomScale = null,
+                        rotationZBitmap = null
+                    ),
+                    cropColors = CropColors(
+                        overlay = Color.Transparent,
+                        overlayActive = Color.Transparent,
+                        gridlines = Color.Transparent,
+                        cropRectangle = Color.Transparent,
+                        handle = Color.Transparent
+                    )
+                )
+                
+                // Sử dụng flipHorizontally từ CropController
+                cropController.flipHorizontally { newBitmap ->
+                    // Lưu bitmap trực tiếp vào state
+                    _collageState.update { state ->
+                        val newBitmaps = state.imageBitmaps.toMutableMap()
+                        newBitmaps[index] = newBitmap
+                        state.copy(imageBitmaps = newBitmaps)
+                    }
+                }
+            }
+        }
+    }
+
+    fun flipImageVertical(context: Context, index: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            // Lấy bitmap từ state hoặc load từ URI
+            val bitmap = currentState.imageBitmaps[index] 
+                ?: (if (index < currentState.imageUris.size) {
+                    uriToBitmap(context, currentState.imageUris[index])
+                } else null)
+            
+            bitmap?.let {
+                // Tạo CropController với bitmap hiện tại
+                val cropController = CropController(
+                    bitmap = it,
+                    cropOptions = CropDefaults.cropOptions(
+                        cropShape = CropShape.FreeForm,
+                        gridLinesVisibility = GridLinesVisibility.NEVER,
+                        touchPadding = 0.dp,
+                        initialPadding = 0.dp,
+                        zoomScale = null,
+                        rotationZBitmap = null
+                    ),
+                    cropColors = CropColors(
+                        overlay = Color.Transparent,
+                        overlayActive = Color.Transparent,
+                        gridlines = Color.Transparent,
+                        cropRectangle = Color.Transparent,
+                        handle = Color.Transparent
+                    )
+                )
+                
+                // Sử dụng flipVertically từ CropController
+                cropController.flipVertically { newBitmap ->
+                    // Lưu bitmap trực tiếp vào state
+                    _collageState.update { state ->
+                        val newBitmaps = state.imageBitmaps.toMutableMap()
+                        newBitmaps[index] = newBitmap
+                        state.copy(imageBitmaps = newBitmaps)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
+        return withContext(Dispatchers.IO) {
+            try {
+                // Nếu URI là file path (file://), dùng BitmapFactory.decodeFile
+                val uriString = uri.toString()
+                if (uriString.startsWith("file://")) {
+                    val filePath = uriString.removePrefix("file://")
+                    return@withContext android.graphics.BitmapFactory.decodeFile(filePath)
+                }
+                
+                // Nếu URI là content:// hoặc http://, dùng contentResolver
+                if (android.os.Build.VERSION.SDK_INT < 28) {
+                    android.provider.MediaStore.Images.Media.getBitmap(
+                        context.contentResolver, uri
+                    )
+                } else {
+                    val source = android.graphics.ImageDecoder.createSource(context.contentResolver, uri)
+                    android.graphics.ImageDecoder.decodeBitmap(source)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
     }
 }
