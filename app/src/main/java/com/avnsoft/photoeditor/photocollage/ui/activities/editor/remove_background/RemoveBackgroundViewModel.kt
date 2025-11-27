@@ -8,7 +8,6 @@ import com.avnsoft.photoeditor.photocollage.BaseApplication
 import com.avnsoft.photoeditor.photocollage.data.model.remove_background.AIDetectResponse
 import com.avnsoft.photoeditor.photocollage.data.repository.RemoveBackgroundRepoImpl
 import com.avnsoft.photoeditor.photocollage.data.repository.UPLOAD_TYPE_STATUS
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.downloadAndSaveToFile
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.saveFileAndReturnPathFile
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
@@ -60,12 +59,10 @@ class RemoveBackgroundViewModel(
     }
 
     private suspend fun uploadFileToS3(data: AIDetectResponse, file: File) {
-//        val fileForUpload = ensureUploadConstraints(file)
-        val fileForUpload = file
         try {
             removeBackgroundRepo.uploadFileToS3(
                 uploadUrl = data.links.first(),
-                file = fileForUpload
+                file = file
             )
             getImageStatus(
                 id = data.id,
@@ -78,10 +75,6 @@ class RemoveBackgroundViewModel(
                 status = UPLOAD_TYPE_STATUS.FAILED
             )
             hideLoading()
-        } finally {
-//            if (fileForUpload != file && fileForUpload.exists()) {
-//                fileForUpload.delete()
-//            }
         }
     }
 

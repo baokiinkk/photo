@@ -33,6 +33,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.settings.SettingsActiv
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.fromJsonTypeToken
 import com.basesource.base.utils.launchActivity
@@ -56,6 +57,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.getTokenFirebase()
+        deleteFolderTmp()
         getSignature()
         observerData()
         setContent {
@@ -246,6 +248,15 @@ class MainActivity : BaseActivity() {
             e.printStackTrace()
         } catch (e: NoSuchAlgorithmException) {
             e.printStackTrace()
+        }
+    }
+
+    fun deleteFolderTmp() {
+        try {
+            val folder = FileUtil.getCacheFolder(this)
+            folder.deleteRecursively()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 }

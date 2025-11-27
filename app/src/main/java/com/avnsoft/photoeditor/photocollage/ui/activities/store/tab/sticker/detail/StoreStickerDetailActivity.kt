@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -50,8 +51,11 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.image.LoadImage
+import com.basesource.base.utils.Effects
 import com.basesource.base.utils.ImageWidget
+import com.basesource.base.utils.backgroundLinearGradient
 import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.figmaShadow
 import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.fromJsonTypeToken
 import com.basesource.base.utils.launchActivity
@@ -101,7 +105,9 @@ class StoreStickerDetailActivity : BaseActivity() {
                             Box(
                                 modifier = Modifier
                                     .background(
-                                        color = if (item.isUsed) Color(0xFFFFF1E5) else Color(0xFFF3F2F2),
+                                        color = if (item.isUsed) Color(0xFFFFF1E5) else Color(
+                                            0xFFF3F2F2
+                                        ),
                                         shape = RoundedCornerShape(20.dp)
                                     )
                             ) {
@@ -112,8 +118,7 @@ class StoreStickerDetailActivity : BaseActivity() {
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .padding(10.dp)
-                                        .alpha(if (item.isUsed) 1f else 0.5f)
-                                    ,
+                                        .alpha(if (item.isUsed) 1f else 0.5f),
                                 ) {
                                     items(item.content) { item ->
                                         Box(
@@ -221,22 +226,29 @@ fun ButtonUnlockPack(
 ) {
     Row(
         modifier = modifier
-            .shadow(
-                elevation = 16.dp,
-                shape = RoundedCornerShape(12.dp),
-                spotColor = Color(0x666425F3),
-                ambientColor = Color(0x666425F3)
-            )
+//            .shadow(
+//                elevation = 16.dp,
+//                shape = RoundedCornerShape(12.dp),
+//                spotColor = Color(0x666425F3),
+//                ambientColor = Color(0x666425F3)
+//            )
             .height(48.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFFF7ACEF),
-                        Color(0xFF6425F3)
-                    )
+            .backgroundLinearGradient(
+                colors = listOf(
+                    Color(0xFFF7ACEF),
+                    Color(0xFF6425F3)
                 )
-            ),
+            )
+//            .background(
+//                brush = Brush.linearGradient(
+//                    colors = listOf(
+//                        Color(0xFFF7ACEF),
+//                        Color(0xFF6425F3)
+//                    )
+//                )
+//            )
+        ,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
