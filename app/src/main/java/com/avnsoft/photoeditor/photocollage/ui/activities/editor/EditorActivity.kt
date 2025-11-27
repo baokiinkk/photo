@@ -382,7 +382,7 @@ class EditorActivity : BaseActivity() {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(
-                                top = inner.calculateTopPadding(),
+//                                top = inner.calculateTopPadding(),
                                 bottom = inner.calculateBottomPadding()
                             ),
                         onBack = {

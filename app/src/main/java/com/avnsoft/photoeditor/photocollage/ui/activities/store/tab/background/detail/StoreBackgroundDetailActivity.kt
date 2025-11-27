@@ -9,20 +9,31 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternModel
@@ -38,9 +49,12 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker.deta
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker.detail.ButtonUsePack
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.utils.getInput
+import com.basesource.base.components.CustomButton
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.image.LoadImage
+import com.basesource.base.utils.Effects
 import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.figmaShadow
 import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.fromJsonTypeToken
 import com.basesource.base.utils.launchActivity
@@ -77,29 +91,9 @@ class StoreBackgroundDetailActivity : BaseActivity() {
                     uiState.item?.let { data ->
                         Box(
                             modifier = Modifier
+                                .weight(1f)
                                 .background(Color(0xFFF8FAFC))
                         ) {
-                            LazyVerticalGrid(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                columns = GridCells.Fixed(2),
-                                verticalArrangement = Arrangement.spacedBy(12.dp),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                contentPadding = PaddingValues(vertical = 16.dp)
-                            ) {
-                                uiState.item?.let { data ->
-                                    items(data.content) { item ->
-                                        LoadImage(
-                                            model = item.urlThumb,
-                                            modifier = Modifier
-                                                .aspectRatio(1f)
-                                                .clip(RoundedCornerShape(20.dp)),
-                                            contentScale = ContentScale.Crop
-                                        )
-                                    }
-                                }
-                            }
-
                             if (uiState.item?.isUsed == true) {
                                 ButtonUsePack(
                                     modifier = Modifier
@@ -116,8 +110,14 @@ class StoreBackgroundDetailActivity : BaseActivity() {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = 14.dp)
-                                        .align(Alignment.BottomCenter)
                                         .padding(bottom = 24.dp)
+                                        .figmaShadow(
+                                            color = Color(0xFF6425F3),
+                                            alpha = 0.4f,
+                                            cornerRadius = 12.dp,
+                                            effects = Effects.DROP_SHADOW
+                                        )
+                                        .align(Alignment.BottomCenter)
                                         .clickableWithAlphaEffect {
                                             viewmodel.updateIsUsedById(data.eventId)
                                         }
@@ -148,3 +148,4 @@ class StoreBackgroundDetailActivity : BaseActivity() {
         }
     }
 }
+

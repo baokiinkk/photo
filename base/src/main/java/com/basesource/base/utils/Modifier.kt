@@ -1,6 +1,7 @@
 package com.basesource.base.utils
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -15,13 +16,18 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 
 fun Modifier.clickableWithAlphaEffect(
@@ -119,4 +125,57 @@ fun pixelToDpConverter(pixelValue: Int): Dp {
     return with(density) {
         pixelValue.toDp()
     }
+}
+
+
+enum class Effects(val offsetX: Dp, val offsetY: Dp, val blur: Dp) {
+    DROP_SHADOW(2.dp, 4.dp, 16.dp)
+}
+
+fun Modifier.figmaShadow(
+    color: Color,
+    alpha: Float = 0.4f,
+    cornerRadius: Dp = 0.dp,
+    effects: Effects
+): Modifier = this.then(
+    Modifier.drawBehind {
+
+        val paint = android.graphics.Paint().apply {
+            isAntiAlias = true
+            this.color = android.graphics.Color.TRANSPARENT
+            setShadowLayer(
+                effects.blur.toPx(),
+                effects.offsetX.toPx(),
+                effects.offsetY.toPx(),
+                color.copy(alpha = alpha).toArgb()
+            )
+        }
+
+        val rect = android.graphics.RectF(
+            0f,
+            0f,
+            size.width,
+            size.height
+        )
+
+        drawContext.canvas.nativeCanvas.drawRoundRect(
+            rect,
+            cornerRadius.toPx(),
+            cornerRadius.toPx(),
+            paint
+        )
+    }
+)
+
+fun Modifier.backgroundLinearGradient(
+    colors: List<Color>
+): Modifier {
+    return this.then(
+        Modifier
+            .background(
+                brush = Brush.linearGradient(
+                    colors = colors
+                )
+            )
+    )
 }
