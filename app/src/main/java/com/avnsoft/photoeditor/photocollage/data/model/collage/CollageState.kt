@@ -4,6 +4,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Bac
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 
 /**
@@ -12,7 +13,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyl
  */
 data class CollageState(
     // Layout & Margin
-    val templateId: String? = null,
+    val templateId: CollageTemplate? = null,
     val topMargin: Float = 0f,        // 0-1
     val columnMargin: Float = 0f,     // 0-1 (map to gap)
     val cornerRadius: Float = 0f,     // 0-1
@@ -30,7 +31,8 @@ data class CollageState(
     // Text tool
     val texts: List<TextState> = emptyList(),
 
-    // Sticker tool
+    // Sticker tool - lưu danh sách Sticker objects để restore khi undo/redo
+    val stickerList: List<Sticker> = emptyList(),
     val stickers: List<StickerState> = emptyList(),
     val stickerBitmapPath: String? = null,  // Path của bitmap sau khi apply sticker
 

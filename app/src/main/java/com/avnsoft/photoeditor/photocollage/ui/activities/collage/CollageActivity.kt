@@ -28,6 +28,8 @@ class CollageActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
+        // Set stickerView vào ViewModel để có thể lấy/restore stickers
+        vm.stickerView = stickerView
         val list = intent.getParcelableArrayListExtra<Uri>(EXTRA_URIS) ?: arrayListOf()
         setContent {
             MainTheme {

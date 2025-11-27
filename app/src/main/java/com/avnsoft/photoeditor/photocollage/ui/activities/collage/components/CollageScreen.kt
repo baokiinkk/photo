@@ -113,7 +113,6 @@ fun CollageScreen(
 
     // Observe state from ViewModel
     val templates by vm.templates.collectAsState()
-    val selected by vm.selected.collectAsState()
     val collageState by vm.collageState.collectAsState()
     val canUndo by vm.canUndo.collectAsState()
     val canRedo by vm.canRedo.collectAsState()
@@ -131,6 +130,7 @@ fun CollageScreen(
     val columnMargin = collageState.columnMargin
     val cornerRadius = collageState.cornerRadius
     val ratio = collageState.ratio
+    val template = collageState.templateId
     LaunchedEffect(Unit) {
         vm.load(currentUris.size.coerceAtLeast(1))
     }
@@ -180,7 +180,7 @@ fun CollageScreen(
 
             )
             {
-                val templateToUse = selected ?: templates.firstOrNull()
+                val templateToUse = template
                 ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
                 // Map slider values to Dp
                 val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
@@ -335,13 +335,13 @@ fun CollageScreen(
                 if (showGridsSheet) {
                     GridsSheet(
                         templates = templates,
-                        selectedTemplate = selected,
+                        selectedTemplate = template,
                         onTemplateSelect = { template ->
                             vm.selectTemplate(template)
                         },
                         onClose = { showGridsSheet = false },
                         onConfirm = { tab ->
-                            vm.confirmGridsChanges(tab)
+                            vm.confirmChanges()
                             showGridsSheet = false
                         },
                         topMargin = topMargin,
@@ -365,7 +365,7 @@ fun CollageScreen(
                             vm.cancelRatioChanges()
                             showRatioSheet = false
                         }, onConfirm = {
-                            vm.confirmRatioChanges()
+                            vm.confirmChanges()
                             showRatioSheet = false
                         }, modifier = Modifier
                             .fillMaxWidth()
@@ -384,7 +384,7 @@ fun CollageScreen(
                             showBackgroundSheet = false
                         },
                         onConfirm = {
-                            vm.confirmBackgroundChanges()
+                            vm.confirmChanges()
                             showBackgroundSheet = false
                         },
                         modifier = Modifier
@@ -404,7 +404,7 @@ fun CollageScreen(
                             showFrameSheet = false
                         },
                         onConfirm = {
-                            vm.confirmFrameChanges()
+                            vm.confirmChanges()
                             showFrameSheet = false
                         },
                         modifier = Modifier
@@ -428,6 +428,7 @@ fun CollageScreen(
                             },
                             onApply = {
                                 stickerView.setLocked(false)
+                                vm.confirmStickerChanges()
                                 showStickerSheet = false
                             }
                         )
@@ -447,6 +448,7 @@ fun CollageScreen(
                             },
                             onApply = {
                                 stickerView.setLocked(false)
+                                vm.confirmStickerChanges()
                                 showTextSheet = false
                             },
                             onAddFirstText = {
