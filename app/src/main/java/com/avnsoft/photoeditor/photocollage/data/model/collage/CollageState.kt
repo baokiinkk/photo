@@ -1,9 +1,12 @@
 package com.avnsoft.photoeditor.photocollage.data.model.collage
 
+import android.graphics.Bitmap
+import android.net.Uri
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 
 /**
@@ -12,10 +15,16 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyl
  */
 data class CollageState(
     // Layout & Margin
-    val templateId: String? = null,
+    val templateId: CollageTemplate? = null,
     val topMargin: Float = 0f,        // 0-1
     val columnMargin: Float = 0f,     // 0-1 (map to gap)
     val cornerRadius: Float = 0f,     // 0-1
+
+    // Image URIs - danh sách ảnh trong collage (URIs ban đầu)
+    val imageUris: List<Uri> = emptyList(),
+    
+    // Image Bitmaps - lưu bitmap trực tiếp sau khi transform
+    val imageBitmaps: Map<Int, Bitmap> = emptyMap(),  // Map<imageIndex, Bitmap>
 
     // Ratio tool
     val ratio: String? = null,        // e.g., "1:1", "4:3", "16:9"
@@ -30,7 +39,8 @@ data class CollageState(
     // Text tool
     val texts: List<TextState> = emptyList(),
 
-    // Sticker tool
+    // Sticker tool - lưu danh sách Sticker objects để restore khi undo/redo
+    val stickerList: List<Sticker> = emptyList(),
     val stickers: List<StickerState> = emptyList(),
     val stickerBitmapPath: String? = null,  // Path của bitmap sau khi apply sticker
 

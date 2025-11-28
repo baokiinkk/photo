@@ -1,34 +1,52 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageState
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.data.repository.CollageTemplateRepository
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.GridsTab
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.FontAsset
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.basesource.base.result.Result
+import com.tanishranjan.cropkit.CropController
+import com.tanishranjan.cropkit.CropDefaults
+import com.tanishranjan.cropkit.CropOptions
+import com.tanishranjan.cropkit.CropShape
+import com.tanishranjan.cropkit.CropColors
+import com.tanishranjan.cropkit.GridLinesVisibility
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
+import androidx.core.net.toUri
+import java.util.Stack
 
 @KoinViewModel
 class CollageViewModel(
     private val repository: CollageTemplateRepository
 ) : ViewModel() {
 
-    private val undoRedoManager = CollageUndoRedoManager()
+    private val undoStack = Stack<CollageState>()
+    private val redoStack = Stack<CollageState>()
 
     // Templates
     private val _templates = MutableStateFlow<List<CollageTemplate>>(emptyList())
     val templates: StateFlow<List<CollageTemplate>> = _templates.asStateFlow()
-
-    private val _selected = MutableStateFlow<CollageTemplate?>(null)
-    val selected: StateFlow<CollageTemplate?> = _selected.asStateFlow()
 
     // Collage State
     private val _collageState = MutableStateFlow(
@@ -74,6 +92,173 @@ class CollageViewModel(
     // Lưu image transforms tạm thời khi đang chỉnh sửa (chưa confirm)
     private var tempImageTransforms: Map<Int, com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState>? = null
 
+    // Reference đến FreeStyleStickerView để lấy/restore stickers
+    var stickerView: FreeStyleStickerView? = null
+        set(value) {
+            field = value
+            // Không push initial state ở đây, vì đã push trong load()
+            // Chỉ update stickerList vào current state
+            if (value != null) {
+                val currentState = _collageState.value
+                val stickers = getStickersFromView(value)
+                val stateWithStickers = currentState.copy(stickerList = stickers)
+                _collageState.value = stateWithStickers
+                // Update initial state nếu chưa có
+                if (initialState == null) {
+                    initialState = stateWithStickers.copy()
+                }
+            }
+        }
+
+    /**
+     * Lấy danh sách stickers từ StickerView bằng reflection
+     */
+    private fun getStickersFromView(stickerView: FreeStyleStickerView): List<Sticker> {
+        return try {
+            val field = stickerView.javaClass.superclass.getDeclaredField("stickers")
+            field.isAccessible = true
+            @Suppress("UNCHECKED_CAST")
+            (field.get(stickerView) as? MutableList<Sticker>)?.toList() ?: emptyList()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    /**
+     * Lưu state của stickers khi apply sticker/text
+     */
+    fun confirmStickerChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            val stickers = stickerView?.let { getStickersFromView(it) } ?: emptyList()
+            val stateToSave = currentState.copy(stickerList = stickers)
+            
+            push(stateToSave)
+        }
+    }
+
+    /**
+     * Restore stickers từ state (được gọi khi undo/redo)
+     */
+    fun restoreStickers(stickers: List<Sticker>) {
+        stickerView?.let { view ->
+            // Tạm thời disable callbacks để tránh side effects
+            val originalListener = view.onStickerOperationListener
+            view.setOnStickerOperationListener(null)
+            
+            view.removeAllStickers()
+            
+            stickers.forEach { originalSticker ->
+                // Clone sticker để tránh reference issues
+                val clonedSticker = cloneSticker(originalSticker)
+                if (clonedSticker != null) {
+                    // Add sticker trực tiếp vào list để tránh trigger callbacks và set position mặc định
+                    try {
+                        val field = view.javaClass.superclass.getDeclaredField("stickers")
+                        field.isAccessible = true
+                        @Suppress("UNCHECKED_CAST")
+                        val stickersList = field.get(view) as? MutableList<Sticker>
+                        
+                        // Matrix đã được copy trong cloneSticker, nhưng đảm bảo nó được set đúng
+                        // (cloneSticker đã copy matrix rồi)
+                        
+                        stickersList?.add(clonedSticker)
+                        
+                        // Set handling sticker nếu đây là sticker đầu tiên
+                        if (stickersList?.size == 1) {
+                            val handlingField = view.javaClass.superclass.getDeclaredField("handlingSticker")
+                            handlingField.isAccessible = true
+                            handlingField.set(view, clonedSticker)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        // Fallback: dùng addSticker nếu reflection fail
+                        view.addSticker(clonedSticker)
+                        // Restore matrix sau khi add (vì addSticker sẽ set position mặc định)
+                        clonedSticker.matrix.set(originalSticker.matrix)
+                    }
+                }
+            }
+            
+            // Restore callbacks
+            view.setOnStickerOperationListener(originalListener)
+            view.invalidate()
+        }
+    }
+
+    /**
+     * Clone một Sticker (tạo instance mới với cùng properties)
+     */
+    private fun cloneSticker(sticker: Sticker): Sticker? {
+        return try {
+            // Tạo sticker mới dựa trên type
+            when (sticker) {
+                is com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker -> {
+                    val props = sticker.getAddTextProperties() ?: return null
+                    val newSticker = com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker(
+                        stickerView?.context ?: return null,
+                        props
+                    )
+                    // Copy matrix
+                    newSticker.matrix.set(sticker.matrix)
+                    // Copy flip state
+                    if (sticker.isFlippedHorizontally) newSticker.setFlippedHorizontally(true)
+                    if (sticker.isFlippedVertically) newSticker.setFlippedVertically(true)
+                    // Copy alpha
+                    newSticker.setAlpha(sticker.alpha)
+                    newSticker
+                }
+                is com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker -> {
+                    // Clone DrawableSticker
+                    val drawable = sticker.drawable
+                    if (drawable != null) {
+                        val newSticker = com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker(drawable)
+                        // Copy matrix
+                        newSticker.matrix.set(sticker.matrix)
+                        // Copy flip state
+                        if (sticker.isFlippedHorizontally) newSticker.setFlippedHorizontally(true)
+                        if (sticker.isFlippedVertically) newSticker.setFlippedVertically(true)
+                        // Copy alpha
+                        newSticker.setAlpha(sticker.alpha)
+                        newSticker
+                    } else {
+                        null
+                    }
+                }
+                is com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker -> {
+                    // Clone FreeStyleSticker
+                    val drawable = sticker.drawable
+                    val id = sticker.id
+                    val photo = try {
+                        val photoField = sticker.javaClass.getDeclaredField("photo")
+                        photoField.isAccessible = true
+                        photoField.get(sticker) as? com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.Photo
+                    } catch (e: Exception) {
+                        null
+                    }
+                    if (drawable != null) {
+                        val newSticker = com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker(id, photo, drawable)
+                        // Copy matrix
+                        newSticker.matrix.set(sticker.matrix)
+                        // Copy flip state
+                        if (sticker.isFlippedHorizontally) newSticker.setFlippedHorizontally(true)
+                        if (sticker.isFlippedVertically) newSticker.setFlippedVertically(true)
+                        // Copy alpha
+                        newSticker.setAlpha(sticker.alpha)
+                        newSticker
+                    } else {
+                        null
+                    }
+                }
+                else -> null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     fun load(count: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             getConfigTextSticker()
@@ -83,15 +268,17 @@ class CollageViewModel(
                     val filtered = all.filter { it.cells.size == count }
                     val options = filtered.ifEmpty { all }
                     _templates.value = options
-                    _selected.value = options.firstOrNull()
-                    
+
                     // Update state với template đầu tiên (chỉ update, không save vào undo stack)
                     options.firstOrNull()?.let { template ->
-                        val stateWithTemplate = _collageState.value.copy(templateId = template.id)
+                        val stateWithTemplate = _collageState.value.copy(templateId = template)
                         _collageState.value = stateWithTemplate
-                        // Lưu initial state (để có thể undo về ban đầu khi confirm lần đầu)
-                        if (initialState == null) {
+                        // Lưu initial state và push vào undo stack (chỉ một lần)
+                        if (initialState == null && undoStack.isEmpty()) {
                             initialState = stateWithTemplate.copy()
+                            // Push initial state vào undo stack (chỉ push một lần)
+                            undoStack.push(stateWithTemplate.copy())
+                            redoStack.push(stateWithTemplate.copy())
                         }
                     }
                 }
@@ -102,8 +289,7 @@ class CollageViewModel(
 
     fun selectTemplate(template: CollageTemplate) {
         viewModelScope.launch(Dispatchers.IO) {
-            _selected.value = template
-            _collageState.value = _collageState.value.copy(templateId = template.id)
+            _collageState.value = _collageState.value.copy(templateId = template)
         }
     }
 
@@ -135,7 +321,7 @@ class CollageViewModel(
     fun cancelRatioChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             // Khôi phục ratio về state đã lưu cuối cùng
-            val lastSavedState = undoRedoManager.getLastState()
+            val lastSavedState = undoStack.lastOrNull()
             val ratioToRestore = lastSavedState?.ratio ?: initialState?.ratio
             tempRatio = null
             _collageState.value = _collageState.value.copy(ratio = ratioToRestore)
@@ -152,139 +338,13 @@ class CollageViewModel(
             )
         }
     }
-
-    fun confirmRatioChanges() {
+    fun confirmChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             val currentState = _collageState.value
-            val lastSavedState = undoRedoManager.getLastState()
-            
-            // Tạo state mới với ratio đã chọn
-            val newState = currentState.copy(
-                ratio = currentState.ratio
-            )
-            
-            // Merge với lastSavedState để giữ nguyên các giá trị không thay đổi
-            val stateToSave = lastSavedState?.let { last ->
-                newState.copy(
-                    // Giữ các giá trị khác từ last saved state
-                    templateId = last.templateId,
-                    topMargin = last.topMargin,
-                    columnMargin = last.columnMargin,
-                    cornerRadius = last.cornerRadius,
-                    backgroundSelection = last.backgroundSelection,
-                    frameSelection = last.frameSelection,
-                    texts = last.texts,
-                    stickers = last.stickers,
-                    filter = last.filter,
-                    blur = last.blur,
-                    brightness = last.brightness,
-                    contrast = last.contrast,
-                    saturation = last.saturation
-                )
-            } ?: newState
-            
-            // Nếu đây là lần đầu confirm (redo stack rỗng) và có initial state, lưu initial state trước
-            if (!undoRedoManager.canUndo() && initialState != null) {
-                val initial = initialState!!
-                // Kiểm tra xem có thay đổi so với initial state không
-                val hasChanges = initial.ratio != stateToSave.ratio
-                
-                if (hasChanges) {
-                    // Lưu initial state vào redo stack trước (để có thể undo về ban đầu)
-                    undoRedoManager.saveState(initial.copy())
-                }
-            }
-            
-            // Lưu state vào redo stack
-            undoRedoManager.saveState(stateToSave)
-            _collageState.value = stateToSave
-            tempRatio = null // Clear temp ratio sau khi confirm
-            updateUndoRedoState()
-        }
-    }
+            val stateToSave = currentState.copy()
 
-    fun confirmGridsChanges(tab: GridsTab) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val currentState = _collageState.value
-            val lastSavedState = undoRedoManager.getLastState()
-            
-            // Tạo state mới chỉ với thay đổi tương ứng với tab
-            val newState = when (tab) {
-                GridsTab.LAYOUT -> {
-                    // Chỉ lưu layout (templateId), giữ nguyên margin values từ currentState
-                    currentState.copy(
-                        templateId = _selected.value?.id ?: currentState.templateId
-                    )
-                }
-                GridsTab.MARGIN -> {
-                    // Chỉ lưu margin values, giữ nguyên templateId từ currentState
-                    currentState.copy(
-                        topMargin = currentState.topMargin,
-                        columnMargin = currentState.columnMargin,
-                        cornerRadius = currentState.cornerRadius
-                    )
-                }
-            }
-            
-            // Merge với lastSavedState để giữ nguyên các giá trị không thay đổi
-            val stateToSave = lastSavedState?.let { last ->
-                when (tab) {
-                    GridsTab.LAYOUT -> newState.copy(
-                        // Giữ margin từ last saved state
-                        topMargin = last.topMargin,
-                        columnMargin = last.columnMargin,
-                        cornerRadius = last.cornerRadius,
-                        // Giữ ratio và các giá trị khác
-                        ratio = last.ratio,
-                        backgroundSelection = last.backgroundSelection,
-                        frameSelection = last.frameSelection,
-                        texts = last.texts,
-                        stickers = last.stickers,
-                        filter = last.filter,
-                        blur = last.blur,
-                        brightness = last.brightness,
-                        contrast = last.contrast,
-                        saturation = last.saturation
-                    )
-                    GridsTab.MARGIN -> newState.copy(
-                        // Giữ templateId từ last saved state
-                        templateId = last.templateId,
-                        // Giữ ratio và các giá trị khác
-                        ratio = last.ratio,
-                        backgroundSelection = last.backgroundSelection,
-                        frameSelection = last.frameSelection,
-                        texts = last.texts,
-                        stickers = last.stickers,
-                        filter = last.filter,
-                        blur = last.blur,
-                        brightness = last.brightness,
-                        contrast = last.contrast,
-                        saturation = last.saturation
-                    )
-                }
-            } ?: newState
-            
-            // Nếu đây là lần đầu confirm (redo stack rỗng) và có initial state, lưu initial state trước
-            if (!undoRedoManager.canUndo() && initialState != null) {
-                val initial = initialState!!
-                // Kiểm tra xem có thay đổi so với initial state không
-                val hasChanges = when (tab) {
-                    GridsTab.LAYOUT -> initial.templateId != stateToSave.templateId
-                    GridsTab.MARGIN -> initial.topMargin != stateToSave.topMargin ||
-                            initial.columnMargin != stateToSave.columnMargin ||
-                            initial.cornerRadius != stateToSave.cornerRadius
-                }
-                
-                if (hasChanges) {
-                    // Lưu initial state vào redo stack trước (để có thể undo về ban đầu)
-                    undoRedoManager.saveState(initial.copy())
-                }
-            }
-            
-            // Lưu state vào redo stack
-            undoRedoManager.saveState(stateToSave)
-            _collageState.value = stateToSave
-            updateUndoRedoState()
+            push(stateToSave)
+            tempRatio = null
         }
     }
 
@@ -308,7 +368,7 @@ class CollageViewModel(
     fun cancelBackgroundChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             // Khôi phục background về state đã lưu cuối cùng
-            val lastSavedState = undoRedoManager.getLastState()
+            val lastSavedState = undoStack.lastOrNull()
             val backgroundSelectionToRestore = lastSavedState?.backgroundSelection ?: initialState?.backgroundSelection
             tempBackgroundSelection = null
             _collageState.value = _collageState.value.copy(
@@ -317,94 +377,50 @@ class CollageViewModel(
         }
     }
 
-    fun confirmBackgroundChanges() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val currentState = _collageState.value
-            val lastSavedState = undoRedoManager.getLastState()
-            
-            // Tạo state mới với background đã chọn
-            val newState = currentState.copy(
-                backgroundSelection = currentState.backgroundSelection
-            )
-            
-            // Merge với lastSavedState để giữ nguyên các giá trị không thay đổi
-            val stateToSave = lastSavedState?.let { last ->
-                newState.copy(
-                    // Giữ các giá trị khác từ last saved state
-                    templateId = last.templateId,
-                    topMargin = last.topMargin,
-                    columnMargin = last.columnMargin,
-                    cornerRadius = last.cornerRadius,
-                    ratio = last.ratio,
-                    // Lưu backgroundSelection từ currentState (đã chọn mới), không phải từ last
-                    backgroundSelection = currentState.backgroundSelection,
-                    frameSelection = last.frameSelection,
-                    texts = last.texts,
-                    stickers = last.stickers,
-                    filter = last.filter,
-                    blur = last.blur,
-                    brightness = last.brightness,
-                    contrast = last.contrast,
-                    saturation = last.saturation
-                )
-            } ?: newState
-            
-            // Nếu đây là lần đầu confirm (redo stack rỗng) và có initial state, lưu initial state trước
-            if (!undoRedoManager.canUndo() && initialState != null) {
-                val initial = initialState!!
-                // Kiểm tra xem có thay đổi so với initial state không
-                val hasChanges = initial.backgroundSelection != stateToSave.backgroundSelection
-                
-                if (hasChanges) {
-                    // Lưu initial state vào redo stack trước (để có thể undo về ban đầu)
-                    undoRedoManager.saveState(initial.copy())
-                }
-            }
-            
-            // Lưu state vào redo stack
-            undoRedoManager.saveState(stateToSave)
-            _collageState.value = stateToSave
-            tempBackgroundSelection = null // Clear temp background sau khi confirm
-            updateUndoRedoState()
+    private fun push(state: CollageState) {
+        // Luôn push state vào undo stack khi confirm
+        // Chỉ skip duplicate nếu đã có nhiều hơn 1 state (tránh skip lần confirm đầu tiên)
+        val lastState = undoStack.lastOrNull()
+        if (lastState != null && lastState == state && undoStack.size > 1) {
+            // Chỉ skip duplicate nếu không phải lần confirm đầu tiên
+            return
         }
+        
+        undoStack.push(state.copy())
+        _collageState.value = state
+        _canUndo.value = undoStack.size >= 2
+        _canRedo.value = false
+        redoStack.clear()
     }
 
     fun undo() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val previousState = undoRedoManager.undo()
-            previousState?.let { state ->
-                _collageState.value = state
-                // Update selected template nếu có
-                state.templateId?.let { templateId ->
-                    _templates.value.find { it.id == templateId }?.let { template ->
-                        _selected.value = template
-                    }
-                }
-                updateUndoRedoState()
-            }
-        }
+        if (undoStack.size < 2) return // không thể undo
+
+        val current = undoStack.pop()            // Lấy state hiện tại
+        redoStack.push(current.copy())           // Đẩy vào redo stack
+
+        val previous = undoStack.peek()          // Lấy state trước đó (sau khi pop)
+
+        _collageState.value = previous.copy()
+        // Restore stickers
+        //restoreStickers(previous.stickerList)
+
+        _canUndo.value = undoStack.size > 1
+        _canRedo.value = true
     }
 
     fun redo() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val nextState = undoRedoManager.redo()
-            nextState?.let { state ->
-                _collageState.value = state
-                // Update selected template nếu có
-                state.templateId?.let { templateId ->
-                    _templates.value.find { it.id == templateId }?.let { template ->
-                        _selected.value = template
-                    }
-                }
-                updateUndoRedoState()
-            }
-        }
-    }
+        if (redoStack.isEmpty()) return
 
+        val state = redoStack.pop()              // Lấy lại từ redo
+        undoStack.push(state.copy())             // Push lại vào undo stack
 
-    private fun updateUndoRedoState() {
-        _canUndo.value = undoRedoManager.canUndo()
-        _canRedo.value = undoRedoManager.canRedo()
+        _collageState.value = state.copy()
+        // Restore stickers
+        //restoreStickers(state.stickerList)
+
+        _canUndo.value = undoStack.size > 1
+        _canRedo.value = redoStack.isNotEmpty()
     }
 
     // Helper để update state từ các tools khác (mở rộng sau)
@@ -420,7 +436,7 @@ class CollageViewModel(
     fun cancelFrameChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             // Khôi phục frame về state đã lưu cuối cùng
-            val lastSavedState = undoRedoManager.getLastState()
+            val lastSavedState = undoStack.lastOrNull()
             val frameSelectionToRestore = lastSavedState?.frameSelection ?: initialState?.frameSelection
             tempFrameSelection = null
             _collageState.value = _collageState.value.copy(
@@ -429,113 +445,6 @@ class CollageViewModel(
         }
     }
 
-    fun confirmFrameChanges() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val currentState = _collageState.value
-            val lastSavedState = undoRedoManager.getLastState()
-            
-            // Tạo state mới với frame đã chọn
-            val newState = currentState.copy(
-                frameSelection = currentState.frameSelection
-            )
-            
-            // Merge với lastSavedState để giữ nguyên các giá trị không thay đổi
-            val stateToSave = lastSavedState?.let { last ->
-                newState.copy(
-                    // Giữ các giá trị khác từ last saved state
-                    templateId = last.templateId,
-                    topMargin = last.topMargin,
-                    columnMargin = last.columnMargin,
-                    cornerRadius = last.cornerRadius,
-                    ratio = last.ratio,
-                    backgroundSelection = last.backgroundSelection,
-                    // Lưu frameSelection từ currentState (đã chọn mới), không phải từ last
-                    frameSelection = currentState.frameSelection,
-                    texts = last.texts,
-                    stickers = last.stickers,
-                    filter = last.filter,
-                    blur = last.blur,
-                    brightness = last.brightness,
-                    contrast = last.contrast,
-                    saturation = last.saturation
-                )
-            } ?: newState
-            
-            // Nếu đây là lần đầu confirm (redo stack rỗng) và có initial state, lưu initial state trước
-            if (!undoRedoManager.canUndo() && initialState != null) {
-                val initial = initialState!!
-                // Kiểm tra xem có thay đổi so với initial state không
-                val hasChanges = initial.frameSelection != stateToSave.frameSelection
-                
-                if (hasChanges) {
-                    // Lưu initial state vào redo stack trước (để có thể undo về ban đầu)
-                    undoRedoManager.saveState(initial.copy())
-                }
-            }
-            
-            // Lưu state vào redo stack
-            undoRedoManager.saveState(stateToSave)
-            _collageState.value = stateToSave
-            tempFrameSelection = null // Clear temp frame sau khi confirm
-            updateUndoRedoState()
-        }
-    }
-
-    fun updateStickerBitmapPath(path: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val currentState = _collageState.value
-            val lastSavedState = undoRedoManager.getLastState()
-
-            val newState = currentState.copy(
-                stickerBitmapPath = path
-            )
-
-            val stateToSave = lastSavedState?.let { last ->
-                newState.copy(
-                    templateId = last.templateId,
-                    topMargin = last.topMargin,
-                    columnMargin = last.columnMargin,
-                    cornerRadius = last.cornerRadius,
-                    ratio = last.ratio,
-                    backgroundSelection = last.backgroundSelection,
-                    frameSelection = last.frameSelection,
-                    texts = last.texts,
-                    stickers = last.stickers,
-                    stickerBitmapPath = path,
-                    imageTransforms = last.imageTransforms,
-                    filter = last.filter,
-                    blur = last.blur,
-                    brightness = last.brightness,
-                    contrast = last.contrast,
-                    saturation = last.saturation,
-                    textState = last.textState
-                )
-            } ?: newState
-
-            val hasChanges = lastSavedState?.let { last ->
-                last.stickerBitmapPath != stateToSave.stickerBitmapPath
-            } ?: true
-
-            if (!hasChanges) {
-                _collageState.value = stateToSave
-                return@launch
-            }
-
-            if (!hasInitialStateBeenSaved && initialState != null) {
-                val initial = initialState!!
-                val hasInitialChanges = initial.stickerBitmapPath != stateToSave.stickerBitmapPath
-
-                if (hasInitialChanges) {
-                    undoRedoManager.saveState(initial.copy())
-                    hasInitialStateBeenSaved = true
-                }
-            }
-
-            undoRedoManager.saveState(stateToSave)
-            _collageState.value = stateToSave
-            updateUndoRedoState()
-        }
-    }
 
     // Image Transform methods
     fun updateImageTransforms(transforms: Map<Int, com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState>) {
@@ -550,36 +459,200 @@ class CollageViewModel(
     fun confirmImageTransformChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             val currentState = _collageState.value
-            val lastSavedState = undoRedoManager.getLastState()
-
-            val newState = currentState.copy(
-                imageTransforms = currentState.imageTransforms
-            )
-
-            val stateToSave = lastSavedState?.let { last ->
-                newState.copy(
-                    templateId = last.templateId,
-                    topMargin = last.topMargin,
-                    columnMargin = last.columnMargin,
-                    cornerRadius = last.cornerRadius,
-                    ratio = last.ratio,
-                    backgroundSelection = last.backgroundSelection,
-                    frameSelection = last.frameSelection,
-                    texts = last.texts,
-                    stickers = last.stickers,
-                    stickerBitmapPath = last.stickerBitmapPath,
-                    imageTransforms = currentState.imageTransforms,
-                    filter = last.filter,
-                    blur = last.blur,
-                    brightness = last.brightness,
-                    contrast = last.contrast,
-                    saturation = last.saturation,
-                    textState = last.textState
-                )
-            } ?: newState
-
-             _collageState.value = stateToSave
             tempImageTransforms = null // Clear temp transforms sau khi confirm
+        }
+    }
+
+    // Image URIs management - tất cả đều push vào collageState
+    // Load bitmap ban đầu vào state khi set URIs
+    fun setImageUris(context: Context, uris: List<Uri>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val newBitmaps = mutableMapOf<Int, Bitmap>()
+            uris.forEachIndexed { index, uri ->
+                uriToBitmap(context, uri)?.let { bitmap ->
+                    newBitmaps[index] = bitmap
+                }
+            }
+            _collageState.update { 
+                it.copy(
+                    imageUris = uris,
+                    imageBitmaps = newBitmaps
+                )
+            }
+        }
+    }
+
+    fun addImageUri(context: Context, uri: Uri) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            val newIndex = currentState.imageUris.size
+            val newBitmaps = currentState.imageBitmaps.toMutableMap()
+            uriToBitmap(context, uri)?.let { bitmap ->
+                newBitmaps[newIndex] = bitmap
+            }
+            _collageState.update { 
+                it.copy(
+                    imageUris = it.imageUris + uri,
+                    imageBitmaps = newBitmaps
+                )
+            }
+        }
+    }
+
+    // Image transformation methods - sử dụng CropController như CropActivity
+    // Lưu bitmap trực tiếp vào state thay vì chỉ lưu path
+    fun rotateImage(context: Context, index: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            // Lấy bitmap từ state hoặc load từ URI
+            val bitmap = currentState.imageBitmaps[index] 
+                ?: (if (index < currentState.imageUris.size) {
+                    uriToBitmap(context, currentState.imageUris[index])
+                } else null)
+            
+            bitmap?.let {
+                // Tạo CropController với bitmap hiện tại
+                val cropController = CropController(
+                    bitmap = it,
+                    cropOptions = CropDefaults.cropOptions(
+                        cropShape = CropShape.FreeForm,
+                        gridLinesVisibility = GridLinesVisibility.NEVER,
+                        touchPadding = 0.dp,
+                        initialPadding = 0.dp,
+                        zoomScale = null,
+                        rotationZBitmap = null
+                    ),
+                    cropColors = CropColors(
+                        overlay = Color.Transparent,
+                        overlayActive = Color.Transparent,
+                        gridlines = Color.Transparent,
+                        cropRectangle = Color.Transparent,
+                        handle = Color.Transparent
+                    )
+                )
+                
+                // Sử dụng rotateClockwise từ CropController
+                cropController.rotateClockwise { newBitmap ->
+                    // Lưu bitmap trực tiếp vào state
+                    _collageState.update { state ->
+                        val newBitmaps = state.imageBitmaps.toMutableMap()
+                        newBitmaps[index] = newBitmap
+                        state.copy(imageBitmaps = newBitmaps)
+                    }
+                }
+            }
+        }
+    }
+
+    fun flipImageHorizontal(context: Context, index: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            // Lấy bitmap từ state hoặc load từ URI
+            val bitmap = currentState.imageBitmaps[index] 
+                ?: (if (index < currentState.imageUris.size) {
+                    uriToBitmap(context, currentState.imageUris[index])
+                } else null)
+            
+            bitmap?.let {
+                // Tạo CropController với bitmap hiện tại
+                val cropController = CropController(
+                    bitmap = it,
+                    cropOptions = CropDefaults.cropOptions(
+                        cropShape = CropShape.FreeForm,
+                        gridLinesVisibility = GridLinesVisibility.NEVER,
+                        touchPadding = 0.dp,
+                        initialPadding = 0.dp,
+                        zoomScale = null,
+                        rotationZBitmap = null
+                    ),
+                    cropColors = CropColors(
+                        overlay = Color.Transparent,
+                        overlayActive = Color.Transparent,
+                        gridlines = Color.Transparent,
+                        cropRectangle = Color.Transparent,
+                        handle = Color.Transparent
+                    )
+                )
+                
+                // Sử dụng flipHorizontally từ CropController
+                cropController.flipHorizontally { newBitmap ->
+                    // Lưu bitmap trực tiếp vào state
+                    _collageState.update { state ->
+                        val newBitmaps = state.imageBitmaps.toMutableMap()
+                        newBitmaps[index] = newBitmap
+                        state.copy(imageBitmaps = newBitmaps)
+                    }
+                }
+            }
+        }
+    }
+
+    fun flipImageVertical(context: Context, index: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            // Lấy bitmap từ state hoặc load từ URI
+            val bitmap = currentState.imageBitmaps[index] 
+                ?: (if (index < currentState.imageUris.size) {
+                    uriToBitmap(context, currentState.imageUris[index])
+                } else null)
+            
+            bitmap?.let {
+                // Tạo CropController với bitmap hiện tại
+                val cropController = CropController(
+                    bitmap = it,
+                    cropOptions = CropDefaults.cropOptions(
+                        cropShape = CropShape.FreeForm,
+                        gridLinesVisibility = GridLinesVisibility.NEVER,
+                        touchPadding = 0.dp,
+                        initialPadding = 0.dp,
+                        zoomScale = null,
+                        rotationZBitmap = null
+                    ),
+                    cropColors = CropColors(
+                        overlay = Color.Transparent,
+                        overlayActive = Color.Transparent,
+                        gridlines = Color.Transparent,
+                        cropRectangle = Color.Transparent,
+                        handle = Color.Transparent
+                    )
+                )
+                
+                // Sử dụng flipVertically từ CropController
+                cropController.flipVertically { newBitmap ->
+                    // Lưu bitmap trực tiếp vào state
+                    _collageState.update { state ->
+                        val newBitmaps = state.imageBitmaps.toMutableMap()
+                        newBitmaps[index] = newBitmap
+                        state.copy(imageBitmaps = newBitmaps)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
+        return withContext(Dispatchers.IO) {
+            try {
+                // Nếu URI là file path (file://), dùng BitmapFactory.decodeFile
+                val uriString = uri.toString()
+                if (uriString.startsWith("file://")) {
+                    val filePath = uriString.removePrefix("file://")
+                    return@withContext android.graphics.BitmapFactory.decodeFile(filePath)
+                }
+                
+                // Nếu URI là content:// hoặc http://, dùng contentResolver
+                if (android.os.Build.VERSION.SDK_INT < 28) {
+                    android.provider.MediaStore.Images.Media.getBitmap(
+                        context.contentResolver, uri
+                    )
+                } else {
+                    val source = android.graphics.ImageDecoder.createSource(context.contentResolver, uri)
+                    android.graphics.ImageDecoder.decodeBitmap(source)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CellSpec
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
@@ -27,7 +28,8 @@ data class ProcessedCellData(
     val pathAlignParentRight: Boolean? = null,  // Path align parent right
     val cornerMethod: String? = null, // Corner method identifier
     val shrinkMethod: String? = null, // Shrink method identifier
-    val imageUri: Uri
+    val imageUri: Uri,
+    val imageBitmap: Bitmap? = null  // Bitmap nếu có (ưu tiên dùng bitmap thay vì URI)
 )
 
 /**
@@ -50,6 +52,7 @@ object CollagePreviewDataProcessor {
     fun processTemplate(
         template: CollageTemplate,
         images: List<Uri>,
+        imageBitmaps: Map<Int, Bitmap> = emptyMap(),
         canvasWidth: Float,
         canvasHeight: Float
     ): List<ProcessedCellData> {
@@ -57,6 +60,7 @@ object CollagePreviewDataProcessor {
             processCell(
                 cell = cell,
                 imageUri = images.getOrNull(index % images.size) ?: Uri.EMPTY,
+                imageBitmap = imageBitmaps[index],
                 canvasWidth = canvasWidth,
                 canvasHeight = canvasHeight
             )
@@ -69,6 +73,7 @@ object CollagePreviewDataProcessor {
     private fun processCell(
         cell: CellSpec,
         imageUri: Uri,
+        imageBitmap: Bitmap? = null,
         canvasWidth: Float,
         canvasHeight: Float
     ): ProcessedCellData {
@@ -138,7 +143,7 @@ object CollagePreviewDataProcessor {
                 cell.clearPathInCenterHorizontal, cell.clearPathInCenterVertical,
                 cell.fitBound, cell.pathAlignParentRight,
                 cornerMethod, shrinkMethod,
-                imageUri
+                imageUri, imageBitmap
             )
         } else {
             // Không có bound: tính từ points (absolute coordinates 0..1)
