@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.LaunchedEffect
@@ -257,6 +259,16 @@ fun CollageScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+                // Detect click ra ngoài CollagePreview để unselect
+                .pointerInput(selectedImageIndex) {
+                    detectTapGestures {
+                        // Unselect khi click ra ngoài CollagePreview (vùng ngoài BoxWithConstraints)
+                        if (selectedImageIndex != null) {
+                            selectedImageIndex = null
+                            vm.triggerUnselectAllImages()
+                        }
+                    }
+                }
         ) {
             BoxWithConstraints(
                 modifier = Modifier
@@ -271,6 +283,16 @@ fun CollageScreen(
                     )
                     .background(BackgroundWhite)
                     .capturable(captureController)
+                    // Detect click ra ngoài CollagePreview (trong BoxWithConstraints nhưng ngoài CollagePreview)
+                    .pointerInput(selectedImageIndex) {
+                        detectTapGestures {
+                            // Unselect khi click ra ngoài CollagePreview
+                            if (selectedImageIndex != null) {
+                                selectedImageIndex = null
+                                vm.triggerUnselectAllImages()
+                            }
+                        }
+                    }
 
             ) {
                 val templateToUse = template ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
@@ -334,7 +356,12 @@ fun CollageScreen(
                             vm.updateImageTransforms(transforms)
                             vm.confirmImageTransformChanges()
                         },
-                        unselectAllTrigger = unselectAllImagesTrigger
+                        unselectAllTrigger = unselectAllImagesTrigger,
+                        onOutsideClick = {
+                            // Unselect image khi click ra ngoài
+                            selectedImageIndex = null
+                            vm.triggerUnselectAllImages()
+                        }
                     )
                     collageState.frameSelection?.takeIf { it is FrameSelection.Frame }?.let { frame ->
                         val data = frame as FrameSelection.Frame

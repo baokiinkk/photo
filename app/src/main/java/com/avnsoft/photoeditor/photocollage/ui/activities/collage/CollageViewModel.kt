@@ -2,28 +2,23 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.collage
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageState
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.data.repository.CollageTemplateRepository
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.GridsTab
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.FontAsset
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
-import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.basesource.base.result.Result
+import com.tanishranjan.cropkit.CropColors
 import com.tanishranjan.cropkit.CropController
 import com.tanishranjan.cropkit.CropDefaults
-import com.tanishranjan.cropkit.CropOptions
 import com.tanishranjan.cropkit.CropShape
-import com.tanishranjan.cropkit.CropColors
 import com.tanishranjan.cropkit.GridLinesVisibility
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +28,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
-import androidx.core.net.toUri
 import java.util.Stack
 
 @KoinViewModel

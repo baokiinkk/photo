@@ -182,6 +182,7 @@ fun CollagePreview(
     onImageClick: ((Int, Uri) -> Unit)? = null,
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)? = null,
     unselectAllTrigger: Int = 0,
+    onOutsideClick: (() -> Unit)? = null,  // Callback khi click ra ngoài
     modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -283,6 +284,33 @@ fun CollagePreview(
                     width = with(density) { effectiveCanvasWidth.toDp() },
                     height = with(density) { effectiveCanvasHeight.toDp() }
                 )
+                // Detect click ra ngoài các image cells
+                .pointerInput(processedCells.size) {
+                    detectTapGestures { tapOffset ->
+                        // Kiểm tra xem tap có nằm trong bounds của bất kỳ cell nào không
+                        val tapX = tapOffset.x
+                        val tapY = tapOffset.y
+                        
+                        var isInsideAnyCell = false
+                        processedCells.forEachIndexed { index, cellData ->
+                            val cellLeft = cellData.left
+                            val cellTop = cellData.top
+                            val cellRight = cellData.left + cellData.width
+                            val cellBottom = cellData.top + cellData.height
+                            
+                            if (tapX >= cellLeft && tapX <= cellRight &&
+                                tapY >= cellTop && tapY <= cellBottom) {
+                                isInsideAnyCell = true
+                                return@forEachIndexed
+                            }
+                        }
+                        
+                        // Nếu click ra ngoài tất cả cells, unselect
+                        if (!isInsideAnyCell) {
+                            onOutsideClick?.invoke()
+                        }
+                    }
+                }
         ) {
             CollageContent(
                 processedCells = processedCells,
@@ -434,7 +462,6 @@ private fun CollageImageCell(
                         transformOrigin = TransformOrigin.Center
                         clip = true
                     },
-                contentScale = ContentScale.Crop
             )
         } else {
             AsyncImage(
