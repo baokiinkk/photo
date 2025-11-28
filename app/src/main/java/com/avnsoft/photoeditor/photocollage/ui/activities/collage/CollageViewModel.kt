@@ -37,12 +37,10 @@ class CollageViewModel(
     private var initialState: CollageState? = null
 
     private val _templates = MutableStateFlow(emptyList<CollageTemplate>())
-    val templates: StateFlow<List<CollageTemplate>> = _templates.asStateFlow()
+    val templates = _templates.asStateFlow()
 
-    private val _collageState = MutableStateFlow(
-        CollageState(topMargin = 0f, columnMargin = 0f, cornerRadius = 0f)
-    )
-    val collageState: StateFlow<CollageState> = _collageState.asStateFlow()
+    private val _state = MutableStateFlow(CollageState())
+    val collageState = _state.asStateFlow()
 
     private val _canUndo = MutableStateFlow(false)
     val canUndo = _canUndo.asStateFlow()
@@ -50,17 +48,17 @@ class CollageViewModel(
     private val _canRedo = MutableStateFlow(false)
     val canRedo = _canRedo.asStateFlow()
 
-    private val _unselectAllImagesTrigger = MutableStateFlow(0)
-    val unselectAllImagesTrigger = _unselectAllImagesTrigger.asStateFlow()
+    private val _unselectTrigger = MutableStateFlow(0)
+    val unselectAllImagesTrigger = _unselectTrigger.asStateFlow()
 
     var stickerView: FreeStyleStickerView? = null
-        set(value) {
-            field = value
-            value ?: return
-            val stickers = extractStickers(value)
-            val state = _collageState.value.copy(stickerList = stickers)
-            _collageState.value = state
-            if (initialState == null) initialState = state.copy()
+        set(v) {
+            field = v
+            v ?: return
+            val stickers = extractStickers(v)
+            val newState = _state.value.copy(stickerList = stickers)
+            _state.value = newState
+            if (initialState == null) initialState = newState.copy()
         }
 
     private var tempRatio: String? = null
@@ -69,12 +67,8 @@ class CollageViewModel(
     private var tempTransforms: Map<Int, ImageTransformState>? = null
 
     fun triggerUnselectAllImages() {
-        _unselectAllImagesTrigger.update { it + 1 }
+        _unselectTrigger.update { it + 1 }
     }
-
-    // ---------------------------
-    // Sticker Handling
-    // ---------------------------
 
     private fun extractStickers(view: FreeStyleStickerView): List<Sticker> {
         return try {
@@ -90,13 +84,9 @@ class CollageViewModel(
     fun confirmStickerChanges() {
         viewModelScope.launch {
             val stickers = stickerView?.let { extractStickers(it) } ?: emptyList()
-            push(_collageState.value.copy(stickerList = stickers))
+            push(_state.value.copy(stickerList = stickers))
         }
     }
-
-    // ---------------------------
-    // Template & State Loading
-    // ---------------------------
 
     fun load(count: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -111,22 +101,20 @@ class CollageViewModel(
                     _templates.value = list
                     val first = list.firstOrNull() ?: return@launch
 
-                    _collageState.value = _collageState.value.copy(templateId = first)
+                    updateState { it.copy(templateId = first) }
 
                     if (initialState == null) {
-                        initialState = _collageState.value.copy()
+                        initialState = _state.value.copy()
                         undoStack.push(initialState!!.copy())
-                        redoStack.push(initialState!!.copy())
+                        redoStack.clear()
+                        _canUndo.value = false
+                        _canRedo.value = false
                     }
                 }
                 else -> Unit
             }
         }
     }
-
-    // ---------------------------
-    // Simple Updates
-    // ---------------------------
 
     fun selectTemplate(t: CollageTemplate) = updateState { it.copy(templateId = t) }
     fun updateTopMargin(v: Float) = updateState { it.copy(topMargin = v) }
@@ -139,50 +127,48 @@ class CollageViewModel(
     }
 
     fun cancelRatioChanges() {
-        val restore = undoStack.lastOrNull()?.ratio ?: initialState?.ratio
+        val restored = undoStack.lastOrNull()?.ratio ?: initialState?.ratio
         tempRatio = null
-        updateState { it.copy(ratio = restore) }
+        updateState { it.copy(ratio = restored) }
     }
 
-    fun updateBackground(selection: BackgroundSelection) {
-        tempBackground = selection
-        updateState { it.copy(backgroundSelection = selection) }
+    fun updateBackground(bg: BackgroundSelection) {
+        tempBackground = bg
+        updateState { it.copy(backgroundSelection = bg) }
     }
 
     fun cancelBackgroundChanges() {
-        val restore = undoStack.lastOrNull()?.backgroundSelection ?: initialState?.backgroundSelection
+        val restored = undoStack.lastOrNull()?.backgroundSelection ?: initialState?.backgroundSelection
         tempBackground = null
-        updateState { it.copy(backgroundSelection = restore) }
+        updateState { it.copy(backgroundSelection = restored) }
     }
 
-    fun updateFrame(selection: FrameSelection) {
-        tempFrame = selection
-        updateState { it.copy(frameSelection = selection) }
+    fun updateFrame(frame: FrameSelection) {
+        tempFrame = frame
+        updateState { it.copy(frameSelection = frame) }
     }
 
     fun cancelFrameChanges() {
-        val restore = undoStack.lastOrNull()?.frameSelection ?: initialState?.frameSelection
+        val restored = undoStack.lastOrNull()?.frameSelection ?: initialState?.frameSelection
         tempFrame = null
-        updateState { it.copy(frameSelection = restore) }
-    }
-
-    // ---------------------------
-    // Undo / Redo
-    // ---------------------------
-
-    private fun push(s: CollageState) {
-        if (undoStack.lastOrNull() == s && undoStack.size > 1) return
-        undoStack.push(s.copy())
-        redoStack.clear()
-
-        _collageState.value = s
-        _canUndo.value = undoStack.size > 1
-        _canRedo.value = false
+        updateState { it.copy(frameSelection = restored) }
     }
 
     fun confirmChanges() {
-        push(_collageState.value.copy())
+        val s = _state.value.copy()
+        push(s)
         tempRatio = null
+    }
+
+    private fun push(s: CollageState) {
+        if (undoStack.lastOrNull() == s && undoStack.size > 1) return
+
+        undoStack.push(s.copy())
+        redoStack.clear()
+
+        _state.value = s
+        _canUndo.value = undoStack.size > 1
+        _canRedo.value = false
     }
 
     fun undo() {
@@ -191,7 +177,7 @@ class CollageViewModel(
         redoStack.push(current.copy())
 
         val prev = undoStack.peek()
-        _collageState.value = prev.copy()
+        _state.value = prev.copy()
 
         _canUndo.value = undoStack.size > 1
         _canRedo.value = true
@@ -199,18 +185,14 @@ class CollageViewModel(
 
     fun redo() {
         if (redoStack.isEmpty()) return
-        val state = redoStack.pop()
-        undoStack.push(state.copy())
+        val next = redoStack.pop()
+        undoStack.push(next.copy())
 
-        _collageState.value = state.copy()
+        _state.value = next.copy()
 
         _canUndo.value = undoStack.size > 1
         _canRedo.value = redoStack.isNotEmpty()
     }
-
-    // ---------------------------
-    // Image Transform
-    // ---------------------------
 
     fun updateImageTransforms(m: Map<Int, ImageTransformState>) {
         tempTransforms = m
@@ -221,31 +203,25 @@ class CollageViewModel(
         tempTransforms = null
     }
 
-    // ---------------------------
-    // Image URI & Bitmap Management
-    // ---------------------------
-
     fun setImageUris(context: Context, uris: List<Uri>) {
         viewModelScope.launch(Dispatchers.IO) {
             val bitmaps = uris.mapIndexedNotNull { i, uri ->
                 uriToBitmap(context, uri)?.let { i to it }
             }.toMap()
 
-            updateState {
-                it.copy(imageUris = uris, imageBitmaps = bitmaps)
-            }
+            updateState { it.copy(imageUris = uris, imageBitmaps = bitmaps) }
         }
     }
 
     fun addImageUri(context: Context, uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
-            val bitmaps = collageState.value.imageBitmaps.toMutableMap()
-            uriToBitmap(context, uri)?.let { bitmaps[bitmaps.size] = it }
+            val maps = _state.value.imageBitmaps.toMutableMap()
+            uriToBitmap(context, uri)?.let { maps[maps.size] = it }
 
             updateState {
                 it.copy(
                     imageUris = it.imageUris + uri,
-                    imageBitmaps = bitmaps
+                    imageBitmaps = maps
                 )
             }
         }
@@ -253,46 +229,42 @@ class CollageViewModel(
 
     fun removeImageUri(index: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val state = collageState.value
-            val uris = state.imageUris.toMutableList()
-            if (uris.size <= 1 || index !in uris.indices) return@launch
+            val s = _state.value
+            if (s.imageUris.size <= 1 || index !in s.imageUris.indices) return@launch
 
-            uris.removeAt(index)
+            val newUris = s.imageUris.toMutableList().apply { removeAt(index) }
+            val newMaps = mutableMapOf<Int, Bitmap>()
 
-            val newBitmaps = mutableMapOf<Int, Bitmap>()
-            uris.forEachIndexed { i, _ ->
-                state.imageBitmaps[i]?.let { newBitmaps[i] = it }
+            newUris.forEachIndexed { i, _ ->
+                s.imageBitmaps[i]?.let { newMaps[i] = it }
             }
 
-            updateState { it.copy(imageUris = uris, imageBitmaps = newBitmaps) }
+            updateState { it.copy(imageUris = newUris, imageBitmaps = newMaps) }
         }
     }
 
-    // ---------------------------
-    // Image Tools (rotate, flip)
-    // ---------------------------
-
     fun rotateImage(context: Context, index: Int) =
-        applyCropTransform(context, index) { controller, cb -> controller.rotateClockwise(cb) }
+        applyTransform(context, index) { c, cb -> c.rotateClockwise(cb) }
 
     fun flipImageHorizontal(context: Context, index: Int) =
-        applyCropTransform(context, index) { controller, cb -> controller.flipHorizontally(cb) }
+        applyTransform(context, index) { c, cb -> c.flipHorizontally(cb) }
 
     fun flipImageVertical(context: Context, index: Int) =
-        applyCropTransform(context, index) { controller, cb -> controller.flipVertically(cb) }
+        applyTransform(context, index) { c, cb -> c.flipVertically(cb) }
 
-    private fun applyCropTransform(
+    private fun applyTransform(
         context: Context,
         index: Int,
         action: (CropController, (Bitmap) -> Unit) -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val bitmap = collageState.value.imageBitmaps[index]
-                ?: collageState.value.imageUris.getOrNull(index)?.let { uriToBitmap(context, it) }
+            val s = _state.value
+            val bmp = s.imageBitmaps[index]
+                ?: s.imageUris.getOrNull(index)?.let { uriToBitmap(context, it) }
                 ?: return@launch
 
             val controller = CropController(
-                bitmap,
+                bmp,
                 cropOptions = CropDefaults.cropOptions(CropShape.FreeForm),
                 cropColors = CropColors(
                     overlay = Color.Transparent,
@@ -303,27 +275,24 @@ class CollageViewModel(
                 )
             )
 
-            action(controller) { newBitmap ->
-                val maps = collageState.value.imageBitmaps.toMutableMap()
-                maps[index] = newBitmap
+            action(controller) { newBmp ->
+                val maps = s.imageBitmaps.toMutableMap()
+                maps[index] = newBmp
                 updateState { it.copy(imageBitmaps = maps) }
             }
         }
     }
 
-    // ---------------------------
-    // Helper
-    // ---------------------------
-
     private fun updateState(block: (CollageState) -> CollageState) {
-        _collageState.update(block)
+        _state.update(block)
     }
 
     private suspend fun uriToBitmap(ctx: Context, uri: Uri): Bitmap? =
         withContext(Dispatchers.IO) {
             try {
-                if (uri.toString().startsWith("file://"))
-                    BitmapFactory.decodeFile(uri.toString().removePrefix("file://"))
+                val s = uri.toString()
+                if (s.startsWith("file://"))
+                    BitmapFactory.decodeFile(s.removePrefix("file://"))
                 else if (android.os.Build.VERSION.SDK_INT < 28)
                     android.provider.MediaStore.Images.Media.getBitmap(ctx.contentResolver, uri)
                 else
