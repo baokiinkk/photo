@@ -55,7 +55,7 @@ fun DiscoverQuickEdits(onItemClick: (StaggeredItem) -> Unit) {
                 StaggeredItem(CollageTool.STICKER, LottieCompositionSpec.RawRes(R.raw.stickers)),
                 StaggeredItem(CollageTool.TEXT, LottieCompositionSpec.RawRes(R.raw.text)),
                 StaggeredItem(CollageTool.FRAME, LottieCompositionSpec.RawRes(R.raw.frame)),
-                StaggeredItem(CollageTool.DOODLE, LottieCompositionSpec.RawRes(R.raw.doodle))
+                StaggeredItem(CollageTool.DRAW, LottieCompositionSpec.RawRes(R.raw.doodle))
             )
         )
     }

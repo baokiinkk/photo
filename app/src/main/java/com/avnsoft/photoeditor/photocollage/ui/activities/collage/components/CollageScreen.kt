@@ -1,13 +1,12 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 
 import android.app.Activity.RESULT_OK
-import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -32,22 +31,24 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageState
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
@@ -58,17 +59,31 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleVie
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.StickerFooterTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.TextStickerFooterTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
+import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
+import com.avnsoft.photoeditor.photocollage.ui.dialog.DeleteImageDialog
+import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.basesource.base.ui.base.BaseActivity
-import com.basesource.base.utils.capturable
 import com.basesource.base.utils.launchActivity
-import com.basesource.base.utils.rememberCaptureController
+import dev.shreyaspatil.capturable.capturable
+import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+private const val MAX_PHOTOS = 10
+
+private fun aspectRatioFor(ratio: String?): Float? = when (ratio) {
+    "1:1" -> 1f
+    "4:5" -> 4f / 5f
+    "5:4" -> 5f / 4f
+    "3:4" -> 3f / 4f
+    "Original" -> null
+    else -> null
+}
 
 @OptIn(ExperimentalComposeApi::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -82,102 +97,101 @@ fun CollageScreen(
 ) {
     val context = LocalContext.current
 
-    // Observe state from ViewModel
     val templates by vm.templates.collectAsState()
     val collageState by vm.collageState.collectAsState()
     val canUndo by vm.canUndo.collectAsState()
     val canRedo by vm.canRedo.collectAsState()
     val unselectAllImagesTrigger by vm.unselectAllImagesTrigger.collectAsState()
+    val showDiscardDialog by vm.showDiscardDialog.collectAsState()
 
-    // Initialize imageUris nếu chưa có
+    // Intercept back press
+    BackHandler {
+        vm.showDiscardDialog()
+    }
+
     LaunchedEffect(uris, collageState.imageUris) {
         if (collageState.imageUris.isEmpty() && uris.isNotEmpty()) {
             vm.setImageUris(context, uris)
         }
     }
 
-    // State để lưu trữ danh sách uris (có thể thay đổi khi thêm ảnh) - dùng từ collageState
-    // Luôn ưu tiên dùng imageUris từ collageState, chỉ fallback về uris khi imageUris empty
-    val currentUris = if (collageState.imageUris.isNotEmpty()) collageState.imageUris else uris
-
-    // Giới hạn tối đa 10 ảnh
-    val MAX_PHOTOS = 10
+    val currentUris = collageState.imageUris.ifEmpty { uris }
     val canAddPhoto = currentUris.size < MAX_PHOTOS
 
-    // Track selected image index
     var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
+    var isSwapMode by remember { mutableStateOf(false) }
+    var replaceImageIndex by remember { mutableStateOf<Int?>(null) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var deleteImageIndex by remember { mutableStateOf<Int?>(null) }
 
-    // Launcher để chọn ảnh từ gallery (cho add photo)
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let { newUri ->
-            // Kiểm tra giới hạn trước khi thêm
             if (currentUris.size < MAX_PHOTOS) {
-                // Thêm ảnh mới vào danh sách
                 vm.addImageUri(context, newUri)
-                // Cập nhật số lượng ảnh và load lại templates
-                // vm.load() sẽ tự động chọn grid đầu tiên
                 val newCount = (currentUris.size + 1).coerceAtLeast(1)
                 vm.load(newCount)
             }
         }
     }
 
-    // Launcher để chọn ảnh thay thế (REPLACE)
-    var replaceImageIndex by remember { mutableStateOf<Int?>(null) }
     val replaceLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let { newUri ->
             replaceImageIndex?.let { index ->
                 if (index < currentUris.size) {
-                    // Thay thế ảnh tại index - cập nhật trong ViewModel
                     val newUris = currentUris.toMutableList().apply {
                         this[index] = newUri
                     }
                     vm.setImageUris(context, newUris)
                     replaceImageIndex = null
-                    // Không clear selectedImageIndex - giữ toolbar hiển thị
                 }
             }
         }
     }
 
-    // State để track swap mode (chọn ảnh thứ 2 để swap)
-    var isSwapMode by remember { mutableStateOf(false) }
-
-
-    // Helper function để convert Uri to Bitmap
-    fun uriToBitmap(uri: Uri): Bitmap? {
-        return try {
-            if (android.os.Build.VERSION.SDK_INT < 28) {
-                android.provider.MediaStore.Images.Media.getBitmap(
-                    context.contentResolver, uri
-                )
-            } else {
-                val source = android.graphics.ImageDecoder.createSource(
-                    context.contentResolver, uri
-                )
-                android.graphics.ImageDecoder.decodeBitmap(source)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+    LaunchedEffect(unselectAllImagesTrigger) {
+        if (unselectAllImagesTrigger > 0) {
+            selectedImageIndex = null
         }
     }
 
+    val topMargin = collageState.topMargin
+    val columnMargin = collageState.columnMargin
+    val cornerRadius = collageState.cornerRadius
+    val ratio = collageState.ratio
+    val templateId = collageState.templateId
 
-    // Hàm helper để reset và tính lại image transforms khi đổi grids hoặc add photo
-    // Hàm này sẽ được gọi từ LaunchedEffect
+    LaunchedEffect(Unit) {
+        vm.load(currentUris.size.coerceAtLeast(1))
+    }
+
+    val captureController = rememberCaptureController()
+    val scope = rememberCoroutineScope()
+    var pathBitmap by remember { mutableStateOf("") }
+    var showBottomSheetSaveImage by remember { mutableStateOf(false) }
+
+    var showGridsSheet by remember { mutableStateOf(false) }
+    var showRatioSheet by remember { mutableStateOf(false) }
+    var showBackgroundSheet by remember { mutableStateOf(false) }
+    var showFrameSheet by remember { mutableStateOf(false) }
+    var showStickerSheet by remember { mutableStateOf(false) }
+    var showTextSheet by remember { mutableStateOf(false) }
+
+    val aspectRatioValue = remember(ratio) { aspectRatioFor(ratio) }
+
     suspend fun resetImageTransforms(
-        template: CollageTemplate, canvasWidth: Float, canvasHeight: Float, topMargin: Float = 0f
+        template: CollageTemplate,
+        canvasWidth: Float,
+        canvasHeight: Float,
+        topMarginValue: Float = 0f
     ) {
-        // Áp dụng topMargin: giảm kích thước vùng bound tổng
-        val topMarginPx = topMargin * 0.2f * canvasHeight
-        val leftMarginPx = topMargin * 0.2f * canvasWidth
-        val rightMarginPx = topMargin * 0.2f * canvasWidth
-        val bottomMarginPx = topMargin * 0.2f * canvasHeight
+        val topMarginPx = topMarginValue * 0.2f * canvasHeight
+        val leftMarginPx = topMarginValue * 0.2f * canvasWidth
+        val rightMarginPx = topMarginValue * 0.2f * canvasWidth
+        val bottomMarginPx = topMarginValue * 0.2f * canvasHeight
 
         val effectiveCanvasWidth = canvasWidth - leftMarginPx - rightMarginPx
         val effectiveCanvasHeight = canvasHeight - topMarginPx - bottomMarginPx
@@ -193,36 +207,117 @@ fun CollageScreen(
         vm.confirmImageTransformChanges()
     }
 
-    val captureController = rememberCaptureController()
-    val scope = rememberCoroutineScope()
-    var pathBitmap by remember { mutableStateOf("") }
-    var showBottomSheetSaveImage by remember { mutableStateOf(false) }
+    fun clearAllSheets() {
+        showGridsSheet = false
+        showRatioSheet = false
+        showBackgroundSheet = false
+        showFrameSheet = false
+        showStickerSheet = false
+        showTextSheet = false
+    }
 
-    var showGridsSheet by remember { mutableStateOf(false) }
-    var showRatioSheet by remember { mutableStateOf(false) }
-    var showBackgroundSheet by remember { mutableStateOf(false) }
-    var showFrameSheet by remember { mutableStateOf(false) }
-    var showStickerSheet by remember { mutableStateOf(false) }
-    var showTextSheet by remember { mutableStateOf(false) }
+    fun handleToolClick(tool: CollageTool) {
+        when (tool) {
+            CollageTool.GRIDS -> {
+                clearAllSheets()
+                showGridsSheet = true
+            }
 
-    // Track selected image index
+            CollageTool.RATIO -> {
+                clearAllSheets()
+                showRatioSheet = true
+            }
 
-    // Clear selectedImageIndex khi unselect all
-    LaunchedEffect(unselectAllImagesTrigger) {
-        if (unselectAllImagesTrigger > 0) {
-            selectedImageIndex = null
+            CollageTool.BACKGROUND -> {
+                clearAllSheets()
+                showBackgroundSheet = true
+            }
+
+            CollageTool.FRAME -> {
+                clearAllSheets()
+                showFrameSheet = true
+            }
+
+            CollageTool.STICKER -> {
+                clearAllSheets()
+                showStickerSheet = true
+            }
+
+            CollageTool.TEXT -> {
+                clearAllSheets()
+                showTextSheet = true
+            }
+
+            CollageTool.ADD_PHOTO -> {
+                if (canAddPhoto) {
+                    clearAllSheets()
+                    launcher.launch("image/*")
+                }
+            }
+
+            else -> {
+                clearAllSheets()
+            }
         }
     }
 
-    // Sticker state
-    // Extract values from state
-    val topMargin = collageState.topMargin
-    val columnMargin = collageState.columnMargin
-    val cornerRadius = collageState.cornerRadius
-    val ratio = collageState.ratio
-    val template = collageState.templateId
-    LaunchedEffect(Unit) {
-        vm.load(currentUris.size.coerceAtLeast(1))
+    fun handleImageEditAction(action: ImageEditAction) {
+        val index = selectedImageIndex ?: return
+        when (action) {
+            ImageEditAction.REPLACE -> {
+                replaceImageIndex = index
+                replaceLauncher.launch("image/*")
+            }
+
+            ImageEditAction.SWAP -> {
+                isSwapMode = true
+                Toast.makeText(context, R.string.copy, Toast.LENGTH_SHORT).show()
+            }
+
+            ImageEditAction.CROP -> {
+                val selectedUri = currentUris.getOrNull(index) ?: return
+                scope.launch(Dispatchers.IO) {
+                    val path = copyImageToAppStorage(context, selectedUri) ?: return@launch
+                    scope.launch(Dispatchers.Main) {
+                        (context as? BaseActivity)?.launchActivity(
+                            toActivity = CropActivity::class.java,
+                            input = ToolInput(pathBitmap = path),
+                            callback = { result ->
+                                if (result.resultCode == RESULT_OK) {
+                                    val resultPathBitmap =
+                                        result.data?.getStringExtra("pathBitmap")
+                                    if (index < currentUris.size && resultPathBitmap != null) {
+                                        val newUris = currentUris.toMutableList().apply {
+                                            this[index] = resultPathBitmap.toUri()
+                                        }
+                                        vm.setImageUris(context, newUris)
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+
+            ImageEditAction.ROTATE -> {
+                vm.rotateImage(context, index)
+            }
+
+            ImageEditAction.FLIP_HORIZONTAL -> {
+                vm.flipImageHorizontal(context, index)
+            }
+
+            ImageEditAction.FLIP_VERTICAL -> {
+                vm.flipImageVertical(context, index)
+            }
+
+            ImageEditAction.DELETE -> {
+                if (currentUris.size > 1) {
+                    deleteImageIndex = index
+                    showDeleteDialog = true
+                }
+            }
+        }
     }
 
     Column(
@@ -230,16 +325,18 @@ fun CollageScreen(
             .fillMaxSize()
             .background(Background2)
     ) {
-        // Header
         FeaturePhotoHeader(
-            onBack = onBack,
+            onBack = {
+                vm.showDiscardDialog()
+            },
             onUndo = { vm.undo() },
             onRedo = { vm.redo() },
             onSave = {
                 scope.launch {
                     try {
                         stickerView.setShowFocus(false)
-                        val bitmap = captureController.toImageBitmap().asAndroidBitmap()
+                        val bitmapAsync = captureController.captureAsync()
+                        val bitmap = bitmapAsync.await().asAndroidBitmap()
                         pathBitmap = bitmap.toFile(context)
                         showBottomSheetSaveImage = true
                     } catch (ex: Throwable) {
@@ -250,21 +347,19 @@ fun CollageScreen(
             canUndo = canUndo && !showGridsSheet && !showRatioSheet,
             canRedo = canRedo && !showGridsSheet && !showRatioSheet
         )
-        // Calculate aspect ratio from ratio string (e.g., "1:1" -> 1.0, "4:5" -> 0.8)
-        val aspectRatioValue = remember(ratio) {
-            when (ratio) {
-                "Original" -> null // No aspect ratio constraint for Original
-                "1:1" -> 1f
-                "4:5" -> 4f / 5f
-                "5:4" -> 5f / 4f
-                "3:4" -> 3f / 4f
-                else -> null
-            }
-        }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+                .pointerInput(selectedImageIndex) {
+                    detectTapGestures {
+                        if (selectedImageIndex != null) {
+                            selectedImageIndex = null
+                            vm.triggerUnselectAllImages()
+                        }
+                    }
+                }
         ) {
             BoxWithConstraints(
                 modifier = Modifier
@@ -279,27 +374,35 @@ fun CollageScreen(
                     )
                     .background(BackgroundWhite)
                     .capturable(captureController)
-
+                    .pointerInput(selectedImageIndex) {
+                        detectTapGestures {
+                            if (selectedImageIndex != null) {
+                                selectedImageIndex = null
+                                vm.triggerUnselectAllImages()
+                            }
+                        }
+                    }
             ) {
                 val templateToUse =
-                    template ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
-                // Map slider values to Dp
-                val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
-                val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
+                    templateId ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
+                val gapValue = (1 + columnMargin * 19).dp
+                val cornerValue = (1 + cornerRadius * 19).dp
 
                 val canvasWidth = constraints.maxWidth.toFloat()
                 val canvasHeight = constraints.maxHeight.toFloat()
 
-                // Reset transforms khi đổi template hoặc thêm ảnh (KHÔNG reset khi topMargin thay đổi)
                 LaunchedEffect(templateToUse.id, currentUris.size) {
-                    if (templateToUse.id.isNotEmpty() && currentUris.isNotEmpty() && canvasWidth > 0 && canvasHeight > 0) {
-                        // Clear transforms trước để trigger lại tính toán
+                    if (templateToUse.id.isNotEmpty() &&
+                        currentUris.isNotEmpty() &&
+                        canvasWidth > 0 &&
+                        canvasHeight > 0
+                    ) {
                         vm.updateImageTransforms(emptyMap())
-                        // Delay để đảm bảo template và images đã được cập nhật hoàn toàn
                         delay(500)
                         resetImageTransforms(templateToUse, canvasWidth, canvasHeight, topMargin)
                     }
                 }
+
                 Box(modifier = Modifier.wrapContentSize()) {
                     CollagePreview(
                         images = currentUris,
@@ -310,9 +413,8 @@ fun CollageScreen(
                         imageTransforms = collageState.imageTransforms,
                         topMargin = topMargin,
                         imageBitmaps = collageState.imageBitmaps,
-                        onImageClick = { index, uri ->
+                        onImageClick = { index, _ ->
                             if (isSwapMode && selectedImageIndex != null && selectedImageIndex != index) {
-                                // Swap mode: swap ảnh được chọn với ảnh vừa click
                                 val firstIndex = selectedImageIndex!!
                                 if (firstIndex < currentUris.size && index < currentUris.size) {
                                     val newUris = currentUris.toMutableList().apply {
@@ -321,233 +423,98 @@ fun CollageScreen(
                                         this[index] = temp
                                     }
                                     vm.setImageUris(context, newUris)
-                                    // Sau khi swap, giữ selectedImageIndex để toolbar vẫn hiển thị
-                                    // Chỉ clear khi user click lại vào ảnh đã select hoặc unselect
                                     isSwapMode = false
                                 }
                             } else {
-                                // Toggle selected image index
-                                if (selectedImageIndex == index) {
-                                    // Click lại vào image đã select -> unselect
-                                    selectedImageIndex = null
-                                    isSwapMode = false
-                                } else {
-                                    // Select image mới
-                                    selectedImageIndex = index
+                                selectedImageIndex =
+                                    if (selectedImageIndex == index) null else index
+                                if (selectedImageIndex == null) {
                                     isSwapMode = false
                                 }
                             }
                         },
                         onImageTransformsChange = { transforms ->
-                            // Lưu transforms vào ViewModel và confirm vào undo stack
                             vm.updateImageTransforms(transforms)
                             vm.confirmImageTransformChanges()
                         },
-                        unselectAllTrigger = unselectAllImagesTrigger
+                        unselectAllTrigger = unselectAllImagesTrigger,
+                        onOutsideClick = {
+                            selectedImageIndex = null
+                            vm.triggerUnselectAllImages()
+                        }
                     )
-                    collageState.frameSelection?.takeIf { it is FrameSelection.Frame }
+
+                    collageState.frameSelection
+                        ?.takeIf { it is FrameSelection.Frame }
                         ?.let { frame ->
                             val data = frame as FrameSelection.Frame
                             val url =
-                                if (data.item.urlThumb?.startsWith("http://") == true || data.item.urlThumb?.startsWith(
-                                        "https://"
-                                    ) == true
+                                if (data.item.urlThumb?.startsWith("http://") == true ||
+                                    data.item.urlThumb?.startsWith("https://") == true
                                 ) {
                                     data.item.urlThumb
                                 } else {
                                     "${data.urlRoot}${data.item.urlThumb}"
                                 }
+
                             AsyncImage(
                                 model = ImageRequest.Builder(context).data(url).build(),
                                 contentDescription = "",
                                 contentScale = ContentScale.FillBounds,
                                 modifier = Modifier.fillMaxSize()
                             )
-
                         }
                 }
             }
 
             FreeStyleStickerComposeView(
-                modifier = Modifier.fillMaxSize(), view = stickerView
+                modifier = Modifier.fillMaxSize(),
+                view = stickerView
             )
 
             Box(modifier = Modifier.align(Alignment.BottomCenter)) {
-                // Hiển thị ImageEditToolbar khi có image được select
-                if (selectedImageIndex != null && !showTextSheet && !showStickerSheet && !showGridsSheet && !showRatioSheet && !showBackgroundSheet && !showFrameSheet) {
+                if (selectedImageIndex != null &&
+                    !showTextSheet &&
+                    !showStickerSheet &&
+                    !showGridsSheet &&
+                    !showRatioSheet &&
+                    !showBackgroundSheet &&
+                    !showFrameSheet
+                ) {
                     ImageEditToolbar(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .wrapContentHeight(), onActionClick = { action ->
-                        val index = selectedImageIndex ?: return@ImageEditToolbar
-                        when (action) {
-                            ImageEditAction.REPLACE -> {
-                                // Chọn ảnh mới để thay thế
-                                replaceImageIndex = index
-                                replaceLauncher.launch("image/*")
-                            }
-
-                            ImageEditAction.SWAP -> {
-                                // Bật swap mode - user sẽ click vào ảnh khác để swap
-                                isSwapMode = true
-                            }
-
-                            ImageEditAction.CROP -> {
-                                // Mở CropActivity cho ảnh được chọn - dùng launchActivity giống EditorActivity
-                                val selectedUri = currentUris.getOrNull(index)
-                                selectedUri?.let { uri ->
-                                    scope.launch(Dispatchers.IO) {
-                                        val pathBitmap =
-                                            copyImageToAppStorage(context, uri) ?: return@launch
-                                        scope.launch(Dispatchers.Main) {
-                                            (context as? BaseActivity)?.let { baseActivity ->
-                                                baseActivity.launchActivity(
-                                                    toActivity = CropActivity::class.java,
-                                                    input = ToolInput(pathBitmap = pathBitmap),
-                                                    callback = { result ->
-                                                        if (result.resultCode == RESULT_OK) {
-                                                            val resultPathBitmap =
-                                                                result.data?.getStringExtra("pathBitmap")
-                                                            if (index < currentUris.size && resultPathBitmap != null) {
-                                                                // Update ảnh sau khi crop - cập nhật trong ViewModel
-                                                                val newUris =
-                                                                    currentUris.toMutableList()
-                                                                        .apply {
-                                                                            this[index] =
-                                                                                resultPathBitmap.toUri()
-                                                                        }
-                                                                vm.setImageUris(
-                                                                    context,
-                                                                    newUris
-                                                                )
-                                                                // Không clear selectedImageIndex - giữ toolbar hiển thị
-                                                            }
-                                                        }
-                                                    }
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            ImageEditAction.ROTATE -> {
-                                // Rotate ảnh 90 độ - xử lý trong ViewModel trên IO thread
-                                vm.rotateImage(context, index)
-                                // Không clear selectedImageIndex - giữ toolbar hiển thị
-                            }
-
-                            ImageEditAction.FLIP_HORIZONTAL -> {
-                                // Flip ảnh theo chiều ngang - xử lý trong ViewModel trên IO thread
-                                vm.flipImageHorizontal(context, index)
-                                // Không clear selectedImageIndex - giữ toolbar hiển thị
-                            }
-
-                            ImageEditAction.FLIP_VERTICAL -> {
-                                // Flip ảnh theo chiều dọc - xử lý trong ViewModel trên IO thread
-                                vm.flipImageVertical(context, index)
-                                // Không clear selectedImageIndex - giữ toolbar hiển thị
-                            }
+                            .wrapContentHeight(),
+                        onActionClick = { action -> handleImageEditAction(action) },
+                        onClose = {
+                            selectedImageIndex = null
+                            vm.triggerUnselectAllImages()
+                        },
+                        disabledActions = if (currentUris.size <= 1) {
+                            setOf(ImageEditAction.DELETE)
+                        } else {
+                            emptySet()
                         }
-                    }, onClose = {
-                        selectedImageIndex = null
-                        vm.triggerUnselectAllImages()
-                    })
+                    )
                 } else if (!showTextSheet) {
                     FeatureBottomTools(
                         tools = toolsCollage,
-                        onToolClick = { tool ->
-                            when (tool) {
-                                CollageTool.GRIDS -> {
-                                    showGridsSheet = true
-                                    showTextSheet = false
-                                    showRatioSheet = false
-                                    showBackgroundSheet = false
-                                    showFrameSheet = false
-                                    showStickerSheet = false
-                                }
-
-                                CollageTool.RATIO -> {
-                                    showRatioSheet = true
-                                    showTextSheet = false
-                                    showGridsSheet = false
-                                    showBackgroundSheet = false
-                                    showFrameSheet = false
-                                    showStickerSheet = false
-                                }
-
-                                CollageTool.BACKGROUND -> {
-                                    showBackgroundSheet = true
-                                    showTextSheet = false
-                                    showGridsSheet = false
-                                    showRatioSheet = false
-                                    showFrameSheet = false
-                                    showStickerSheet = false
-
-                                }
-
-                                CollageTool.FRAME -> {
-                                    showFrameSheet = true
-                                    showTextSheet = false
-                                    showGridsSheet = false
-                                    showRatioSheet = false
-                                    showBackgroundSheet = false
-                                    showStickerSheet = false
-
-                                }
-
-                                CollageTool.STICKER -> {
-                                    showStickerSheet = true
-                                    showTextSheet = false
-                                    showGridsSheet = false
-                                    showRatioSheet = false
-                                    showBackgroundSheet = false
-                                    showFrameSheet = false
-                                }
-
-                                CollageTool.TEXT -> {
-                                    showTextSheet = true
-                                    showGridsSheet = false
-                                    showRatioSheet = false
-                                    showBackgroundSheet = false
-                                    showFrameSheet = false
-                                    showStickerSheet = false
-                                }
-
-                                CollageTool.ADD_PHOTO -> {
-                                    if (canAddPhoto) {
-                                        launcher.launch("image/*")
-                                        showTextSheet = false
-                                        showGridsSheet = false
-                                        showRatioSheet = false
-                                        showBackgroundSheet = false
-                                        showFrameSheet = false
-                                        showStickerSheet = false
-                                    }
-                                }
-
-                                else -> {
-                                    showTextSheet = false
-                                    showGridsSheet = false
-                                    showRatioSheet = false
-                                    showBackgroundSheet = false
-                                    showFrameSheet = false
-                                    showStickerSheet = false
-                                }
-                            }
-                        },
-                        disabledTools = if (!canAddPhoto) setOf(CollageTool.ADD_PHOTO) else emptySet()
+                        onToolClick = { tool -> handleToolClick(tool) },
+                        disabledTools = if (!canAddPhoto) {
+                            setOf(CollageTool.ADD_PHOTO)
+                        } else {
+                            emptySet()
+                        }
                     )
                 }
+
                 if (showGridsSheet) {
                     GridsSheet(
                         templates = templates,
-                        selectedTemplate = template,
-                        onTemplateSelect = { template ->
-                            vm.selectTemplate(template)
-                        },
+                        selectedTemplate = templateId,
+                        onTemplateSelect = { template -> vm.selectTemplate(template) },
                         onClose = { showGridsSheet = false },
-                        onConfirm = { tab ->
+                        onConfirm = {
                             vm.confirmChanges()
                             showGridsSheet = false
                         },
@@ -566,15 +533,17 @@ fun CollageScreen(
 
                 if (showRatioSheet) {
                     RatioSheet(
-                        selectedRatio = ratio, onRatioSelect = { aspect ->
-                            vm.updateRatio(aspect.label)
-                        }, onClose = {
+                        selectedRatio = ratio,
+                        onRatioSelect = { aspect -> vm.updateRatio(aspect.label) },
+                        onClose = {
                             vm.cancelRatioChanges()
                             showRatioSheet = false
-                        }, onConfirm = {
+                        },
+                        onConfirm = {
                             vm.confirmChanges()
                             showRatioSheet = false
-                        }, modifier = Modifier
+                        },
+                        modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
                     )
@@ -626,15 +595,19 @@ fun CollageScreen(
                         StickerFooterTool(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .wrapContentHeight(), stickerView = stickerView, onCancel = {
-                            stickerView.removeCurrentSticker()
-                            stickerView.setLocked(false)
-                            showStickerSheet = false
-                        }, onApply = {
-                            stickerView.setLocked(false)
-                            vm.confirmStickerChanges()
-                            showStickerSheet = false
-                        })
+                                .wrapContentHeight(),
+                            stickerView = stickerView,
+                            onCancel = {
+                                stickerView.removeCurrentSticker()
+                                stickerView.setLocked(false)
+                                showStickerSheet = false
+                            },
+                            onApply = {
+                                stickerView.setLocked(false)
+                                vm.confirmStickerChanges()
+                                showStickerSheet = false
+                            }
+                        )
                     }
 
                     showTextSheet -> {
@@ -658,103 +631,147 @@ fun CollageScreen(
                                 stickerView.addSticker(
                                     TextSticker(
                                         stickerView.context,
-                                        it,
-
-                                        ), Sticker.Position.TOP
+                                        it
+                                    ),
+                                    com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker.Position.TOP
                                 )
                             },
                             addTextSticker = { font ->
                                 stickerView.replace(
                                     TextSticker(
-                                        stickerView.context, font
+                                        stickerView.context,
+                                        font
                                     )
                                 )
-                            },
+                            }
                         )
                     }
 
-
-                    else -> {
-
-                    }
+                    else -> Unit
                 }
 
                 val textStickerUIState by freeStyleViewModel.uiState.collectAsStateWithLifecycle()
                 if (textStickerUIState.isVisibleTextField) {
                     EditTextStickerLayer(
-                        modifier = Modifier.fillMaxSize(), onEditText = {
+                        modifier = Modifier.fillMaxSize(),
+                        onEditText = {
                             freeStyleViewModel.hideEditTextSticker()
                             stickerView.replace(
                                 TextSticker(
-                                    stickerView.context, it
+                                    stickerView.context,
+                                    it
                                 )
                             )
-                        }, editTextProperties = textStickerUIState.editTextProperties
+                        },
+                        editTextProperties = textStickerUIState.editTextProperties
                     )
                 }
             }
         }
-        if (showBottomSheetSaveImage) {
-            ExportImageBottomSheet(pathBitmap = pathBitmap, onDismissRequest = {
-                showBottomSheetSaveImage = false
-            }, onDownload = {
-                if (pathBitmap.isNotEmpty()) {
-                    scope.launch {
-                        try {
-                            val bitmap = pathBitmap.toBitmap() ?: return@launch
-                            val bitmapMark =
-                                FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25);
-                            val uriMark = FileUtil.saveImageToStorageWithQuality(
-                                context = context, quality = it, bitmap = bitmapMark
-                            )
-                            onDownloadSuccess.invoke(
-                                ExportImageData(
-                                    pathUriMark = uriMark?.toString(),
-                                    pathBitmapOriginal = pathBitmap,
-                                    quality = it
-                                )
-                            )
-                        } catch (ex: Throwable) {
-                            Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    }
-                } else {
-                    Toast.makeText(context, "Save Image Error", Toast.LENGTH_SHORT).show()
-                }
 
-            })
+        if (showBottomSheetSaveImage) {
+            ExportImageBottomSheet(
+                pathBitmap = pathBitmap,
+                onDismissRequest = {
+                    showBottomSheetSaveImage = false
+                },
+                onDownload = {
+                    if (pathBitmap.isNotEmpty()) {
+                        scope.launch {
+                            try {
+                                val bitmap = pathBitmap.toBitmap() ?: return@launch
+                                val bitmapMark =
+                                    FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25)
+                                val uriMark =
+                                    FileUtil.saveImageToStorageWithQuality(
+                                        context = context,
+                                        quality = it.value,
+                                        bitmap = bitmapMark
+                                    )
+                                onDownloadSuccess.invoke(
+                                    ExportImageData(
+                                        pathUriMark = uriMark?.toString(),
+                                        pathBitmapOriginal = pathBitmap
+                                    )
+                                )
+                            } catch (ex: Throwable) {
+                                Toast.makeText(
+                                    context,
+                                    "Error ${ex.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, "Save Image Error", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            )
         }
+
+        DeleteImageDialog(
+            isVisible = showDeleteDialog,
+            onDelete = {
+                deleteImageIndex?.let { index ->
+                    if (currentUris.size > 1 && index < currentUris.size) {
+                        vm.removeImageUri(index)
+                        selectedImageIndex = null
+                        vm.triggerUnselectAllImages()
+                        val newCount = (currentUris.size - 1).coerceAtLeast(1)
+                        vm.load(newCount)
+                    }
+                }
+                showDeleteDialog = false
+                deleteImageIndex = null
+            },
+            onCancel = {
+                showDeleteDialog = false
+                deleteImageIndex = null
+            },
+            onDismiss = {
+                showDeleteDialog = false
+                deleteImageIndex = null
+            }
+        )
+
+        DiscardChangesDialog(
+            isVisible = showDiscardDialog,
+            onDiscard = {
+                onBack()
+            },
+            onCancel = {
+                vm.hideDiscardDialog()
+            }
+        )
     }
 }
-
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 private fun CollageScreenPreview() {
-    // Mock ViewModel state cho preview
     val mockUris = listOf(Uri.EMPTY, Uri.EMPTY, Uri.EMPTY)
 
-    // Preview đơn giản không dùng ViewModel
     Box(
         Modifier
             .fillMaxSize()
             .background(Color(0xFF2C2C2E))
     ) {
         Column(Modifier.fillMaxSize()) {
-            // Header
             FeaturePhotoHeader(
-                onBack = {}, onUndo = {}, onRedo = {}, onSave = {}, canUndo = false, canRedo = false
+                onBack = {},
+                onUndo = {},
+                onRedo = {},
+                onSave = {},
+                canUndo = false,
+                canRedo = false
             )
 
-            // Preview area
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .padding(16.dp)
                     .background(Color.White, RoundedCornerShape(12.dp))
                     .padding(16.dp)
-
             ) {
                 val templateToUse = CollageTemplates.LEFT_BIG_RIGHT_2
                 CollagePreview(
@@ -766,9 +783,10 @@ private fun CollageScreenPreview() {
                 )
             }
 
-            // Bottom tools
             FeatureBottomTools(
-                tools = toolsCollage, onToolClick = {})
+                tools = toolsCollage,
+                onToolClick = {}
+            )
         }
     }
 }

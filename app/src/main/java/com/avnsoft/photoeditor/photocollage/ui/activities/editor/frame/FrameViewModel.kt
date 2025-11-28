@@ -3,6 +3,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.frame
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ class FrameViewModel(
 
     val uiState = MutableStateFlow(FrameUIState())
 
+
     fun getConfig(screenInput: ToolInput?) {
         viewModelScope.launch(Dispatchers.IO) {
             uiState.update {
@@ -25,8 +27,14 @@ class FrameViewModel(
             }
         }
     }
+
+    fun updateFrame(selection: FrameSelection) {
+        uiState.update { it.copy(frameSelection = selection) }
+    }
+
 }
 
 data class FrameUIState(
     val originBitmap: Bitmap? = null,
+    val frameSelection: FrameSelection? = null
 )

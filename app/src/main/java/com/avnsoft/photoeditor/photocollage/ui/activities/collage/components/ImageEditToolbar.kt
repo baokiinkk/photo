@@ -30,7 +30,7 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.basesource.base.utils.clickableWithAlphaEffect
 
 enum class ImageEditAction {
-    REPLACE, SWAP, CROP, ROTATE, FLIP_HORIZONTAL, FLIP_VERTICAL
+    REPLACE, SWAP, CROP, ROTATE, FLIP_HORIZONTAL, FLIP_VERTICAL, DELETE
 }
 
 data class ImageEditToolItem(
@@ -40,19 +40,21 @@ data class ImageEditToolItem(
 )
 
 val imageEditTools = listOf(
-    ImageEditToolItem(ImageEditAction.REPLACE, R.string.replace, R.drawable.ic_add_image),
-    ImageEditToolItem(ImageEditAction.SWAP, R.string.swap, R.drawable.ic_refresh),
+    ImageEditToolItem(ImageEditAction.REPLACE, R.string.replace, R.drawable.ic_replace_tool),
+    ImageEditToolItem(ImageEditAction.SWAP, R.string.swap, R.drawable.ic_swap_tool),
     ImageEditToolItem(ImageEditAction.CROP, R.string.crop, R.drawable.ic_crop),
     ImageEditToolItem(ImageEditAction.ROTATE, R.string.rotate, R.drawable.ic_rotate_left),
     ImageEditToolItem(ImageEditAction.FLIP_HORIZONTAL, R.string.horizontal, R.drawable.ic_flip_horizontal),
-    ImageEditToolItem(ImageEditAction.FLIP_VERTICAL, R.string.vertical, R.drawable.ic_flip_vertical)
+    ImageEditToolItem(ImageEditAction.FLIP_VERTICAL, R.string.vertical, R.drawable.ic_flip_vertical),
+    ImageEditToolItem(ImageEditAction.DELETE, R.string.delete, R.drawable.ic_delete_tool)
 )
 
 @Composable
 fun ImageEditToolbar(
     modifier: Modifier = Modifier,
     onActionClick: (ImageEditAction) -> Unit = {},
-    onClose: () -> Unit = {}
+    onClose: () -> Unit = {},
+    disabledActions: Set<ImageEditAction> = emptySet()
 ) {
     Row(
         modifier = modifier
@@ -64,7 +66,8 @@ fun ImageEditToolbar(
         imageEditTools.forEach { item ->
             ImageEditToolItem(
                 item = item,
-                onClick = { onActionClick(item.action) }
+                onClick = { onActionClick(item.action) },
+                enabled = !disabledActions.contains(item.action)
             )
         }
     }
@@ -73,26 +76,37 @@ fun ImageEditToolbar(
 @Composable
 private fun ImageEditToolItem(
     item: ImageEditToolItem,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    enabled: Boolean = true
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .width(65.dp)
-            .clickableWithAlphaEffect {
-                onClick.invoke()
-            }
+            .then(
+                if (enabled) {
+                    Modifier.clickableWithAlphaEffect {
+                        onClick.invoke()
+                    }
+                } else {
+                    Modifier
+                }
+            )
     ) {
         Image(
             painterResource(item.icon),
             contentDescription = "",
             modifier = Modifier.size(24.dp),
-            colorFilter = ColorFilter.tint(AppColor.Gray900)
+            colorFilter = ColorFilter.tint(
+                if (enabled) AppColor.Gray900 else AppColor.Gray400
+            )
         )
         Text(
             modifier = Modifier.padding(top = 2.dp),
             text = stringResource(item.label),
-            style = AppStyle.caption2().medium().gray900()
+            style = AppStyle.caption2().medium().run {
+                if (enabled) gray900() else gray400()
+            }
         )
     }
 }

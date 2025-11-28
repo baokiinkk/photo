@@ -1,0 +1,184 @@
+<resources>
+    <string name="app_name">Ứng dụng Ảnh</string>
+    <string name="title_settings">Cài đặt</string>
+    <string name="setting_language">Ngôn ngữ</string>
+    <string name="setting_rate_app">Đánh giá</string>
+    <string name="setting_send_feedback">Gửi phản hồi</string>
+    <string name="setting_share_app">Chia sẻ ứng dụng</string>
+    <string name="setting_gdpr">GDPR</string>
+    <string name="setting_privacy_policy">Chính sách bảo mật</string>
+    <!-- Language Selection -->
+    <string name="choose_language">Chọn ngôn ngữ</string>
+    <string name="language_changed">Đã thay đổi ngôn ngữ thành công</string>
+    <string name="language_change_failed">Không thể thay đổi ngôn ngữ</string>
+    <string name="language">ngôn ngữ</string>
+    <string name="rate_now">Đánh giá ngay</string>
+
+    <string name="crop">Cắt</string>
+    <string name="grids">Lưới</string>
+    <string name="ratio_tool">Tỷ lệ</string>
+    <string name="background_tool">Nền</string>
+    <string name="frame_tool">Khung</string>
+    <string name="text_tool">Văn bản</string>
+    <string name="sticker_tool">Nhãn dán</string>
+    <string name="add_photo_tool">Thêm ảnh</string>
+    <string name="discover">Khám phá</string>
+    <string name="my_creative">Sáng tạo của tôi</string>
+    <string name="horizontal">Ngang</string>
+    <string name="Format">Định dạng</string>
+    <string name="vertical">Dọc</string>
+    <string name="format">Định dạng</string>
+    <string name="rotate">Xoay</string>
+    <string name="position">Vị trí</string>
+    <string name="square">Vuông</string>
+    <string name="adjust">Điều chỉnh</string>
+    <string name="filter">Bộ lọc</string>
+    <string name="blur">Làm mờ</string>
+    <string name="background">Nền</string>
+    <string name="original">Gốc</string>
+    <string name="enhance">Nâng cao</string>
+    <string name="remove_bg">Xóa nền</string>
+    <string name="draw">Vẽ</string>
+    <string name="brightness">Độ sáng</string>
+    <string name="contrast">Độ tương phản</string>
+    <string name="saturation">Độ bão hòa</string>
+    <string name="warmth">Độ ấm</string>
+    <string name="fade">Mờ dần</string>
+    <string name="highlight">Làm nổi bật</string>
+    <string name="shadow">Bóng</string>
+    <string name="hue">Màu sắc</string>
+    <string name="vignette">Viền tối</string>
+    <string name="sharpen">Làm sắc nét</string>
+    <string name="grain">Hạt</string>
+    <string name="reset">Đặt lại</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="cancel">Hủy</string>
+    <string name="shapes">Hình dạng</string>
+    <string name="selfie">Tự sướng</string>
+    <string name="memory">Kỷ niệm</string>
+    <string name="eart">Trái tim</string>
+    <string name="fancy">Đẹp mắt</string>
+    <string name="heart">Trái tim</string>
+    <string name="brush">Cọ vẽ</string>
+    <string name="sticker">Nhãn dán</string>
+    <string name="font">Phông chữ</string>
+    <string name="color">Màu sắc</string>
+    <string name="align">Căn chỉnh</string>
+    <string name="auto">Tự động</string>
+    <string name="lasso">Lasso</string>
+    <string name="solid">Đặc</string>
+    <string name="pattern">Mẫu</string>
+    <string name="replace">Thay thế</string>
+    <string name="swap">đổi</string>
+    <string name="store">Cửa hàng</string>
+    <string name="use">Sử dụng</string>
+    <string name="sticker_pack">Gói nhãn dán</string>
+    <string name="use_sticker_pack">Sử dụng gói nhãn dán</string>
+    <string name="unlock_sticker_pack">Mở khóa gói nhãn dán</string>
+    <string name="background_pack">Gói nền</string>
+    <string name="template">Mẫu</string>
+    <string name="do_you_like_gps_checker">Bạn có thích GPS Checker không?</string>
+    <string name="rate_your_experience">Đánh giá trải nghiệm của bạn với chúng tôi!</string>
+
+    <!-- Settings Screen -->
+    <string name="settings">Cài đặt</string>
+    <string name="english">Tiếng Anh</string>
+    <string name="rate_us">Đánh giá chúng tôi</string>
+    <string name="feedback">Phản hồi</string>
+    <string name="share_app">Chia sẻ ứng dụng</string>
+    <string name="manager_subscription">Quản lý đăng ký</string>
+    <string name="gdpr">GDPR</string>
+    <string name="check_app_update">Kiểm tra cập nhật ứng dụng</string>
+    <string name="privacy_policy">Chính sách bảo mật</string>
+    <string name="restore_purchase">Khôi phục mua hàng</string>
+    <string name="join_the_community">Tham gia cộng đồng</string>
+    <string name="version_with_team">Phiên bản %1$s ️ Đội AmoBear</string>
+
+    <!-- Feedback and Sharing -->
+    <string name="feedback_subject">%1$s - Phản hồi</string>
+    <string name="feedback_body">Xin chào,\n\nTôi muốn cung cấp phản hồi về ứng dụng %1$s.\n\n%2$s\n\nPhản hồi:\n</string>
+    <string name="send_feedback_via_email">Gửi phản hồi qua email</string>
+    <string name="share_app_title">%1$s - Chia sẻ ứng dụng</string>
+    <string name="share_app_body">Tải xuống từ Play Store: https://play.google.com/store/apps/details?id=%1$s</string>
+    <string name="check_out_app">Xem %1$s</string>
+    <string name="share_app_chooser">Chia sẻ %1$s</string>
+
+    <!-- URLs -->
+    <string name="gdpr_url">https://example.com/gdpr</string>
+    <string name="privacy_policy_url">https://example.com/privacy</string>
+    <string name="content_removing_object">Magic AI đang xóa…</string>
+    <string name="content_magic_ai_is_enhancing">Magic AI đang nâng cao…</string>
+    <string name="save">Lưu</string>
+    <string name="apply">Áp dụng</string>
+
+    <!-- My Create Screen -->
+    <string name="no_creations_yet">Chưa có tác phẩm nào!</string>
+    <string name="start_first_project">Bắt đầu dự án đầu tiên của bạn và để sự sáng tạo của bạn tỏa sáng.</string>
+    <string name="start_editing">Bắt đầu chỉnh sửa</string>
+
+    <!-- Discover Screen -->
+    <string name="collage_maker">Tạo ảnh ghép</string>
+    <string name="free_style">Phong cách tự do</string>
+    <string name="templates">Mẫu</string>
+    <string name="see_all">Xem tất cả</string>
+    <string name="quick_edits">Chỉnh sửa nhanh</string>
+    <string name="remove_object">Xóa đối tượng</string>
+    <string name="ai_enhance">Nâng cao AI</string>
+
+    <!-- Common -->
+    <string name="close">Đóng</string>
+    <string name="back">Quay lại</string>
+    <string name="loading_frames">Đang tải khung…</string>
+    <string name="loading_patterns">Đang tải mẫu…</string>
+    <string name="loading_gradients">Đang tải gradient…</string>
+    <string name="error">Lỗi: %1$s</string>
+    <string name="no_frames_available">Không có khung nào</string>
+    <string name="no_patterns_available">Không có mẫu nào</string>
+    <string name="no_gradients_available">Không có gradient nào</string>
+    <string name="pro">PRO</string>
+    <string name="selected">Đã chọn</string>
+
+    <!-- Collage Tools -->
+    <string name="layout">Bố cục</string>
+    <string name="margin">Lề</string>
+
+    <!-- Text Sticker -->
+    <string name="click_to_edit">Nhấn để chỉnh sửa</string>
+
+    <!-- Image Picker -->
+    <string name="select_photos">Chọn 1-10 ảnh</string>
+    <string name="next">Tiếp theo</string>
+    <string name="all">Tất cả</string>
+    <string name="all_with_count">Tất cả (%1$d)</string>
+
+    <!-- Crop -->
+    <string name="image_saved">Ảnh đã lưu</string>
+    <string name="select_image_from_gallery">Chọn ảnh từ thư viện</string>
+
+    <!-- Remove Object -->
+    <string name="remove">Xóa</string>
+    <string name="saved_to_device">Đã lưu vào thiết bị</string>
+
+    <!-- Delete Image Dialog -->
+    <string name="delete_image_title">Xóa ảnh</string>
+    <string name="delete_image_message">Ảnh này sẽ bị xóa vĩnh viễn. Bạn có chắc chắn muốn xóa?</string>
+    <string name="photo_quality">Chất lượng ảnh</string>
+    <string name="pick_your_preferred_download_resolution">Chọn độ phân giải tải xuống ưa thích của bạn</string>
+    <string name="low">Thấp</string>
+    <string name="medium">Trung bình</string>
+    <string name="high">Cao</string>
+    <string name="download">Tải xuống</string>
+    <string name="new_edit">Chỉnh sửa mới</string>
+    <string name="share">Chia sẻ</string>
+    <string name="remove_watermark">Xóa watermark</string>
+    <string name="ai_tools">Công cụ AI</string>
+
+    <!-- Confirm Save Image Dialog -->
+    <string name="discard_changes">Bỏ qua thay đổi</string>
+    <string name="discard_changes_message">Thay đổi sẽ không được lưu. Bạn có chắc chắn muốn tiếp tục?</string>
+    <string name="discard">Bỏ qua</string>
+    <string name="copy">Sao chép</string>
+    <string name="delete">Xóa</string>
+    <string name="doodle">Vẽ nguệch ngoạc</string>
+</resources>
+

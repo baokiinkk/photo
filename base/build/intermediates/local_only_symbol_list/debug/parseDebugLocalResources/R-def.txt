@@ -3,7 +3,9 @@ local
 drawable checkbox_active
 drawable checkbox_inactive
 drawable flag_en
+drawable flat_french
 drawable flat_japan
+drawable flat_korean
 drawable flat_macao
 drawable flat_mexico
 drawable flat_mo

@@ -158,6 +158,10 @@
     <!-- Remove Object -->
     <string name="remove">Remove</string>
     <string name="saved_to_device">Saved to Device</string>
+
+    <!-- Delete Image Dialog -->
+    <string name="delete_image_title">Delete Photo</string>
+    <string name="delete_image_message">This photo will be removed permanently.Are you sure you want to delete?</string>
     <string name="photo_quality">Photo Quality</string>
     <string name="pick_your_preferred_download_resolution">Pick your preferred download resolution</string>
     <string name="low">Low</string>
@@ -174,11 +178,12 @@
     <string name="discard_changes_message">Changes will not be saved. Are you sure you want to proceed?</string>
     <string name="discard">Discard</string>
     <string name="doodle">Doodle</string>
+    <string name="copy">Copy</string>
+    <string name="delete">Delete</string>
 
     <!-- Confirm Remove Photo Dialog -->
     <string name="delete_photo">Delete Photo</string>
-    <string name="delete_photo_confirmation">This photo will be removed permanently.
-Are you sure you want to delete?</string>
+    <string name="delete_photo_confirmation">This photo will be removed permanently. Are you sure you want to delete?</string>
     <string name="no_keep_it">No, keep it</string>
     <string name="yes_delete">Yes, delete</string>
     <string name="edit">Edit</string>

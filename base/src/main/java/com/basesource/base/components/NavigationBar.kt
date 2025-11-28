@@ -1,5 +1,6 @@
 package com.basesource.base.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,11 +35,11 @@ fun NavigationBar(
     Column(
         modifier = modifier
     ) {
-        Row(
+        Box(
             modifier = Modifier
                 .height(height)
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            contentAlignment = Alignment.Center
         ) {
             when {
                 onClickBack != null -> {
@@ -46,6 +47,7 @@ fun NavigationBar(
                         onClick = { onClickBack() },
                         modifier = Modifier
                             .size(40.dp)
+                            .align(Alignment.CenterStart)
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_left),
@@ -61,7 +63,7 @@ fun NavigationBar(
             }
             title?.let {
                 Text(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.fillMaxWidth(),
                     text = it,
                     textAlign = textAlign,
                     maxLines = 1,

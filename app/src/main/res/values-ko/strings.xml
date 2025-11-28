@@ -1,0 +1,184 @@
+<resources>
+    <string name="app_name">사진 앱</string>
+    <string name="title_settings">설정</string>
+    <string name="setting_language">언어</string>
+    <string name="setting_rate_app">평가</string>
+    <string name="setting_send_feedback">피드백 보내기</string>
+    <string name="setting_share_app">앱 공유</string>
+    <string name="setting_gdpr">GDPR</string>
+    <string name="setting_privacy_policy">개인정보 보호정책</string>
+    <!-- Language Selection -->
+    <string name="choose_language">언어 선택</string>
+    <string name="language_changed">언어가 성공적으로 변경되었습니다</string>
+    <string name="language_change_failed">언어 변경 실패</string>
+    <string name="language">언어</string>
+    <string name="rate_now">지금 평가하기</string>
+
+    <string name="crop">자르기</string>
+    <string name="grids">격자</string>
+    <string name="ratio_tool">비율</string>
+    <string name="background_tool">배경</string>
+    <string name="frame_tool">프레임</string>
+    <string name="text_tool">텍스트</string>
+    <string name="sticker_tool">스티커</string>
+    <string name="add_photo_tool">사진 추가</string>
+    <string name="discover">발견</string>
+    <string name="my_creative">내 창작물</string>
+    <string name="horizontal">가로</string>
+    <string name="Format">형식</string>
+    <string name="vertical">세로</string>
+    <string name="format">형식</string>
+    <string name="rotate">회전</string>
+    <string name="position">위치</string>
+    <string name="square">정사각형</string>
+    <string name="adjust">조정</string>
+    <string name="filter">필터</string>
+    <string name="blur">흐림</string>
+    <string name="background">배경</string>
+    <string name="original">원본</string>
+    <string name="enhance">향상</string>
+    <string name="remove_bg">배경 제거</string>
+    <string name="draw">그리기</string>
+    <string name="brightness">밝기</string>
+    <string name="contrast">대비</string>
+    <string name="saturation">채도</string>
+    <string name="warmth">온도</string>
+    <string name="fade">페이드</string>
+    <string name="highlight">하이라이트</string>
+    <string name="shadow">그림자</string>
+    <string name="hue">색조</string>
+    <string name="vignette">비네팅</string>
+    <string name="sharpen">선명하게</string>
+    <string name="grain">그레인</string>
+    <string name="reset">재설정</string>
+    <string name="confirm">확인</string>
+    <string name="cancel">취소</string>
+    <string name="shapes">도형</string>
+    <string name="selfie">셀피</string>
+    <string name="memory">추억</string>
+    <string name="eart">하트</string>
+    <string name="fancy">화려한</string>
+    <string name="heart">하트</string>
+    <string name="brush">브러시</string>
+    <string name="sticker">스티커</string>
+    <string name="font">글꼴</string>
+    <string name="color">색상</string>
+    <string name="align">정렬</string>
+    <string name="auto">자동</string>
+    <string name="lasso">올가미</string>
+    <string name="solid">단색</string>
+    <string name="pattern">패턴</string>
+    <string name="replace">교체</string>
+    <string name="swap">교환</string>
+    <string name="store">스토어</string>
+    <string name="use">사용</string>
+    <string name="sticker_pack">스티커 팩</string>
+    <string name="use_sticker_pack">스티커 팩 사용</string>
+    <string name="unlock_sticker_pack">스티커 팩 잠금 해제</string>
+    <string name="background_pack">배경 팩</string>
+    <string name="template">템플릿</string>
+    <string name="do_you_like_gps_checker">GPS 체커를 좋아하시나요?</string>
+    <string name="rate_your_experience">저희와의 경험을 평가해주세요!</string>
+
+    <!-- Settings Screen -->
+    <string name="settings">설정</string>
+    <string name="english">영어</string>
+    <string name="rate_us">평가하기</string>
+    <string name="feedback">피드백</string>
+    <string name="share_app">앱 공유</string>
+    <string name="manager_subscription">구독 관리</string>
+    <string name="gdpr">GDPR</string>
+    <string name="check_app_update">앱 업데이트 확인</string>
+    <string name="privacy_policy">개인정보 보호정책</string>
+    <string name="restore_purchase">구매 복원</string>
+    <string name="join_the_community">커뮤니티에 참여하기</string>
+    <string name="version_with_team">버전 %1$s ️ AmoBear 팀</string>
+
+    <!-- Feedback and Sharing -->
+    <string name="feedback_subject">%1$s - 피드백</string>
+    <string name="feedback_body">안녕하세요,\n\n%1$s 앱에 대한 피드백을 제공하고 싶습니다.\n\n%2$s\n\n피드백:\n</string>
+    <string name="send_feedback_via_email">이메일로 피드백 보내기</string>
+    <string name="share_app_title">%1$s - 앱 공유</string>
+    <string name="share_app_body">Play 스토어에서 다운로드: https://play.google.com/store/apps/details?id=%1$s</string>
+    <string name="check_out_app">%1$s 확인하기</string>
+    <string name="share_app_chooser">%1$s 공유</string>
+
+    <!-- URLs -->
+    <string name="gdpr_url">https://example.com/gdpr</string>
+    <string name="privacy_policy_url">https://example.com/privacy</string>
+    <string name="content_removing_object">Magic AI가 제거 중…</string>
+    <string name="content_magic_ai_is_enhancing">Magic AI가 향상 중…</string>
+    <string name="save">저장</string>
+    <string name="apply">적용</string>
+
+    <!-- My Create Screen -->
+    <string name="no_creations_yet">아직 작품이 없습니다!</string>
+    <string name="start_first_project">첫 번째 프로젝트를 시작하고 창의력을 발휘하세요.</string>
+    <string name="start_editing">편집 시작</string>
+
+    <!-- Discover Screen -->
+    <string name="collage_maker">콜라주 메이커</string>
+    <string name="free_style">자유 스타일</string>
+    <string name="templates">템플릿</string>
+    <string name="see_all">모두 보기</string>
+    <string name="quick_edits">빠른 편집</string>
+    <string name="remove_object">객체 제거</string>
+    <string name="ai_enhance">AI 향상</string>
+
+    <!-- Common -->
+    <string name="close">닫기</string>
+    <string name="back">뒤로</string>
+    <string name="loading_frames">프레임 로딩 중…</string>
+    <string name="loading_patterns">패턴 로딩 중…</string>
+    <string name="loading_gradients">그라데이션 로딩 중…</string>
+    <string name="error">오류: %1$s</string>
+    <string name="no_frames_available">사용 가능한 프레임 없음</string>
+    <string name="no_patterns_available">사용 가능한 패턴 없음</string>
+    <string name="no_gradients_available">사용 가능한 그라데이션 없음</string>
+    <string name="pro">프로</string>
+    <string name="selected">선택됨</string>
+
+    <!-- Collage Tools -->
+    <string name="layout">레이아웃</string>
+    <string name="margin">여백</string>
+
+    <!-- Text Sticker -->
+    <string name="click_to_edit">편집하려면 클릭</string>
+
+    <!-- Image Picker -->
+    <string name="select_photos">1-10장의 사진 선택</string>
+    <string name="next">다음</string>
+    <string name="all">전체</string>
+    <string name="all_with_count">전체 (%1$d)</string>
+
+    <!-- Crop -->
+    <string name="image_saved">이미지 저장됨</string>
+    <string name="select_image_from_gallery">갤러리에서 이미지 선택</string>
+
+    <!-- Remove Object -->
+    <string name="remove">제거</string>
+    <string name="saved_to_device">기기에 저장됨</string>
+
+    <!-- Delete Image Dialog -->
+    <string name="delete_image_title">사진 삭제</string>
+    <string name="delete_image_message">이 사진은 영구적으로 제거됩니다. 삭제하시겠습니까?</string>
+    <string name="photo_quality">사진 품질</string>
+    <string name="pick_your_preferred_download_resolution">선호하는 다운로드 해상도 선택</string>
+    <string name="low">낮음</string>
+    <string name="medium">중간</string>
+    <string name="high">높음</string>
+    <string name="download">다운로드</string>
+    <string name="new_edit">새 편집</string>
+    <string name="share">공유</string>
+    <string name="remove_watermark">워터마크 제거</string>
+    <string name="ai_tools">AI 도구</string>
+
+    <!-- Confirm Save Image Dialog -->
+    <string name="discard_changes">변경 사항 취소</string>
+    <string name="discard_changes_message">변경 사항이 저장되지 않습니다. 계속하시겠습니까?</string>
+    <string name="discard">취소</string>
+    <string name="copy">복사</string>
+    <string name="delete">삭제</string>
+    <string name="doodle">낙서</string>
+</resources>
+

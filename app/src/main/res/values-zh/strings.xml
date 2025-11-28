@@ -1,0 +1,184 @@
+<resources>
+    <string name="app_name">照片应用</string>
+    <string name="title_settings">设置</string>
+    <string name="setting_language">语言</string>
+    <string name="setting_rate_app">评分</string>
+    <string name="setting_send_feedback">发送反馈</string>
+    <string name="setting_share_app">分享应用</string>
+    <string name="setting_gdpr">GDPR</string>
+    <string name="setting_privacy_policy">隐私政策</string>
+    <!-- Language Selection -->
+    <string name="choose_language">选择语言</string>
+    <string name="language_changed">语言更改成功</string>
+    <string name="language_change_failed">更改语言失败</string>
+    <string name="language">语言</string>
+    <string name="rate_now">立即评分</string>
+
+    <string name="crop">裁剪</string>
+    <string name="grids">网格</string>
+    <string name="ratio_tool">比例</string>
+    <string name="background_tool">背景</string>
+    <string name="frame_tool">框架</string>
+    <string name="text_tool">文本</string>
+    <string name="sticker_tool">贴纸</string>
+    <string name="add_photo_tool">添加照片</string>
+    <string name="discover">发现</string>
+    <string name="my_creative">我的创作</string>
+    <string name="horizontal">水平</string>
+    <string name="Format">格式</string>
+    <string name="vertical">垂直</string>
+    <string name="format">格式</string>
+    <string name="rotate">旋转</string>
+    <string name="position">位置</string>
+    <string name="square">正方形</string>
+    <string name="adjust">调整</string>
+    <string name="filter">滤镜</string>
+    <string name="blur">模糊</string>
+    <string name="background">背景</string>
+    <string name="original">原始</string>
+    <string name="enhance">增强</string>
+    <string name="remove_bg">移除背景</string>
+    <string name="draw">绘制</string>
+    <string name="brightness">亮度</string>
+    <string name="contrast">对比度</string>
+    <string name="saturation">饱和度</string>
+    <string name="warmth">色温</string>
+    <string name="fade">褪色</string>
+    <string name="highlight">高光</string>
+    <string name="shadow">阴影</string>
+    <string name="hue">色调</string>
+    <string name="vignette">晕影</string>
+    <string name="sharpen">锐化</string>
+    <string name="grain">颗粒</string>
+    <string name="reset">重置</string>
+    <string name="confirm">确认</string>
+    <string name="cancel">取消</string>
+    <string name="shapes">形状</string>
+    <string name="selfie">自拍</string>
+    <string name="memory">回忆</string>
+    <string name="eart">心形</string>
+    <string name="fancy">精美</string>
+    <string name="heart">心形</string>
+    <string name="brush">画笔</string>
+    <string name="sticker">贴纸</string>
+    <string name="font">字体</string>
+    <string name="color">颜色</string>
+    <string name="align">对齐</string>
+    <string name="auto">自动</string>
+    <string name="lasso">套索</string>
+    <string name="solid">实心</string>
+    <string name="pattern">图案</string>
+    <string name="replace">替换</string>
+    <string name="swap">交换</string>
+    <string name="store">商店</string>
+    <string name="use">使用</string>
+    <string name="sticker_pack">贴纸包</string>
+    <string name="use_sticker_pack">使用贴纸包</string>
+    <string name="unlock_sticker_pack">解锁贴纸包</string>
+    <string name="background_pack">背景包</string>
+    <string name="template">模板</string>
+    <string name="do_you_like_gps_checker">您喜欢GPS检查器吗？</string>
+    <string name="rate_your_experience">评价您的使用体验！</string>
+
+    <!-- Settings Screen -->
+    <string name="settings">设置</string>
+    <string name="english">英语</string>
+    <string name="rate_us">给我们评分</string>
+    <string name="feedback">反馈</string>
+    <string name="share_app">分享应用</string>
+    <string name="manager_subscription">管理订阅</string>
+    <string name="gdpr">GDPR</string>
+    <string name="check_app_update">检查应用更新</string>
+    <string name="privacy_policy">隐私政策</string>
+    <string name="restore_purchase">恢复购买</string>
+    <string name="join_the_community">加入社区</string>
+    <string name="version_with_team">版本 %1$s ️ AmoBear团队</string>
+
+    <!-- Feedback and Sharing -->
+    <string name="feedback_subject">%1$s - 反馈</string>
+    <string name="feedback_body">您好，\n\n我想提供关于%1$s应用的反馈。\n\n%2$s\n\n反馈：\n</string>
+    <string name="send_feedback_via_email">通过电子邮件发送反馈</string>
+    <string name="share_app_title">%1$s - 分享应用</string>
+    <string name="share_app_body">从Play商店下载：https://play.google.com/store/apps/details?id=%1$s</string>
+    <string name="check_out_app">查看 %1$s</string>
+    <string name="share_app_chooser">分享 %1$s</string>
+
+    <!-- URLs -->
+    <string name="gdpr_url">https://example.com/gdpr</string>
+    <string name="privacy_policy_url">https://example.com/privacy</string>
+    <string name="content_removing_object">Magic AI正在移除…</string>
+    <string name="content_magic_ai_is_enhancing">Magic AI正在增强…</string>
+    <string name="save">保存</string>
+    <string name="apply">应用</string>
+
+    <!-- My Create Screen -->
+    <string name="no_creations_yet">还没有作品！</string>
+    <string name="start_first_project">开始您的第一个项目，让您的创造力闪耀。</string>
+    <string name="start_editing">开始编辑</string>
+
+    <!-- Discover Screen -->
+    <string name="collage_maker">拼贴制作器</string>
+    <string name="free_style">自由风格</string>
+    <string name="templates">模板</string>
+    <string name="see_all">查看全部</string>
+    <string name="quick_edits">快速编辑</string>
+    <string name="remove_object">移除对象</string>
+    <string name="ai_enhance">AI增强</string>
+
+    <!-- Common -->
+    <string name="close">关闭</string>
+    <string name="back">返回</string>
+    <string name="loading_frames">正在加载框架…</string>
+    <string name="loading_patterns">正在加载图案…</string>
+    <string name="loading_gradients">正在加载渐变…</string>
+    <string name="error">错误：%1$s</string>
+    <string name="no_frames_available">没有可用的框架</string>
+    <string name="no_patterns_available">没有可用的图案</string>
+    <string name="no_gradients_available">没有可用的渐变</string>
+    <string name="pro">专业版</string>
+    <string name="selected">已选择</string>
+
+    <!-- Collage Tools -->
+    <string name="layout">布局</string>
+    <string name="margin">边距</string>
+
+    <!-- Text Sticker -->
+    <string name="click_to_edit">点击编辑</string>
+
+    <!-- Image Picker -->
+    <string name="select_photos">选择1-10张照片</string>
+    <string name="next">下一步</string>
+    <string name="all">全部</string>
+    <string name="all_with_count">全部 (%1$d)</string>
+
+    <!-- Crop -->
+    <string name="image_saved">图片已保存</string>
+    <string name="select_image_from_gallery">从图库选择图片</string>
+
+    <!-- Remove Object -->
+    <string name="remove">移除</string>
+    <string name="saved_to_device">已保存到设备</string>
+
+    <!-- Delete Image Dialog -->
+    <string name="delete_image_title">删除照片</string>
+    <string name="delete_image_message">此照片将被永久删除。您确定要删除吗？</string>
+    <string name="photo_quality">照片质量</string>
+    <string name="pick_your_preferred_download_resolution">选择您首选的下载分辨率</string>
+    <string name="low">低</string>
+    <string name="medium">中</string>
+    <string name="high">高</string>
+    <string name="download">下载</string>
+    <string name="new_edit">新建编辑</string>
+    <string name="share">分享</string>
+    <string name="remove_watermark">移除水印</string>
+    <string name="ai_tools">AI工具</string>
+
+    <!-- Confirm Save Image Dialog -->
+    <string name="discard_changes">放弃更改</string>
+    <string name="discard_changes_message">更改将不会被保存。您确定要继续吗？</string>
+    <string name="discard">放弃</string>
+    <string name="copy">复制</string>
+    <string name="delete">删除</string>
+    <string name="doodle">涂鸦</string>
+</resources>
+
