@@ -151,7 +151,8 @@ fun FreeStyleScreen(
                 }
             )
             Box(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
                     .padding(horizontal = 16.dp)
                     .padding(top = 80.dp, bottom = 175.dp)
                     .then(
@@ -187,11 +188,15 @@ fun FreeStyleScreen(
                         is FrameSelection.Frame -> {
                             val context = LocalContext.current
                             val data = frame as FrameSelection.Frame
-                            val url = if (data.item.urlThumb?.startsWith("http://") == true || data.item.urlThumb?.startsWith("https://") == true) {
-                                data.item.urlThumb
-                            } else {
-                                "${data.urlRoot}${data.item.urlThumb}"
-                            }
+                            val url =
+                                if (data.item.urlThumb?.startsWith("http://") == true || data.item.urlThumb?.startsWith(
+                                        "https://"
+                                    ) == true
+                                ) {
+                                    data.item.urlThumb
+                                } else {
+                                    "${data.urlRoot}${data.item.urlThumb}"
+                                }
                             AsyncImage(
                                 model = ImageRequest.Builder(context)
                                     .data(url)
@@ -201,6 +206,7 @@ fun FreeStyleScreen(
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
+
                         else -> {}
                     }
                 }
@@ -364,13 +370,14 @@ fun FreeStyleScreen(
                                     FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25);
                                 val uriMark = FileUtil.saveImageToStorageWithQuality(
                                     context = context,
-                                    quality = it.value,
+                                    quality = it,
                                     bitmap = bitmapMark
                                 )
                                 onDownloadSuccess.invoke(
                                     ExportImageData(
                                         pathUriMark = uriMark?.toString(),
-                                        pathBitmapOriginal = pathBitmap
+                                        pathBitmapOriginal = pathBitmap,
+                                        quality = it
                                     )
                                 )
                             } catch (ex: Throwable) {
@@ -527,7 +534,8 @@ fun TextStickerFooterTool(
             },
             uiState = uiState,
             onSelectedColor = { color ->
-                stickerView.getCurrentTextSticker()?.getAddTextProperties()?.textColor = color.toArgb()
+                stickerView.getCurrentTextSticker()?.getAddTextProperties()?.textColor =
+                    color.toArgb()
                 stickerView.getCurrentTextSticker()?.getAddTextProperties()?.let {
                     stickerView.replace(
                         TextSticker(
@@ -576,7 +584,8 @@ fun TextStickerFooterTool(
                 selectedColor = currentSelectedColor,
                 onColorSelected = { color ->
                     currentSelectedColor = color
-                    stickerView.getCurrentTextSticker()?.getAddTextProperties()?.textColor = color.toArgb()
+                    stickerView.getCurrentTextSticker()?.getAddTextProperties()?.textColor =
+                        color.toArgb()
                     stickerView.getCurrentTextSticker()?.getAddTextProperties()?.let {
                         stickerView.replace(
                             TextSticker(

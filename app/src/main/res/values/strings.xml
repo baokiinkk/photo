@@ -92,7 +92,7 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="restore_purchase">Restore Purchase</string>
     <string name="join_the_community">Join the community</string>
-    <string name="version_with_team">Version %1$s ️ AmoBear\'s Team</string>
+    <string name="version_with_team">Version %1$s ️ AmoBear's Team</string>
 
     <!-- Feedback and Sharing -->
     <string name="feedback_subject">%1$s - Feedback</string>
@@ -173,4 +173,11 @@
     <string name="discard_changes">Discard Changes</string>
     <string name="discard_changes_message">Changes will not be saved. Are you sure you want to proceed?</string>
     <string name="discard">Discard</string>
+
+    <!-- Confirm Remove Photo Dialog -->
+    <string name="delete_photo">Delete Photo</string>
+    <string name="delete_photo_confirmation">This photo will be removed permanently.
+Are you sure you want to delete?</string>
+    <string name="no_keep_it">No, keep it</string>
+    <string name="yes_delete">Yes, delete</string>
 </resources>

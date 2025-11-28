@@ -71,6 +71,7 @@ import java.io.File
 data class ExportImageData(
     val pathUriMark: String?,
     val pathBitmapOriginal: String,
+    val quality: Quality
 ) : IScreenData
 
 class ExportImageResultActivity : BaseActivity() {
@@ -101,7 +102,7 @@ class ExportImageResultActivity : BaseActivity() {
                         shareImage()
                     },
                     onRemoveWatermarkClick = {
-                        viewmodel.removeWatermarkClick()
+                        viewmodel.removeWatermarkClick(screenInput.quality)
                     },
                     onRemoveObjectClick = {
                         navigateToRemoveObject()

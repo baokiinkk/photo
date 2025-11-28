@@ -577,13 +577,14 @@ fun EditorScreen(
                                     FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25);
                                 val uriMark = FileUtil.saveImageToStorageWithQuality(
                                     context = context,
-                                    quality = it.value,
+                                    quality = it,
                                     bitmap = bitmapMark
                                 )
                                 onDownloadSuccess.invoke(
                                     ExportImageData(
                                         pathUriMark = uriMark?.toString(),
-                                        pathBitmapOriginal = pathBitmap
+                                        pathBitmapOriginal = pathBitmap,
+                                        quality = it
                                     )
                                 )
                             } catch (ex: Throwable) {

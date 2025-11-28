@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.avnsoft.photoeditor.photocollage.data.model.image.ImageInfoRoomModel
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternRoomModel
 import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerRoomModel
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateRoomModel
@@ -49,4 +50,17 @@ interface AppDataDao {
     @Query("UPDATE template_table SET isUsed = :isUsed WHERE eventId = :eventId")
     fun updateIsUsedTemplateById(eventId: Long, isUsed: Boolean)
 
+
+    // =============================== Image info ============================
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertImage(message: ImageInfoRoomModel): Long
+    @Query("SELECT * FROM image_info")
+    fun getImages(): Flow<List<ImageInfoRoomModel>>
+
+    @Query("DELETE FROM image_info")
+    fun deleteAllImage()
+
+    @Query("DELETE FROM image_info WHERE id = :id")
+    suspend fun deleteImageById(id: Long)
 }
