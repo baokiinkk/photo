@@ -146,7 +146,7 @@ class BackgroundActivity : BaseActivity() {
                         }
                         Spacer(modifier = Modifier.height(36.dp))
                         BackgroundSheet(
-                            isShowFooter = uiState.backgroundSelection == null,
+                            isShowFooter = true,
                             selectedBackgroundSelection = uiState.backgroundSelection,
                             onBackgroundSelect = { _, selection ->
                                 viewmodel.updateBackground(selection)

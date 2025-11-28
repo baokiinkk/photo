@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.data.repository
 
+import android.util.Log
 import com.avnsoft.photoeditor.photocollage.data.local.room.AppDataDao
 import com.avnsoft.photoeditor.photocollage.data.model.image.ImageInfoModel
 import com.avnsoft.photoeditor.photocollage.data.model.image.ImageInfoRoomModel
@@ -13,12 +14,12 @@ class GetImageInfoRepoImpl(
     private val appDataDao: AppDataDao
 ) {
 
-    fun insertImage(imageUrl: String) {
+    fun insertImage(imageUrl: String): Int {
         val imageInfoModel = ImageInfoRoomModel(
             imageUrl = imageUrl,
             createdAt = System.currentTimeMillis()
         )
-        appDataDao.insertImage(imageInfoModel)
+        return appDataDao.insertImage(imageInfoModel).toInt()
     }
 
     fun getMyCreates(): Flow<List<MyCreateItem>> {
@@ -36,7 +37,11 @@ class GetImageInfoRepoImpl(
         appDataDao.deleteAllImage()
     }
 
-    suspend fun deleteImageById(id: Int) {
+    suspend fun deleteImageById(id: Long) {
         appDataDao.deleteImageById(id)
+    }
+
+    fun updateImageById(id: Int, imageUrl: String) {
+        appDataDao.updateImageById(id, imageUrl)
     }
 }

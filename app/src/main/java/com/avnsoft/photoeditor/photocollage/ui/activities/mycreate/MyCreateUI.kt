@@ -341,7 +341,7 @@ fun MyCreateProjectItemPreview() {
     Surface {
         MyCreateProjectItem(
             project = MyCreateItem(
-                id = "1".toInt(),
+                id = "1".toLong(),
                 thumbnailPath = "",
                 title = "My Project"
             ),
@@ -357,32 +357,32 @@ fun MyCreateProjectGridPreview() {
         MyCreateProjectGrid(
             projects = listOf(
                 MyCreateItem(
-                    id = "1".toInt(),
+                    id = "1".toLong(),
                     thumbnailPath = "",
                     title = "Project 1"
                 ),
                 MyCreateItem(
-                    id = "2".toInt(),
+                    id = "2".toLong(),
                     thumbnailPath = "",
                     title = "Project 2"
                 ),
                 MyCreateItem(
-                    id = "3".toInt(),
+                    id = "3".toLong(),
                     thumbnailPath = "",
                     title = "Project 3"
                 ),
                 MyCreateItem(
-                    id = "4".toInt(),
+                    id = "4".toLong(),
                     thumbnailPath = "",
                     title = "Project 4"
                 ),
                 MyCreateItem(
-                    id = "5".toInt(),
+                    id = "5".toLong(),
                     thumbnailPath = "",
                     title = "Project 5"
                 ),
                 MyCreateItem(
-                    id = "6".toInt(),
+                    id = "6".toLong(),
                     thumbnailPath = "",
                     title = "Project 6"
                 )

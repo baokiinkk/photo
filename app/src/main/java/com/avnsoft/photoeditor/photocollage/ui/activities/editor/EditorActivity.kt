@@ -34,6 +34,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -390,15 +391,6 @@ class EditorActivity : BaseActivity() {
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    BackgroundLayer(
-                        backgroundSelection = uiState.backgroundColor,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(
-                                top = inner.calculateTopPadding(),
-                                bottom = inner.calculateBottomPadding()
-                            )
-                    )
                     EditorScreen(
                         blurView = blurView,
                         viewmodel = viewmodel,
@@ -503,6 +495,11 @@ fun EditorScreen(
                         }
                         .capturable(captureController)
                 ) {
+                    BackgroundLayer(
+                        backgroundSelection = uiState.backgroundColor,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
                     uiState.bitmap?.let {
                         Image(
                             bitmap = it.asImageBitmap(),
@@ -522,6 +519,11 @@ fun EditorScreen(
                         .padding(top = 20.dp, bottom = 23.dp)
                         .capturable(captureController)
                 ) {
+                    BackgroundLayer(
+                        backgroundSelection = uiState.backgroundColor,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
                     Box(
                         modifier = Modifier
                             .fillMaxSize()

@@ -42,7 +42,7 @@ class MyCreateViewModel(
         }
     }
 
-    fun deleteProject(projectId: Int) {
+    fun deleteProject(projectId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             imageInfoRepoImpl.deleteImageById(projectId)
         }
@@ -56,7 +56,7 @@ data class MyCreateUIState(
 )
 
 data class MyCreateItem(
-    val id: Int = -1,
+    val id: Long = -1,
     val thumbnailPath: String = "",
     val title: String? = null,
     val createdAt: Long = System.currentTimeMillis()

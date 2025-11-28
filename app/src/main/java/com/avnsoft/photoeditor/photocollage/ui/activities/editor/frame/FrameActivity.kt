@@ -77,13 +77,13 @@ class FrameActivity : BaseActivity() {
                             Modifier
                                 .fillMaxWidth()
                                 .weight(1f)
-                                .capturable(captureController)
                         ) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .aspectRatio(it.width / it.height.toFloat())
                                     .align(Alignment.Center)
+                                    .capturable(captureController)
                             ) {
                                 Image(
                                     bitmap = it.asImageBitmap(),

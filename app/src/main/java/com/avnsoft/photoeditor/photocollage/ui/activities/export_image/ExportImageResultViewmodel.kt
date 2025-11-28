@@ -3,10 +3,8 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.export_image
 import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.data.repository.GetImageInfoRepoImpl
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
-import com.basesource.base.utils.fromJson
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,15 +20,18 @@ class ExportImageResultViewmodel(
 
     val uiState = MutableStateFlow(ExportImageResultUIState())
     var isSaved: Boolean = false
-
+    var imageId: Int = -1
     fun initData(
         exportImageData: ExportImageData
     ) {
-        uiState.update {
-            it.copy(
-                imageUrl = exportImageData.pathUriMark,
-                pathBitmapOriginal = exportImageData.pathBitmapOriginal
-            )
+        viewModelScope.launch(Dispatchers.IO) {
+            imageId = getImageInfoRepoImpl.insertImage(exportImageData.pathUriMark.toString())
+            uiState.update {
+                it.copy(
+                    imageUrl = exportImageData.pathUriMark,
+                    pathBitmapOriginal = exportImageData.pathBitmapOriginal
+                )
+            }
         }
     }
 
@@ -49,7 +50,7 @@ class ExportImageResultViewmodel(
                 bitmap = uiState.value.pathBitmapOriginal.toBitmap(context) ?: return@launch
             )
             uri?.let {
-                getImageInfoRepoImpl.insertImage(it.toString())
+                getImageInfoRepoImpl.updateImageById(id = imageId, it.toString())
             }
             isSaved = true
         }

@@ -360,7 +360,7 @@ fun FreeStyleScreen(
                 },
                 onDownload = {
                     if (pathBitmap.isNotEmpty()) {
-                        scope.launch {
+                        scope.launch(Dispatchers.IO) {
                             try {
                                 val bitmap = pathBitmap.toBitmap() ?: return@launch
                                 val bitmapMark =

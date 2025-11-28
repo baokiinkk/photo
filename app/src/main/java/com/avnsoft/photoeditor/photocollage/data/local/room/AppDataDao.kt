@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.avnsoft.photoeditor.photocollage.data.model.image.ImageInfoRoomModel
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternRoomModel
 import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerRoomModel
@@ -55,6 +56,7 @@ interface AppDataDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertImage(message: ImageInfoRoomModel): Long
+
     @Query("SELECT * FROM image_info")
     fun getImages(): Flow<List<ImageInfoRoomModel>>
 
@@ -62,5 +64,9 @@ interface AppDataDao {
     fun deleteAllImage()
 
     @Query("DELETE FROM image_info WHERE id = :id")
-    suspend fun deleteImageById(id: Int)
+    suspend fun deleteImageById(id: Long)
+
+    @Query("UPDATE image_info SET imageUrl = :imageUrl WHERE id = :id")
+    fun updateImageById(id: Int,imageUrl: String)
+
 }
