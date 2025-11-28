@@ -51,6 +51,9 @@ class CollageViewModel(
     private val _unselectTrigger = MutableStateFlow(0)
     val unselectAllImagesTrigger = _unselectTrigger.asStateFlow()
 
+    private val _showDiscardDialog = MutableStateFlow(false)
+    val showDiscardDialog = _showDiscardDialog.asStateFlow()
+
     var stickerView: FreeStyleStickerView? = null
         set(v) {
             field = v
@@ -201,6 +204,14 @@ class CollageViewModel(
 
     fun confirmImageTransformChanges() {
         tempTransforms = null
+    }
+
+    fun showDiscardDialog() {
+        _showDiscardDialog.value = true
+    }
+
+    fun hideDiscardDialog() {
+        _showDiscardDialog.value = false
     }
 
     fun setImageUris(context: Context, uris: List<Uri>) {

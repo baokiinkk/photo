@@ -34,12 +34,15 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageState
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
@@ -56,6 +59,9 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleVie
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.StickerFooterTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.TextStickerFooterTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
+import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
+import com.avnsoft.photoeditor.photocollage.ui.dialog.DeleteImageDialog
+import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
@@ -96,6 +102,12 @@ fun CollageScreen(
     val canUndo by vm.canUndo.collectAsState()
     val canRedo by vm.canRedo.collectAsState()
     val unselectAllImagesTrigger by vm.unselectAllImagesTrigger.collectAsState()
+    val showDiscardDialog by vm.showDiscardDialog.collectAsState()
+
+    // Intercept back press
+    BackHandler {
+        vm.showDiscardDialog()
+    }
 
     LaunchedEffect(uris, collageState.imageUris) {
         if (collageState.imageUris.isEmpty() && uris.isNotEmpty()) {
@@ -109,6 +121,8 @@ fun CollageScreen(
     var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
     var isSwapMode by remember { mutableStateOf(false) }
     var replaceImageIndex by remember { mutableStateOf<Int?>(null) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var deleteImageIndex by remember { mutableStateOf<Int?>(null) }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -257,6 +271,7 @@ fun CollageScreen(
 
             ImageEditAction.SWAP -> {
                 isSwapMode = true
+                Toast.makeText(context, R.string.copy, Toast.LENGTH_SHORT).show()
             }
 
             ImageEditAction.CROP -> {
@@ -298,11 +313,8 @@ fun CollageScreen(
 
             ImageEditAction.DELETE -> {
                 if (currentUris.size > 1) {
-                    vm.removeImageUri(index)
-                    selectedImageIndex = null
-                    vm.triggerUnselectAllImages()
-                    val newCount = (currentUris.size - 1).coerceAtLeast(1)
-                    vm.load(newCount)
+                    deleteImageIndex = index
+                    showDeleteDialog = true
                 }
             }
         }
@@ -314,7 +326,9 @@ fun CollageScreen(
             .background(Background2)
     ) {
         FeaturePhotoHeader(
-            onBack = onBack,
+            onBack = {
+                vm.showDiscardDialog()
+            },
             onUndo = { vm.undo() },
             onRedo = { vm.redo() },
             onSave = {
@@ -694,6 +708,41 @@ fun CollageScreen(
                 }
             )
         }
+
+        DeleteImageDialog(
+            isVisible = showDeleteDialog,
+            onDelete = {
+                deleteImageIndex?.let { index ->
+                    if (currentUris.size > 1 && index < currentUris.size) {
+                        vm.removeImageUri(index)
+                        selectedImageIndex = null
+                        vm.triggerUnselectAllImages()
+                        val newCount = (currentUris.size - 1).coerceAtLeast(1)
+                        vm.load(newCount)
+                    }
+                }
+                showDeleteDialog = false
+                deleteImageIndex = null
+            },
+            onCancel = {
+                showDeleteDialog = false
+                deleteImageIndex = null
+            },
+            onDismiss = {
+                showDeleteDialog = false
+                deleteImageIndex = null
+            }
+        )
+
+        DiscardChangesDialog(
+            isVisible = showDiscardDialog,
+            onDiscard = {
+                onBack()
+            },
+            onCancel = {
+                vm.hideDiscardDialog()
+            }
+        )
     }
 }
 

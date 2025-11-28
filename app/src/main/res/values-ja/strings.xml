@@ -1,0 +1,184 @@
+<resources>
+    <string name="app_name">写真アプリ</string>
+    <string name="title_settings">設定</string>
+    <string name="setting_language">言語</string>
+    <string name="setting_rate_app">評価</string>
+    <string name="setting_send_feedback">フィードバックを送信</string>
+    <string name="setting_share_app">アプリを共有</string>
+    <string name="setting_gdpr">GDPR</string>
+    <string name="setting_privacy_policy">プライバシーポリシー</string>
+    <!-- Language Selection -->
+    <string name="choose_language">言語を選択</string>
+    <string name="language_changed">言語が正常に変更されました</string>
+    <string name="language_change_failed">言語の変更に失敗しました</string>
+    <string name="language">言語</string>
+    <string name="rate_now">今すぐ評価</string>
+
+    <string name="crop">切り抜き</string>
+    <string name="grids">グリッド</string>
+    <string name="ratio_tool">比率</string>
+    <string name="background_tool">背景</string>
+    <string name="frame_tool">フレーム</string>
+    <string name="text_tool">テキスト</string>
+    <string name="sticker_tool">ステッカー</string>
+    <string name="add_photo_tool">写真を追加</string>
+    <string name="discover">発見</string>
+    <string name="my_creative">私の作品</string>
+    <string name="horizontal">横</string>
+    <string name="Format">フォーマット</string>
+    <string name="vertical">縦</string>
+    <string name="format">フォーマット</string>
+    <string name="rotate">回転</string>
+    <string name="position">位置</string>
+    <string name="square">正方形</string>
+    <string name="adjust">調整</string>
+    <string name="filter">フィルター</string>
+    <string name="blur">ぼかし</string>
+    <string name="background">背景</string>
+    <string name="original">オリジナル</string>
+    <string name="enhance">強化</string>
+    <string name="remove_bg">背景を削除</string>
+    <string name="draw">描画</string>
+    <string name="brightness">明るさ</string>
+    <string name="contrast">コントラスト</string>
+    <string name="saturation">彩度</string>
+    <string name="warmth">色温度</string>
+    <string name="fade">フェード</string>
+    <string name="highlight">ハイライト</string>
+    <string name="shadow">シャドウ</string>
+    <string name="hue">色相</string>
+    <string name="vignette">ビネット</string>
+    <string name="sharpen">シャープ化</string>
+    <string name="grain">グレイン</string>
+    <string name="reset">リセット</string>
+    <string name="confirm">確認</string>
+    <string name="cancel">キャンセル</string>
+    <string name="shapes">図形</string>
+    <string name="selfie">セルフィー</string>
+    <string name="memory">思い出</string>
+    <string name="eart">ハート</string>
+    <string name="fancy">ファンシー</string>
+    <string name="heart">ハート</string>
+    <string name="brush">ブラシ</string>
+    <string name="sticker">ステッカー</string>
+    <string name="font">フォント</string>
+    <string name="color">色</string>
+    <string name="align">配置</string>
+    <string name="auto">自動</string>
+    <string name="lasso">ラッソ</string>
+    <string name="solid">ソリッド</string>
+    <string name="pattern">パターン</string>
+    <string name="replace">置換</string>
+    <string name="swap">交換</string>
+    <string name="store">ストア</string>
+    <string name="use">使用</string>
+    <string name="sticker_pack">ステッカーパック</string>
+    <string name="use_sticker_pack">ステッカーパックを使用</string>
+    <string name="unlock_sticker_pack">ステッカーパックのロックを解除</string>
+    <string name="background_pack">背景パック</string>
+    <string name="template">テンプレート</string>
+    <string name="do_you_like_gps_checker">GPSチェッカーはお気に入りですか？</string>
+    <string name="rate_your_experience">私たちとの体験を評価してください！</string>
+
+    <!-- Settings Screen -->
+    <string name="settings">設定</string>
+    <string name="english">英語</string>
+    <string name="rate_us">評価する</string>
+    <string name="feedback">フィードバック</string>
+    <string name="share_app">アプリを共有</string>
+    <string name="manager_subscription">サブスクリプション管理</string>
+    <string name="gdpr">GDPR</string>
+    <string name="check_app_update">アプリの更新を確認</string>
+    <string name="privacy_policy">プライバシーポリシー</string>
+    <string name="restore_purchase">購入を復元</string>
+    <string name="join_the_community">コミュニティに参加</string>
+    <string name="version_with_team">バージョン %1$s ️ AmoBearチーム</string>
+
+    <!-- Feedback and Sharing -->
+    <string name="feedback_subject">%1$s - フィードバック</string>
+    <string name="feedback_body">こんにちは、\n\n%1$sアプリについてのフィードバックを提供したいと思います。\n\n%2$s\n\nフィードバック：\n</string>
+    <string name="send_feedback_via_email">メールでフィードバックを送信</string>
+    <string name="share_app_title">%1$s - アプリを共有</string>
+    <string name="share_app_body">Playストアからダウンロード：https://play.google.com/store/apps/details?id=%1$s</string>
+    <string name="check_out_app">%1$sを確認</string>
+    <string name="share_app_chooser">%1$sを共有</string>
+
+    <!-- URLs -->
+    <string name="gdpr_url">https://example.com/gdpr</string>
+    <string name="privacy_policy_url">https://example.com/privacy</string>
+    <string name="content_removing_object">Magic AIが削除中…</string>
+    <string name="content_magic_ai_is_enhancing">Magic AIが強化中…</string>
+    <string name="save">保存</string>
+    <string name="apply">適用</string>
+
+    <!-- My Create Screen -->
+    <string name="no_creations_yet">まだ作品がありません！</string>
+    <string name="start_first_project">最初のプロジェクトを開始して、創造性を輝かせましょう。</string>
+    <string name="start_editing">編集を開始</string>
+
+    <!-- Discover Screen -->
+    <string name="collage_maker">コラージュメーカー</string>
+    <string name="free_style">フリースタイル</string>
+    <string name="templates">テンプレート</string>
+    <string name="see_all">すべて表示</string>
+    <string name="quick_edits">クイック編集</string>
+    <string name="remove_object">オブジェクトを削除</string>
+    <string name="ai_enhance">AI強化</string>
+
+    <!-- Common -->
+    <string name="close">閉じる</string>
+    <string name="back">戻る</string>
+    <string name="loading_frames">フレームを読み込み中…</string>
+    <string name="loading_patterns">パターンを読み込み中…</string>
+    <string name="loading_gradients">グラデーションを読み込み中…</string>
+    <string name="error">エラー：%1$s</string>
+    <string name="no_frames_available">利用可能なフレームがありません</string>
+    <string name="no_patterns_available">利用可能なパターンがありません</string>
+    <string name="no_gradients_available">利用可能なグラデーションがありません</string>
+    <string name="pro">プロ</string>
+    <string name="selected">選択済み</string>
+
+    <!-- Collage Tools -->
+    <string name="layout">レイアウト</string>
+    <string name="margin">マージン</string>
+
+    <!-- Text Sticker -->
+    <string name="click_to_edit">クリックして編集</string>
+
+    <!-- Image Picker -->
+    <string name="select_photos">1-10枚の写真を選択</string>
+    <string name="next">次へ</string>
+    <string name="all">すべて</string>
+    <string name="all_with_count">すべて (%1$d)</string>
+
+    <!-- Crop -->
+    <string name="image_saved">画像が保存されました</string>
+    <string name="select_image_from_gallery">ギャラリーから画像を選択</string>
+
+    <!-- Remove Object -->
+    <string name="remove">削除</string>
+    <string name="saved_to_device">デバイスに保存されました</string>
+
+    <!-- Delete Image Dialog -->
+    <string name="delete_image_title">写真を削除</string>
+    <string name="delete_image_message">この写真は永久に削除されます。削除してもよろしいですか？</string>
+    <string name="photo_quality">写真の品質</string>
+    <string name="pick_your_preferred_download_resolution">お好みのダウンロード解像度を選択</string>
+    <string name="low">低</string>
+    <string name="medium">中</string>
+    <string name="high">高</string>
+    <string name="download">ダウンロード</string>
+    <string name="new_edit">新しい編集</string>
+    <string name="share">共有</string>
+    <string name="remove_watermark">ウォーターマークを削除</string>
+    <string name="ai_tools">AIツール</string>
+
+    <!-- Confirm Save Image Dialog -->
+    <string name="discard_changes">変更を破棄</string>
+    <string name="discard_changes_message">変更は保存されません。続行してもよろしいですか？</string>
+    <string name="discard">破棄</string>
+    <string name="copy">コピー</string>
+    <string name="delete">削除</string>
+    <string name="doodle">落書き</string>
+</resources>
+

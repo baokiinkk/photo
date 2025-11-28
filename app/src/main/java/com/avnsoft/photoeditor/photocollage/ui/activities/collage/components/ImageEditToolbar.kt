@@ -40,13 +40,13 @@ data class ImageEditToolItem(
 )
 
 val imageEditTools = listOf(
-    ImageEditToolItem(ImageEditAction.REPLACE, R.string.replace, R.drawable.ic_add_image),
-    ImageEditToolItem(ImageEditAction.SWAP, R.string.swap, R.drawable.ic_refresh),
+    ImageEditToolItem(ImageEditAction.REPLACE, R.string.replace, R.drawable.ic_replace_tool),
+    ImageEditToolItem(ImageEditAction.SWAP, R.string.swap, R.drawable.ic_swap_tool),
     ImageEditToolItem(ImageEditAction.CROP, R.string.crop, R.drawable.ic_crop),
     ImageEditToolItem(ImageEditAction.ROTATE, R.string.rotate, R.drawable.ic_rotate_left),
     ImageEditToolItem(ImageEditAction.FLIP_HORIZONTAL, R.string.horizontal, R.drawable.ic_flip_horizontal),
     ImageEditToolItem(ImageEditAction.FLIP_VERTICAL, R.string.vertical, R.drawable.ic_flip_vertical),
-    ImageEditToolItem(ImageEditAction.DELETE, R.string.saved_to_device, R.drawable.ic_delete_image)
+    ImageEditToolItem(ImageEditAction.DELETE, R.string.delete, R.drawable.ic_delete_tool)
 )
 
 @Composable

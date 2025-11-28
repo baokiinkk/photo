@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -110,7 +112,9 @@ fun SettingsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundWhite),
+            .background(BackgroundWhite)
+            .statusBarsPadding()
+            .navigationBarsPadding(),
     ) {
         NavigationBar(
             textAlign = TextAlign.Center,
@@ -264,7 +268,7 @@ fun SettingsItem(
         horizontalArrangement = Arrangement.SpaceBetween) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             ImageWidget(
-                resId = icon, modifier = Modifier.size(40.dp)
+                resId = icon, modifier = Modifier.size(36.dp)
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
@@ -281,7 +285,7 @@ fun SettingsItem(
             }
             if (showArrow) {
                 ImageWidget(
-                    resId = R.drawable.ic_arrow_right, modifier = Modifier.size(20.dp)
+                    resId = R.drawable.ic_arrow_right, modifier = Modifier.size(16.dp)
                 )
             }
         }

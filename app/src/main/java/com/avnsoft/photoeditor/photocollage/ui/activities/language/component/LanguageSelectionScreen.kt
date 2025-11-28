@@ -57,6 +57,7 @@ fun LanguageSelectionScreen(
         modifier = modifier
             .fillMaxSize()
             .background(BackgroundGray)
+            .statusBarsPadding()
     ) {
         // Content
         Column(
@@ -108,7 +109,6 @@ private fun LanguageItem(
 ) {
     val backgroundColor = if (isSelected) Purple50 else Color.White
     val borderColor = if (isSelected) Purple500 else null
-    val style = if (isSelected) AppStyle.buttonLarge().semibold().grayScale09() else AppStyle.title2().regular().grayScale09()
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.cursor))
 
     Box(
@@ -152,7 +152,7 @@ private fun LanguageItem(
             Text(
                 modifier = Modifier.weight(1f),
                 text = language.displayName,
-                style = style,
+                style = AppStyle.body1().medium().gray900(),
             )
             RadioButton(
                 modifier = Modifier.size(24.dp),

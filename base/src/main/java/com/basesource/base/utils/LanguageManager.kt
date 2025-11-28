@@ -32,11 +32,10 @@ enum class LanguageType(
     @DrawableRes val flag: Int
 ) {
     ENGLISH("en", "English", R.drawable.flag_en),
-    FRENCH("fr", "Monaco", R.drawable.flat_mo),
-    MACAO("zh", "Macao", R.drawable.flat_macao),
-    MYANMAR("my", "Myanmar", R.drawable.flat_myanmar),
-    MEXICO("es", "Mexico", R.drawable.flat_mexico),
-    VIETNAMESE("vi", "Vietnam", R.drawable.flat_vn),
-    JAPANESE("ja", "Japan", R.drawable.flat_japan),
+    VIETNAMESE("vi", "Vietnamese", R.drawable.flat_vn),
+    CHINESE("zh", "Chinese", R.drawable.flat_macao),
+    KOREAN("ko", "Korean", R.drawable.flat_korean),
+    JAPANESE("ja", "Japanese", R.drawable.flat_japan),
+    FRENCH("fr", "French", R.drawable.flat_french),
 
 }
