@@ -9,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,9 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.layout.ContentScale
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -39,12 +35,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -55,6 +53,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundLayer
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSheet
@@ -79,16 +79,13 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
-import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
-import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.basesource.base.components.ColorPickerDialog
+import com.basesource.base.utils.capturable
 import com.basesource.base.utils.clickableWithAlphaEffect
-import com.basesource.base.utils.toJson
-import dev.shreyaspatil.capturable.capturable
-import dev.shreyaspatil.capturable.controller.rememberCaptureController
+import com.basesource.base.utils.rememberCaptureController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -115,6 +112,7 @@ fun FreeStyleScreen(
     onDownloadSuccess: (ExportImageData) -> Unit
 ) {
     val captureController = rememberCaptureController()
+
     val scope = rememberCoroutineScope()
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
     var showBottomSheetSaveImage by remember { mutableStateOf(false) }
@@ -139,8 +137,7 @@ fun FreeStyleScreen(
                     scope.launch {
                         try {
                             stickerView.setShowFocus(false)
-                            val bitmapAsync = captureController.captureAsync()
-                            val bitmap = bitmapAsync.await().asAndroidBitmap()
+                            val bitmap = captureController.toImageBitmap().asAndroidBitmap()
                             pathBitmap = bitmap.toFile(context)
                             showBottomSheetSaveImage = true
                         } catch (ex: Throwable) {
@@ -151,7 +148,8 @@ fun FreeStyleScreen(
                 }
             )
             Box(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
                     .padding(horizontal = 16.dp)
                     .padding(top = 80.dp, bottom = 175.dp)
                     .then(
@@ -187,11 +185,15 @@ fun FreeStyleScreen(
                         is FrameSelection.Frame -> {
                             val context = LocalContext.current
                             val data = frame as FrameSelection.Frame
-                            val url = if (data.item.urlThumb?.startsWith("http://") == true || data.item.urlThumb?.startsWith("https://") == true) {
-                                data.item.urlThumb
-                            } else {
-                                "${data.urlRoot}${data.item.urlThumb}"
-                            }
+                            val url =
+                                if (data.item.urlThumb?.startsWith("http://") == true || data.item.urlThumb?.startsWith(
+                                        "https://"
+                                    ) == true
+                                ) {
+                                    data.item.urlThumb
+                                } else {
+                                    "${data.urlRoot}${data.item.urlThumb}"
+                                }
                             AsyncImage(
                                 model = ImageRequest.Builder(context)
                                     .data(url)
@@ -201,6 +203,7 @@ fun FreeStyleScreen(
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
+
                         else -> {}
                     }
                 }
@@ -357,20 +360,21 @@ fun FreeStyleScreen(
                 },
                 onDownload = {
                     if (pathBitmap.isNotEmpty()) {
-                        scope.launch {
+                        scope.launch(Dispatchers.IO) {
                             try {
                                 val bitmap = pathBitmap.toBitmap() ?: return@launch
                                 val bitmapMark =
                                     FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25);
                                 val uriMark = FileUtil.saveImageToStorageWithQuality(
                                     context = context,
-                                    quality = it.value,
+                                    quality = it,
                                     bitmap = bitmapMark
                                 )
                                 onDownloadSuccess.invoke(
                                     ExportImageData(
                                         pathUriMark = uriMark?.toString(),
-                                        pathBitmapOriginal = pathBitmap
+                                        pathBitmapOriginal = pathBitmap,
+                                        quality = it
                                     )
                                 )
                             } catch (ex: Throwable) {
@@ -527,7 +531,8 @@ fun TextStickerFooterTool(
             },
             uiState = uiState,
             onSelectedColor = { color ->
-                stickerView.getCurrentTextSticker()?.getAddTextProperties()?.textColor = color.toArgb()
+                stickerView.getCurrentTextSticker()?.getAddTextProperties()?.textColor =
+                    color.toArgb()
                 stickerView.getCurrentTextSticker()?.getAddTextProperties()?.let {
                     stickerView.replace(
                         TextSticker(
@@ -576,7 +581,8 @@ fun TextStickerFooterTool(
                 selectedColor = currentSelectedColor,
                 onColorSelected = { color ->
                     currentSelectedColor = color
-                    stickerView.getCurrentTextSticker()?.getAddTextProperties()?.textColor = color.toArgb()
+                    stickerView.getCurrentTextSticker()?.getAddTextProperties()?.textColor =
+                        color.toArgb()
                     stickerView.getCurrentTextSticker()?.getAddTextProperties()?.let {
                         stickerView.replace(
                             TextSticker(

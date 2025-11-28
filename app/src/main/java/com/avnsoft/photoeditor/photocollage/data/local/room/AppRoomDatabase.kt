@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import com.avnsoft.photoeditor.photocollage.data.model.image.ImageInfoRoomModel
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternContentConverter
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternRoomModel
 import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerConverter
@@ -22,7 +23,8 @@ object DatabaseInfo {
     entities = [
         StickerRoomModel::class,
         PatternRoomModel::class,
-        TemplateRoomModel::class
+        TemplateRoomModel::class,
+        ImageInfoRoomModel::class
     ],
     version = DatabaseInfo.DATABASE_VERSION,
     exportSchema = false

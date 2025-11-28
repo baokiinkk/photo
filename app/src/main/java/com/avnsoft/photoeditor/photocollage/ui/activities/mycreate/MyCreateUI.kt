@@ -26,22 +26,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.shareFile
 import com.avnsoft.photoeditor.photocollage.ui.activities.main.FeatureType
 import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainViewModel
+import com.avnsoft.photoeditor.photocollage.ui.dialog.ConfirmDeletePhotoDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
+import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.clickableWithAlphaEffect
 import org.koin.androidx.compose.koinViewModel
 
@@ -51,6 +61,10 @@ fun MyCreateUI(
     mainViewModel: MainViewModel? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var isShowConfirmDeletePhotoDialog by remember { mutableStateOf(false) }
+    var projectItem by remember { mutableStateOf(MyCreateItem()) }
+    var isShowMyCreateUIBottomSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -58,7 +72,7 @@ fun MyCreateUI(
             .background(BackgroundGray)
     ) {
         MyCreateHeader(mainViewModel)
-        
+
         if (uiState.isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -78,10 +92,51 @@ fun MyCreateUI(
             MyCreateProjectGrid(
                 projects = uiState.projects,
                 onProjectClick = { project ->
-                    // TODO: Handle project click - open project editor
+                    projectItem = project
+                    isShowMyCreateUIBottomSheet = true
                 }
             )
         }
+
+        ConfirmDeletePhotoDialog(
+            isVisible = isShowConfirmDeletePhotoDialog,
+            onKeep = {
+                isShowConfirmDeletePhotoDialog = false
+            },
+            onDelete = {
+                viewModel.deleteProject(projectItem.id)
+                isShowConfirmDeletePhotoDialog = false
+            }
+        )
+
+        MyCreateUIBottomSheet(
+            isVisible = isShowMyCreateUIBottomSheet,
+            pathBitmap = projectItem.thumbnailPath,
+            onDismissRequest = {
+                isShowMyCreateUIBottomSheet = false
+            },
+            onClose = {
+                isShowMyCreateUIBottomSheet = false
+            },
+            onEdit = {
+                isShowMyCreateUIBottomSheet = false
+                EditorActivity.newScreen(
+                    context = context,
+                    input = EditorInput(
+                        pathBitmap = projectItem.thumbnailPath
+                    )
+                )
+            },
+            onDelete = {
+                isShowMyCreateUIBottomSheet = false
+                isShowConfirmDeletePhotoDialog = true
+            },
+            onShare = {
+                isShowMyCreateUIBottomSheet = false
+                val uri = projectItem.thumbnailPath.toUri()
+                (context as? BaseActivity)?.shareFile(uri)
+            }
+        )
     }
 }
 
@@ -147,16 +202,16 @@ fun MyCreateEmptyState(
             contentDescription = null,
             contentScale = ContentScale.FillWidth
         )
-        
+
         Spacer(modifier = Modifier.height(12.dp))
-        
+
         // Title
         Text(
             text = stringResource(R.string.no_creations_yet),
             style = AppStyle.title1().semibold().Color_101828(),
             modifier = Modifier.padding(bottom = 4.dp)
         )
-        
+
         // Description
         Text(
             textAlign = TextAlign.Center,
@@ -164,7 +219,7 @@ fun MyCreateEmptyState(
             style = AppStyle.body1().medium().Color_667085(),
             modifier = Modifier.padding(bottom = 20.dp)
         )
-        
+
         // Start Editing button
         Row(
             modifier = Modifier
@@ -231,7 +286,7 @@ fun MyCreateProjectItem(
             placeholder = painterResource(R.drawable.ic_empty_image),
             error = painterResource(R.drawable.ic_empty_image)
         )
-        
+
         // Title overlay (if exists)
         project.title?.let { title ->
             Box(
@@ -286,7 +341,7 @@ fun MyCreateProjectItemPreview() {
     Surface {
         MyCreateProjectItem(
             project = MyCreateItem(
-                id = "1",
+                id = "1".toLong(),
                 thumbnailPath = "",
                 title = "My Project"
             ),
@@ -302,32 +357,32 @@ fun MyCreateProjectGridPreview() {
         MyCreateProjectGrid(
             projects = listOf(
                 MyCreateItem(
-                    id = "1",
+                    id = "1".toLong(),
                     thumbnailPath = "",
                     title = "Project 1"
                 ),
                 MyCreateItem(
-                    id = "2",
+                    id = "2".toLong(),
                     thumbnailPath = "",
                     title = "Project 2"
                 ),
                 MyCreateItem(
-                    id = "3",
+                    id = "3".toLong(),
                     thumbnailPath = "",
                     title = "Project 3"
                 ),
                 MyCreateItem(
-                    id = "4",
+                    id = "4".toLong(),
                     thumbnailPath = "",
                     title = "Project 4"
                 ),
                 MyCreateItem(
-                    id = "5",
+                    id = "5".toLong(),
                     thumbnailPath = "",
                     title = "Project 5"
                 ),
                 MyCreateItem(
-                    id = "6",
+                    id = "6".toLong(),
                     thumbnailPath = "",
                     title = "Project 6"
                 )

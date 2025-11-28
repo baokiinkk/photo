@@ -60,9 +60,9 @@ import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.components.ColorPickerDialog
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.ImageWidget
+import com.basesource.base.utils.capturable
 import com.basesource.base.utils.clickableWithAlphaEffect
-import dev.shreyaspatil.capturable.capturable
-import dev.shreyaspatil.capturable.controller.rememberCaptureController
+import com.basesource.base.utils.rememberCaptureController
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -112,8 +112,7 @@ class DrawActivity : BaseActivity() {
                         onSave = {
                             scope.launch {
                                 try {
-                                    val bitmapAsync = captureController.captureAsync()
-                                    val bitmap = bitmapAsync.await().asAndroidBitmap()
+                                    val bitmap = captureController.toImageBitmap().asAndroidBitmap()
                                     val pathBitmap = bitmap.toFile(context)
                                     val intent = Intent()
                                     intent.putExtra(EditorActivity.PATH_BITMAP, "$pathBitmap")

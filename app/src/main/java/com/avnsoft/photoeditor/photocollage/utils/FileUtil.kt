@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.Quality
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -23,7 +24,7 @@ object FileUtil {
     const val FOLDER_SDK = "PhotoCollage"
 
     @Throws(IOException::class)
-    fun saveImageToStorageWithQuality(context: Context, quality: Int, bitmap: Bitmap): Uri? {
+    fun saveImageToStorageWithQuality(context: Context, quality: Quality, bitmap: Bitmap): Uri? {
         val imageOutStream: OutputStream?
         val uri: Uri?
         val filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date()) + ".png"
@@ -38,14 +39,14 @@ object FileUtil {
 
             uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
             imageOutStream = contentResolver.openOutputStream(uri!!)
-            bitmap.compress(Bitmap.CompressFormat.PNG, quality, imageOutStream!!)
+            bitmap.compress(Bitmap.CompressFormat.PNG, quality.value, imageOutStream!!)
         } else {
             val parentFilePath: String = getRootFolder()
             val file = File(parentFilePath)
             if (!file.exists()) file.mkdirs()
             val image = File(file, filename)
             imageOutStream = FileOutputStream(image)
-            bitmap.compress(Bitmap.CompressFormat.PNG, quality, imageOutStream)
+            bitmap.compress(Bitmap.CompressFormat.PNG, quality.value, imageOutStream)
             uri = addImageToGallery(image.path, context)
         }
 

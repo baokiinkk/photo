@@ -1,6 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
@@ -8,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -34,6 +34,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -48,7 +49,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Col
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.adjust.AdjustActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.ai_enhance.AIEnhanceActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurView
@@ -58,7 +58,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.DrawActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.frame.FrameActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
@@ -72,9 +71,10 @@ import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
+import com.basesource.base.utils.capturable
 import com.basesource.base.utils.launchActivity
-import dev.shreyaspatil.capturable.capturable
-import dev.shreyaspatil.capturable.controller.rememberCaptureController
+import com.basesource.base.utils.rememberCaptureController
+import com.basesource.base.utils.toJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -105,10 +105,17 @@ fun String?.uriToBitmap(context: Context): Bitmap? {
 
 class EditorActivity : BaseActivity() {
 
-    companion object{
+    companion object {
 
         const val PATH_BITMAP = "pathBitmap"
+
+        fun newScreen(context: Context, input: EditorInput) {
+            val intent = Intent(context, EditorActivity::class.java)
+            intent.putExtra("arg", input.toJson())
+            context.startActivity(intent)
+        }
     }
+
     private val viewmodel: EditorViewModel by viewModel()
 
     private val screenInput: EditorInput? by lazy {
@@ -384,15 +391,6 @@ class EditorActivity : BaseActivity() {
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    BackgroundLayer(
-                        backgroundSelection = uiState.backgroundColor,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(
-                                top = inner.calculateTopPadding(),
-                                bottom = inner.calculateBottomPadding()
-                            )
-                    )
                     EditorScreen(
                         blurView = blurView,
                         viewmodel = viewmodel,
@@ -431,7 +429,7 @@ class EditorActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-       viewmodel.showDiscardDialog()
+        viewmodel.showDiscardDialog()
     }
 
     override fun onDestroy() {
@@ -473,8 +471,7 @@ fun EditorScreen(
                 onSave = {
                     scope.launch {
                         try {
-                            val bitmapAsync = captureController.captureAsync()
-                            val bitmap = bitmapAsync.await().asAndroidBitmap()
+                            val bitmap = captureController.toImageBitmap().asAndroidBitmap()
                             pathBitmap = bitmap.toFile(context)
                             showBottomSheetSaveImage = true
                         } catch (ex: Throwable) {
@@ -498,6 +495,11 @@ fun EditorScreen(
                         }
                         .capturable(captureController)
                 ) {
+                    BackgroundLayer(
+                        backgroundSelection = uiState.backgroundColor,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
                     uiState.bitmap?.let {
                         Image(
                             bitmap = it.asImageBitmap(),
@@ -517,6 +519,11 @@ fun EditorScreen(
                         .padding(top = 20.dp, bottom = 23.dp)
                         .capturable(captureController)
                 ) {
+                    BackgroundLayer(
+                        backgroundSelection = uiState.backgroundColor,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -577,13 +584,14 @@ fun EditorScreen(
                                     FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25);
                                 val uriMark = FileUtil.saveImageToStorageWithQuality(
                                     context = context,
-                                    quality = it.value,
+                                    quality = it,
                                     bitmap = bitmapMark
                                 )
                                 onDownloadSuccess.invoke(
                                     ExportImageData(
                                         pathUriMark = uriMark?.toString(),
-                                        pathBitmapOriginal = pathBitmap
+                                        pathBitmapOriginal = pathBitmap,
+                                        quality = it
                                     )
                                 )
                             } catch (ex: Throwable) {
