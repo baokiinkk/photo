@@ -450,12 +450,29 @@ fun CollageScreen(
                             ImageEditAction.FLIP_VERTICAL -> {
                                 // Flip ảnh theo chiều dọc - xử lý trong ViewModel trên IO thread
                                 vm.flipImageVertical(context, index)
-                                // Không clear selectedImageIndex - giữ toolbar hiển thị
+                                                    // Không clear selectedImageIndex - giữ toolbar hiển thị
+                            }
+
+                            ImageEditAction.DELETE -> {
+                                // Xóa ảnh khỏi danh sách
+                                if (currentUris.size > 1) {
+                                    vm.removeImageUri(index)
+                                    // Unselect sau khi xóa
+                                    selectedImageIndex = null
+                                    vm.triggerUnselectAllImages()
+                                    // Load lại templates với số lượng ảnh mới
+                                    val newCount = (currentUris.size - 1).coerceAtLeast(1)
+                                    vm.load(newCount)
+                                }
                             }
                         }
                     }, onClose = {
                         selectedImageIndex = null
                         vm.triggerUnselectAllImages()
+                    }, disabledActions = if (currentUris.size <= 1) {
+                        setOf(ImageEditAction.DELETE)
+                    } else {
+                        emptySet()
                     })
                 } else if (!showTextSheet) {
                     FeatureBottomTools(

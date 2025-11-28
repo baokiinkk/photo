@@ -493,6 +493,35 @@ class CollageViewModel(
         }
     }
 
+    fun removeImageUri(index: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _collageState.value
+            if (index < currentState.imageUris.size && currentState.imageUris.size > 1) {
+                val newUris = currentState.imageUris.toMutableList().apply {
+                    removeAt(index)
+                }
+                val newBitmaps = currentState.imageBitmaps.toMutableMap().apply {
+                    // Remove bitmap tại index và reindex các bitmap sau index
+                    remove(index)
+                    // Reindex: các bitmap có index > index cần giảm đi 1
+                    val keysToUpdate = keys.filter { it > index }.sorted()
+                    keysToUpdate.forEach { oldIndex ->
+                        val bitmap = remove(oldIndex)
+                        bitmap?.let {
+                            put(oldIndex - 1, it)
+                        }
+                    }
+                }
+                _collageState.update { 
+                    it.copy(
+                        imageUris = newUris,
+                        imageBitmaps = newBitmaps
+                    )
+                }
+            }
+        }
+    }
+
     // Image transformation methods - sử dụng CropController như CropActivity
     // Lưu bitmap trực tiếp vào state thay vì chỉ lưu path
     fun rotateImage(context: Context, index: Int) {
