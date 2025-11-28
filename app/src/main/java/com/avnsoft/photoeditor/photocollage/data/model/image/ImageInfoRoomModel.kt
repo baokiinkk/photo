@@ -7,5 +7,8 @@ import androidx.room.PrimaryKey
 data class ImageInfoRoomModel(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val imageUrl: String
+    val imageUrl: String,
+    val createdAt: Long
 )
+
+

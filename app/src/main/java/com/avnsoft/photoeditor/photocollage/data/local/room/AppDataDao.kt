@@ -62,5 +62,5 @@ interface AppDataDao {
     fun deleteAllImage()
 
     @Query("DELETE FROM image_info WHERE id = :id")
-    suspend fun deleteImageById(id: Long)
+    suspend fun deleteImageById(id: Int)
 }

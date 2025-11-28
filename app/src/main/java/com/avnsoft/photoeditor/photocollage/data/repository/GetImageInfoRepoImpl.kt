@@ -14,7 +14,10 @@ class GetImageInfoRepoImpl(
 ) {
 
     fun insertImage(imageUrl: String) {
-        val imageInfoModel = ImageInfoRoomModel(imageUrl = imageUrl)
+        val imageInfoModel = ImageInfoRoomModel(
+            imageUrl = imageUrl,
+            createdAt = System.currentTimeMillis()
+        )
         appDataDao.insertImage(imageInfoModel)
     }
 
@@ -23,7 +26,7 @@ class GetImageInfoRepoImpl(
             models.map {
                 MyCreateItem(
                     thumbnailPath = it.imageUrl,
-                    id = it.id.toString(),
+                    id = it.id,
                 )
             }
         }
@@ -33,7 +36,7 @@ class GetImageInfoRepoImpl(
         appDataDao.deleteAllImage()
     }
 
-    suspend fun deleteImageById(id: Long) {
+    suspend fun deleteImageById(id: Int) {
         appDataDao.deleteImageById(id)
     }
 }

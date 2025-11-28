@@ -183,7 +183,11 @@ fun CollageScreen(
         val effectiveCanvasHeight = canvasHeight - topMarginPx - bottomMarginPx
 
         val initialTransforms = ImageTransformCalculator.calculateInitialTransformsFromTemplate(
-            context = context, template = template, images = currentUris, canvasWidth = effectiveCanvasWidth, canvasHeight = effectiveCanvasHeight
+            context = context,
+            template = template,
+            images = currentUris,
+            canvasWidth = effectiveCanvasWidth,
+            canvasHeight = effectiveCanvasHeight
         )
         vm.updateImageTransforms(initialTransforms)
         vm.confirmImageTransformChanges()
@@ -228,19 +232,24 @@ fun CollageScreen(
     ) {
         // Header
         FeaturePhotoHeader(
-            onBack = onBack, onUndo = { vm.undo() }, onRedo = { vm.redo() }, onSave = {
-            scope.launch {
-                try {
-                    stickerView.setShowFocus(false)
-                    val bitmapAsync = captureController.captureAsync()
-                    val bitmap = bitmapAsync.await().asAndroidBitmap()
-                    pathBitmap = bitmap.toFile(context)
-                    showBottomSheetSaveImage = true
-                } catch (ex: Throwable) {
-                    Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT).show()
+            onBack = onBack,
+            onUndo = { vm.undo() },
+            onRedo = { vm.redo() },
+            onSave = {
+                scope.launch {
+                    try {
+                        stickerView.setShowFocus(false)
+                        val bitmapAsync = captureController.captureAsync()
+                        val bitmap = bitmapAsync.await().asAndroidBitmap()
+                        pathBitmap = bitmap.toFile(context)
+                        showBottomSheetSaveImage = true
+                    } catch (ex: Throwable) {
+                        Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-        }, canUndo = canUndo && !showGridsSheet && !showRatioSheet, canRedo = canRedo && !showGridsSheet && !showRatioSheet
+            },
+            canUndo = canUndo && !showGridsSheet && !showRatioSheet,
+            canRedo = canRedo && !showGridsSheet && !showRatioSheet
         )
         // Calculate aspect ratio from ratio string (e.g., "1:1" -> 1.0, "4:5" -> 0.8)
         val aspectRatioValue = remember(ratio) {
@@ -273,7 +282,8 @@ fun CollageScreen(
                     .capturable(captureController)
 
             ) {
-                val templateToUse = template ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
+                val templateToUse =
+                    template ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
                 // Map slider values to Dp
                 val gapValue = (1 + columnMargin * 19).dp // columnMargin: 0-1 -> gap: 1-20dp
                 val cornerValue = (1 + cornerRadius * 19).dp // cornerRadius: 0-1 -> corner: 1-20dp
@@ -336,21 +346,26 @@ fun CollageScreen(
                         },
                         unselectAllTrigger = unselectAllImagesTrigger
                     )
-                    collageState.frameSelection?.takeIf { it is FrameSelection.Frame }?.let { frame ->
-                        val data = frame as FrameSelection.Frame
-                        val url = if (data.item.urlThumb?.startsWith("http://") == true || data.item.urlThumb?.startsWith("https://") == true) {
-                            data.item.urlThumb
-                        } else {
-                            "${data.urlRoot}${data.item.urlThumb}"
-                        }
-                        AsyncImage(
-                            model = ImageRequest.Builder(context).data(url).build(),
-                            contentDescription = "",
-                            contentScale = ContentScale.FillBounds,
-                            modifier = Modifier.fillMaxSize()
-                        )
+                    collageState.frameSelection?.takeIf { it is FrameSelection.Frame }
+                        ?.let { frame ->
+                            val data = frame as FrameSelection.Frame
+                            val url =
+                                if (data.item.urlThumb?.startsWith("http://") == true || data.item.urlThumb?.startsWith(
+                                        "https://"
+                                    ) == true
+                                ) {
+                                    data.item.urlThumb
+                                } else {
+                                    "${data.urlRoot}${data.item.urlThumb}"
+                                }
+                            AsyncImage(
+                                model = ImageRequest.Builder(context).data(url).build(),
+                                contentDescription = "",
+                                contentScale = ContentScale.FillBounds,
+                                modifier = Modifier.fillMaxSize()
+                            )
 
-                    }
+                        }
                 }
             }
 
@@ -361,9 +376,10 @@ fun CollageScreen(
             Box(modifier = Modifier.align(Alignment.BottomCenter)) {
                 // Hiển thị ImageEditToolbar khi có image được select
                 if (selectedImageIndex != null && !showTextSheet && !showStickerSheet && !showGridsSheet && !showRatioSheet && !showBackgroundSheet && !showFrameSheet) {
-                    ImageEditToolbar(modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(), onActionClick = { action ->
+                    ImageEditToolbar(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(), onActionClick = { action ->
                         val index = selectedImageIndex ?: return@ImageEditToolbar
                         when (action) {
                             ImageEditAction.REPLACE -> {
@@ -382,7 +398,8 @@ fun CollageScreen(
                                 val selectedUri = currentUris.getOrNull(index)
                                 selectedUri?.let { uri ->
                                     scope.launch(Dispatchers.IO) {
-                                        val pathBitmap = copyImageToAppStorage(context, uri) ?: return@launch
+                                        val pathBitmap =
+                                            copyImageToAppStorage(context, uri) ?: return@launch
                                         scope.launch(Dispatchers.Main) {
                                             (context as? BaseActivity)?.let { baseActivity ->
                                                 baseActivity.launchActivity(
@@ -390,13 +407,20 @@ fun CollageScreen(
                                                     input = ToolInput(pathBitmap = pathBitmap),
                                                     callback = { result ->
                                                         if (result.resultCode == RESULT_OK) {
-                                                            val resultPathBitmap = result.data?.getStringExtra("pathBitmap")
+                                                            val resultPathBitmap =
+                                                                result.data?.getStringExtra("pathBitmap")
                                                             if (index < currentUris.size && resultPathBitmap != null) {
                                                                 // Update ảnh sau khi crop - cập nhật trong ViewModel
-                                                                val newUris = currentUris.toMutableList().apply {
-                                                                    this[index] = resultPathBitmap.toUri()
-                                                                }
-                                                                vm.setImageUris(context, newUris)
+                                                                val newUris =
+                                                                    currentUris.toMutableList()
+                                                                        .apply {
+                                                                            this[index] =
+                                                                                resultPathBitmap.toUri()
+                                                                        }
+                                                                vm.setImageUris(
+                                                                    context,
+                                                                    newUris
+                                                                )
                                                                 // Không clear selectedImageIndex - giữ toolbar hiển thị
                                                             }
                                                         }
@@ -432,7 +456,8 @@ fun CollageScreen(
                     })
                 } else if (!showTextSheet) {
                     FeatureBottomTools(
-                        tools = toolsCollage, onToolClick = { tool ->
+                        tools = toolsCollage,
+                        onToolClick = { tool ->
                             when (tool) {
                                 CollageTool.GRIDS -> {
                                     showGridsSheet = true
@@ -511,7 +536,8 @@ fun CollageScreen(
                                     showStickerSheet = false
                                 }
                             }
-                        }, disabledTools = if (!canAddPhoto) setOf(CollageTool.ADD_PHOTO) else emptySet()
+                        },
+                        disabledTools = if (!canAddPhoto) setOf(CollageTool.ADD_PHOTO) else emptySet()
                     )
                 }
                 if (showGridsSheet) {
@@ -542,14 +568,14 @@ fun CollageScreen(
                 if (showRatioSheet) {
                     RatioSheet(
                         selectedRatio = ratio, onRatioSelect = { aspect ->
-                        vm.updateRatio(aspect.label)
-                    }, onClose = {
-                        vm.cancelRatioChanges()
-                        showRatioSheet = false
-                    }, onConfirm = {
-                        vm.confirmChanges()
-                        showRatioSheet = false
-                    }, modifier = Modifier
+                            vm.updateRatio(aspect.label)
+                        }, onClose = {
+                            vm.cancelRatioChanges()
+                            showRatioSheet = false
+                        }, onConfirm = {
+                            vm.confirmChanges()
+                            showRatioSheet = false
+                        }, modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
                     )
@@ -557,15 +583,19 @@ fun CollageScreen(
 
                 if (showBackgroundSheet) {
                     BackgroundSheet(
-                        selectedBackgroundSelection = collageState.backgroundSelection, onBackgroundSelect = { _, selection ->
-                        vm.updateBackground(selection)
-                    }, onClose = {
-                        vm.cancelBackgroundChanges()
-                        showBackgroundSheet = false
-                    }, onConfirm = {
-                        vm.confirmChanges()
-                        showBackgroundSheet = false
-                    }, modifier = Modifier
+                        selectedBackgroundSelection = collageState.backgroundSelection,
+                        onBackgroundSelect = { _, selection ->
+                            vm.updateBackground(selection)
+                        },
+                        onClose = {
+                            vm.cancelBackgroundChanges()
+                            showBackgroundSheet = false
+                        },
+                        onConfirm = {
+                            vm.confirmChanges()
+                            showBackgroundSheet = false
+                        },
+                        modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
                     )
@@ -573,15 +603,19 @@ fun CollageScreen(
 
                 if (showFrameSheet) {
                     FrameSheet(
-                        selectedFrameSelection = collageState.frameSelection, onFrameSelect = { selection ->
-                        vm.updateFrame(selection)
-                    }, onClose = {
-                        vm.cancelFrameChanges()
-                        showFrameSheet = false
-                    }, onConfirm = {
-                        vm.confirmChanges()
-                        showFrameSheet = false
-                    }, modifier = Modifier
+                        selectedFrameSelection = collageState.frameSelection,
+                        onFrameSelect = { selection ->
+                            vm.updateFrame(selection)
+                        },
+                        onClose = {
+                            vm.cancelFrameChanges()
+                            showFrameSheet = false
+                        },
+                        onConfirm = {
+                            vm.confirmChanges()
+                            showFrameSheet = false
+                        },
+                        modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
                     )
@@ -590,9 +624,10 @@ fun CollageScreen(
                 when {
                     showStickerSheet -> {
                         stickerView.setLocked(true)
-                        StickerFooterTool(modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(), stickerView = stickerView, onCancel = {
+                        StickerFooterTool(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(), stickerView = stickerView, onCancel = {
                             stickerView.removeCurrentSticker()
                             stickerView.setLocked(false)
                             showStickerSheet = false
@@ -668,17 +703,21 @@ fun CollageScreen(
                     scope.launch {
                         try {
                             val bitmap = pathBitmap.toBitmap() ?: return@launch
-                            val bitmapMark = FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25);
+                            val bitmapMark =
+                                FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25);
                             val uriMark = FileUtil.saveImageToStorageWithQuality(
-                                context = context, quality = it.value, bitmap = bitmapMark
+                                context = context, quality = it, bitmap = bitmapMark
                             )
                             onDownloadSuccess.invoke(
                                 ExportImageData(
-                                    pathUriMark = uriMark?.toString(), pathBitmapOriginal = pathBitmap
+                                    pathUriMark = uriMark?.toString(),
+                                    pathBitmapOriginal = pathBitmap,
+                                    quality = it
                                 )
                             )
                         } catch (ex: Throwable) {
-                            Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 } else {
@@ -720,7 +759,11 @@ private fun CollageScreenPreview() {
             ) {
                 val templateToUse = CollageTemplates.LEFT_BIG_RIGHT_2
                 CollagePreview(
-                    images = mockUris, template = templateToUse, gap = 6.dp, corner = 12.dp, modifier = Modifier.fillMaxSize()
+                    images = mockUris,
+                    template = templateToUse,
+                    gap = 6.dp,
+                    corner = 12.dp,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 
