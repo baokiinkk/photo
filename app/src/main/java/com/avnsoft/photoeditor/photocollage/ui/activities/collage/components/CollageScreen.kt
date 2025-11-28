@@ -63,9 +63,9 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.utils.capturable
 import com.basesource.base.utils.launchActivity
-import dev.shreyaspatil.capturable.capturable
-import dev.shreyaspatil.capturable.controller.rememberCaptureController
+import com.basesource.base.utils.rememberCaptureController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -239,8 +239,7 @@ fun CollageScreen(
                 scope.launch {
                     try {
                         stickerView.setShowFocus(false)
-                        val bitmapAsync = captureController.captureAsync()
-                        val bitmap = bitmapAsync.await().asAndroidBitmap()
+                        val bitmap = captureController.toImageBitmap().asAndroidBitmap()
                         pathBitmap = bitmap.toFile(context)
                         showBottomSheetSaveImage = true
                     } catch (ex: Throwable) {

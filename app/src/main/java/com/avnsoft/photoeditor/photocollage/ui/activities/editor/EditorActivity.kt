@@ -70,10 +70,10 @@ import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
+import com.basesource.base.utils.capturable
 import com.basesource.base.utils.launchActivity
+import com.basesource.base.utils.rememberCaptureController
 import com.basesource.base.utils.toJson
-import dev.shreyaspatil.capturable.capturable
-import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -479,8 +479,7 @@ fun EditorScreen(
                 onSave = {
                     scope.launch {
                         try {
-                            val bitmapAsync = captureController.captureAsync()
-                            val bitmap = bitmapAsync.await().asAndroidBitmap()
+                            val bitmap = captureController.toImageBitmap().asAndroidBitmap()
                             pathBitmap = bitmap.toFile(context)
                             showBottomSheetSaveImage = true
                         } catch (ex: Throwable) {

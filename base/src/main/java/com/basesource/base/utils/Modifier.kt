@@ -17,9 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.layer.GraphicsLayer
+import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
@@ -179,5 +183,22 @@ fun Modifier.backgroundLinearGradient(
                     colors = colors
                 )
             )
+    )
+}
+
+@Composable
+fun rememberCaptureController() = rememberGraphicsLayer()
+fun Modifier.capturable(graphicsLayer: GraphicsLayer): Modifier {
+    return this.then(
+        Modifier
+            .drawWithContent {
+                // call record to capture the content in the graphics layer
+                graphicsLayer.record {
+                    // draw the contents of the composable into the graphics layer
+                    this@drawWithContent.drawContent()
+                }
+                // draw the graphics layer on the visible canvas
+                drawLayer(graphicsLayer)
+            }
     )
 }

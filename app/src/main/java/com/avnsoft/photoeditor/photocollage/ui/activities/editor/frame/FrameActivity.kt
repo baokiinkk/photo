@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.ExperimentalComposeApi
@@ -37,8 +36,8 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
-import dev.shreyaspatil.capturable.capturable
-import dev.shreyaspatil.capturable.controller.rememberCaptureController
+import com.basesource.base.utils.capturable
+import com.basesource.base.utils.rememberCaptureController
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -74,7 +73,7 @@ class FrameActivity : BaseActivity() {
                         .background(Color(0xFFF2F4F8))
                 ) {
                     HeaderSave(
-                        modifier =Modifier
+                        modifier = Modifier
                             .fillMaxWidth()
                             .background(Color.White)
                             .padding(horizontal = 16.dp, vertical = 16.dp),
@@ -84,8 +83,7 @@ class FrameActivity : BaseActivity() {
                         onActionRight = {
                             scope.launch {
                                 try {
-                                    val bitmapAsync = captureController.captureAsync()
-                                    val bitmap = bitmapAsync.await().asAndroidBitmap()
+                                    val bitmap = captureController.toImageBitmap().asAndroidBitmap()
                                     val pathBitmap = bitmap.toFile(context)
                                     val intent = Intent()
                                     intent.putExtra(EditorActivity.PATH_BITMAP, "$pathBitmap")

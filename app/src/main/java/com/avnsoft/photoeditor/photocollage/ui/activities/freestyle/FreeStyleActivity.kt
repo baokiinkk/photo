@@ -62,7 +62,6 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.fromJsonTypeToken
 import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.toJson
-import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
