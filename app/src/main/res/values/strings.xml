@@ -181,4 +181,6 @@
 Are you sure you want to delete?</string>
     <string name="no_keep_it">No, keep it</string>
     <string name="yes_delete">Yes, delete</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>

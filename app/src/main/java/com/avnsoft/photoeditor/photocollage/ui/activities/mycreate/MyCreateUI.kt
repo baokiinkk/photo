@@ -34,19 +34,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.shareFile
 import com.avnsoft.photoeditor.photocollage.ui.activities.main.FeatureType
 import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainViewModel
 import com.avnsoft.photoeditor.photocollage.ui.dialog.ConfirmDeletePhotoDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
+import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.clickableWithAlphaEffect
 import org.koin.androidx.compose.koinViewModel
 
@@ -57,7 +63,10 @@ fun MyCreateUI(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var isShowConfirmDeletePhotoDialog by remember { mutableStateOf(false) }
-    var projectId by remember { mutableIntStateOf(-1) }
+    var projectItem by remember { mutableStateOf(MyCreateItem()) }
+    var isShowMyCreateUIBottomSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -84,9 +93,8 @@ fun MyCreateUI(
             MyCreateProjectGrid(
                 projects = uiState.projects,
                 onProjectClick = { project ->
-                    // TODO: Handle project click - open project editor
-                    projectId = project.id
-                    isShowConfirmDeletePhotoDialog = true
+                    projectItem = project
+                    isShowMyCreateUIBottomSheet = true
                 }
             )
         }
@@ -97,9 +105,39 @@ fun MyCreateUI(
                 isShowConfirmDeletePhotoDialog = false
             },
             onDelete = {
-                viewModel.deleteProject(projectId)
+                viewModel.deleteProject(projectItem.id)
                 isShowConfirmDeletePhotoDialog = false
-            })
+            }
+        )
+
+        MyCreateUIBottomSheet(
+            isVisible = isShowMyCreateUIBottomSheet,
+            pathBitmap = projectItem.thumbnailPath,
+            onDismissRequest = {
+                isShowMyCreateUIBottomSheet = false
+            },
+            onClose = {
+                isShowMyCreateUIBottomSheet = false
+            },
+            onEdit = {
+                isShowMyCreateUIBottomSheet = false
+                EditorActivity.newScreen(
+                    context = context,
+                    input = EditorInput(
+                        pathBitmap = projectItem.thumbnailPath
+                    )
+                )
+            },
+            onDelete = {
+                isShowMyCreateUIBottomSheet = false
+                isShowConfirmDeletePhotoDialog = true
+            },
+            onShare = {
+                isShowMyCreateUIBottomSheet = false
+                val uri = projectItem.thumbnailPath.toUri()
+                (context as? BaseActivity)?.shareFile(uri)
+            }
+        )
     }
 }
 

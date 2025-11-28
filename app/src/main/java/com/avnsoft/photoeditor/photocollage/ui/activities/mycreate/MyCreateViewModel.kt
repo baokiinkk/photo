@@ -56,8 +56,8 @@ data class MyCreateUIState(
 )
 
 data class MyCreateItem(
-    val id: Int,
-    val thumbnailPath: String,
+    val id: Int = -1,
+    val thumbnailPath: String = "",
     val title: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 )

@@ -1,6 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
@@ -8,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -48,7 +48,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Col
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.adjust.AdjustActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.ai_enhance.AIEnhanceActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurView
@@ -58,7 +57,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.draw.DrawActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.frame.FrameActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
@@ -73,6 +71,7 @@ import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.launchActivity
+import com.basesource.base.utils.toJson
 import dev.shreyaspatil.capturable.capturable
 import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.CoroutineScope
@@ -105,10 +104,17 @@ fun String?.uriToBitmap(context: Context): Bitmap? {
 
 class EditorActivity : BaseActivity() {
 
-    companion object{
+    companion object {
 
         const val PATH_BITMAP = "pathBitmap"
+
+        fun newScreen(context: Context, input: EditorInput) {
+            val intent = Intent(context, EditorActivity::class.java)
+            intent.putExtra("arg", input.toJson())
+            context.startActivity(intent)
+        }
     }
+
     private val viewmodel: EditorViewModel by viewModel()
 
     private val screenInput: EditorInput? by lazy {
@@ -431,7 +437,7 @@ class EditorActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-       viewmodel.showDiscardDialog()
+        viewmodel.showDiscardDialog()
     }
 
     override fun onDestroy() {

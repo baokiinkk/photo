@@ -123,10 +123,7 @@ fun ConfirmDeletePhotoDialog(
                         Text(
                             text = stringResource(R.string.discard_changes_message),
                             textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = Color.Gray,
-                                fontSize = 16.sp
-                            )
+                            style = AppStyle.body1().medium().gray500()
                         )
 
                         Spacer(modifier = Modifier.height(24.dp))
