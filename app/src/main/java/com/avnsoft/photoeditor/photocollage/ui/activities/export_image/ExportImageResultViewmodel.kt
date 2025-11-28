@@ -21,6 +21,7 @@ class ExportImageResultViewmodel(
 ) : BaseViewModel() {
 
     val uiState = MutableStateFlow(ExportImageResultUIState())
+    var isSaved: Boolean = false
 
     fun initData(
         exportImageData: ExportImageData
@@ -34,6 +35,7 @@ class ExportImageResultViewmodel(
     }
 
     fun removeWatermarkClick(quality: Quality) {
+        if (isSaved) return
         viewModelScope.launch(Dispatchers.IO) {
             uiState.update {
                 it.copy(
@@ -49,6 +51,7 @@ class ExportImageResultViewmodel(
             uri?.let {
                 getImageInfoRepoImpl.insertImage(it.toString())
             }
+            isSaved = true
         }
     }
 

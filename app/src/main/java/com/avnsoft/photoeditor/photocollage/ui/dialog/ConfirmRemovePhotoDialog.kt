@@ -113,6 +113,8 @@ fun ConfirmDeletePhotoDialog(
                                 .padding(start = 50.dp, end = 15.dp)
                         )
 
+                        Spacer(modifier = Modifier.height(20.dp))
+
                         Text(
                             text = stringResource(R.string.delete_photo),
                             style = AppStyle.title1().bold().Color_101828(),
