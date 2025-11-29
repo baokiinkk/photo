@@ -50,6 +50,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainViewModel
 import com.avnsoft.photoeditor.photocollage.ui.dialog.ConfirmDeletePhotoDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
+import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.clickableWithAlphaEffect
@@ -146,6 +147,7 @@ fun MyCreateHeader(viewModel: MainViewModel?) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
+            .background(BackgroundWhite)
             .statusBarsPadding()
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
@@ -271,42 +273,20 @@ fun MyCreateProjectItem(
     project: MyCreateItem,
     onClick: () -> Unit
 ) {
-    Box(
+
+    AsyncImage(
+        model = project.thumbnailPath,
+        contentDescription = project.title,
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .clickableWithAlphaEffect { onClick() }
-    ) {
-        AsyncImage(
-            model = project.thumbnailPath,
-            contentDescription = project.title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            placeholder = painterResource(R.drawable.ic_empty_image),
-            error = painterResource(R.drawable.ic_empty_image)
-        )
+            .height(156.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .clickableWithAlphaEffect { onClick() },
+        contentScale = ContentScale.Crop,
+        placeholder = painterResource(R.drawable.ic_empty_image),
+        error = painterResource(R.drawable.ic_empty_image)
+    )
 
-        // Title overlay (if exists)
-        project.title?.let { title ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .background(
-                        color = androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
-                    )
-                    .padding(12.dp)
-            ) {
-                Text(
-                    text = title,
-                    style = AppStyle.body2().semibold().white(),
-                    maxLines = 1
-                )
-            }
-        }
-    }
 }
 
 @Preview(showBackground = true, showSystemUi = true)

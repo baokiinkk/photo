@@ -3,7 +3,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.store
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternModel
 import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerModel
-import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateCategoryModel
 import com.avnsoft.photoeditor.photocollage.data.repository.PatternRepository
 import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
 import com.avnsoft.photoeditor.photocollage.data.repository.TemplateRepoImpl
@@ -81,7 +81,6 @@ class StoreViewModel(
                 uiState.update {
                     it.copy(
                         templates = item,
-                        selectedTabTemplate = item.firstOrNull()
                     )
                 }
             }
@@ -108,15 +107,6 @@ class StoreViewModel(
         }
     }
 
-    fun updateIsUsedTemplateById(eventId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            templateRepoImpl.updateIsUsedById(
-                eventId,
-                true
-            )
-        }
-    }
-
 }
 
 data class StoreUIState(
@@ -126,7 +116,6 @@ data class StoreUIState(
     val patterns: List<PatternModel> = emptyList(),
     val selectedTabPattern: PatternModel? = null,
 
-    val templates: List<TemplateModel> = emptyList(),
-    val selectedTabTemplate: TemplateModel? = null
+    val templates: List<TemplateCategoryModel> = emptyList(),
 )
 

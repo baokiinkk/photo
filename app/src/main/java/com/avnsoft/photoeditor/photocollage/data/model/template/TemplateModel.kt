@@ -2,19 +2,29 @@ package com.avnsoft.photoeditor.photocollage.data.model.template
 
 import com.basesource.base.ui.base.IScreenData
 
+// Category model - contains category name and list of templates
+data class TemplateCategoryModel(
+    val category: String?,
+    val templates: List<TemplateModel>?
+) : IScreenData
+
 data class TemplateModel(
-    val eventId: Long,
-    val urlThumb: String?,
-    val tabName: String,
-    val content: List<TemplateContentModel>,
+    val previewUrl: String?,
+    val frameUrl: String,
+    val cells: List<TemplateContentModel>?,
     val timeCreate: String = System.currentTimeMillis().toString(),
-    val isUsed: Boolean,
-    val total: String,
-    val bannerUrl: String
+    val isUsed: Boolean?,
+    val isPro: Boolean? = false,
+    val isReward: Boolean? = false,
+    val isFree: Boolean? = false,
+    val bannerUrl: String?
 ) : IScreenData
 
 data class TemplateContentModel(
-    val title: String,
-    val name: String,
-    val urlThumb: String,
+    val x: Float?,
+    val y: Float?,
+    val width: Float?,
+    val height: Float?,
+    val rotate: Int? = null,
+    val urlThumb: String? = null
 )

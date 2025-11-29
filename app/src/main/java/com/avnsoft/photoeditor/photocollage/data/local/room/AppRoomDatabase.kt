@@ -9,8 +9,8 @@ import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternContentCon
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternRoomModel
 import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerConverter
 import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerRoomModel
-import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateConverter
-import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateRoomModel
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateCategoryConverter
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateCategoryRoomModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -23,7 +23,7 @@ object DatabaseInfo {
     entities = [
         StickerRoomModel::class,
         PatternRoomModel::class,
-        TemplateRoomModel::class,
+        TemplateCategoryRoomModel::class,
         ImageInfoRoomModel::class
     ],
     version = DatabaseInfo.DATABASE_VERSION,
@@ -33,7 +33,7 @@ object DatabaseInfo {
     Converters::class,
     StickerConverter::class,
     PatternContentConverter::class,
-    TemplateConverter::class
+    TemplateCategoryConverter::class
 )
 abstract class AppRoomDatabase : RoomDatabase() {
 

@@ -7,37 +7,48 @@ import androidx.room.TypeConverters
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-
+// Category model - contains category name and list of templates
 @Entity(tableName = "template_table")
-@TypeConverters(TemplateConverter::class)
-data class TemplateRoomModel(
+@TypeConverters(TemplateCategoryConverter::class)
+data class TemplateCategoryRoomModel(
     @PrimaryKey
-    val eventId: Long,
-    val eventName: String,
-    val urlThumb: String,
-    val content: List<TemplateContentRoom> = emptyList(),
+    val id: String,
+    val category: String?,
+    val templates: List<TemplateRoomModel>?
+)
+
+data class TemplateRoomModel(
+    val bannerUrl: String?,
+    val previewUrl: String? = null, // From TemplateData.previewUrl
+    val frameUrl: String?, // From TemplateData.frameUrl
+    val content: List<TemplateContentRoom>?, // From TemplateData.content (cells)
     val timeCreate: String = System.currentTimeMillis().toString(),
-    val isUsed: Boolean,
-    val bannerUrl: String
+    val isUsed: Boolean?, // From TemplateData.isUsed
+    val isPro: Boolean? = false, // From TemplateData.isPro
+    val isReward: Boolean? = false, // From TemplateData.isReward
+    val isFree: Boolean? = false // From TemplateData.isFree
 )
 
 data class TemplateContentRoom(
-    val title: String,
-    val name: String,
-    val urlThumb: String,
+    val urlThumb: String?,
+    val x: Float?,
+    val y: Float?,
+    val width: Float?,
+    val height: Float?,
+    val rotate: Int? = null,
 )
 
-class TemplateConverter {
+class TemplateCategoryConverter {
 
     @TypeConverter
-    fun fromContent(list: List<TemplateContentRoom>): String {
+    fun fromTemplates(list: List<TemplateRoomModel>): String {
         return Gson().toJson(list)
     }
 
     @TypeConverter
-    fun toContent(json: String?): List<TemplateContentRoom> {
+    fun toTemplates(json: String?): List<TemplateRoomModel> {
         if (json == null) return emptyList()
-        val type = object : TypeToken<List<TemplateContentRoom>>() {}.type
+        val type = object : TypeToken<List<TemplateRoomModel>>() {}.type
         return Gson().fromJson(json, type)
     }
 }

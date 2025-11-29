@@ -5,7 +5,6 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateCategoryModel
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
@@ -39,9 +39,10 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 
 @Composable
 fun TabTemplates(
-    templates: List<TemplateModel>,
+    templates: List<TemplateCategoryModel>,
     onItemClicked: (TemplateModel) -> Unit
 ) {
+    if(templates.isEmpty()) return
     var tabIndex by remember { mutableIntStateOf(0) }
     Column(
         modifier = Modifier
@@ -74,7 +75,7 @@ fun TabTemplates(
                     Text(
                         modifier = Modifier
                             .padding(vertical = 4.dp, horizontal = 12.dp),
-                        text = item.tabName,
+                        text = item.category.orEmpty(),
                         style = if (isSelected) {
                             AppStyle.caption1().semibold().white()
                         } else {
@@ -85,11 +86,7 @@ fun TabTemplates(
             }
         }
 
-        if (tabIndex == 0) {
-            val tabAll = templates.toMutableList()
-            if (tabAll.isNotEmpty()) {
-                tabAll.removeAt(0)
-            }
+        templates[tabIndex].templates.takeIf { it?.isNotEmpty() == true }?.let {
             LazyVerticalGrid(
                 modifier = Modifier
                     .padding(top = 16.dp, bottom = 16.dp),
@@ -97,26 +94,22 @@ fun TabTemplates(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                itemsIndexed(
-                    items = tabAll,
-                    key = { index, item ->
-                        index
-                    }
-                ) { index, item ->
+                itemsIndexed(items = it) { index, item ->
                     Box(
                         modifier = Modifier
-                            .aspectRatio(1f)
+                            .fillMaxWidth(1f)
+                            .height(194.dp)
                             .clip(RoundedCornerShape(20.dp))
                             .clickableWithAlphaEffect {
                                 onItemClicked.invoke(item)
                             }
                     ) {
                         LoadImage(
-                            model = item.urlThumb,
+                            model = item.previewUrl,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
-                        if (!item.isUsed) {
+                        if (item.isPro == true && item.isUsed == false) {
                             ImageWidget(
                                 resId = R.drawable.button_pro,
                                 modifier = Modifier
@@ -126,33 +119,6 @@ fun TabTemplates(
                                     .padding(top = 8.dp, end = 8.dp)
                             )
                         }
-                    }
-                }
-            }
-        } else {
-            val data = templates[tabIndex].content
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(vertical = 16.dp)
-            ) {
-                itemsIndexed(
-                    items = data,
-                    key = { index, item ->
-                        index
-                    }
-                ) { index, item ->
-                    Box(
-                        modifier = Modifier
-                            .aspectRatio(1f)
-                            .clip(RoundedCornerShape(20.dp))
-                    ) {
-                        LoadImage(
-                            model = item.urlThumb,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
                     }
                 }
             }
