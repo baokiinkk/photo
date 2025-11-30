@@ -58,7 +58,7 @@ class EditorStoreActivity : BaseActivity() {
             val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
             Scaffold(
                 containerColor = AppColor.White
-            ) { inner ->
+            ) { _ ->
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -90,7 +90,17 @@ class EditorStoreActivity : BaseActivity() {
                             .background(Color.White),
                         items = uiState.items,
                         onClick = {
-                            viewmodel.onToolClick(it.tool)
+                            when(it.tool){
+                                CollageTool.REPLACE->{
+                                    finish()
+                                }
+                                CollageTool.TEMPLATE->{
+
+                                }
+                                else ->{
+                                    viewmodel.onToolClick(it.tool)
+                                }
+                            }
                         }
                     )
                 }

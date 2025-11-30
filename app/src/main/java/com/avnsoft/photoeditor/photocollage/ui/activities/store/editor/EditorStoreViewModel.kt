@@ -25,7 +25,7 @@ class EditorStoreViewModel : BaseViewModel() {
         ),
         ToolItem(CollageTool.FILTER, R.string.filter, R.drawable.ic_filter),
         ToolItem(CollageTool.STICKER, R.string.sticker_tool, R.drawable.ic_sticker_tool),
-        ToolItem(CollageTool.ADD_PHOTO, R.string.replace, R.drawable.ic_photo_tool)
+        ToolItem(CollageTool.REPLACE, R.string.replace, R.drawable.ic_photo_tool)
     )
 
     val uiState = MutableStateFlow(EditorStoreUIState(items))

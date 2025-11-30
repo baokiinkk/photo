@@ -67,6 +67,7 @@
         <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurActivity" />
         <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity" />
         <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity" />
+        <activity android:name=".ui.activities.store.tab.template.detail.TemplateDetailActivity" />
         <activity
             android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerActivity"
             android:exported="false"

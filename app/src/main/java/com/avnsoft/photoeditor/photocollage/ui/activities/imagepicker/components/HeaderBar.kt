@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
 import com.basesource.base.utils.clickableWithAlphaEffect
 
@@ -30,7 +31,7 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 fun PickerHeaderBar(
     folderName: String = "Recent",
     canNext: Boolean,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)? = null,
     onNext: () -> Unit,
     onFolderClick: () -> Unit = {},
     showSheet: Boolean
@@ -38,12 +39,14 @@ fun PickerHeaderBar(
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-            .statusBarsPadding(),
+            .background(BackgroundWhite)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onBack) {
-            Icon(painter = painterResource(R.drawable.ic_arrow_left), contentDescription = stringResource(R.string.back), modifier = Modifier.size(28.dp))
+        onBack?.let {
+            IconButton(onClick = onBack) {
+                Icon(painter = painterResource(R.drawable.ic_arrow_left), contentDescription = stringResource(R.string.back), modifier = Modifier.size(28.dp))
+            }
         }
         Spacer(Modifier.width(18.dp))
         Row(Modifier

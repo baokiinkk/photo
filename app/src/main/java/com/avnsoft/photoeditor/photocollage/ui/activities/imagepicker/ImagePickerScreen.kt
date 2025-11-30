@@ -10,6 +10,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -20,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.BucketSheet
@@ -49,7 +53,9 @@ fun ImagePickerScreen(
 
     Box(Modifier
         .fillMaxSize()
-        .background(Color.White)) {
+        .background(Color.White)
+        .statusBarsPadding()
+    ) {
         Column(Modifier.fillMaxSize()) {
             val context = LocalContext.current
             PickerHeaderBar(
