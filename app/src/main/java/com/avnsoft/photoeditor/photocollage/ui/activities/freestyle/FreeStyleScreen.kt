@@ -35,7 +35,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -244,7 +243,9 @@ fun FreeStyleScreen(
                         .align(Alignment.BottomCenter),
                     stickerView = stickerView,
                     onCancel = {
-                        stickerView.removeCurrentSticker()
+                        if (!viewmodel.isEditTextSticker){
+                            stickerView.removeCurrentSticker()
+                        }
                         stickerView.setLocked(false)
                         viewmodel.cancelTextSticker()
                     },
@@ -253,6 +254,7 @@ fun FreeStyleScreen(
                         viewmodel.applyTextSticker()
                     },
                     onAddFirstText = {
+                        if (uiState.isVisibleTextField) return@TextStickerFooterTool
                         stickerView.addSticker(
                             TextSticker(
                                 stickerView.context,
@@ -263,12 +265,23 @@ fun FreeStyleScreen(
                         )
                     },
                     addTextSticker = { font ->
-                        stickerView.replace(
-                            TextSticker(
-                                stickerView.context,
-                                font
+                        if (viewmodel.isEditTextSticker) {
+                            val properties = uiState.editTextProperties
+                            properties.fontName = font.fontName
+                            stickerView.replace(
+                                TextSticker(
+                                    stickerView.context,
+                                    properties
+                                )
                             )
-                        )
+                        } else {
+                            stickerView.replace(
+                                TextSticker(
+                                    stickerView.context,
+                                    font
+                                )
+                            )
+                        }
                     },
                 )
             }
