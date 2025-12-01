@@ -593,7 +593,7 @@ fun CollageScreen(
 
                 when {
                     showStickerSheet -> {
-                        stickerView.setLocked(true)
+//                        stickerView.setLocked(true)
                         StickerFooterTool(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -613,7 +613,7 @@ fun CollageScreen(
                     }
 
                     showTextSheet -> {
-                        stickerView.setLocked(true)
+//                        stickerView.setLocked(true)
                         TextStickerFooterTool(
                             modifier = Modifier
                                 .fillMaxWidth()
