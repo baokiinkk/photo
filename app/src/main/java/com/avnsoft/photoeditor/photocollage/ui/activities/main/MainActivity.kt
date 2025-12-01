@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
@@ -32,6 +33,8 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.TypeSelect
 import com.avnsoft.photoeditor.photocollage.ui.activities.settings.SettingsActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivityInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.TemplateDetailActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.TemplateDetailInput
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
@@ -116,13 +119,22 @@ class MainActivity : BaseActivity() {
                             FeatureType.STORE -> {
                                 gotoStore()
                             }
-
+                            FeatureType.TEMPLATE -> {
+                                gotoTemplate(event.data)
+                            }
                             else -> {}
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun gotoTemplate(data: TemplateModel?) {
+        launchActivity(
+            toActivity = TemplateDetailActivity::class.java,
+            input = TemplateDetailInput(data)
+        )
     }
 
     private fun gotoCollage() {

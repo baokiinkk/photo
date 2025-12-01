@@ -39,7 +39,7 @@ fun MainScreenUI(
             tabs = viewModel.getTabs(),
             selected = selectedTab,
             onEditPhoto = {
-                viewModel.navigateFeature(FeatureType.EDIT_PHOTO)
+                viewModel.navigateScreen(FeatureType.EDIT_PHOTO)
             },
             onTabSelected = {
                 viewModel.navigateToTab(it)

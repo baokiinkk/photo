@@ -86,7 +86,7 @@ fun MyCreateUI(
         } else if (uiState.projects.isEmpty()) {
             MyCreateEmptyState(
                 onStartEditing = {
-                    mainViewModel?.navigateFeature(FeatureType.EDIT_PHOTO)
+                    mainViewModel?.navigateScreen(FeatureType.EDIT_PHOTO)
                 }
             )
         } else {
@@ -155,7 +155,7 @@ fun MyCreateHeader(viewModel: MainViewModel?) {
             modifier = Modifier
                 .size(24.dp)
                 .clickableWithAlphaEffect {
-                    viewModel?.navigateFeature(FeatureType.SETTING)
+                    viewModel?.navigateScreen(FeatureType.SETTING)
                 },
             painter = painterResource(R.drawable.ic_menu),
             contentDescription = ""
@@ -178,7 +178,7 @@ fun MyCreateHeader(viewModel: MainViewModel?) {
             modifier = Modifier
                 .size(24.dp)
                 .clickableWithAlphaEffect {
-                    viewModel?.navigateFeature(FeatureType.STORE)
+                    viewModel?.navigateScreen(FeatureType.STORE)
                 },
             painter = painterResource(R.drawable.ic_market_black),
             contentDescription = ""

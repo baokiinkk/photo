@@ -5,9 +5,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateCategoryModel
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.data.repository.PatternRepository
 import com.avnsoft.photoeditor.photocollage.data.repository.RemoveObjectRepoImpl
 import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
+import com.avnsoft.photoeditor.photocollage.data.repository.TemplateRepoImpl
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
@@ -27,20 +30,24 @@ class MainViewModel(
     private val stickerRepo: StickerRepoImpl,
     private val patternRepo: PatternRepository,
     private val removeObjectRepoImpl: RemoveObjectRepoImpl,
-    private val editorSharedPref: EditorSharedPref
+    private val editorSharedPref: EditorSharedPref,
+    private val templateRepoImpl: TemplateRepoImpl
 ) : BaseViewModel(), KoinComponent {
     private val _selectedTab = MutableStateFlow(TabType.DISCOVER)
     val selectedTab: StateFlow<TabType> = _selectedTab.asStateFlow()
     private val _events = MutableSharedFlow<MainScreenEvent>()
     val events: SharedFlow<MainScreenEvent> = _events.asSharedFlow()
 
+    private val _templates = MutableStateFlow<List<TemplateCategoryModel>>(emptyList())
+    val templates: StateFlow<List<TemplateCategoryModel>> = _templates.asStateFlow()
+
     init {
         initAppData()
     }
 
-    fun navigateFeature(type: FeatureType, tool: CollageTool? = null) {
+    fun navigateScreen(type: FeatureType, tool: CollageTool? = null, data: TemplateModel? = null) {
         viewModelScope.launch {
-            _events.emit(MainScreenEvent.NavigateTo(type, tool))
+            _events.emit(MainScreenEvent.NavigateTo(type, tool, data))
         }
     }
 
@@ -88,6 +95,20 @@ class MainViewModel(
 
                 }
             }
+            async {
+                getPreviewTemplates()
+            }
+        }
+    }
+
+    suspend fun getPreviewTemplates() {
+        try {
+            val response = templateRepoImpl.getPreviewTemplates()
+            response.collect { item ->
+                _templates.value = item
+            }
+        } catch (ex: Exception) {
+
         }
     }
 
@@ -106,8 +127,7 @@ class MainViewModel(
 
 sealed class MainScreenEvent {
     data class NavigateToTab(val tabType: TabType) : MainScreenEvent()
-
-    data class NavigateTo(val type: FeatureType, val tool: CollageTool? = null) : MainScreenEvent()
+    data class NavigateTo(val type: FeatureType, val tool: CollageTool? = null, val data: TemplateModel? = null) : MainScreenEvent()
 }
 
 enum class TabType {
@@ -115,7 +135,7 @@ enum class TabType {
 }
 
 enum class FeatureType {
-    COLLAGE, FREE_STYLE, REMOVE_BACKGROUND, AI_ENHANCE, REMOVE_OBJECT, EDIT_PHOTO, SETTING, STORE
+    COLLAGE, FREE_STYLE, REMOVE_BACKGROUND, AI_ENHANCE, REMOVE_OBJECT, EDIT_PHOTO, SETTING, STORE, TEMPLATE
 }
 
 data class TabItem(

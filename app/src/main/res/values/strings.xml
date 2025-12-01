@@ -187,4 +187,6 @@
     <string name="no_keep_it">No, keep it</string>
     <string name="yes_delete">Yes, delete</string>
     <string name="edit">Edit</string>
+    <string name="collage">Collage</string>
+    <string name="text_tool_home">Add Text</string>
 </resources>

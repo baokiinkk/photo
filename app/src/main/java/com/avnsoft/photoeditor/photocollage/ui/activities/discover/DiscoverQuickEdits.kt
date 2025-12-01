@@ -136,9 +136,9 @@ fun QuickEditCardStaggered(
                 CollageTool.BACKGROUND -> Pair(R.string.background_tool, R.drawable.ic_background_home)
                 CollageTool.FRAME -> Pair(R.string.frame_tool, R.drawable.ic_frame_home)
                 CollageTool.STICKER -> Pair(R.string.sticker_tool, R.drawable.ic_sticker_home)
-                CollageTool.TEXT -> Pair(R.string.text_tool, R.drawable.ic_text_home)
+                CollageTool.TEXT -> Pair(R.string.text_tool_home, R.drawable.ic_text_home)
                 CollageTool.FILTER -> Pair(R.string.filter, R.drawable.ic_filter_home)
-                CollageTool.DOODLE -> Pair(R.string.doodle, R.drawable.ic_doodle_home)
+                CollageTool.DRAW -> Pair(R.string.doodle, R.drawable.ic_doodle_home)
                 else -> Pair(R.string.background_tool, R.drawable.ic_background_home)
 
             }
