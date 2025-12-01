@@ -35,6 +35,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Fea
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput.TYPE
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.initEditorLib
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity
@@ -43,6 +44,8 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.uriToBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageResultActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivityInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.TemplateDetailActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.TemplateDetailInput
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
@@ -159,7 +162,12 @@ class EditorStoreActivity : BaseActivity() {
                         }
 
                         CollageTool.TEMPLATE -> {
-                            // TODO: Handle template
+                            launchActivity(toActivity = StoreActivity::class.java, input = StoreActivityInput(TYPE.BACK_AND_RETURN)) {
+                                if(it.resultCode == RESULT_OK) {
+                                    setResult(RESULT_OK)
+                                    finish()
+                                }
+                            }
                         }
 
                         else -> {

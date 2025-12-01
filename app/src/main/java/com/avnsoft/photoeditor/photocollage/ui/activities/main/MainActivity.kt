@@ -31,6 +31,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImageReque
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.TypeSelect
 import com.avnsoft.photoeditor.photocollage.ui.activities.settings.SettingsActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivityInput
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
@@ -145,7 +146,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun gotoStore() {
-        launchActivity(toActivity = StoreActivity::class.java)
+        launchActivity(toActivity = StoreActivity::class.java, input = StoreActivityInput())
     }
 
     private fun gotoEditPhoto(tool: CollageTool? = null) {

@@ -163,6 +163,7 @@ class TemplateDetailActivity : BaseActivity() {
                                                 )
                                             ) {
                                                 if (it.resultCode == RESULT_OK) {
+                                                    setResult(RESULT_OK)
                                                     finish()
                                                 }
                                             }
