@@ -217,7 +217,7 @@ fun FreeStyleScreen(
 
         when {
             uiState.isShowStickerTool -> {
-                stickerView.setLocked(true)
+//                stickerView.setLocked(true)
                 StickerFooterTool(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -236,7 +236,7 @@ fun FreeStyleScreen(
             }
 
             uiState.isShowTextStickerTool -> {
-                stickerView.setLocked(true)
+//                stickerView.setLocked(true)
                 TextStickerFooterTool(
                     modifier = Modifier
                         .fillMaxWidth()
