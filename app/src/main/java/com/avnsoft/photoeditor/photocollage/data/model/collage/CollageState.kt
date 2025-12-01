@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.ImageTransformState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView

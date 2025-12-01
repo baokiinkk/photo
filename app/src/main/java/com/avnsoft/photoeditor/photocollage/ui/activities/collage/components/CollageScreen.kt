@@ -42,10 +42,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageState
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.CollagePreview
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.ImageTransformCalculator
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
@@ -59,7 +60,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleVie
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.StickerFooterTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.TextStickerFooterTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
-import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DeleteImageDialog
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
@@ -399,8 +399,6 @@ fun CollageScreen(
                         canvasWidth > 0 &&
                         canvasHeight > 0
                     ) {
-                        vm.updateImageTransforms(emptyMap())
-                        delay(500)
                         resetImageTransforms(templateToUse, canvasWidth, canvasHeight, topMargin)
                     }
                 }
