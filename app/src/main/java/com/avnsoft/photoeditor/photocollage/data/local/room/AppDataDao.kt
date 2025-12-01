@@ -4,10 +4,12 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.avnsoft.photoeditor.photocollage.data.model.image.ImageInfoRoomModel
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternRoomModel
 import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerRoomModel
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateCategoryRoomModel
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateRoomModel
 import kotlinx.coroutines.flow.Flow
 
@@ -39,17 +41,21 @@ interface AppDataDao {
     fun updateIsUsedPatternById(eventId: Long, isUsed: Boolean)
 
     // =============================== template ============================
-    @Insert(onConflict = OnConflictStrategy.Companion.IGNORE)
-    fun insertAllTemplate(values: List<TemplateRoomModel>): List<Long>
+
+    @Query("DELETE FROM template_table")
+    suspend fun deleteAllTemplate()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllTemplate(list: List<TemplateCategoryRoomModel>)
+
+    @Transaction
+    suspend fun refreshAllCategories(list: List<TemplateCategoryRoomModel>) {
+        deleteAllTemplate()
+        insertAllTemplate(list)
+    }
 
     @Query("SELECT * FROM template_table")
-    fun getTemplates(): List<TemplateRoomModel>
-
-    @Query("SELECT * FROM template_table")
-    fun getPreviewTemplates(): Flow<List<TemplateRoomModel>>
-
-    @Query("UPDATE template_table SET isUsed = :isUsed WHERE eventId = :eventId")
-    fun updateIsUsedTemplateById(eventId: Long, isUsed: Boolean)
+    fun getPreviewTemplateCategories(): Flow<List<TemplateCategoryRoomModel>>
 
 
     // =============================== Image info ============================

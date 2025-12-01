@@ -1,0 +1,470 @@
+package com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail
+
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.layer.GraphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerViewModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.BucketSheet
+import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.PickerHeaderBar
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.editor.EditorStoreActivity
+import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
+import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.Background1
+import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
+import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
+import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
+import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
+import com.avnsoft.photoeditor.photocollage.utils.getInput
+import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.ui.image.LoadImage
+import com.basesource.base.utils.ImageWidget
+import com.basesource.base.utils.capturable
+import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.launchActivity
+import com.basesource.base.utils.rememberCaptureController
+import com.basesource.base.utils.requestPermission
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
+import androidx.lifecycle.viewmodel.compose.viewModel as composeViewModel
+
+class TemplateDetailActivity : BaseActivity() {
+
+    private val viewModel: TemplateDetailViewModel by viewModel()
+
+    private val screenInput: TemplateModel? by lazy {
+        intent.getInput()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.initData(screenInput)
+        if (hasPermission()) {
+            showContent()
+        } else {
+            val perm =
+                if (Build.VERSION.SDK_INT >= 33) android.Manifest.permission.READ_MEDIA_IMAGES else android.Manifest.permission.READ_EXTERNAL_STORAGE
+            requestPermission(perm) {
+                if (it) {
+                    showContent()
+                } else {
+                    finish()
+                }
+            }
+        }
+    }
+
+    private fun hasPermission(): Boolean {
+        val perm =
+            if (Build.VERSION.SDK_INT >= 33) android.Manifest.permission.READ_MEDIA_IMAGES else android.Manifest.permission.READ_EXTERNAL_STORAGE
+        return ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun showContent() {
+        setContent {
+            MainTheme {
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                val captureController = rememberCaptureController()
+                val scope = rememberCoroutineScope()
+                val context = LocalContext.current
+
+                Scaffold(
+                    containerColor = AppColor.White
+                ) { inner ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(
+                                top = inner.calculateTopPadding(), bottom = inner.calculateBottomPadding()
+                            )
+                    ) {
+                        TemplateDetailHeader(
+                            onClose = { finish() },
+                            onApply = {
+                                scope.launch {
+                                    try {
+                                        val bitmap = captureController.toImageBitmap().asAndroidBitmap()
+                                        val pathBitmap = bitmap.toFile(context)
+                                        val file = File(pathBitmap)
+                                        val uri = file.toUri()
+                                        launchActivity(
+                                            toActivity = EditorStoreActivity::class.java,
+                                            input = ToolInput(pathBitmap = uri.toString())
+                                        )
+                                    } catch (ex: Throwable) {
+                                        Toast.makeText(
+                                            context,
+                                            "Error ${ex.message}",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                    }
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        uiState.template?.let { template ->
+                            TemplateDetailContent(
+                                captureController = captureController,
+                                template = template, selectedImages = uiState.selectedImages, onImageSelected = { index, uri ->
+                                    viewModel.selectImage(index, uri)
+                                }, onImageUnselected = { index ->
+                                    viewModel.unselectImage(index)
+                                }, modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(BackgroundGray)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TemplateDetailHeader(
+    onClose: () -> Unit,
+    onApply: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(BackgroundWhite)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ImageWidget(
+            resId = R.drawable.ic_close,
+            modifier = Modifier
+                .size(28.dp)
+                .clickableWithAlphaEffect(onClick = onClose)
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = stringResource(R.string.apply),
+            style = AppStyle.button().semibold().primary500(),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.clickableWithAlphaEffect(onClick = onApply)
+        )
+    }
+}
+
+@Composable
+fun TemplateDetailContent(
+    template: TemplateModel,
+    selectedImages: Map<Int, Uri>,
+    onImageSelected: (Int, Uri) -> Unit,
+    onImageUnselected: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    captureController: GraphicsLayer
+) {
+    val imagePickerViewModel: ImagePickerViewModel = composeViewModel()
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    var selectedCellIndex by remember { mutableStateOf<Int?>(0) }
+
+    Column(modifier = modifier) {
+        // Banner with cells overlay and frame
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(20.dp)
+                .capturable(captureController)
+        ) {
+            val bannerWidth = constraints.maxWidth.toFloat()
+            val bannerHeight = constraints.maxHeight.toFloat()
+
+            // Banner image
+            template.bannerUrl?.let { bannerUrl ->
+                LoadImage(
+                    model = bannerUrl, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds
+                )
+            }
+
+            // Cells overlay
+            template.cells?.forEachIndexed { index, cell ->
+                val x = cell.x ?: 0f
+                val y = cell.y ?: 0f
+                val width = cell.width ?: 0f
+                val height = cell.height ?: 0f
+                val rotate = cell.rotate?.toFloat() ?: 0f
+
+                val cellX = x * bannerWidth
+                val cellY = y * bannerHeight
+                val cellWidth = width * bannerWidth
+                val cellHeight = height * bannerHeight
+
+                val isSelected = selectedCellIndex == index
+                val hasImage = selectedImages.containsKey(index)
+
+                Box(
+                    modifier = Modifier
+                        .offset(x = with(density) { cellX.toDp() }, y = with(density) { cellY.toDp() })
+                        .width(with(density) { cellWidth.toDp() })
+                        .height(with(density) { cellHeight.toDp() })
+                        .rotate(rotate)
+                        .then(
+                            if (hasImage) {
+                                Modifier
+                            } else {
+                                Modifier
+                                    .border(
+                                        width = if (isSelected) 3.dp else 2.dp,
+                                        color = if (isSelected) Color(0xFF6425F3) else Color(0xFF6425F3).copy(alpha = 0.5f),
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                    .background(Color.White.copy(alpha = 0.1f))
+                            }
+                        )
+                        .clickableWithAlphaEffect {
+                            selectedCellIndex = index
+                        }) {
+                    selectedImages[index]?.let { uri ->
+                        LoadImage(
+                            model = uri, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+            }
+
+            // Frame overlay
+            template.frameUrl?.let { frameUrl ->
+                LoadImage(
+                    model = frameUrl, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds
+                )
+            }
+        }
+
+        // ImagePickerScreen - always visible
+
+        CustomImagePickerScreen(
+            modifier = Modifier.fillMaxWidth().background(BackgroundWhite),
+            viewModel = imagePickerViewModel,
+            selectedImages = selectedImages,
+            selectedCellIndex = selectedCellIndex,
+            onImageClick = { uri ->
+                selectedCellIndex?.or(0)?.let { index ->
+                    onImageSelected(index, uri)
+                    val nextIndex = template.cells?.indices?.firstOrNull {
+                        it > index && !selectedImages.containsKey(it)
+                    }
+                    selectedCellIndex = nextIndex?.or(0)
+                }
+            },
+            onRemove = { uri ->
+                selectedImages.entries.find { it.value == uri }?.key?.let { index ->
+                    selectedCellIndex = index
+                    onImageUnselected(index)
+                }
+            },
+            onCancel = {
+                // Do nothing, keep screen open
+            })
+    }
+}
+
+@Composable
+fun CustomImagePickerScreen(
+    modifier: Modifier,
+    viewModel: ImagePickerViewModel,
+    selectedImages: Map<Int, Uri>,
+    selectedCellIndex: Int?,
+    onImageClick: (Uri) -> Unit,
+    onRemove: (Uri) -> Unit,
+    onCancel: () -> Unit,
+) {
+    val buckets by viewModel.buckets.collectAsState()
+    val currentBucket by viewModel.currentBucket.collectAsState()
+    val images by viewModel.images.collectAsState()
+
+    var showSheet by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) { viewModel.loadInitial() }
+
+    Column(modifier) {
+        val context = LocalContext.current
+        PickerHeaderBar(
+            folderName = currentBucket?.name ?: "Gallery",
+            canNext = false,
+            showSheet = showSheet,
+            onNext = { },
+            onFolderClick = { showSheet = !showSheet })
+
+        if (showSheet) {
+            BucketSheet(
+                buckets = buckets,
+                currentBucketId = currentBucket?.id,
+                modifier = Modifier
+                    .height(284.dp)
+                    .verticalScroll(rememberScrollState()),
+                onSelect = {
+                    viewModel.setCurrentBucket(it)
+                    showSheet = false
+                })
+        } else {
+            CustomGalleryGrid(
+                images = images,
+                selectedImages = selectedImages,
+                selectedCellIndex = selectedCellIndex,
+                modifier = Modifier.height(284.dp).padding(horizontal = 16.dp),
+                onImageClick = { galleryImage ->
+
+                    if (selectedImages.containsValue(galleryImage.uri)) {
+                        onRemove(galleryImage.uri)
+                        return@CustomGalleryGrid
+                    }
+                    onImageClick(galleryImage.uri)
+                },
+                showCameraTile = true,
+                maxSelect = viewModel.MAX_SELECT,
+                onCameraClick = {
+                    val activity = (context as? BaseActivity) ?: return@CustomGalleryGrid
+                    val hasCamera = ContextCompat.checkSelfPermission(
+                        activity, android.Manifest.permission.CAMERA
+                    ) == PackageManager.PERMISSION_GRANTED
+                    val launchCamera: () -> Unit = {
+                        // Camera logic here - similar to ImagePickerScreen
+                    }
+                    if (hasCamera) {
+                        launchCamera()
+                    } else {
+                        activity.requestPermission(android.Manifest.permission.CAMERA) { granted ->
+                            if (granted) {
+                                launchCamera()
+                            }
+                        }
+                    }
+                })
+        }
+    }
+}
+
+@Composable
+fun CustomGalleryGrid(
+    images: List<com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.GalleryImage>,
+    selectedImages: Map<Int, Uri>,
+    selectedCellIndex: Int?,
+    onImageClick: (com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.GalleryImage) -> Unit,
+    modifier: Modifier = Modifier,
+    showCameraTile: Boolean = true,
+    onCameraClick: () -> Unit = {},
+    maxSelect: Int = 10
+) {
+    val canSelectMore = selectedImages.size < maxSelect
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3), modifier = modifier.heightIn(max = 999.dp)
+    ) {
+        if (showCameraTile) {
+            item {
+                Image(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(14.dp))
+                        .clickableWithAlphaEffect(
+                            enabled = canSelectMore, onClick = {
+                                if (canSelectMore) {
+                                    onCameraClick.invoke()
+                                }
+                            }),
+                    painter = painterResource(com.avnsoft.photoeditor.photocollage.R.drawable.ic_camera),
+                    contentDescription = "",
+                    colorFilter = if (!canSelectMore) androidx.compose.ui.graphics.ColorFilter.tint(Color.Gray.copy(alpha = 0.5f)) else null
+                )
+            }
+        }
+        items(images) { img ->
+            Box(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(14.dp))
+                    .clickableWithAlphaEffect() { onImageClick(img) }) {
+                AsyncImage(
+                    model = img.uri, contentDescription = img.displayName, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize()
+                )
+                // Find cell index for this URI
+                val cellIndex = selectedImages.entries.find { it.value == img.uri }?.key
+                if (cellIndex != null) {
+                    Box(
+                        Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(6.dp)
+                            .size(24.dp)
+                            .background(Color(0xFF9747FF), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            (cellIndex + 1).toString(), style = com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle.body2().bold().white()
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+

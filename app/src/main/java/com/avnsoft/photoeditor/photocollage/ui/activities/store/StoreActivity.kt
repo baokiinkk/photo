@@ -45,6 +45,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker.deta
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.background.TabBackground
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.background.detail.StoreBackgroundDetailActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker.TabSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.TemplateDetailActivity
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.basesource.base.ui.base.BaseActivity
@@ -64,18 +65,6 @@ class StoreActivity : BaseActivity() {
         setContent {
             var selectedTab by remember { mutableStateOf(StoreTab.TEMPLATE) }
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-            val launcher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.GetContent()
-            ) { uri: Uri? ->
-                uri?.let {
-                    launchActivity(
-                        toActivity = EditorStoreActivity::class.java,
-                        input = ToolInput(pathBitmap = it.toString())
-                    )
-                }
-            }
-
 
             Scaffold(
                 containerColor = AppColor.White
@@ -103,8 +92,11 @@ class StoreActivity : BaseActivity() {
                         StoreTab.TEMPLATE -> {
                             TabTemplates(
                                 templates = uiState.templates,
-                                onItemClicked = {
-                                    launcher.launch("image/*")
+                                onItemClicked = { template ->
+                                    launchActivity(
+                                        toActivity = TemplateDetailActivity::class.java,
+                                        input = template
+                                    )
                                 }
                             )
                         }

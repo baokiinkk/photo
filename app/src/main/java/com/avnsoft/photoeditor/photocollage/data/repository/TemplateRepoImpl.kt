@@ -3,7 +3,8 @@ package com.avnsoft.photoeditor.photocollage.data.repository
 import android.content.Context
 import com.avnsoft.photoeditor.photocollage.data.local.room.AppDataDao
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
-import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateContentModel
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateCategoryModel
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateCategoryRoomModel
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateContentRoom
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateResponse
@@ -23,7 +24,6 @@ class TemplateRepoImpl(
     private val editorSharedPref: EditorSharedPref
 ) {
     suspend fun syncTemplates() {
-        if (editorSharedPref.getIsSyncTemplate()) return
         val response = safeApiCall<TemplateResponse>(
             context = context,
             apiCallMock = { api.getTemplates() },
@@ -31,33 +31,40 @@ class TemplateRepoImpl(
         )
         when (response) {
             is Result.Success -> {
-                val data = response.data.data.mapIndexed { index, model ->
-                    val contents = model.content.map { item ->
-                        val urlThumb = if (index == 0) {
-                            "file:///android_asset/${item.urlThumb}"
-                        } else {
-                            "${response.data.urlRoot}${item.urlThumb}"
+                val categories = response.data.data.map { categoryData ->
+                    val templates = categoryData.content?.map { templateItem ->
+                        val contents = templateItem.content?.map { contentItem ->
+                            TemplateContentRoom(
+                                urlThumb = contentItem.urlThumb,
+                                x = contentItem.x,
+                                y = contentItem.y,
+                                width = contentItem.width,
+                                height = contentItem.height,
+                                rotate = contentItem.rotate
+                            )
                         }
-                        TemplateContentRoom(
-                            title = item.title,
-                            name = item.name,
-                            urlThumb = urlThumb
+                        
+                        TemplateRoomModel(
+                            bannerUrl = "file:///android_asset/${templateItem.bannerUrl}",
+                            previewUrl = templateItem.previewUrl?.let { "file:///android_asset/$it" },
+                            frameUrl = templateItem.frameUrl,
+                            content = contents,
+                            timeCreate = System.currentTimeMillis().toString(),
+                            isUsed = templateItem.isUsed,
+                            isPro = templateItem.isPro,
+                            isReward = templateItem.isReward,
+                            isFree = templateItem.isFree
                         )
                     }
-
-                    TemplateRoomModel(
-                        eventId = model.eventId,
-                        eventName = model.eventName,
-                        urlThumb = contents.first().urlThumb,
-                        content = contents,
-                        timeCreate = System.currentTimeMillis().toString(),
-                        isUsed = model.isUsed,
-                        bannerUrl = model.bannerUrl,
+                    
+                    TemplateCategoryRoomModel(
+                        id = System.currentTimeMillis().toString(),
+                        category = categoryData.category,
+                        templates = templates
                     )
                 }
 
-                appDataDao.insertAllTemplate(data)
-                editorSharedPref.setIsSyncTemplate(true)
+                appDataDao.refreshAllCategories(categories)
             }
 
             else -> {
@@ -65,79 +72,56 @@ class TemplateRepoImpl(
             }
         }
     }
+    suspend fun getPreviewTemplates(): Flow<List<TemplateCategoryModel>> {
+        syncTemplates()
+        val response = appDataDao.getPreviewTemplateCategories()
 
-    suspend fun getTemplates(): Result<List<TemplateModel>> {
-        if (!editorSharedPref.getIsSyncTemplate()) {
-            syncTemplates()
-        }
-        val response = appDataDao.getTemplates()
-        val data = response.mapIndexed { index, model ->
-            val contents = model.content.map { item ->
-                TemplateContentModel(
-                    title = item.title,
-                    name = item.name,
-                    urlThumb = item.urlThumb
-                )
-            }
-            TemplateModel(
-                eventId = model.eventId,
-                urlThumb = model.urlThumb,
-                content = contents,
-                isUsed = model.isUsed,
-                tabName = model.eventName,
-                total = contents.size.toString(),
-                bannerUrl = model.bannerUrl
-            )
-        }.filter {
-            it.isUsed
-        }
-        return Result.Success(data)
-    }
-
-    suspend fun getPreviewTemplates(): Flow<List<TemplateModel>> {
-        if (!editorSharedPref.getIsSyncTemplate()) {
-            syncTemplates()
-        }
-        val response = appDataDao.getPreviewTemplates()
-
-        val data = response.map { models ->
-            val res = models.map { model ->
-                val contents = model.content.map { item ->
-                    TemplateContentModel(
-                        title = item.title,
-                        name = item.name,
-                        urlThumb = item.urlThumb
+        val data = response.map { categories ->
+            fun toTemplateModel(roomModel: TemplateRoomModel): TemplateModel {
+                val cells = (roomModel.content ?: emptyList()).map { contentRoom ->
+                    com.avnsoft.photoeditor.photocollage.data.model.template.TemplateContentModel(
+                        x = contentRoom.x,
+                        y = contentRoom.y,
+                        width = contentRoom.width,
+                        height = contentRoom.height,
+                        rotate = contentRoom.rotate
                     )
                 }
-                TemplateModel(
-                    eventId = model.eventId,
-                    urlThumb = model.urlThumb,
-                    content = contents,
-                    isUsed = model.isUsed,
-                    tabName = model.eventName,
-                    total = contents.size.toString(),
-                    bannerUrl = model.bannerUrl
+                return TemplateModel(
+                    previewUrl = roomModel.previewUrl,
+                    frameUrl = roomModel.frameUrl ?: "",
+                    cells = cells,
+                    isUsed = roomModel.isUsed ?: false,
+                    isPro = roomModel.isPro ?: false,
+                    isReward = roomModel.isReward ?: false,
+                    isFree = roomModel.isFree ?: false,
+                    bannerUrl = roomModel.bannerUrl ?: ""
                 )
             }
-                .toMutableList()
-            res.add(
-                0, TemplateModel(
-                    eventId = 0,
-                    urlThumb = null,
-                    content = emptyList(),
-                    isUsed = true,
-                    tabName = "All",
-                    total = "",
-                    bannerUrl = ""
+
+            val categoryModels = categories.map { categoryModel ->
+                val categoryName = categoryModel.category
+                val templates = (categoryModel.templates ?: emptyList()).map { toTemplateModel(it) }
+                
+                TemplateCategoryModel(
+                    category = categoryName,
+                    templates = templates
+                )
+            }
+
+            val allTemplates = categoryModels.flatMap { it.templates.orEmpty() }
+            
+            val result = mutableListOf<TemplateCategoryModel>()
+            result.add(
+                TemplateCategoryModel(
+                    category = "All",
+                    templates = allTemplates
                 )
             )
-            res
+            result.addAll(categoryModels)
+            result
         }
         return data
     }
 
-    suspend fun updateIsUsedById(eventId: Long, isUsed: Boolean): Boolean {
-        appDataDao.updateIsUsedTemplateById(eventId, isUsed)
-        return true
-    }
 }

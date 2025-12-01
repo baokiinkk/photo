@@ -37,7 +37,7 @@ fun BucketSheet(
                     .fillMaxWidth()
                     .height(92.dp)
                     .clickableWithAlphaEffect { onSelect(bucket) }
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                    .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (bucket.thumbnail != null) {

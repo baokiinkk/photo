@@ -50,12 +50,4 @@ class EditorSharedPref : KoinComponent {
     fun setIsRequestedToken(value: Boolean) {
         sharedPrefsApi.set(KEY_IS_REQUESTED_TOKEN, value)
     }
-
-    fun getIsSyncTemplate(): Boolean {
-        return sharedPrefsApi.get(IS_SYNC_TEMPLATE, false)
-    }
-
-    fun setIsSyncTemplate(isSync: Boolean) {
-        sharedPrefsApi.set(IS_SYNC_TEMPLATE, isSync)
-    }
 }
