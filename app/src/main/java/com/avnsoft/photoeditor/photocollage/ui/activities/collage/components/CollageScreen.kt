@@ -207,7 +207,6 @@ fun CollageScreen(
             canvasHeight = effectiveCanvasHeight
         )
         vm.updateImageTransforms(initialTransforms)
-        vm.confirmImageTransformChanges()
     }
 
     fun clearAllSheets() {
@@ -435,7 +434,6 @@ fun CollageScreen(
                         },
                         onImageTransformsChange = { transforms ->
                             vm.updateImageTransforms(transforms)
-                            vm.confirmImageTransformChanges()
                         },
                         unselectAllTrigger = unselectAllImagesTrigger,
                         onOutsideClick = {
