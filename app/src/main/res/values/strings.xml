@@ -161,7 +161,7 @@
 
     <!-- Delete Image Dialog -->
     <string name="delete_image_title">Delete Photo</string>
-    <string name="delete_image_message">This photo will be removed permanently.Are you sure you want to delete?</string>
+    <string name="delete_image_message">This photo will be removed permanently. Are you sure you want to delete?</string>
     <string name="photo_quality">Photo Quality</string>
     <string name="pick_your_preferred_download_resolution">Pick your preferred download resolution</string>
     <string name="low">Low</string>

@@ -30,6 +30,7 @@ import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
+import com.avnsoft.photoeditor.photocollage.ui.theme.Primary_6425F3
 import com.basesource.base.components.CustomButton
 import com.basesource.base.utils.clickableWithAlphaEffect
 
@@ -81,7 +82,7 @@ fun DiscardChangesDialog(
                             .align(Alignment.TopEnd)
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.ic_close),
+                            painter = painterResource(R.drawable.ic_close_black),
                             contentDescription = stringResource(R.string.close),
                             modifier = Modifier
                                 .size(24.dp)
@@ -120,7 +121,7 @@ fun DiscardChangesDialog(
                         // Action buttons
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             // Discard button (gray with dark text)
                             Box(
@@ -146,7 +147,7 @@ fun DiscardChangesDialog(
                                     .weight(1f)
                                     .height(48.dp)
                                     .clip(RoundedCornerShape(12.dp))
-                                    .background(Primary500)
+                                    .background(Primary_6425F3)
                                     .clickableWithAlphaEffect(onClick = onCancel),
                                 contentAlignment = Alignment.Center
                             ) {
