@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -65,7 +66,8 @@ fun FeatureBottomTools(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.White)
-            .horizontalScroll(rememberScrollState())
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.Center
     ) {
         tools.forEach { item ->
             ToolItem(

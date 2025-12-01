@@ -8,6 +8,7 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.WindowCompat
 import com.basesource.base.utils.LanguageManager
 import com.basesource.base.utils.LanguageType
@@ -20,6 +21,14 @@ abstract class BaseActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    onBackActivity()
+                }
+            })
         // Lưu ngôn ngữ hiện tại khi tạo activity
         _currentLanguage = LanguageManager.getCurrentLanguage(this)
         // Khởi tạo sớm ActivityResultManager để tránh lỗi register khi đang ở RESUMED
@@ -27,6 +36,9 @@ abstract class BaseActivity : ComponentActivity() {
         val initManager = activityResultManager
     }
 
+    open fun onBackActivity() {
+
+    }
     override fun attachBaseContext(newBase: Context) {
         val language = LanguageManager.getCurrentLanguage(newBase)
         val locale = Locale(language.code)
