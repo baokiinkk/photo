@@ -88,9 +88,31 @@ class AddTextProperties {
                 addTextProperties.isShowBackground = false
                 addTextProperties.backgroundBorder = 8
                 // Note: This is a default value, actual text should be set from context
-                addTextProperties.text = "Click to Edit" // TODO: Use context.getString(R.string.click_to_edit) when context is available
+                addTextProperties.text =
+                    "Click to Edit" // TODO: Use context.getString(R.string.click_to_edit) when context is available
                 return addTextProperties
             }
+
+        fun getAddTextProperties(): AddTextProperties {
+            val addTextProperties = AddTextProperties()
+            addTextProperties.textSize = 18
+            addTextProperties.textAlign = 4
+            addTextProperties.fontName = getFontDefault() //"fonts/36.ttf"
+            addTextProperties.textColor = -1
+            addTextProperties.textAlpha = 255
+            addTextProperties.backgroundAlpha = 255
+            addTextProperties.paddingWidth = 16
+            addTextProperties.textShaderIndex = 7
+            addTextProperties.backgroundColorIndex = 21
+            addTextProperties.textColorIndex = 16
+            addTextProperties.fontIndex = 0
+            addTextProperties.isShowBackground = false
+            addTextProperties.backgroundBorder = 8
+            // Note: This is a default value, actual text should be set from context
+            addTextProperties.text =
+                "Click to Edit" // TODO: Use context.getString(R.string.click_to_edit) when context is available
+            return addTextProperties
+        }
     }
 }
 

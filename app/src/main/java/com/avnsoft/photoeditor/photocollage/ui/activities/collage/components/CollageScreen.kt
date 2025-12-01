@@ -182,6 +182,9 @@ fun CollageScreen(
 
     val aspectRatioValue = remember(ratio) { aspectRatioFor(ratio) }
 
+    val textStickerUIState by freeStyleViewModel.uiState.collectAsStateWithLifecycle()
+
+
     suspend fun resetImageTransforms(
         template: CollageTemplate,
         canvasWidth: Float,
@@ -617,7 +620,9 @@ fun CollageScreen(
                                 .wrapContentHeight(),
                             stickerView = stickerView,
                             onCancel = {
-                                stickerView.removeCurrentSticker()
+                                if (!freeStyleViewModel.isEditTextSticker){
+                                    stickerView.removeCurrentSticker()
+                                }
                                 stickerView.setLocked(false)
                                 showTextSheet = false
                             },
@@ -627,6 +632,7 @@ fun CollageScreen(
                                 showTextSheet = false
                             },
                             onAddFirstText = {
+                                if (textStickerUIState.isVisibleTextField) return@TextStickerFooterTool
                                 stickerView.addSticker(
                                     TextSticker(
                                         stickerView.context,
@@ -649,7 +655,6 @@ fun CollageScreen(
                     else -> Unit
                 }
 
-                val textStickerUIState by freeStyleViewModel.uiState.collectAsStateWithLifecycle()
                 if (textStickerUIState.isVisibleTextField) {
                     EditTextStickerLayer(
                         modifier = Modifier.fillMaxSize(),

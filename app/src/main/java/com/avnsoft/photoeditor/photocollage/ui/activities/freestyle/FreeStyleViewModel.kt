@@ -1,22 +1,17 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.freestyle
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.provider.MediaStore
 import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.Photo
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -25,7 +20,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
-import java.util.Stack
 
 @KoinViewModel
 class FreeStyleViewModel(
@@ -40,10 +34,12 @@ class FreeStyleViewModel(
     private val _removeSticker = Channel<Sticker>()
     val removeSticker = _removeSticker.receiveAsFlow()
 
+    var isEditTextSticker: Boolean = false
+
     fun initData(uriList: List<Uri>) {
         viewModelScope.launch(Dispatchers.IO) {
             val data = uriList.mapIndexed { index, uri ->
-                val drawable = decodeUriToDrawable(context, uri, 400, 400)
+                val drawable = FileUtil.decodeUriToDrawable(context, uri, 400, 400)
                 FreeStyleSticker(index, Photo(uri, 0), drawable)
             }.toMutableList()
             freeStyleSticker.postValue(data)
@@ -89,6 +85,7 @@ class FreeStyleViewModel(
                 isVisibleTextField = false
             )
         }
+        isEditTextSticker = false
     }
 
     fun applyTextSticker() {
@@ -98,13 +95,17 @@ class FreeStyleViewModel(
                 isVisibleTextField = false
             )
         }
+        isEditTextSticker = false
     }
 
+
     fun showEditTextSticker(editTextProperties: AddTextProperties?) {
+        isEditTextSticker = true
         uiState.update {
             it.copy(
                 isVisibleTextField = true,
-                editTextProperties = editTextProperties ?: AddTextProperties.defaultProperties
+                editTextProperties = editTextProperties ?: AddTextProperties.defaultProperties,
+                isShowTextStickerTool = true
             )
         }
     }
@@ -152,7 +153,7 @@ class FreeStyleViewModel(
     fun addMorePhoto(result: List<String>?) {
         val uris = result?.map { it.toUri() } ?: emptyList()
         val data = uris.mapIndexed { index, uri ->
-            val drawable = decodeUriToDrawable(context, uri, 400, 400)
+            val drawable = FileUtil.decodeUriToDrawable(context, uri, 400, 400)
             FreeStyleSticker(index, Photo(uri, 0), drawable)
         }.toMutableList()
         freeStyleSticker.postValue(data)
@@ -243,7 +244,7 @@ data class FreeStyleUIState(
     val isShowStickerTool: Boolean = false,
     val isShowTextStickerTool: Boolean = false,
     val isVisibleTextField: Boolean = false,
-    val editTextProperties: AddTextProperties = AddTextProperties.defaultProperties,
+    val editTextProperties: AddTextProperties = AddTextProperties.getAddTextProperties(),
     val isShowBackgroundTool: Boolean = false,
     val backgroundSelection: BackgroundSelection? = BackgroundSelection
         .Solid("#F2F4F8"),
@@ -287,50 +288,4 @@ sealed class StackFreeStyle(
     ) : StackFreeStyle(sticker, background)
 
     data object NONE : StackFreeStyle(null, null)
-}
-
-fun decodeUriToDrawable(context: Context, uri: Uri?, w: Int, h: Int): BitmapDrawable? {
-    try {
-        var mBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri)
-        if (mBitmap == null) mBitmap =
-            BitmapFactory.decodeResource(context.getResources(), R.drawable.thumbs)
-        val bm: Bitmap = getBitmapResize(mBitmap, w, h)
-        return BitmapDrawable(context.getResources(), bm)
-    } catch (ex: Exception) {
-        ex.printStackTrace()
-        System.gc()
-    } catch (ex: OutOfMemoryError) {
-        ex.printStackTrace()
-        System.gc()
-    }
-    return null
-}
-
-fun getBitmapResize(bitmap: Bitmap, w: Int, h: Int): Bitmap {
-    var maxWidth = 1080
-    var maxHeight = 1920
-
-    if (w != -1 && h != -1) {
-        maxWidth = w
-        maxHeight = h
-    }
-
-    val width = bitmap.getWidth()
-    val height = bitmap.getHeight()
-    if (width >= height) {
-        val i3 = (height * maxWidth) / width
-        if (i3 > maxHeight) {
-            maxWidth = (maxWidth * maxHeight) / i3
-        } else {
-            maxHeight = i3
-        }
-    } else {
-        val i4 = (width * maxHeight) / height
-        if (i4 > maxWidth) {
-            maxHeight = (maxHeight * maxWidth) / i4
-        } else {
-            maxWidth = i4
-        }
-    }
-    return Bitmap.createScaledBitmap(bitmap, maxWidth, maxHeight, true)
 }

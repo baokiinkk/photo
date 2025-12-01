@@ -3,13 +3,16 @@ package com.avnsoft.photoeditor.photocollage.utils
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.Quality
 import java.io.File
@@ -142,5 +145,56 @@ object FileUtil {
         val height = (bitmap.height * ratio).toInt()
 
         return Bitmap.createScaledBitmap(bitmap, width, height, true)
+    }
+
+    fun getBitmapResize(bitmap: Bitmap, w: Int, h: Int): Bitmap {
+        var maxWidth = 1080
+        var maxHeight = 1920
+
+        if (w != -1 && h != -1) {
+            maxWidth = w
+            maxHeight = h
+        }
+
+        val width = bitmap.getWidth()
+        val height = bitmap.getHeight()
+        if (width >= height) {
+            val i3 = (height * maxWidth) / width
+            if (i3 > maxHeight) {
+                maxWidth = (maxWidth * maxHeight) / i3
+            } else {
+                maxHeight = i3
+            }
+        } else {
+            val i4 = (width * maxHeight) / height
+            if (i4 > maxWidth) {
+                maxHeight = (maxHeight * maxWidth) / i4
+            } else {
+                maxWidth = i4
+            }
+        }
+        return Bitmap.createScaledBitmap(bitmap, maxWidth, maxHeight, true)
+    }
+
+    fun decodeUriToDrawable(context: Context, uri: Uri?, w: Int, h: Int): BitmapDrawable? {
+        try {
+            var mBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri)
+            if (mBitmap == null) mBitmap =
+                BitmapFactory.decodeResource(context.getResources(), R.drawable.thumbs)
+            val bm: Bitmap =
+                getBitmapResize(
+                    mBitmap,
+                    w,
+                    h
+                )
+            return BitmapDrawable(context.getResources(), bm)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            System.gc()
+        } catch (ex: OutOfMemoryError) {
+            ex.printStackTrace()
+            System.gc()
+        }
+        return null
     }
 }
