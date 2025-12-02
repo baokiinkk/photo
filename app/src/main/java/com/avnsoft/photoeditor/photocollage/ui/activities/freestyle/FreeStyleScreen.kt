@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.BasicTextField
@@ -33,6 +32,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.toArgb
@@ -55,7 +55,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.model.gradient.GradientGroup
+import com.avnsoft.photoeditor.photocollage.data.model.gradient.GradientItem
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundLayer
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
@@ -80,6 +83,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportIma
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.basesource.base.components.ColorPickerDialog
@@ -125,11 +129,11 @@ fun FreeStyleScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(BackgroundGray)
         ) {
             HeaderSave(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .statusBarsPadding()
                     .background(Color.White)
                     .padding(horizontal = 16.dp, vertical = 16.dp),
                 onBack = onBack,
@@ -152,6 +156,14 @@ fun FreeStyleScreen(
                     .weight(1f)
                     .padding(horizontal = 16.dp)
                     .padding(top = 80.dp, bottom = 175.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(
+                                Color(0xFFFFCCE4),
+                                Color(0xFF66A8FF),
+                            )
+                        )
+                    )
                     .then(
                         remember(uiState.ratio) {
                             if (uiState.ratio != null) {
@@ -159,13 +171,13 @@ fun FreeStyleScreen(
                             } else {
                                 Modifier
                             }
-                        }
-                    )
+                        })
                     .clipToBounds()
                     .capturable(captureController)
             ) {
                 BackgroundLayer(
-                    backgroundSelection = uiState.backgroundSelection,
+                    backgroundSelection = uiState.backgroundSelection ?: BackgroundSelection
+                        .Gradient(GradientItem(colors = listOf("#FFCCE4", "#66A8FF")), GradientGroup()),
                     modifier = Modifier.fillMaxSize()
                 )
                 FreeStyleStickerComposeView(

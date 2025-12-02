@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
@@ -53,6 +55,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePicke
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity.Companion.RESULT_URI
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
@@ -259,6 +262,7 @@ fun HeaderSave(
     textRight: String = stringResource(R.string.save),
     type: TEXT_TYPE = TEXT_TYPE.ROUND,
 ) {
+    Spacer(modifier = Modifier.fillMaxWidth().height(24.dp).background(BackgroundWhite))
     Row(
         modifier = modifier,
     ) {

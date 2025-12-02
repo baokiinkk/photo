@@ -831,7 +831,7 @@ private fun GradientBackgroundTab(
                         .height(140.dp)
                 ) {
                     gradients.forEach { group ->
-                        items(group.content) { item ->
+                        items(group.content.orEmpty()) { item ->
                             GradientItemCard(
                                 gradientItem = item,
                                 gradientGroup = group,
@@ -888,30 +888,13 @@ private fun GradientItemCard(
                     onGradientSelect?.invoke(gradientItem, gradientGroup)
                 },
             contentAlignment = Alignment.Center
-        ) {
-            // Show PRO badge if needed
-            if (gradientGroup.isPro || gradientItem.isPro == true) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(4.dp)
-                        .background(
-                            color = Color(0xFF9747FF),
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.pro),
-                        style = AppStyle.title1().medium().white(),
-                    )
-                }
-            }
+        ){
+
         }
 
         // Gradient title below
         Text(
-            text = gradientItem.title,
+            text = gradientItem.title.orEmpty(),
             style = AppStyle.body2().medium().gray900(),
             modifier = Modifier.padding(top = 8.dp)
         )

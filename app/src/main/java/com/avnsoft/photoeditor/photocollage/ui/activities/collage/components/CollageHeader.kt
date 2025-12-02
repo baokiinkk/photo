@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.Gray300
 import com.avnsoft.photoeditor.photocollage.ui.theme.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
@@ -38,23 +41,23 @@ fun FeaturePhotoHeader(
     onSave: () -> Unit,
     canUndo: Boolean = false,
     canRedo: Boolean = false,
-    modifier: Modifier = Modifier,
     canSave: Boolean = false,
     type: TEXT_TYPE = TEXT_TYPE.ROUND,
     textRight: String = stringResource(R.string.save)
 ) {
     val context = LocalContext.current
+    Spacer(modifier = Modifier.fillMaxWidth().height(24.dp).background(BackgroundWhite))
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .height(56.dp)
+            .background(Color.White),
+        contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(horizontal = 16.dp)
-                .padding(top = 8.dp),
+                .padding(horizontal = 16.dp).align(Alignment.Center),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
