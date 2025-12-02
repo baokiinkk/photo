@@ -56,6 +56,7 @@ fun DeleteImageDialog(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(16.dp)
                 .background(
                     color = BackgroundWhite,
                     shape = RoundedCornerShape(20.dp)
@@ -80,7 +81,7 @@ fun DeleteImageDialog(
                         .align(Alignment.TopEnd)
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.ic_close),
+                        painter = painterResource(R.drawable.ic_close_black),
                         contentDescription = stringResource(R.string.close),
                         modifier = Modifier
                             .size(24.dp)
@@ -96,7 +97,7 @@ fun DeleteImageDialog(
                 text = stringResource(R.string.delete_image_title),
                 style = AppStyle.title1().bold().gray900(),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(top = 20.dp)
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -106,15 +107,13 @@ fun DeleteImageDialog(
                 text = stringResource(R.string.delete_image_message),
                 style = AppStyle.body1().medium().gray500(),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
             )
-
-            Spacer(modifier = Modifier.height(20.dp))
 
             // Action buttons
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.fillMaxWidth().padding(20.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // Cancel button (gray)
                 Box(
@@ -129,7 +128,7 @@ fun DeleteImageDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.cancel),
+                        text = stringResource(R.string.no_keep_it),
                         style = AppStyle.buttonMedium().bold().gray800()
                     )
                 }
@@ -145,7 +144,7 @@ fun DeleteImageDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.delete),
+                        text = stringResource(R.string.yes_delete),
                         style = AppStyle.buttonMedium().bold().white()
                     )
                 }

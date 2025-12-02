@@ -13,9 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -31,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropAspect
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ItemFormat
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray500
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
@@ -47,7 +45,7 @@ val collageRatioOptions = listOf(
 
 @Composable
 fun RatioSheet(
-    selectedRatio: String? = null,
+    selectedRatio: Pair<Int, Int>? = null,
     onRatioSelect: (CropAspect) -> Unit,
     onClose: () -> Unit,
     onConfirm: () -> Unit,
@@ -65,12 +63,14 @@ fun RatioSheet(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.Bottom,
             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 4.dp)
         ) {
-            items(collageRatioOptions) { aspect ->
-                RatioOptionItem(
-                    aspect = aspect,
-                    isSelected = selectedRatio == aspect.label,
+            items(CropAspect.entries.toTypedArray().filter { it != CropAspect.FREE }) { aspect ->
+                ItemFormat(
+                    text = aspect.label,
+                    iconAspect = aspect.iconAspect,
+                    isSelected = selectedRatio == aspect.ratio,
                     onClick = { onRatioSelect(aspect) }
                 )
             }
@@ -162,7 +162,6 @@ private fun RatioOptionItem(
 @Composable
 private fun RatioSheetPreview() {
     RatioSheet(
-        selectedRatio = "1:1",
         onRatioSelect = {},
         onClose = {},
         onConfirm = {}

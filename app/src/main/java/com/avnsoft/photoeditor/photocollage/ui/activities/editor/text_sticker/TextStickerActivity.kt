@@ -60,9 +60,9 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -88,7 +88,7 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
 import com.avnsoft.photoeditor.photocollage.ui.theme.fontFamily
 import com.avnsoft.photoeditor.photocollage.utils.getInput
-import com.basesource.base.components.ColorPickerDialog
+import com.basesource.base.components.ColorPickerUI
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
@@ -390,9 +390,6 @@ class TextStickerActivity : BaseActivity() {
                                         stickerView?.setStickerHorizontalPosition(Sticker.Position.RIGHT)
                                     }
                                 }
-                            },
-                            onShowSystemColor = {
-                                showColorWheel = true
                             }
                         )
                     }
@@ -401,29 +398,6 @@ class TextStickerActivity : BaseActivity() {
                         LoadingScreen()
                     }
 
-                    if (showColorWheel) {
-                        ColorPickerDialog(
-                            selectedColor = currentSelectedColor,
-                            onColorSelected = { color ->
-                                currentSelectedColor = color
-                                stickerView?.getCurrentTextSticker()
-                                    ?.getAddTextProperties()?.textColor = color.toArgb()
-                                stickerView?.getCurrentTextSticker()?.getAddTextProperties()?.let {
-                                    stickerView?.replace(
-                                        TextSticker(
-                                            this@TextStickerActivity,
-                                            it
-                                        )
-                                    )
-                                }
-                                showColorWheel = false
-                            },
-                            onDismiss = { showColorWheel = false },
-                            textStyle = AppStyle.body1().medium().gray900(),
-                            confirmText = R.string.confirm,
-                            cancelText = R.string.cancel
-                        )
-                    }
                 }
             }
         }
@@ -449,7 +423,6 @@ fun TextStickerToolPanel(
     opacityColorValue: Float,
     onOpacityColor: (Float) -> Unit,
     onAlign: (TEXT_ALIGN) -> Unit,
-    onShowSystemColor: () -> Unit
 ) {
     val tabs = listOf(
         stringResource(TEXT_TAB.FONT.res),
@@ -521,7 +494,6 @@ fun TextStickerToolPanel(
                         onSelectedColor = onSelectedColor,
                         sliderValue = opacityColorValue,
                         onSliderChange = onOpacityColor,
-                        onShowSystemColor = onShowSystemColor,
                         sliderValueRange = 0f..255f
                     )
                 }
@@ -622,9 +594,10 @@ fun TabColor(
     onSelectedColor: (Color) -> Unit,
     sliderValue: Float,
     onSliderChange: (Float) -> Unit,
-    onShowSystemColor: () -> Unit,
     sliderValueRange: ClosedFloatingPointRange<Float> = 0f..100f
 ) {
+    var showColorWheel by remember { mutableStateOf(false) }
+
     val colors: List<Color> = listOf(
         Color(0xFFF7F8F3),
         Color(0xFFFFF7EC),
@@ -633,55 +606,70 @@ fun TabColor(
         Color(0xFFFFBBBE),
         Color(0xFFFF8B0D),
     )
-    Column {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(top = 30.dp, start = 16.dp, end = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ImageWidget(
-                resId = R.drawable.ic_color,
-                modifier = Modifier
-                    .size(32.dp)
-                    .clickableWithAlphaEffect(onClick = onShowSystemColor)
-            )
-            colors.forEach { item ->
-                Box(
+    if (showColorWheel) {
+        ColorPickerUI(
+            modifier = modifier,
+            onColorSelected = {
+                onSelectedColor.invoke(it)
+            },
+            onDismiss = { showColorWheel = false },
+            textStyle = AppStyle.body1().medium().gray900(),
+            confirmText = R.string.confirm,
+            cancelText = R.string.cancel
+        )
+    } else {
+        Column {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(top = 30.dp, start = 16.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ImageWidget(
+                    resId = R.drawable.ic_color,
                     modifier = Modifier
                         .size(32.dp)
-                        .background(item, CircleShape)
                         .clickableWithAlphaEffect {
-                            onSelectedColor.invoke(item)
+                            showColorWheel = true
                         }
                 )
+                colors.forEach { item ->
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(item, CircleShape)
+                            .clickableWithAlphaEffect {
+                                onSelectedColor.invoke(item)
+                            }
+                    )
+                }
             }
-        }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp, start = 16.dp, end = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ImageWidget(
-                resId = R.drawable.ic_opacity
-            )
-            Slider(
-                value = sliderValue,
-                onValueChange = onSliderChange,
-                valueRange = sliderValueRange,
+            Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .height(2.dp)
-                    .padding(start = 20.dp),
-                colors = SliderDefaults.colors(
-                    thumbColor = AppColor.Gray800,
-                    activeTrackColor = AppColor.Gray800,
-                    inactiveTrackColor = AppColor.Gray200
+                    .fillMaxWidth()
+                    .padding(top = 24.dp, start = 16.dp, end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ImageWidget(
+                    resId = R.drawable.ic_opacity
                 )
-            )
+                Slider(
+                    value = sliderValue,
+                    onValueChange = onSliderChange,
+                    valueRange = sliderValueRange,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(2.dp)
+                        .padding(start = 20.dp),
+                    colors = SliderDefaults.colors(
+                        thumbColor = AppColor.Gray800,
+                        activeTrackColor = AppColor.Gray800,
+                        inactiveTrackColor = AppColor.Gray200
+                    )
+                )
+            }
         }
     }
 }

@@ -19,6 +19,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,27 +50,36 @@ fun DiscoverUI(viewModel: MainViewModel? = null) {
         Spacer(Modifier.height(20.dp))
         DiscoverFunctionCards(
             onCollageClick = {
-                viewModel?.navigateFeature(FeatureType.COLLAGE)
+                viewModel?.navigateScreen(FeatureType.COLLAGE)
             },
             onFreeStyleClick = {
-                viewModel?.navigateFeature(FeatureType.FREE_STYLE)
+                viewModel?.navigateScreen(FeatureType.FREE_STYLE)
             }
         )
         Spacer(Modifier.height(12.dp))
         DiscoverShortcuts(
             onRemoveObject = {
-                viewModel?.navigateFeature(FeatureType.REMOVE_OBJECT)
+                viewModel?.navigateScreen(FeatureType.REMOVE_OBJECT)
             },
             onAIEnhance = {
-                viewModel?.navigateFeature(FeatureType.AI_ENHANCE)
+                viewModel?.navigateScreen(FeatureType.AI_ENHANCE)
             },
             onRemoveBG = {
-                viewModel?.navigateFeature(FeatureType.REMOVE_BACKGROUND)
+                viewModel?.navigateScreen(FeatureType.REMOVE_BACKGROUND)
             }
         )
-        DiscoverTemplates()
+        val templates by viewModel?.templates?.collectAsState() ?: remember { mutableStateOf(emptyList()) }
+        DiscoverTemplates(
+            templates = templates,
+            onSeeAll = {
+                viewModel?.navigateScreen(FeatureType.STORE)
+            },
+            onTemplateClick = { template ->
+                viewModel?.navigateScreen(FeatureType.TEMPLATE, data = template)
+            }
+        )
         DiscoverQuickEdits {
-            viewModel?.navigateFeature(FeatureType.EDIT_PHOTO, it.tool)
+            viewModel?.navigateScreen(FeatureType.EDIT_PHOTO, it.tool)
         }
     }
 }
@@ -86,7 +99,7 @@ fun DiscoverHeader(
             modifier = Modifier
                 .size(24.dp)
                 .clickableWithAlphaEffect {
-                    viewModel?.navigateFeature(FeatureType.SETTING)
+                    viewModel?.navigateScreen(FeatureType.SETTING)
                 },
             painter = painterResource(R.drawable.ic_menu),
             contentDescription = ""
@@ -109,7 +122,7 @@ fun DiscoverHeader(
             modifier = Modifier
                 .size(24.dp)
                 .clickableWithAlphaEffect {
-                    viewModel?.navigateFeature(FeatureType.STORE)
+                    viewModel?.navigateScreen(FeatureType.STORE)
                 },
             painter = painterResource(R.drawable.ic_market),
             contentDescription = ""
@@ -172,7 +185,7 @@ fun DiscoverFunctionCards(
                 )
                 Text(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    text = stringResource(R.string.grids),
+                    text = stringResource(R.string.collage),
                     style = AppStyle.title2().semibold().white()
                 )
             }

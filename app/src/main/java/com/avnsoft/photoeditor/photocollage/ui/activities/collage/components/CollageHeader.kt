@@ -2,8 +2,11 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.Gray300
 import com.avnsoft.photoeditor.photocollage.ui.theme.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
@@ -37,34 +41,74 @@ fun FeaturePhotoHeader(
     onSave: () -> Unit,
     canUndo: Boolean = false,
     canRedo: Boolean = false,
-    modifier: Modifier = Modifier,
     canSave: Boolean = false,
     type: TEXT_TYPE = TEXT_TYPE.ROUND,
     textRight: String = stringResource(R.string.save)
 ) {
     val context = LocalContext.current
-    Row(
-        modifier = modifier
+    Spacer(modifier = Modifier.fillMaxWidth().height(24.dp).background(BackgroundWhite))
+    Box(
+        modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp)
-            .padding(top = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .height(56.dp)
+            .background(Color.White),
+        contentAlignment = Alignment.Center
     ) {
-        ImageWidget(
+        Row(
             modifier = Modifier
-                .clickableWithAlphaEffect {
-                    if (onBack != null) onBack.invoke() else {
-                        (context as? BaseActivity)?.onBackPressedDispatcher?.onBackPressed()
-                    }
-                },
-            resId = R.drawable.ic_arrow_left
-        )
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp).align(Alignment.Center),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ImageWidget(
+                modifier = Modifier
+                    .clickableWithAlphaEffect {
+                        if (onBack != null) onBack.invoke() else {
+                            (context as? BaseActivity)?.onBackPressedDispatcher?.onBackPressed()
+                        }
+                    },
+                resId = R.drawable.ic_arrow_left
+            )
+            when (type) {
+                TEXT_TYPE.TEXT -> {
+                    Text(
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .clickableWithAlphaEffect {
+                                if (canSave) onSave.invoke()
+                            },
+                        text = textRight,
+                        textAlign = TextAlign.Center,
+                        style = if (canSave) {
+                            AppStyle.buttonMedium().semibold().primary500()
+                        } else {
+                            AppStyle.buttonMedium().semibold().gray300()
+                        }
+                    )
+                }
+
+                TEXT_TYPE.ROUND -> {
+                    Text(
+                        modifier = Modifier
+                            .background(Primary500, RoundedCornerShape(8.dp))
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .clickableWithAlphaEffect {
+                                onSave.invoke()
+                            },
+                        text = textRight,
+                        textAlign = TextAlign.Center,
+                        style = AppStyle.button().semibold().white()
+                    )
+                }
+            }
+
+        }
 
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.align(Alignment.Center),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
         ) {
             IconButton(onClick = {}, enabled = canUndo) {
                 Icon(
@@ -83,40 +127,6 @@ fun FeaturePhotoHeader(
                 )
             }
         }
-
-        when (type) {
-            TEXT_TYPE.TEXT -> {
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                        .clickableWithAlphaEffect {
-                            if (canSave) onSave.invoke()
-                        },
-                    text = textRight,
-                    textAlign = TextAlign.Center,
-                    style = if (canSave) {
-                        AppStyle.buttonMedium().semibold().primary500()
-                    } else {
-                        AppStyle.buttonMedium().semibold().gray300()
-                    }
-                )
-            }
-
-            TEXT_TYPE.ROUND -> {
-                Text(
-                    modifier = Modifier
-                        .background(Primary500, RoundedCornerShape(8.dp))
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                        .clickableWithAlphaEffect {
-                            onSave.invoke()
-                        },
-                    text = textRight,
-                    textAlign = TextAlign.Center,
-                    style = AppStyle.button().semibold().white()
-                )
-            }
-        }
-
     }
 }
 

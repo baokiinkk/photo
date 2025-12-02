@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -66,16 +65,16 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePicke
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.BucketSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.PickerHeaderBar
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.editor.EditorStoreActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.editor.ToolTemplateInput
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
-import com.avnsoft.photoeditor.photocollage.ui.theme.Background1
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
-import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.capturable
@@ -88,17 +87,22 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import androidx.lifecycle.viewmodel.compose.viewModel as composeViewModel
 
+data class TemplateDetailInput(
+    val template: TemplateModel?,
+    val type: ToolInput.TYPE = ToolInput.TYPE.NEW,
+    ) : IScreenData
+
 class TemplateDetailActivity : BaseActivity() {
 
     private val viewModel: TemplateDetailViewModel by viewModel()
 
-    private val screenInput: TemplateModel? by lazy {
+    private val screenInput: TemplateDetailInput? by lazy {
         intent.getInput()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.initData(screenInput)
+        viewModel.initData(screenInput?.template)
         if (hasPermission()) {
             showContent()
         } else {
@@ -147,10 +151,23 @@ class TemplateDetailActivity : BaseActivity() {
                                         val pathBitmap = bitmap.toFile(context)
                                         val file = File(pathBitmap)
                                         val uri = file.toUri()
-                                        launchActivity(
-                                            toActivity = EditorStoreActivity::class.java,
-                                            input = ToolInput(pathBitmap = uri.toString())
-                                        )
+                                        if(screenInput?.type == ToolInput.TYPE.BACK_AND_RETURN){
+                                            setResult(RESULT_OK, intent.putExtra("PATH", uri.toString()))
+                                            finish()
+                                        }else {
+                                            launchActivity(
+                                                toActivity = EditorStoreActivity::class.java,
+                                                input = ToolTemplateInput(
+                                                    toolInput = ToolInput(pathBitmap = uri.toString()),
+                                                    template = screenInput?.template
+                                                )
+                                            ) {
+                                                if (it.resultCode == RESULT_OK) {
+                                                    setResult(RESULT_OK)
+                                                    finish()
+                                                }
+                                            }
+                                        }
                                     } catch (ex: Throwable) {
                                         Toast.makeText(
                                             context,
@@ -302,7 +319,9 @@ fun TemplateDetailContent(
         // ImagePickerScreen - always visible
 
         CustomImagePickerScreen(
-            modifier = Modifier.fillMaxWidth().background(BackgroundWhite),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(BackgroundWhite),
             viewModel = imagePickerViewModel,
             selectedImages = selectedImages,
             selectedCellIndex = selectedCellIndex,
@@ -370,7 +389,9 @@ fun CustomImagePickerScreen(
                 images = images,
                 selectedImages = selectedImages,
                 selectedCellIndex = selectedCellIndex,
-                modifier = Modifier.height(284.dp).padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .height(284.dp)
+                    .padding(horizontal = 16.dp),
                 onImageClick = { galleryImage ->
 
                     if (selectedImages.containsValue(galleryImage.uri)) {

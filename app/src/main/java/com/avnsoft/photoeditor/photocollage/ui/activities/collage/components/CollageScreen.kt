@@ -3,6 +3,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 import android.app.Activity.RESULT_OK
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -34,7 +35,6 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.activity.compose.BackHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -42,12 +42,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageState
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.CollagePreview
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.ImageTransformCalculator
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropAspect.Companion.toAspectRatio
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
@@ -59,7 +61,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleVie
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.StickerFooterTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.TextStickerFooterTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
-import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DeleteImageDialog
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
@@ -71,19 +72,9 @@ import com.basesource.base.utils.capturable
 import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.rememberCaptureController
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val MAX_PHOTOS = 10
-
-private fun aspectRatioFor(ratio: String?): Float? = when (ratio) {
-    "1:1" -> 1f
-    "4:5" -> 4f / 5f
-    "5:4" -> 5f / 4f
-    "3:4" -> 3f / 4f
-    "Original" -> null
-    else -> null
-}
 
 @OptIn(ExperimentalComposeApi::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -117,6 +108,7 @@ fun CollageScreen(
 
     val currentUris = collageState.imageUris.ifEmpty { uris }
     val canAddPhoto = currentUris.size < MAX_PHOTOS
+    val canUseGrid = currentUris.size > 1
 
     var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
     var isSwapMode by remember { mutableStateOf(false) }
@@ -180,8 +172,6 @@ fun CollageScreen(
     var showStickerSheet by remember { mutableStateOf(false) }
     var showTextSheet by remember { mutableStateOf(false) }
 
-    val aspectRatioValue = remember(ratio) { aspectRatioFor(ratio) }
-
     val textStickerUIState by freeStyleViewModel.uiState.collectAsStateWithLifecycle()
 
 
@@ -207,7 +197,6 @@ fun CollageScreen(
             canvasHeight = effectiveCanvasHeight
         )
         vm.updateImageTransforms(initialTransforms)
-        vm.confirmImageTransformChanges()
     }
 
     fun clearAllSheets() {
@@ -372,9 +361,10 @@ fun CollageScreen(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 80.dp, bottom = 175.dp)
+                    .align(Alignment.Center)
                     .then(
-                        if (aspectRatioValue != null) {
-                            Modifier.aspectRatio(aspectRatioValue)
+                        if (ratio != null) {
+                            Modifier.aspectRatio(ratio.toAspectRatio())
                         } else {
                             Modifier
                         }
@@ -403,8 +393,6 @@ fun CollageScreen(
                         canvasWidth > 0 &&
                         canvasHeight > 0
                     ) {
-                        vm.updateImageTransforms(emptyMap())
-                        delay(500)
                         resetImageTransforms(templateToUse, canvasWidth, canvasHeight, topMargin)
                     }
                 }
@@ -441,7 +429,6 @@ fun CollageScreen(
                         },
                         onImageTransformsChange = { transforms ->
                             vm.updateImageTransforms(transforms)
-                            vm.confirmImageTransformChanges()
                         },
                         unselectAllTrigger = unselectAllImagesTrigger,
                         onOutsideClick = {
@@ -506,10 +493,9 @@ fun CollageScreen(
                     FeatureBottomTools(
                         tools = toolsCollage,
                         onToolClick = { tool -> handleToolClick(tool) },
-                        disabledTools = if (!canAddPhoto) {
-                            setOf(CollageTool.ADD_PHOTO)
-                        } else {
-                            emptySet()
+                        disabledTools = buildSet {
+                            if (!canAddPhoto) add(CollageTool.ADD_PHOTO)
+                            if (!canUseGrid) add(CollageTool.GRIDS)
                         }
                     )
                 }
@@ -540,7 +526,7 @@ fun CollageScreen(
                 if (showRatioSheet) {
                     RatioSheet(
                         selectedRatio = ratio,
-                        onRatioSelect = { aspect -> vm.updateRatio(aspect.label) },
+                        onRatioSelect = { aspect -> vm.updateRatio(aspect.ratio) },
                         onClose = {
                             vm.cancelRatioChanges()
                             showRatioSheet = false

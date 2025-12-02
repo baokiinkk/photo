@@ -5,6 +5,8 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.avnsoft.photoeditor.photocollage.data.model.gradient.GradientGroup
+import com.avnsoft.photoeditor.photocollage.data.model.gradient.GradientItem
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
@@ -183,7 +185,7 @@ class FreeStyleViewModel(
         }
     }
 
-    fun updateRatio(ratio: String?) {
+    fun updateRatio(ratio: Pair<Int, Int>?) {
         uiState.update {
             it.copy(
                 ratio = ratio
@@ -258,10 +260,9 @@ data class FreeStyleUIState(
     val isVisibleTextField: Boolean = false,
     val editTextProperties: AddTextProperties = AddTextProperties.getAddTextProperties(),
     val isShowBackgroundTool: Boolean = false,
-    val backgroundSelection: BackgroundSelection? = BackgroundSelection
-        .Solid("#F2F4F8"),
+    val backgroundSelection: BackgroundSelection? = null,
     val isShowRatioTool: Boolean = false,
-    val ratio: String? = null,
+    val ratio: Pair<Int, Int>? = null,
     val isShowFrameTool: Boolean = false,
     val frameSelection: FrameSelection? = null,
     val canUndo: Boolean = false,

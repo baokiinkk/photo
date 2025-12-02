@@ -36,6 +36,7 @@ val TextWhite = Color.White
 
 // Border Colors
 val Primary500 = Color(0xFF6425F3)
+val Primary_6425F3 = Color(0xFF6425F3)
 val Background1 = Color(0xFFF8FAFC)
 val Background2 = Color(0xFFF2F4F8)
 val BorderPrimary = Color(0xFF354CC4)

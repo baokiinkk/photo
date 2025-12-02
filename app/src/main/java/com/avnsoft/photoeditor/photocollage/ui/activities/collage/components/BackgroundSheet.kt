@@ -56,13 +56,17 @@ import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternContentMod
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternModel
 import com.avnsoft.photoeditor.photocollage.data.repository.GradientRepository
 import com.avnsoft.photoeditor.photocollage.data.repository.PatternRepository
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivityInput
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray100
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray500
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.loadPatternAssetPainter
 import com.basesource.base.components.ColorPickerUI
+import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.launchActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -162,7 +166,7 @@ fun BackgroundSheet(
                     val colorHex = currentSelectedColor.colorToHex()
                     onBackgroundSelect(BackgroundTab.SOLID, BackgroundSelection.Solid(colorHex))
                 },
-                selectedColor = initSelectColor ?: Color.White,
+                selectedColor = initSelectColor,
                 onDismiss = { showColorWheel = false },
                 textStyle = AppStyle.body1().medium().gray900(),
                 confirmText = R.string.confirm,
@@ -194,13 +198,23 @@ fun BackgroundSheet(
                     )
                 }
             } else {
+                val context = LocalContext.current
                 Row(
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
+                        .padding(vertical = 16.dp, horizontal = 20.dp)
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    Image(
+                        modifier = Modifier
+                            .padding(end = 20.dp)
+                            .clickableWithAlphaEffect {
+                                (context as? BaseActivity)?.launchActivity(toActivity = StoreActivity::class.java, input = StoreActivityInput())
+                            },
+                        painter = painterResource(R.drawable.ic_market_black),
+                        contentDescription = ""
+                    )
+
                     listOf(
                         BackgroundTab.SOLID,
                         BackgroundTab.PATTERN,
@@ -366,9 +380,11 @@ private fun SolidBackgroundTab(
             item {
                 Image(painter = painterResource(R.drawable.ic_color_picker),
                     contentDescription = "",
-                    modifier = Modifier.size(32.dp).clickableWithAlphaEffect{
-                        onColorWheelClick.invoke()
-                    }
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickableWithAlphaEffect {
+                            onColorWheelClick.invoke()
+                        }
                 )
             }
             items(solidColors) { color ->
@@ -815,7 +831,7 @@ private fun GradientBackgroundTab(
                         .height(140.dp)
                 ) {
                     gradients.forEach { group ->
-                        items(group.content) { item ->
+                        items(group.content.orEmpty()) { item ->
                             GradientItemCard(
                                 gradientItem = item,
                                 gradientGroup = group,
@@ -872,30 +888,13 @@ private fun GradientItemCard(
                     onGradientSelect?.invoke(gradientItem, gradientGroup)
                 },
             contentAlignment = Alignment.Center
-        ) {
-            // Show PRO badge if needed
-            if (gradientGroup.isPro || gradientItem.isPro == true) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(4.dp)
-                        .background(
-                            color = Color(0xFF9747FF),
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.pro),
-                        style = AppStyle.title1().medium().white(),
-                    )
-                }
-            }
+        ){
+
         }
 
         // Gradient title below
         Text(
-            text = gradientItem.title,
+            text = gradientItem.title.orEmpty(),
             style = AppStyle.body2().medium().gray900(),
             modifier = Modifier.padding(top = 8.dp)
         )

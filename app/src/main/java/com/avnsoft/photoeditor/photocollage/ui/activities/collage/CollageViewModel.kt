@@ -13,7 +13,7 @@ import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.data.repository.CollageTemplateRepository
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.ImageTransformState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.FontAsset
@@ -21,12 +21,14 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyl
 import com.basesource.base.result.Result
 import com.tanishranjan.cropkit.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
 import java.util.Stack
 
+@OptIn(FlowPreview::class)
 @KoinViewModel
 class CollageViewModel(
     private val repository: CollageTemplateRepository
@@ -64,7 +66,7 @@ class CollageViewModel(
             if (initialState == null) initialState = newState.copy()
         }
 
-    private var tempRatio: String? = null
+    private var tempRatio: Pair<Int, Int>?? = null
     private var tempBackground: BackgroundSelection? = null
     private var tempFrame: FrameSelection? = null
     private var tempTransforms: Map<Int, ImageTransformState>? = null
@@ -107,13 +109,17 @@ class CollageViewModel(
                     updateState { it.copy(templateId = first) }
 
                     if (initialState == null) {
-                        initialState = _state.value.copy()
+                        // Đảm bảo push initialState với đầy đủ data hiện tại
+                        val currentState = _state.value.copy()
+                        initialState = currentState.copy()
+                        undoStack.clear()
                         undoStack.push(initialState!!.copy())
                         redoStack.clear()
                         _canUndo.value = false
                         _canRedo.value = false
                     }
                 }
+
                 else -> Unit
             }
         }
@@ -126,7 +132,7 @@ class CollageViewModel(
     fun updateColumnMargin(v: Float) = updateState { it.copy(columnMargin = v) }
     fun updateCornerRadius(v: Float) = updateState { it.copy(cornerRadius = v) }
 
-    fun updateRatio(r: String?) {
+    fun updateRatio(r: Pair<Int, Int>?) {
         tempRatio = r
         updateState { it.copy(ratio = r) }
     }
@@ -163,10 +169,29 @@ class CollageViewModel(
         val s = _state.value.copy()
         push(s)
         tempRatio = null
+        tempBackground = null
+        tempFrame = null
     }
 
     private fun push(s: CollageState) {
-        if (undoStack.lastOrNull() == s && undoStack.size > 1) return
+        // Nếu stack rỗng hoặc chỉ có 1 item (initialState), luôn push
+        // Nếu stack có > 1 item, chỉ skip nếu state giống hệt state cuối cùng
+        val lastState = undoStack.lastOrNull()
+        if (lastState != null && undoStack.size > 1) {
+            // So sánh các field quan trọng để tránh push duplicate
+            if (lastState.templateId?.id == s.templateId?.id &&
+                lastState.topMargin == s.topMargin &&
+                lastState.columnMargin == s.columnMargin &&
+                lastState.cornerRadius == s.cornerRadius &&
+                lastState.ratio == s.ratio &&
+                lastState.backgroundSelection == s.backgroundSelection &&
+                lastState.frameSelection == s.frameSelection &&
+                lastState.imageUris == s.imageUris &&
+                lastState.imageTransforms == s.imageTransforms
+            ) {
+                return
+            }
+        }
 
         undoStack.push(s.copy())
         redoStack.clear()
@@ -204,10 +229,6 @@ class CollageViewModel(
         updateState { it.copy(imageTransforms = m) }
     }
 
-    fun confirmImageTransformChanges() {
-        tempTransforms = null
-    }
-
     fun showDiscardDialog() {
         _showDiscardDialog.value = true
     }
@@ -223,6 +244,16 @@ class CollageViewModel(
             }.toMap()
 
             updateState { it.copy(imageUris = uris, imageBitmaps = bitmaps) }
+
+            // Nếu chưa có initialState, push state hiện tại vào stack
+            if (initialState == null && undoStack.isEmpty()) {
+                val currentState = _state.value.copy()
+                initialState = currentState.copy()
+                undoStack.push(initialState!!.copy())
+                redoStack.clear()
+                _canUndo.value = false
+                _canRedo.value = false
+            }
         }
     }
 

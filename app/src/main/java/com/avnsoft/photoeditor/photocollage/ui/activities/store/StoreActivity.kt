@@ -1,10 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store
 
-import android.net.Uri
 import android.os.Bundle
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,29 +31,37 @@ import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput.TYPE
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity.Companion.RESULT_URI
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImageRequest
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.TypeSelect
-import com.avnsoft.photoeditor.photocollage.ui.activities.store.editor.EditorStoreActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.TabTemplates
-import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker.detail.StoreStickerDetailActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.background.TabBackground
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.background.detail.StoreBackgroundDetailActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker.TabSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.sticker.detail.StoreStickerDetailActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.TemplateDetailActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.TemplateDetailInput
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
-import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.fromJsonTypeToken
 import com.basesource.base.utils.launchActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+data class StoreActivityInput(
+    val type: TYPE = TYPE.NEW,
+) : IScreenData
 class StoreActivity : BaseActivity() {
+
+    private val screenInput: StoreActivityInput? by lazy {
+        intent.getInput()
+    }
 
     private val viewModel: StoreViewModel by viewModel()
 
@@ -81,12 +86,15 @@ class StoreActivity : BaseActivity() {
                         title = stringResource(R.string.store),
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
-                    TabStore(
-                        selectedTab = selectedTab,
-                        onTabSelect = {
-                            selectedTab = it
-                        }
-                    )
+
+                    if (screenInput?.type == TYPE.NEW) {
+                        TabStore(
+                            selectedTab = selectedTab,
+                            onTabSelect = {
+                                selectedTab = it
+                            }
+                        )
+                    }
 
                     when (selectedTab) {
                         StoreTab.TEMPLATE -> {
@@ -95,8 +103,13 @@ class StoreActivity : BaseActivity() {
                                 onItemClicked = { template ->
                                     launchActivity(
                                         toActivity = TemplateDetailActivity::class.java,
-                                        input = template
-                                    )
+                                        input = TemplateDetailInput(template)
+                                    ) {
+                                        if (screenInput?.type == TYPE.BACK_AND_RETURN && it.resultCode == RESULT_OK) {
+                                            setResult(RESULT_OK)
+                                            finish()
+                                        }
+                                    }
                                 }
                             )
                         }

@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ImageTransformState
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.ImageTransformState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
@@ -27,7 +27,7 @@ data class CollageState(
     val imageBitmaps: Map<Int, Bitmap> = emptyMap(),  // Map<imageIndex, Bitmap>
 
     // Ratio tool
-    val ratio: String? = null,        // e.g., "1:1", "4:3", "16:9"
+    val ratio: Pair<Int, Int>? = null,        // e.g., "1:1", "4:3", "16:9"
 
     // Background tool
     val backgroundSelection: BackgroundSelection? = null,  // Current background selection (SOLID, PATTERN, GRADIENT)
