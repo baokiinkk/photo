@@ -56,13 +56,17 @@ import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternContentMod
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternModel
 import com.avnsoft.photoeditor.photocollage.data.repository.GradientRepository
 import com.avnsoft.photoeditor.photocollage.data.repository.PatternRepository
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivityInput
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray100
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray500
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.loadPatternAssetPainter
 import com.basesource.base.components.ColorPickerUI
+import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.launchActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -194,13 +198,23 @@ fun BackgroundSheet(
                     )
                 }
             } else {
+                val context = LocalContext.current
                 Row(
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
+                        .padding(vertical = 16.dp, horizontal = 20.dp)
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    Image(
+                        modifier = Modifier
+                            .padding(end = 20.dp)
+                            .clickableWithAlphaEffect {
+                                (context as? BaseActivity)?.launchActivity(toActivity = StoreActivity::class.java, input = StoreActivityInput())
+                            },
+                        painter = painterResource(R.drawable.ic_market_black),
+                        contentDescription = ""
+                    )
+
                     listOf(
                         BackgroundTab.SOLID,
                         BackgroundTab.PATTERN,
@@ -366,9 +380,11 @@ private fun SolidBackgroundTab(
             item {
                 Image(painter = painterResource(R.drawable.ic_color_picker),
                     contentDescription = "",
-                    modifier = Modifier.size(32.dp).clickableWithAlphaEffect{
-                        onColorWheelClick.invoke()
-                    }
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickableWithAlphaEffect {
+                            onColorWheelClick.invoke()
+                        }
                 )
             }
             items(solidColors) { color ->
