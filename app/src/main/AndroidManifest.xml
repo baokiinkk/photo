@@ -103,6 +103,11 @@
         <activity android:name=".ui.activities.editor.remove_background.RemoveBackgroundResultActivity" />
 
         <activity android:name=".ui.activities.editor.frame.FrameActivity" />
+
+        <activity
+            android:name=".ui.activities.editor.text_sticker.edittext.EditTextStickerActivity"
+            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:theme="@style/Theme.TransparentActivity"/>
     </application>
 
 </manifest>

@@ -195,7 +195,10 @@ class TextStickerActivity : BaseActivity() {
                                             .onGloballyPositioned { layoutCoordinates ->
                                                 textFieldSize = layoutCoordinates.size
                                                 if (!viewmodel.textMeasured) {
-                                                    viewmodel.addFirstTextSticker(textFieldSize, defaultText)
+                                                    viewmodel.addFirstTextSticker(
+                                                        textFieldSize,
+                                                        defaultText
+                                                    )
                                                     viewmodel.textMeasured = true
                                                 }
                                             }
@@ -588,6 +591,7 @@ fun TabAlign(
     ) {
         items.forEachIndexed { index, item ->
             ItemAlign(
+                resId = item,
                 isSelected = selectedTab.index == index,
                 onSelectedTab = {
                     val selectedTab = TEXT_ALIGN.entries.toTypedArray()[index]
@@ -600,13 +604,15 @@ fun TabAlign(
 
 @Composable
 fun ItemAlign(
+    resId: Int,
     isSelected: Boolean,
     onSelectedTab: () -> Unit,
 ) {
     ImageWidget(
-        resId = R.drawable.ic_align_start,
+        resId = resId,
         tintColor = if (isSelected) AppColor.Primary500 else AppColor.Gray300,
-        modifier = Modifier.clickableWithAlphaEffect(onClick = onSelectedTab)
+        modifier = Modifier
+            .clickableWithAlphaEffect(onClick = onSelectedTab)
     )
 }
 

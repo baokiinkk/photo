@@ -5,5 +5,19 @@
         <item name="cornerSize">12dp</item>
     </style>
 
+    <style name="Theme.TransparentActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+
+        <!-- Không có shadow, activity sau vẫn thấy -->
+        <item name="android:backgroundDimEnabled">false</item>
+
+        <!-- Không che full màn hình khi mở bàn phím -->
+        <item name="android:windowSoftInputMode">adjustResize</item>
+
+        <!-- Bỏ actionbar -->
+        <item name="android:windowNoTitle">true</item>
+    </style>
 
 </resources>
