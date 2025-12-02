@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.freestyle
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
@@ -45,6 +46,8 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.TEX
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.edittext.EditTextStickerActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
@@ -191,6 +194,35 @@ class FreeStyleActivity : BaseActivity() {
             public override fun onTextStickerEdit(param1Sticker: Sticker) {
                 if (param1Sticker is TextSticker) {
                     viewmodel.showEditTextSticker(param1Sticker.getAddTextProperties())
+                    val intent = EditTextStickerActivity.newIntent(
+                        this@FreeStyleActivity,
+                        param1Sticker.getAddTextProperties()?.text
+                    )
+                    activityResultManager.launchActivity(intent, null) {
+                        if (it.resultCode == Activity.RESULT_OK) {
+                            val textResult =
+                                it.data?.getStringExtra(EditTextStickerActivity.EXTRA_TEXT)
+                                    .orEmpty()
+                            val widthResult =
+                                it.data?.getIntExtra(EditTextStickerActivity.EXTRA_WIDTH, 0)
+                            val heightResult =
+                                it.data?.getIntExtra(EditTextStickerActivity.EXTRA_HEIGHT, 0)
+
+                            val paramAddTextProperties = param1Sticker.getAddTextProperties()
+                                ?: AddTextProperties.defaultProperties
+                            paramAddTextProperties.apply {
+                                this.text = textResult
+                                this.textWidth = widthResult ?: 0
+                                this.textHeight = heightResult ?: 0
+                            }
+                            stickerView.replace(
+                                TextSticker(
+                                    stickerView.context,
+                                    paramAddTextProperties
+                                )
+                            )
+                        }
+                    }
                 }
             }
 

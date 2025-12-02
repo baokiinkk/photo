@@ -52,6 +52,14 @@ class TextStickerViewModel : BaseViewModel() {
         }
     }
 
+    fun updateTextIndex(index: Int){
+        uiState.update {
+            it.copy(
+                textIndex = index
+            )
+        }
+    }
+
     var originTextFieldSize: IntSize = IntSize.Zero
 
     fun addFirstTextSticker(

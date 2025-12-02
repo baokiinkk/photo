@@ -324,14 +324,18 @@ fun CollageScreen(
             onUndo = { vm.undo() },
             onRedo = { vm.redo() },
             onSave = {
-                scope.launch {
-                    try {
-                        stickerView.setShowFocus(false)
-                        val bitmap =captureController.toImageBitmap().asAndroidBitmap()
-                        pathBitmap = bitmap.toFile(context)
-                        showBottomSheetSaveImage = true
-                    } catch (ex: Throwable) {
-                        Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT).show()
+                clearAllSheets()
+                stickerView.setShowFocus(false)
+                stickerView.post {
+                    scope.launch {
+                        try {
+                            val bitmap = captureController.toImageBitmap().asAndroidBitmap()
+                            pathBitmap = bitmap.toFile(context)
+                            showBottomSheetSaveImage = true
+                        } catch (ex: Throwable) {
+                            Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     }
                 }
             },
@@ -351,6 +355,7 @@ fun CollageScreen(
                         }
                     }
                 }
+                .capturable(captureController)
         ) {
             BoxWithConstraints(
                 modifier = Modifier
@@ -365,7 +370,6 @@ fun CollageScreen(
                         }
                     )
                     .background(BackgroundWhite)
-                    .capturable(captureController)
                     .pointerInput(selectedImageIndex) {
                         detectTapGestures {
                             if (selectedImageIndex != null) {

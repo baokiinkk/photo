@@ -138,15 +138,18 @@ fun FreeStyleScreen(
                     .padding(horizontal = 16.dp, vertical = 16.dp),
                 onBack = onBack,
                 onActionRight = {
-                    scope.launch {
-                        try {
-                            stickerView.setShowFocus(false)
-                            val bitmap = captureController.toImageBitmap().asAndroidBitmap()
-                            pathBitmap = bitmap.toFile(context)
-                            showBottomSheetSaveImage = true
-                        } catch (ex: Throwable) {
-                            Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
-                                .show()
+                    viewmodel.clearAllTool()
+                    stickerView.setShowFocus(false)
+                    stickerView.post {
+                        scope.launch {
+                            try {
+                                val bitmap = captureController.toImageBitmap().asAndroidBitmap()
+                                pathBitmap = bitmap.toFile(context)
+                                showBottomSheetSaveImage = true
+                            } catch (ex: Throwable) {
+                                Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
                         }
                     }
                 }
@@ -248,7 +251,7 @@ fun FreeStyleScreen(
                         .align(Alignment.BottomCenter),
                     stickerView = stickerView,
                     onCancel = {
-                        if (!viewmodel.isEditTextSticker){
+                        if (!viewmodel.isEditTextSticker) {
                             stickerView.removeCurrentSticker()
                         }
                         stickerView.setLocked(false)
@@ -606,7 +609,7 @@ fun TextStickerFooterTool(
                             )
                         )
                     }
-                    showColorWheel = false
+//                    showColorWheel = false
                 },
                 onDismiss = { showColorWheel = false },
                 textStyle = AppStyle.body1().medium().gray900(),
@@ -614,7 +617,6 @@ fun TextStickerFooterTool(
                 cancelText = R.string.cancel
             )
         }
-
     }
 }
 

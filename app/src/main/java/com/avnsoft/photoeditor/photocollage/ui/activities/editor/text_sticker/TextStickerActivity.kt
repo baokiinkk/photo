@@ -79,6 +79,8 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.saveImage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.captureView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.edittext.EditTextStickerActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.FontAsset
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.FontItem
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
@@ -195,7 +197,10 @@ class TextStickerActivity : BaseActivity() {
                                             .onGloballyPositioned { layoutCoordinates ->
                                                 textFieldSize = layoutCoordinates.size
                                                 if (!viewmodel.textMeasured) {
-                                                    viewmodel.addFirstTextSticker(textFieldSize, defaultText)
+                                                    viewmodel.addFirstTextSticker(
+                                                        textFieldSize,
+                                                        defaultText
+                                                    )
                                                     viewmodel.textMeasured = true
                                                 }
                                             }
@@ -269,12 +274,50 @@ class TextStickerActivity : BaseActivity() {
                                         modifier = Modifier.fillMaxSize(),
                                         input = uiState.addTextProperties,
                                         onTextStickerEdit = { textSticker ->
-                                            isVisibleTextField = true
-                                            textFieldValue = textFieldValue.copy(
-                                                text = textSticker.getAddTextProperties()?.text.orEmpty(),
-                                                selection = TextRange(textSticker.getAddTextProperties()?.text.orEmpty().length)
+//                                            isVisibleTextField = true
+//                                            textFieldValue = textFieldValue.copy(
+//                                                text = textSticker.getAddTextProperties()?.text.orEmpty(),
+//                                                selection = TextRange(textSticker.getAddTextProperties()?.text.orEmpty().length)
+//                                            )
+//                                            viewmodel.editTextSticker(textSticker)
+                                            val intent = EditTextStickerActivity.newIntent(
+                                                this@TextStickerActivity,
+                                                textSticker.getAddTextProperties()?.text
                                             )
-                                            viewmodel.editTextSticker(textSticker)
+                                            activityResultManager.launchActivity(intent, null) {
+                                                if (it.resultCode == Activity.RESULT_OK) {
+                                                    val textResult =
+                                                        it.data?.getStringExtra(
+                                                            EditTextStickerActivity.EXTRA_TEXT
+                                                        )
+                                                            .orEmpty()
+                                                    val widthResult =
+                                                        it.data?.getIntExtra(
+                                                            EditTextStickerActivity.EXTRA_WIDTH,
+                                                            0
+                                                        )
+                                                    val heightResult =
+                                                        it.data?.getIntExtra(
+                                                            EditTextStickerActivity.EXTRA_HEIGHT,
+                                                            0
+                                                        )
+
+                                                    val paramAddTextProperties =
+                                                        textSticker.getAddTextProperties()
+                                                            ?: AddTextProperties.defaultProperties
+                                                    paramAddTextProperties.apply {
+                                                        this.text = textResult
+                                                        this.textWidth = widthResult ?: 0
+                                                        this.textHeight = heightResult ?: 0
+                                                    }
+                                                    stickerView?.replace(
+                                                        TextSticker(
+                                                            this@TextStickerActivity,
+                                                            paramAddTextProperties
+                                                        )
+                                                    )
+                                                }
+                                            }
                                         },
                                         onStickerTouchOutside = { stickerView ->
                                             if (isVisibleTextField) {
@@ -341,9 +384,20 @@ class TextStickerActivity : BaseActivity() {
                                 }
                             },
                             addTextSticker = { index, item ->
-                                viewmodel.addTextSticker(
-                                    index = index,
-                                    item = item,
+//                                viewmodel.addTextSticker(
+//                                    index = index,
+//                                    item = item,
+//                                )
+                                viewmodel.updateTextIndex(index)
+                                val font =
+                                    stickerView?.getCurrentTextSticker()?.getAddTextProperties()
+                                        ?: AddTextProperties.getAddTextProperties()
+                                font.fontName = item.fontPath
+                                stickerView?.replace(
+                                    TextSticker(
+                                        this@TextStickerActivity,
+                                        font
+                                    )
                                 )
                             },
                             uiState = uiState,
@@ -560,6 +614,7 @@ fun TabAlign(
     ) {
         items.forEachIndexed { index, item ->
             ItemAlign(
+                resId = item,
                 isSelected = selectedTab.index == index,
                 onSelectedTab = {
                     val selectedTab = TEXT_ALIGN.entries.toTypedArray()[index]
@@ -572,13 +627,15 @@ fun TabAlign(
 
 @Composable
 fun ItemAlign(
+    resId: Int,
     isSelected: Boolean,
     onSelectedTab: () -> Unit,
 ) {
     ImageWidget(
-        resId = R.drawable.ic_align_start,
+        resId = resId,
         tintColor = if (isSelected) AppColor.Primary500 else AppColor.Gray300,
-        modifier = Modifier.clickableWithAlphaEffect(onClick = onSelectedTab)
+        modifier = Modifier
+            .clickableWithAlphaEffect(onClick = onSelectedTab)
     )
 }
 

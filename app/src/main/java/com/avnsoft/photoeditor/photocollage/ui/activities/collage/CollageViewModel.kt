@@ -125,6 +125,8 @@ class CollageViewModel(
         }
     }
 
+
+
     fun selectTemplate(t: CollageTemplate) = updateState { it.copy(templateId = t) }
     fun updateTopMargin(v: Float) = updateState { it.copy(topMargin = v) }
     fun updateColumnMargin(v: Float) = updateState { it.copy(columnMargin = v) }

@@ -102,11 +102,11 @@ class FreeStyleViewModel(
 
 
     fun showEditTextSticker(editTextProperties: AddTextProperties?) {
-        isEditTextSticker = true
+//        isEditTextSticker = true
         uiState.update {
             it.copy(
-                isVisibleTextField = true,
-                editTextProperties = editTextProperties ?: AddTextProperties.defaultProperties,
+//                isVisibleTextField = true,
+//                editTextProperties = editTextProperties ?: AddTextProperties.defaultProperties,
                 isShowTextStickerTool = true
             )
         }
@@ -237,6 +237,18 @@ class FreeStyleViewModel(
         uiState.update {
             it.copy(
                 showDiscardDialog = false
+            )
+        }
+    }
+
+    fun clearAllTool(){
+        uiState.update {
+            it.copy(
+                isShowStickerTool = false,
+                isShowTextStickerTool = false,
+                isShowBackgroundTool = false,
+                isShowRatioTool = false,
+                isShowFrameTool = false
             )
         }
     }
