@@ -162,7 +162,7 @@ fun BackgroundSheet(
                     val colorHex = currentSelectedColor.colorToHex()
                     onBackgroundSelect(BackgroundTab.SOLID, BackgroundSelection.Solid(colorHex))
                 },
-                selectedColor = initSelectColor ?: Color.White,
+                selectedColor = initSelectColor,
                 onDismiss = { showColorWheel = false },
                 textStyle = AppStyle.body1().medium().gray900(),
                 confirmText = R.string.confirm,

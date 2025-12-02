@@ -576,9 +576,6 @@ fun TextStickerFooterTool(
                         stickerView.setStickerHorizontalPosition(Sticker.Position.RIGHT)
                     }
                 }
-            },
-            onShowSystemColor = {
-                showColorWheel = true
             }
         )
 
