@@ -2,6 +2,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,28 +44,68 @@ fun FeaturePhotoHeader(
     textRight: String = stringResource(R.string.save)
 ) {
     val context = LocalContext.current
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.White)
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp)
-            .padding(top = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        ImageWidget(
+        Row(
             modifier = Modifier
-                .clickableWithAlphaEffect {
-                    if (onBack != null) onBack.invoke() else {
-                        (context as? BaseActivity)?.onBackPressedDispatcher?.onBackPressed()
-                    }
-                },
-            resId = R.drawable.ic_arrow_left
-        )
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp)
+                .padding(top = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ImageWidget(
+                modifier = Modifier
+                    .clickableWithAlphaEffect {
+                        if (onBack != null) onBack.invoke() else {
+                            (context as? BaseActivity)?.onBackPressedDispatcher?.onBackPressed()
+                        }
+                    },
+                resId = R.drawable.ic_arrow_left
+            )
+            when (type) {
+                TEXT_TYPE.TEXT -> {
+                    Text(
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .clickableWithAlphaEffect {
+                                if (canSave) onSave.invoke()
+                            },
+                        text = textRight,
+                        textAlign = TextAlign.Center,
+                        style = if (canSave) {
+                            AppStyle.buttonMedium().semibold().primary500()
+                        } else {
+                            AppStyle.buttonMedium().semibold().gray300()
+                        }
+                    )
+                }
+
+                TEXT_TYPE.ROUND -> {
+                    Text(
+                        modifier = Modifier
+                            .background(Primary500, RoundedCornerShape(8.dp))
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .clickableWithAlphaEffect {
+                                onSave.invoke()
+                            },
+                        text = textRight,
+                        textAlign = TextAlign.Center,
+                        style = AppStyle.button().semibold().white()
+                    )
+                }
+            }
+
+        }
 
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.align(Alignment.Center),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
         ) {
             IconButton(onClick = {}, enabled = canUndo) {
                 Icon(
@@ -83,40 +124,6 @@ fun FeaturePhotoHeader(
                 )
             }
         }
-
-        when (type) {
-            TEXT_TYPE.TEXT -> {
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                        .clickableWithAlphaEffect {
-                            if (canSave) onSave.invoke()
-                        },
-                    text = textRight,
-                    textAlign = TextAlign.Center,
-                    style = if (canSave) {
-                        AppStyle.buttonMedium().semibold().primary500()
-                    } else {
-                        AppStyle.buttonMedium().semibold().gray300()
-                    }
-                )
-            }
-
-            TEXT_TYPE.ROUND -> {
-                Text(
-                    modifier = Modifier
-                        .background(Primary500, RoundedCornerShape(8.dp))
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                        .clickableWithAlphaEffect {
-                            onSave.invoke()
-                        },
-                    text = textRight,
-                    textAlign = TextAlign.Center,
-                    style = AppStyle.button().semibold().white()
-                )
-            }
-        }
-
     }
 }
 

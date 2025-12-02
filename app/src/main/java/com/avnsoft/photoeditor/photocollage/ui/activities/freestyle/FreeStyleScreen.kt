@@ -63,6 +63,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.Fra
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.RatioSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropAspect.Companion.toAspectRatio
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerToolPanel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
@@ -153,16 +154,8 @@ fun FreeStyleScreen(
                     .padding(top = 80.dp, bottom = 175.dp)
                     .then(
                         remember(uiState.ratio) {
-                            val aspectRatioValue = when (uiState.ratio) {
-                                "Original" -> null
-                                "1:1" -> 1f
-                                "4:5" -> 4f / 5f
-                                "5:4" -> 5f / 4f
-                                "3:4" -> 3f / 4f
-                                else -> null
-                            }
-                            if (aspectRatioValue != null) {
-                                Modifier.aspectRatio(aspectRatioValue)
+                            if (uiState.ratio != null) {
+                                Modifier.aspectRatio(uiState.ratio.toAspectRatio())
                             } else {
                                 Modifier
                             }
@@ -309,7 +302,7 @@ fun FreeStyleScreen(
                 RatioSheet(
                     selectedRatio = uiState.ratio,
                     onRatioSelect = { aspect ->
-                        viewmodel.updateRatio(aspect.label)
+                        viewmodel.updateRatio(aspect.ratio)
                     },
                     onClose = {
                         viewmodel.cancelRatioTool()

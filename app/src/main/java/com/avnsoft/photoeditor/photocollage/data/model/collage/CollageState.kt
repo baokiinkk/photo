@@ -27,7 +27,7 @@ data class CollageState(
     val imageBitmaps: Map<Int, Bitmap> = emptyMap(),  // Map<imageIndex, Bitmap>
 
     // Ratio tool
-    val ratio: String? = null,        // e.g., "1:1", "4:3", "16:9"
+    val ratio: Pair<Int, Int>? = null,        // e.g., "1:1", "4:3", "16:9"
 
     // Background tool
     val backgroundSelection: BackgroundSelection? = null,  // Current background selection (SOLID, PATTERN, GRADIENT)

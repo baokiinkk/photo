@@ -183,7 +183,7 @@ class FreeStyleViewModel(
         }
     }
 
-    fun updateRatio(ratio: String?) {
+    fun updateRatio(ratio: Pair<Int, Int>?) {
         uiState.update {
             it.copy(
                 ratio = ratio
@@ -249,7 +249,7 @@ data class FreeStyleUIState(
     val backgroundSelection: BackgroundSelection? = BackgroundSelection
         .Solid("#F2F4F8"),
     val isShowRatioTool: Boolean = false,
-    val ratio: String? = null,
+    val ratio: Pair<Int, Int>? = null,
     val isShowFrameTool: Boolean = false,
     val frameSelection: FrameSelection? = null,
     val canUndo: Boolean = false,

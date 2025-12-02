@@ -95,7 +95,7 @@ private fun ToolItem(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .width(65.dp)
+            .width(64.dp)
             .padding(vertical = 12.dp)
             .clickableWithAlphaEffect(
                 onClick = onClick,
@@ -106,6 +106,7 @@ private fun ToolItem(
             painterResource(item.icon),
             contentDescription = "",
             modifier = Modifier.size(24.dp),
+            alignment = Alignment.Center,
             colorFilter = when {
                 isSelect -> ColorFilter.tint(AppColor.Primary500)
                 isDisabled -> ColorFilter.tint(Color.Gray.copy(alpha = 0.5f))

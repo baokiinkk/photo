@@ -66,7 +66,7 @@ class CollageViewModel(
             if (initialState == null) initialState = newState.copy()
         }
 
-    private var tempRatio: String? = null
+    private var tempRatio: Pair<Int, Int>?? = null
     private var tempBackground: BackgroundSelection? = null
     private var tempFrame: FrameSelection? = null
     private var tempTransforms: Map<Int, ImageTransformState>? = null
@@ -130,7 +130,7 @@ class CollageViewModel(
     fun updateColumnMargin(v: Float) = updateState { it.copy(columnMargin = v) }
     fun updateCornerRadius(v: Float) = updateState { it.copy(cornerRadius = v) }
 
-    fun updateRatio(r: String?) {
+    fun updateRatio(r: Pair<Int, Int>?) {
         tempRatio = r
         updateState { it.copy(ratio = r) }
     }
