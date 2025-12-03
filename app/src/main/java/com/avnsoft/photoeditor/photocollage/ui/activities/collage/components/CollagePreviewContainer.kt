@@ -7,25 +7,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.CollagePreview
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropAspect.Companion.toAspectRatio
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 

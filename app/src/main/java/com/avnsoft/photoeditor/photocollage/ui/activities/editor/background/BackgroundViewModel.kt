@@ -2,7 +2,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.background
 
 import android.graphics.Bitmap
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

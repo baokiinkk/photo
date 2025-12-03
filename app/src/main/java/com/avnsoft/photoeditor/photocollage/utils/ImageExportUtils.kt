@@ -7,11 +7,10 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.core.graphics.toColorInt
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

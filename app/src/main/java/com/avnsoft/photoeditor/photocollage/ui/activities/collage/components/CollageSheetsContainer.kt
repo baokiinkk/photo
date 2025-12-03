@@ -4,12 +4,17 @@ import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSheet
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FrameSheet
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.GridsSheet
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.RatioSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
-import androidx.compose.runtime.collectAsState
 
 @Composable
 fun CollageSheetsContainer(
@@ -140,7 +145,7 @@ fun CollageSheetsContainer(
     }
 
     if (showTextSheet) {
-        val textStickerUIState = freeStyleViewModel.uiState.collectAsState().value
+        val textStickerUIState by freeStyleViewModel.uiState.collectAsStateWithLifecycle()
         com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.TextStickerFooterTool(
             modifier = modifier
                 .fillMaxWidth()

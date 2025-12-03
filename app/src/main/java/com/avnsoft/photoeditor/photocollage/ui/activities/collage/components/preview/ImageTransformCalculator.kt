@@ -20,7 +20,7 @@ object ImageTransformCalculator {
         processedCells: List<ProcessedCellData>
     ): Map<Int, ImageTransformState> {
         return withContext(Dispatchers.IO) {
-            processedCells.mapIndexedNotNull { index, cell ->
+            processedCells.mapIndexed { index, cell ->
                 val size = getImageSizeFromUri(context, cell.imageUri)
                 val scale = if (size != null) {
                     calculateFillScale(

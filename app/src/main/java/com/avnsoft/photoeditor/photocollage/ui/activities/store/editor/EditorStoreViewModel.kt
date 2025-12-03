@@ -3,7 +3,6 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.store.editor
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
@@ -11,9 +10,9 @@ import androidx.core.graphics.scale
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.ToolItem
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.basesource.base.viewmodel.BaseViewModel
 import com.tanishranjan.cropkit.util.MathUtils

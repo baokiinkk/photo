@@ -3,24 +3,16 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.core.graphics.scale
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
-import coil.decode.DecodeUtils.calculateInSampleSize
-import coil.size.Scale
-import com.airbnb.lottie.utils.Utils.resizeBitmapIfNeeded
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
-import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.ToolItem
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.basesource.base.viewmodel.BaseViewModel
 import com.tanishranjan.cropkit.util.MathUtils
@@ -30,13 +22,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Stack
-import kotlin.math.max
-import kotlin.math.roundToInt
 
 @KoinViewModel
 class EditorViewModel(

@@ -50,8 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FeatureBottomTools
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.FooterEditor
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.saveImage

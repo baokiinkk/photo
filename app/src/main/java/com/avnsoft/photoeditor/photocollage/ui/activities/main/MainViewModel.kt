@@ -11,7 +11,7 @@ import com.avnsoft.photoeditor.photocollage.data.repository.PatternRepository
 import com.avnsoft.photoeditor.photocollage.data.repository.RemoveObjectRepoImpl
 import com.avnsoft.photoeditor.photocollage.data.repository.StickerRepoImpl
 import com.avnsoft.photoeditor.photocollage.data.repository.TemplateRepoImpl
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

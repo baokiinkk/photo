@@ -1,11 +1,8 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.graphics.Shape
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ProcessedCellData
 
 @Composable

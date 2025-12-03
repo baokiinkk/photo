@@ -180,5 +180,14 @@
     <string name="copy">복사</string>
     <string name="delete">삭제</string>
     <string name="doodle">낙서</string>
+
+    <!-- Confirm Remove Photo Dialog -->
+    <string name="delete_photo">사진 삭제</string>
+    <string name="delete_photo_confirmation">이 사진은 영구적으로 제거됩니다. 삭제하시겠습니까?</string>
+    <string name="no_keep_it">아니요, 유지</string>
+    <string name="yes_delete">예, 삭제</string>
+    <string name="edit">편집</string>
+    <string name="collage">콜라주</string>
+    <string name="text_tool_home">텍스트 추가</string>
 </resources>
 

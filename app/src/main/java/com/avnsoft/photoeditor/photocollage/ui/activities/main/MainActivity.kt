@@ -17,7 +17,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.ai_enhance.AIEnhanceActivity

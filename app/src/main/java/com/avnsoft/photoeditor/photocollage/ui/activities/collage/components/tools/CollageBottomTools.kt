@@ -1,4 +1,4 @@
-package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
+package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

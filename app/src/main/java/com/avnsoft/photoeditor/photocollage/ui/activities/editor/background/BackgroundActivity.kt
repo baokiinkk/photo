@@ -6,10 +6,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,8 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,23 +30,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundLayer
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSheet
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundLayer
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
-import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
-import com.basesource.base.utils.ImageWidget
-import com.basesource.base.utils.clickableWithAlphaEffect
-import com.basesource.base.utils.toJson
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
@@ -61,7 +47,6 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
 import kotlin.math.roundToInt
 
 class BackgroundActivity : BaseActivity() {

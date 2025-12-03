@@ -180,5 +180,14 @@
     <string name="copy">Copier</string>
     <string name="delete">Supprimer</string>
     <string name="doodle">Gribouillage</string>
+
+    <!-- Confirm Remove Photo Dialog -->
+    <string name="delete_photo">Supprimer la photo</string>
+    <string name="delete_photo_confirmation">Cette photo sera supprimée définitivement. Êtes-vous sûr de vouloir supprimer ?</string>
+    <string name="no_keep_it">Non, garder</string>
+    <string name="yes_delete">Oui, supprimer</string>
+    <string name="edit">Modifier</string>
+    <string name="collage">Collage</string>
+    <string name="text_tool_home">Ajouter du texte</string>
 </resources>
 

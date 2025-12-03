@@ -29,8 +29,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSheet
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FrameSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FrameSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile

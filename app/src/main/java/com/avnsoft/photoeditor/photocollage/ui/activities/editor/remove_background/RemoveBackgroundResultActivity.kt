@@ -19,9 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,13 +29,12 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundLayer
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSheet
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundLayer
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
-import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput

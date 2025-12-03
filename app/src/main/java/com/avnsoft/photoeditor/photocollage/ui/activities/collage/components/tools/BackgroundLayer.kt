@@ -1,4 +1,4 @@
-package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
+package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,7 +14,6 @@ import androidx.core.graphics.toColorInt
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
-import com.avnsoft.photoeditor.photocollage.utils.getPatternImageUri
 import com.avnsoft.photoeditor.photocollage.utils.loadPatternAssetPainter
 import com.basesource.base.utils.ImageWidget
 

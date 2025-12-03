@@ -26,8 +26,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundLayer
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundLayer
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollagePreviewDataProcessor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

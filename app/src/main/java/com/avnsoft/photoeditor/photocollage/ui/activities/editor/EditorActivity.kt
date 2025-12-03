@@ -34,7 +34,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -43,10 +42,10 @@ import androidx.compose.ui.unit.toSize
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.BaseApplication
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundLayer
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundLayer
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FeatureBottomTools
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.adjust.AdjustActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity

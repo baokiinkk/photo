@@ -30,8 +30,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeatureBottomTools
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FeatureBottomTools
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput

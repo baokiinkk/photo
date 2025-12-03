@@ -180,5 +180,14 @@
     <string name="copy">复制</string>
     <string name="delete">删除</string>
     <string name="doodle">涂鸦</string>
+
+    <!-- Confirm Remove Photo Dialog -->
+    <string name="delete_photo">删除照片</string>
+    <string name="delete_photo_confirmation">此照片将被永久删除。您确定要删除吗？</string>
+    <string name="no_keep_it">不，保留</string>
+    <string name="yes_delete">是，删除</string>
+    <string name="edit">编辑</string>
+    <string name="collage">拼贴</string>
+    <string name="text_tool_home">添加文本</string>
 </resources>
 

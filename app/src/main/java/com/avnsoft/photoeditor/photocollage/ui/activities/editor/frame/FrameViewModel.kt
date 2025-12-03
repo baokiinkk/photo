@@ -3,7 +3,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.frame
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers

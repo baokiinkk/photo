@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -30,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -38,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerModel
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity
@@ -51,12 +49,9 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.image.LoadImage
-import com.basesource.base.utils.Effects
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.backgroundLinearGradient
 import com.basesource.base.utils.clickableWithAlphaEffect
-import com.basesource.base.utils.figmaShadow
-import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.fromJsonTypeToken
 import com.basesource.base.utils.launchActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel

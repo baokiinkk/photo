@@ -9,9 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -39,11 +37,15 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.CollagePreview
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.CollagePreview
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FeatureBottomTools
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.ImageEditAction
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.ImageEditToolbar
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.toolsCollage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropAspect.Companion.toAspectRatio
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
@@ -52,13 +54,10 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportIma
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.EditTextStickerLayer
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleStickerComposeView
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleViewModel
-import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.StickerFooterTool
-import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.TextStickerFooterTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DeleteImageDialog
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
-import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.basesource.base.ui.base.BaseActivity
@@ -100,7 +99,7 @@ fun CollageScreen(
         }
     }
 
-    val currentUris = collageState.imageUris.ifEmpty { uris }
+    val currentUris: List<Uri> = if (collageState.imageUris.isEmpty()) uris else collageState.imageUris
     val canAddPhoto = currentUris.size < MAX_PHOTOS
     val canUseGrid = currentUris.size > 1
 
@@ -143,12 +142,6 @@ fun CollageScreen(
             selectedImageIndex = null
         }
     }
-
-    val topMargin = collageState.topMargin
-    val columnMargin = collageState.columnMargin
-    val cornerRadius = collageState.cornerRadius
-    val ratio = collageState.ratio
-    val templateId = collageState.templateId
 
     LaunchedEffect(Unit) {
         vm.load(currentUris.size.coerceAtLeast(1))

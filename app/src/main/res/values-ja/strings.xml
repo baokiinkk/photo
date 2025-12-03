@@ -180,5 +180,14 @@
     <string name="copy">コピー</string>
     <string name="delete">削除</string>
     <string name="doodle">落書き</string>
+
+    <!-- Confirm Remove Photo Dialog -->
+    <string name="delete_photo">写真を削除</string>
+    <string name="delete_photo_confirmation">この写真は永久に削除されます。削除してもよろしいですか？</string>
+    <string name="no_keep_it">いいえ、保持</string>
+    <string name="yes_delete">はい、削除</string>
+    <string name="edit">編集</string>
+    <string name="collage">コラージュ</string>
+    <string name="text_tool_home">テキストを追加</string>
 </resources>
 

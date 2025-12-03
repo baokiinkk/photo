@@ -2,8 +2,8 @@ package com.avnsoft.photoeditor.photocollage.data.model.collage
 
 import android.graphics.Bitmap
 import android.net.Uri
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.ImageTransformState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerUIState
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker

@@ -3,8 +3,8 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.adjust
 import android.graphics.Bitmap
 import androidx.compose.ui.unit.IntRect
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.ToolItem
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.ToolItem
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

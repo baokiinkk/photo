@@ -36,7 +36,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.CollageTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.basesource.base.utils.clickableWithAlphaEffect
 

@@ -180,5 +180,14 @@
     <string name="copy">Sao chép</string>
     <string name="delete">Xóa</string>
     <string name="doodle">Vẽ nguệch ngoạc</string>
+
+    <!-- Confirm Remove Photo Dialog -->
+    <string name="delete_photo">Xóa ảnh</string>
+    <string name="delete_photo_confirmation">Ảnh này sẽ bị xóa vĩnh viễn. Bạn có chắc chắn muốn xóa?</string>
+    <string name="no_keep_it">Không, giữ lại</string>
+    <string name="yes_delete">Có, xóa</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="collage">Ảnh ghép</string>
+    <string name="text_tool_home">Thêm văn bản</string>
 </resources>
 

@@ -1,4 +1,4 @@
-package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
+package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
@@ -64,6 +65,7 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.loadPatternAssetPainter
 import com.basesource.base.components.ColorPickerUI
+import com.basesource.base.result.Result
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.launchActivity
@@ -245,7 +247,7 @@ fun BackgroundSheet(
                                 }
                         )
                         if (tab != BackgroundTab.GRADIENT) {
-                            androidx.compose.foundation.layout.Spacer(modifier = Modifier.size(12.dp))
+                            Spacer(modifier = Modifier.size(12.dp))
                         }
                     }
                 }
@@ -475,12 +477,12 @@ private fun PatternBackgroundTab(
             isLoading = true
             error = null
             when (val result = patternRepository.getNewPatterns()) {
-                is com.basesource.base.result.Result.Success -> {
+                is Result.Success -> {
                     patterns = result.data
                     isLoading = false
                 }
 
-                is com.basesource.base.result.Result.Error -> {
+                is Result.Error -> {
                     error = result.exception?.message
                     isLoading = false
                 }
@@ -764,13 +766,13 @@ private fun GradientBackgroundTab(
         isLoading = true
         error = null
         when (val result = gradientRepository.getGradients()) {
-            is com.basesource.base.result.Result.Success -> {
+            is Result.Success -> {
                 gradients = result.data.groups
                 urlRoot = result.data.urlRoot
                 isLoading = false
             }
 
-            is com.basesource.base.result.Result.Error -> {
+            is Result.Error -> {
                 error = result.exception?.message
                 isLoading = false
             }
@@ -876,9 +878,9 @@ private fun GradientItemCard(
                 .size(64.dp)
                 .background(
                     brush = if (colors.size >= 2) {
-                        androidx.compose.ui.graphics.Brush.verticalGradient(colors)
+                        Brush.verticalGradient(colors)
                     } else {
-                        androidx.compose.ui.graphics.Brush.verticalGradient(
+                        Brush.verticalGradient(
                             listOf(Color.White, Color.Gray)
                         )
                     },

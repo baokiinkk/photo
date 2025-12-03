@@ -1,10 +1,11 @@
-package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
+package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,15 +35,6 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.basesource.base.utils.clickableWithAlphaEffect
 
-// Danh sách các ratio options cho collage (chỉ cần một số ratio cơ bản)
-val collageRatioOptions = listOf(
-    CropAspect.ORIGINAL,
-    CropAspect.RATIO_1_1,
-    CropAspect.RATIO_4_5,
-    CropAspect.RATIO_5_4,
-    CropAspect.RATIO_3_4
-)
-
 @Composable
 fun RatioSheet(
     selectedRatio: Pair<Int, Int>? = null,
@@ -64,7 +56,7 @@ fun RatioSheet(
                 .padding(horizontal = 16.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.Bottom,
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 4.dp)
+            contentPadding = PaddingValues(horizontal = 4.dp)
         ) {
             items(CropAspect.entries.toTypedArray().filter { it != CropAspect.FREE }) { aspect ->
                 ItemFormat(

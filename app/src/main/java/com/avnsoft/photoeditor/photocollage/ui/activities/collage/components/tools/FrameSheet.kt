@@ -1,4 +1,4 @@
-package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
+package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,6 +47,7 @@ import com.avnsoft.photoeditor.photocollage.data.repository.FrameRepository
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray500
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.basesource.base.result.Result
 import com.basesource.base.utils.clickableWithAlphaEffect
 import org.koin.compose.koinInject
 
@@ -63,7 +64,6 @@ fun FrameSheet(
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val frameRepository: FrameRepository = koinInject()
 
     var categories by remember { mutableStateOf<List<FrameCategory>?>(emptyList()) }
@@ -76,14 +76,14 @@ fun FrameSheet(
         isLoading = true
         error = null
         when (val result = frameRepository.getFrames()) {
-            is com.basesource.base.result.Result.Success -> {
+            is Result.Success -> {
                 categories = result.data.data
                 urlRoot = result.data.urlRoot.orEmpty()
                 selectedCategory = result.data.data?.firstOrNull()
                 isLoading = false
             }
-            is com.basesource.base.result.Result.Error -> {
-                error = result.exception?.message
+            is Result.Error -> {
+                error = result.exception.message
                 isLoading = false
             }
             else -> {

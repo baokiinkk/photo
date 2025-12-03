@@ -5,10 +5,8 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.avnsoft.photoeditor.photocollage.data.model.gradient.GradientGroup
-import com.avnsoft.photoeditor.photocollage.data.model.gradient.GradientItem
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.BackgroundSelection
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FrameSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker

@@ -180,5 +180,14 @@
     <string name="doodle">Doodle</string>
     <string name="copy">Copy</string>
     <string name="delete">Delete</string>
+
+    <!-- Confirm Remove Photo Dialog -->
+    <string name="delete_photo">Delete Photo</string>
+    <string name="delete_photo_confirmation">This photo will be removed permanently. Are you sure you want to delete?</string>
+    <string name="no_keep_it">No, keep it</string>
+    <string name="yes_delete">Yes, delete</string>
+    <string name="edit">Edit</string>
+    <string name="collage">Collage</string>
+    <string name="text_tool_home">Add Text</string>
 </resources>
 
