@@ -427,8 +427,9 @@ class EditorActivity : BaseActivity() {
         }
     }
 
-    override fun onBackPressed() {
+    override fun onBackActivity() {
         viewmodel.showDiscardDialog()
+
     }
 
     override fun onDestroy() {

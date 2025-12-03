@@ -26,13 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FeatureBottomTools
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput.TYPE
@@ -40,6 +42,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterAc
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.initEditorLib
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.uriToBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
@@ -60,10 +63,6 @@ import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.rememberCaptureController
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
-private fun String?.toBitmap(): android.graphics.Bitmap? {
-    return this?.let { android.graphics.BitmapFactory.decodeFile(it) }
-}
 
 data class ToolTemplateInput(
     val toolInput: ToolInput?,
@@ -269,20 +268,13 @@ fun EditorStoreScreen(
                     .weight(1f)
                     .background(BackgroundGray)
                     .padding(top = 20.dp, bottom = 23.dp)
+                    .onSizeChanged { layout ->
+                        viewmodel.canvasSize = layout.toSize()
+                        viewmodel.scaleBitmapToBox(layout.toSize())
+                    }
                     .capturable(captureController),
                 contentAlignment = Alignment.Center
             ) {
-                uiState.originBitmap?.let {
-                    Image(
-                        bitmap = it.asImageBitmap(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        alignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                    )
-                }
                 uiState.bitmap?.let {
                     Image(
                         bitmap = it.asImageBitmap(),

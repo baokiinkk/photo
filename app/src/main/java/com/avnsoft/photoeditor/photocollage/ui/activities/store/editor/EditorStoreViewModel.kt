@@ -66,10 +66,7 @@ class EditorStoreViewModel(
         viewModelScope.launch {
             pathBitmapResult = copyImageToAppStorage(context, pathBitmap?.toUri())
             uiState.update {
-                it.copy(
-                    bitmap = bitmap,
-                    originBitmap = bitmap
-                )
+                it.copy(bitmap = bitmap)
             }
             tool?.let {
                 onToolClick(tool)
@@ -77,8 +74,50 @@ class EditorStoreViewModel(
         }
     }
 
+    var isFirst = true
+    fun scaleBitmapToBox(canvasSize: Size) {
+        val bitmap = uiState.value.bitmap ?: return
+        viewModelScope.launch(Dispatchers.Default) {
+            val imageWidth = bitmap.width.toFloat()
+            val imageHeight = bitmap.height.toFloat()
+
+            val scaledSize = MathUtils.calculateScaledSize(
+                srcWidth = imageWidth,
+                srcHeight = imageHeight,
+                dstWidth = canvasSize.width,
+                dstHeight = canvasSize.height,
+                contentScale = ContentScale.Fit
+            )
+
+            val newBitmap = bitmap.scale(scaledSize.width.toInt(), scaledSize.height.toInt())
+            uiState.update { it.copy(bitmap = newBitmap) }
+
+            if (isFirst) {
+                pushFirstData(newBitmap)
+                isFirst = false
+            }
+        }
+    }
+
+    fun pushFirstData(bitmap: Bitmap?) {
+        bitmap?.let { newBitmap ->
+            undoStack.push(
+                StackData.EditorBitmap(
+                    bitmap = newBitmap,
+                    backgroundColor = null,
+                    pathBitmapResult = pathBitmapResult
+                )
+            )
+            redoStack.push(
+                StackData.EditorBitmap(
+                    bitmap = newBitmap,
+                    backgroundColor = null,
+                    pathBitmapResult = pathBitmapResult
+                )
+            )
+        }
+    }
     fun updateBitmap(
-        tool: CollageTool = CollageTool.NONE,
         pathBitmap: String?,
         bitmap: Bitmap?
     ) {
@@ -98,99 +137,31 @@ class EditorStoreViewModel(
 
             val newBitmap = bitmap.scale(scaledSize.width.toInt(), scaledSize.height.toInt())
             uiState.update {
-                it.copy(
-                    bitmap = newBitmap,
-                    originBitmap = bitmap
-                )
+                it.copy(bitmap = newBitmap)
             }
             push(
                 stackData = StackData.EditorBitmap(
                     bitmap = newBitmap,
                     backgroundColor = uiState.value.backgroundColor,
                     pathBitmapResult = pathBitmap,
-                    originBitmap = bitmap
                 )
             )
         }
     }
 
-    var isFirstInit: Boolean = true
-
-    fun scaleBitmapToBox(canvasSize: Size) {
-        val bitmap = uiState.value.originBitmap ?: return
-        viewModelScope.launch(Dispatchers.Default) {
-            val imageWidth = bitmap.width.toFloat()
-            val imageHeight = bitmap.height.toFloat()
-
-            val scaledSize = MathUtils.calculateScaledSize(
-                srcWidth = imageWidth,
-                srcHeight = imageHeight,
-                dstWidth = canvasSize.width,
-                dstHeight = canvasSize.height,
-                contentScale = ContentScale.Fit
-            )
-
-            val newBitmap = bitmap.scale(scaledSize.width.toInt(), scaledSize.height.toInt())
-            uiState.update { it.copy(bitmap = newBitmap) }
-
-            if (isFirstInit) {
-                pushFirstData(newBitmap)
-                isFirstInit = false
-            }
-        }
-    }
-
-    fun updateBackgroundColor(color: BackgroundSelection?) {
-        uiState.update {
-            it.copy(
-                backgroundColor = color,
-            )
-        }
-    }
 
     private val undoStack = Stack<StackData>()
     private val redoStack = Stack<StackData>()
 
-    var firstBitmap: Bitmap? = null
-    fun pushFirstData(bitmap: Bitmap?) {
-        bitmap?.let { newBitmap ->
-            firstBitmap = newBitmap
-            undoStack.push(
-                StackData.EditorBitmap(
-                    bitmap = newBitmap,
-                    backgroundColor = null,
-                    originBitmap = uiState.value.originBitmap,
-                    pathBitmapResult = pathBitmapResult
-                )
-            )
-            redoStack.push(
-                StackData.EditorBitmap(
-                    bitmap = newBitmap,
-                    backgroundColor = null,
-                    originBitmap = uiState.value.originBitmap,
-                    pathBitmapResult = pathBitmapResult
-                )
-            )
-        }
-    }
-
     fun push(stackData: StackData) {
         undoStack.push(stackData)
+
+        redoStack.clear()
+
         uiState.update {
             it.copy(
-                canUndo = true,
+                canUndo = undoStack.size > 1,
                 canRedo = false
-            )
-        }
-        redoStack.clear()
-        firstBitmap?.let {
-            redoStack.push(
-                StackData.EditorBitmap(
-                    bitmap = it,
-                    backgroundColor = null,
-                    pathBitmapResult = pathBitmapResult,
-                    uiState.value.originBitmap
-                )
             )
         }
     }
@@ -200,86 +171,71 @@ class EditorStoreViewModel(
             uiState.update {
                 it.copy(
                     canUndo = false,
-                    canRedo = false,
-                    backgroundColor = null
+                    canRedo = redoStack.isNotEmpty()
                 )
             }
-        } else {
-            val stack = undoStack.pop()
-            val previous = undoStack.peek()
-            when (previous) {
-                is StackData.EditorBitmap -> {
-                    uiState.update {
-                        it.copy(
-                            bitmap = previous.bitmap,
-                            canUndo = undoStack.size >= 2,
-                            canRedo = true,
-                            backgroundColor = previous.backgroundColor,
-                            originBitmap = previous.originBitmap,
-                        )
-                    }
-                    pathBitmapResult = previous.pathBitmapResult
-                }
+            return
+        }
 
-                is StackData.Background -> {
-                    uiState.update {
-                        it.copy(
-                            backgroundColor = previous.backgroundColor,
-                            canUndo = undoStack.size >= 2,
-                            canRedo = true,
-                            bitmap = previous.bitmap,
-                            originBitmap = previous.originBitmap,
-                        )
-                    }
-                    pathBitmapResult = previous.pathBitmapResult
-                }
+        val current = undoStack.pop()
+        redoStack.push(current)
 
-                else -> {
+        val previous = undoStack.peek()
 
-                }
-            }
-            redoStack.push(stack)
+        applyState(previous)
+
+        uiState.update {
+            it.copy(
+                canUndo = undoStack.size > 1,
+                canRedo = redoStack.isNotEmpty()
+            )
         }
     }
 
     fun redo() {
-        if (redoStack.size < 2) {
+        if (redoStack.isEmpty()) {
             uiState.update {
-                it.copy(
-                    canRedo = false
-                )
+                it.copy(canRedo = false)
             }
-        } else {
-            val stack = redoStack.pop()
-            when (stack) {
-                is StackData.EditorBitmap -> {
-                    uiState.update {
-                        it.copy(
-                            bitmap = stack.bitmap,
-                            canUndo = true,
-                            canRedo = redoStack.size >= 2,
-                            originBitmap = stack.originBitmap
-                        )
-                    }
-                    pathBitmapResult = stack.pathBitmapResult
-                }
+            return
+        }
 
-                is StackData.Background -> {
-                    uiState.update {
-                        it.copy(
-                            backgroundColor = stack.backgroundColor,
-                            canUndo = true,
-                            canRedo = redoStack.size >= 2,
-                        )
-                    }
-                }
+        val state = redoStack.pop()
+        undoStack.push(state)
 
-                else -> {
+        applyState(state)
 
+        uiState.update {
+            it.copy(
+                canUndo = undoStack.size > 1,
+                canRedo = redoStack.isNotEmpty()
+            )
+        }
+    }
+
+    private fun applyState(state: StackData) {
+        when (state) {
+            is StackData.EditorBitmap -> {
+                uiState.update {
+                    it.copy(
+                        bitmap = state.bitmap,
+                        backgroundColor = state.backgroundColor
+                    )
                 }
+                pathBitmapResult = state.pathBitmapResult
             }
 
-            undoStack.push(stack)
+            is StackData.Background -> {
+                uiState.update {
+                    it.copy(
+                        backgroundColor = state.backgroundColor,
+                        bitmap = state.bitmap
+                    )
+                }
+                pathBitmapResult = state.pathBitmapResult
+            }
+
+            StackData.NONE -> {}
         }
     }
 
@@ -311,14 +267,12 @@ sealed class StackData {
         val bitmap: Bitmap,
         val backgroundColor: BackgroundSelection?,
         val pathBitmapResult: String?,
-        val originBitmap: Bitmap?
     ) : StackData()
 
     data class Background(
         val backgroundColor: BackgroundSelection?,
         val bitmap: Bitmap,
         val pathBitmapResult: String?,
-        val originBitmap: Bitmap?
     ) : StackData()
 
     data object NONE : StackData()
@@ -327,7 +281,6 @@ sealed class StackData {
 data class EditorStoreUIState(
     val items: List<ToolItem>,
     val bitmap: Bitmap? = null,
-    val originBitmap: Bitmap? = null,
     val isOriginal: Boolean = false,
     val backgroundColor: BackgroundSelection? = null,
     val canUndo: Boolean = false,
