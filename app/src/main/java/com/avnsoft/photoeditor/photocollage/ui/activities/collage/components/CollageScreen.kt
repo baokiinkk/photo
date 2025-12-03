@@ -278,12 +278,13 @@ fun CollageScreen(
                         }
                     }
                 }
-                .capturable(captureController)
         ) {
             CollagePreviewContainer(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(top = 80.dp),
+                    .padding(top = 80.dp)
+                    .capturable(captureController)
+                ,
                 viewModel = vm,
                 collageState = collageState,
                 currentUris = currentUris,
