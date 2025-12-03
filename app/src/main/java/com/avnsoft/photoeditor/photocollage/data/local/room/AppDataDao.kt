@@ -15,11 +15,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AppDataDao {
-    @Insert(onConflict = OnConflictStrategy.Companion.IGNORE)
-    fun insertAllSticker(stickers: List<StickerRoomModel>): List<Long>
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAllSticker(stickers: List<StickerRoomModel>): List<Long>
 
     @Query("SELECT * FROM sticker_table")
-    fun getStickers(): List<StickerRoomModel>
+    suspend fun getStickers(): List<StickerRoomModel>
 
     @Query("SELECT * FROM sticker_table")
     fun getPreviewStickers(): Flow<List<StickerRoomModel>>

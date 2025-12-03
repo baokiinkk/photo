@@ -35,7 +35,7 @@ class StickerViewModel(
                     uiState.update {
                         it.copy(
                             stickers = response.data,
-                            currentTab = response.data.first()
+                            currentTab = response.data.firstOrNull()
                         )
                     }
                 }

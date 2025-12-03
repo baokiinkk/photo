@@ -46,9 +46,7 @@ class PatternRepository(
     }
 
     suspend fun getNewPatterns(): Result<List<PatternModel>> {
-        if (!editorSharedPref.getIsSyncSticker()) {
-            syncPatterns()
-        }
+        syncPatterns()
         val response = appDataDao.getPatterns()
         val data = response.mapIndexed { index, model ->
             val contents = model.content.map { item ->
@@ -78,7 +76,6 @@ class PatternRepository(
 
 
     suspend fun syncPatterns() {
-        if (editorSharedPref.getIsSyncPattern()) return
         val response = safeApiCall<PatternResponse>(
             context = context,
             apiCallMock = { api.getPatterns() },
@@ -125,9 +122,7 @@ class PatternRepository(
     }
 
     suspend fun getPreviewPatterns(): Flow<List<PatternModel>> {
-        if (!editorSharedPref.getIsSyncSticker()) {
-            syncPatterns()
-        }
+        syncPatterns()
         val response = appDataDao.getPreviewPatterns()
 
         val data = response.map { models ->

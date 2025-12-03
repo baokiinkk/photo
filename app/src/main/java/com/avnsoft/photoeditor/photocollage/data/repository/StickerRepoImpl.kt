@@ -24,7 +24,6 @@ class StickerRepoImpl(
 ) {
 
     suspend fun syncStickers() {
-        if (editorSharedPref.getIsSyncSticker()) return
         val response = safeApiCall<StickerResponse>(
             context = context,
             apiCallMock = { api.getStickers() },
@@ -73,9 +72,7 @@ class StickerRepoImpl(
     }
 
     suspend fun getStickers(): Result<List<StickerModel>> {
-        if (!editorSharedPref.getIsSyncSticker()) {
-            syncStickers()
-        }
+        syncStickers()
         val response = appDataDao.getStickers()
         val data = response.mapIndexed { index, model ->
             val contents = model.content.map { item ->
@@ -104,9 +101,7 @@ class StickerRepoImpl(
     }
 
     suspend fun getPreviewStickers(): Flow<List<StickerModel>> {
-        if (!editorSharedPref.getIsSyncSticker()) {
-            syncStickers()
-        }
+        syncStickers()
         val response = appDataDao.getPreviewStickers()
 
         val data = response.map { models ->

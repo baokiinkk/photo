@@ -15,8 +15,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 object DatabaseInfo {
-    const val DATABASE_NAME = "photo_database_2025.sqlite"
-    const val DATABASE_VERSION = 2
+    const val DATABASE_NAME = "database_2025.sqlite"
+    const val DATABASE_VERSION = 1
 }
 
 @Database(
