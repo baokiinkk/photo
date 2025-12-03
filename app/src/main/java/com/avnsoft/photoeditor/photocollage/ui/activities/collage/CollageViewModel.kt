@@ -229,6 +229,40 @@ class CollageViewModel(
         updateState { it.copy(imageTransforms = m) }
     }
 
+    fun confirmImageTransformChanges() {
+        val s = _state.value.copy()
+        push(s)
+        tempTransforms = null
+    }
+
+    fun resetImageTransforms(
+        context: Context,
+        template: CollageTemplate,
+        canvasWidth: Float,
+        canvasHeight: Float,
+        topMarginValue: Float = 0f
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val topMarginPx = topMarginValue * 0.2f * canvasHeight
+            val leftMarginPx = topMarginValue * 0.2f * canvasWidth
+            val rightMarginPx = topMarginValue * 0.2f * canvasWidth
+            val bottomMarginPx = topMarginValue * 0.2f * canvasHeight
+
+            val effectiveCanvasWidth = canvasWidth - leftMarginPx - rightMarginPx
+            val effectiveCanvasHeight = canvasHeight - topMarginPx - bottomMarginPx
+
+            val initialTransforms = com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.ImageTransformCalculator
+                .calculateInitialTransformsFromTemplate(
+                    context = context,
+                    template = template,
+                    images = _state.value.imageUris,
+                    canvasWidth = effectiveCanvasWidth,
+                    canvasHeight = effectiveCanvasHeight
+                )
+            updateImageTransforms(initialTransforms)
+        }
+    }
+
     fun showDiscardDialog() {
         _showDiscardDialog.value = true
     }

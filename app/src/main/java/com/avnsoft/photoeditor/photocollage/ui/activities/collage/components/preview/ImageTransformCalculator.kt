@@ -13,9 +13,6 @@ import kotlinx.coroutines.withContext
 import kotlin.math.max
 import kotlin.math.min
 
-/**
- * Tính initial transform cho ảnh để vừa bound, dùng lại được khi đổi grid / add ảnh.
- */
 object ImageTransformCalculator {
 
     suspend fun calculateInitialTransforms(

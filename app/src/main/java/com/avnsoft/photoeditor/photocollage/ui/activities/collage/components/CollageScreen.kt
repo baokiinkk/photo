@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
@@ -33,20 +32,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageTemplates
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.CollagePreview
-import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.ImageTransformCalculator
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropAspect.Companion.toAspectRatio
@@ -174,31 +168,6 @@ fun CollageScreen(
 
     val textStickerUIState by freeStyleViewModel.uiState.collectAsStateWithLifecycle()
 
-
-    suspend fun resetImageTransforms(
-        template: CollageTemplate,
-        canvasWidth: Float,
-        canvasHeight: Float,
-        topMarginValue: Float = 0f
-    ) {
-        val topMarginPx = topMarginValue * 0.2f * canvasHeight
-        val leftMarginPx = topMarginValue * 0.2f * canvasWidth
-        val rightMarginPx = topMarginValue * 0.2f * canvasWidth
-        val bottomMarginPx = topMarginValue * 0.2f * canvasHeight
-
-        val effectiveCanvasWidth = canvasWidth - leftMarginPx - rightMarginPx
-        val effectiveCanvasHeight = canvasHeight - topMarginPx - bottomMarginPx
-
-        val initialTransforms = ImageTransformCalculator.calculateInitialTransformsFromTemplate(
-            context = context,
-            template = template,
-            images = currentUris,
-            canvasWidth = effectiveCanvasWidth,
-            canvasHeight = effectiveCanvasHeight
-        )
-        vm.updateImageTransforms(initialTransforms)
-    }
-
     fun clearAllSheets() {
         showGridsSheet = false
         showRatioSheet = false
@@ -209,47 +178,20 @@ fun CollageScreen(
     }
 
     fun handleToolClick(tool: CollageTool) {
+        clearAllSheets()
         when (tool) {
-            CollageTool.GRIDS -> {
-                clearAllSheets()
-                showGridsSheet = true
-            }
-
-            CollageTool.RATIO -> {
-                clearAllSheets()
-                showRatioSheet = true
-            }
-
-            CollageTool.BACKGROUND -> {
-                clearAllSheets()
-                showBackgroundSheet = true
-            }
-
-            CollageTool.FRAME -> {
-                clearAllSheets()
-                showFrameSheet = true
-            }
-
-            CollageTool.STICKER -> {
-                clearAllSheets()
-                showStickerSheet = true
-            }
-
-            CollageTool.TEXT -> {
-                clearAllSheets()
-                showTextSheet = true
-            }
-
+            CollageTool.GRIDS -> showGridsSheet = true
+            CollageTool.RATIO -> showRatioSheet = true
+            CollageTool.BACKGROUND -> showBackgroundSheet = true
+            CollageTool.FRAME -> showFrameSheet = true
+            CollageTool.STICKER -> showStickerSheet = true
+            CollageTool.TEXT -> showTextSheet = true
             CollageTool.ADD_PHOTO -> {
                 if (canAddPhoto) {
-                    clearAllSheets()
                     launcher.launch("image/*")
                 }
             }
-
-            else -> {
-                clearAllSheets()
-            }
+            else -> Unit
         }
     }
 
@@ -260,12 +202,10 @@ fun CollageScreen(
                 replaceImageIndex = index
                 replaceLauncher.launch("image/*")
             }
-
             ImageEditAction.SWAP -> {
                 isSwapMode = true
                 Toast.makeText(context, R.string.copy, Toast.LENGTH_SHORT).show()
             }
-
             ImageEditAction.CROP -> {
                 val selectedUri = currentUris.getOrNull(index) ?: return
                 scope.launch(Dispatchers.IO) {
@@ -290,19 +230,9 @@ fun CollageScreen(
                     }
                 }
             }
-
-            ImageEditAction.ROTATE -> {
-                vm.rotateImage(context, index)
-            }
-
-            ImageEditAction.FLIP_HORIZONTAL -> {
-                vm.flipImageHorizontal(context, index)
-            }
-
-            ImageEditAction.FLIP_VERTICAL -> {
-                vm.flipImageVertical(context, index)
-            }
-
+            ImageEditAction.ROTATE -> vm.rotateImage(context, index)
+            ImageEditAction.FLIP_HORIZONTAL -> vm.flipImageHorizontal(context, index)
+            ImageEditAction.FLIP_VERTICAL -> vm.flipImageVertical(context, index)
             ImageEditAction.DELETE -> {
                 if (currentUris.size > 1) {
                     deleteImageIndex = index
@@ -357,108 +287,44 @@ fun CollageScreen(
                 }
                 .capturable(captureController)
         ) {
-            BoxWithConstraints(
+            CollagePreviewContainer(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(top = 80.dp, bottom = 175.dp)
-                    .align(Alignment.Center)
-                    .then(
-                        if (ratio != null) {
-                            Modifier.aspectRatio(ratio.toAspectRatio())
-                        } else {
-                            Modifier
-                        }
-                    )
-                    .background(BackgroundWhite)
-                    .pointerInput(selectedImageIndex) {
-                        detectTapGestures {
-                            if (selectedImageIndex != null) {
-                                selectedImageIndex = null
-                                vm.triggerUnselectAllImages()
-                            }
-                        }
+                    .padding(top = 80.dp),
+                viewModel = vm,
+                collageState = collageState,
+                currentUris = currentUris,
+                selectedImageIndex = selectedImageIndex,
+                isSwapMode = isSwapMode,
+                unselectAllImagesTrigger = unselectAllImagesTrigger,
+                onImageClick = { index ->
+                    if (selectedImageIndex == index) {
+                        selectedImageIndex = null
+                        isSwapMode = false
+                    } else {
+                        selectedImageIndex = index
                     }
-            ) {
-                val templateToUse =
-                    templateId ?: CollageTemplates.defaultFor(currentUris.size.coerceAtLeast(1))
-                val gapValue = (1 + columnMargin * 19).dp
-                val cornerValue = (1 + cornerRadius * 19).dp
-
-                val canvasWidth = constraints.maxWidth.toFloat()
-                val canvasHeight = constraints.maxHeight.toFloat()
-
-                LaunchedEffect(templateToUse.id, currentUris.size) {
-                    if (templateToUse.id.isNotEmpty() &&
-                        currentUris.isNotEmpty() &&
-                        canvasWidth > 0 &&
-                        canvasHeight > 0
-                    ) {
-                        resetImageTransforms(templateToUse, canvasWidth, canvasHeight, topMargin)
+                },
+                onImageSwap = { firstIndex, secondIndex ->
+                    if (firstIndex < currentUris.size && secondIndex < currentUris.size) {
+                        val newUris = currentUris.toMutableList().apply {
+                            val temp = this[firstIndex]
+                            this[firstIndex] = this[secondIndex]
+                            this[secondIndex] = temp
+                        }
+                        vm.setImageUris(context, newUris)
+                        isSwapMode = false
                     }
+                },
+                onOutsideClick = {
+                    selectedImageIndex = null
+                    vm.triggerUnselectAllImages()
+                },
+                onUnselectAll = {
+                    selectedImageIndex = null
+                    vm.triggerUnselectAllImages()
                 }
-
-                Box(modifier = Modifier.wrapContentSize()) {
-                    CollagePreview(
-                        images = currentUris,
-                        template = templateToUse,
-                        gap = gapValue,
-                        corner = cornerValue,
-                        backgroundSelection = collageState.backgroundSelection,
-                        imageTransforms = collageState.imageTransforms,
-                        topMargin = topMargin,
-                        imageBitmaps = collageState.imageBitmaps,
-                        onImageClick = { index, _ ->
-                            if (isSwapMode && selectedImageIndex != null && selectedImageIndex != index) {
-                                val firstIndex = selectedImageIndex!!
-                                if (firstIndex < currentUris.size && index < currentUris.size) {
-                                    val newUris = currentUris.toMutableList().apply {
-                                        val temp = this[firstIndex]
-                                        this[firstIndex] = this[index]
-                                        this[index] = temp
-                                    }
-                                    vm.setImageUris(context, newUris)
-                                    isSwapMode = false
-                                }
-                            } else {
-                                selectedImageIndex =
-                                    if (selectedImageIndex == index) null else index
-                                if (selectedImageIndex == null) {
-                                    isSwapMode = false
-                                }
-                            }
-                        },
-                        onImageTransformsChange = { transforms ->
-                            vm.updateImageTransforms(transforms)
-                        },
-                        unselectAllTrigger = unselectAllImagesTrigger,
-                        onOutsideClick = {
-                            selectedImageIndex = null
-                            vm.triggerUnselectAllImages()
-                        }
-                    )
-
-                    collageState.frameSelection
-                        ?.takeIf { it is FrameSelection.Frame }
-                        ?.let { frame ->
-                            val data = frame as FrameSelection.Frame
-                            val url =
-                                if (data.item.urlThumb?.startsWith("http://") == true ||
-                                    data.item.urlThumb?.startsWith("https://") == true
-                                ) {
-                                    data.item.urlThumb
-                                } else {
-                                    "${data.urlRoot}${data.item.urlThumb}"
-                                }
-
-                            AsyncImage(
-                                model = ImageRequest.Builder(context).data(url).build(),
-                                contentDescription = "",
-                                contentScale = ContentScale.FillBounds,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                }
-            }
+            )
 
             FreeStyleStickerComposeView(
                 modifier = Modifier.fillMaxSize(),
@@ -500,150 +366,33 @@ fun CollageScreen(
                     )
                 }
 
-                if (showGridsSheet) {
-                    GridsSheet(
-                        templates = templates,
-                        selectedTemplate = templateId,
-                        onTemplateSelect = { template -> vm.selectTemplate(template) },
-                        onClose = { showGridsSheet = false },
-                        onConfirm = {
-                            vm.confirmChanges()
-                            showGridsSheet = false
-                        },
-                        topMargin = topMargin,
-                        onTopMarginChange = { vm.updateTopMargin(it) },
-                        columnMargin = columnMargin,
-                        onColumnMarginChange = { vm.updateColumnMargin(it) },
-                        cornerRadius = cornerRadius,
-                        onCornerRadiusChange = { vm.updateCornerRadius(it) },
-                        imageCount = currentUris.size.coerceAtLeast(1),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                    )
-                }
-
-                if (showRatioSheet) {
-                    RatioSheet(
-                        selectedRatio = ratio,
-                        onRatioSelect = { aspect -> vm.updateRatio(aspect.ratio) },
-                        onClose = {
-                            vm.cancelRatioChanges()
-                            showRatioSheet = false
-                        },
-                        onConfirm = {
-                            vm.confirmChanges()
-                            showRatioSheet = false
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                    )
-                }
-
-                if (showBackgroundSheet) {
-                    BackgroundSheet(
-                        selectedBackgroundSelection = collageState.backgroundSelection,
-                        onBackgroundSelect = { _, selection ->
-                            vm.updateBackground(selection)
-                        },
-                        onClose = {
-                            vm.cancelBackgroundChanges()
-                            showBackgroundSheet = false
-                        },
-                        onConfirm = {
-                            vm.confirmChanges()
-                            showBackgroundSheet = false
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                    )
-                }
-
-                if (showFrameSheet) {
-                    FrameSheet(
-                        selectedFrameSelection = collageState.frameSelection,
-                        onFrameSelect = { selection ->
-                            vm.updateFrame(selection)
-                        },
-                        onClose = {
-                            vm.cancelFrameChanges()
-                            showFrameSheet = false
-                        },
-                        onConfirm = {
-                            vm.confirmChanges()
-                            showFrameSheet = false
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                    )
-                }
-
-                when {
-                    showStickerSheet -> {
-//                        stickerView.setLocked(true)
-                        StickerFooterTool(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight(),
-                            stickerView = stickerView,
-                            onCancel = {
-                                stickerView.removeCurrentSticker()
-                                stickerView.setLocked(false)
-                                showStickerSheet = false
-                            },
-                            onApply = {
-                                stickerView.setLocked(false)
-                                vm.confirmStickerChanges()
-                                showStickerSheet = false
-                            }
-                        )
-                    }
-
-                    showTextSheet -> {
-//                        stickerView.setLocked(true)
-                        TextStickerFooterTool(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight(),
-                            stickerView = stickerView,
-                            onCancel = {
-                                if (!freeStyleViewModel.isEditTextSticker){
-                                    stickerView.removeCurrentSticker()
-                                }
-                                stickerView.setLocked(false)
-                                showTextSheet = false
-                            },
-                            onApply = {
-                                stickerView.setLocked(false)
-                                vm.confirmStickerChanges()
-                                showTextSheet = false
-                            },
-                            onAddFirstText = {
-                                if (textStickerUIState.isVisibleTextField) return@TextStickerFooterTool
-                                stickerView.addSticker(
-                                    TextSticker(
-                                        stickerView.context,
-                                        it
-                                    ),
-                                    com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker.Position.TOP
-                                )
-                            },
-                            addTextSticker = { font ->
-                                stickerView.replace(
-                                    TextSticker(
-                                        stickerView.context,
-                                        font
-                                    )
-                                )
-                            }
-                        )
-                    }
-
-                    else -> Unit
-                }
+                CollageSheetsContainer(
+                    modifier = Modifier,
+                    viewModel = vm,
+                    freeStyleViewModel = freeStyleViewModel,
+                    stickerView = stickerView,
+                    collageState = collageState,
+                    templates = templates,
+                    currentUris = currentUris,
+                    showGridsSheet = showGridsSheet,
+                    showRatioSheet = showRatioSheet,
+                    showBackgroundSheet = showBackgroundSheet,
+                    showFrameSheet = showFrameSheet,
+                    showStickerSheet = showStickerSheet,
+                    showTextSheet = showTextSheet,
+                    onCloseGridsSheet = { showGridsSheet = false },
+                    onCloseRatioSheet = { showRatioSheet = false },
+                    onCloseBackgroundSheet = { showBackgroundSheet = false },
+                    onCloseFrameSheet = { showFrameSheet = false },
+                    onCloseStickerSheet = { showStickerSheet = false },
+                    onCloseTextSheet = { showTextSheet = false },
+                    onConfirmGridsSheet = { showGridsSheet = false },
+                    onConfirmRatioSheet = { showRatioSheet = false },
+                    onConfirmBackgroundSheet = { showBackgroundSheet = false },
+                    onConfirmFrameSheet = { showFrameSheet = false },
+                    onConfirmStickerSheet = { showStickerSheet = false },
+                    onConfirmTextSheet = { showTextSheet = false }
+                )
 
                 if (textStickerUIState.isVisibleTextField) {
                     EditTextStickerLayer(

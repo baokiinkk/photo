@@ -59,7 +59,7 @@ object CollagePreviewDataProcessor {
         return template.cells.mapIndexed { index, cell ->
             processCell(
                 cell = cell,
-                imageUri = images.getOrNull(index % images.size) ?: Uri.EMPTY,
+                imageUri = images.takeIf { it.isNotEmpty() }?.getOrNull(index % images.size) ?: Uri.EMPTY,
                 imageBitmap = imageBitmaps[index],
                 canvasWidth = canvasWidth,
                 canvasHeight = canvasHeight

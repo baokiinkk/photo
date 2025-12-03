@@ -84,10 +84,6 @@ fun CollagePreview(
 
         var isInitializing by remember(template.id, images) { mutableStateOf(true) }
 
-        /**
-         * Init processedCells + initialTransforms 1 lần cho mỗi (template, images, imageBitmaps, size)
-         * => tránh delay, tránh giật zoom ban đầu.
-         */
         LaunchedEffect(
             template.id,
             images,
@@ -120,13 +116,10 @@ fun CollagePreview(
             }
             processedCells = cells
 
-            // Tính transform: ưu tiên dùng imageTransforms từ ngoài nếu có, nếu không tự tính
-            // Chỉ gọi callback khi thực sự tính initial transforms (chưa có từ state)
             val finalTransforms = if (imageTransforms.isNotEmpty()) {
                 imageTransforms
             } else {
                 val calculated = ImageTransformCalculator.calculateInitialTransforms(context, cells)
-                // Chỉ gọi callback khi tính initial transforms, không gọi khi sync từ state
                 if (calculated.isNotEmpty()) {
                     onImageTransformsChange?.invoke(calculated)
                 }
@@ -141,10 +134,6 @@ fun CollagePreview(
             isInitializing = false
         }
 
-        /**
-         * Khi topMargin thay đổi: chỉ re-process cells để thay đổi bound,
-         * giữ nguyên transform (không zoom lại).
-         */
         LaunchedEffect(topMargin) {
             if (template.id.isNotEmpty() &&
                 images.isNotEmpty() &&
@@ -163,7 +152,6 @@ fun CollagePreview(
             }
         }
 
-        // Unselect all khi trigger thay đổi
         LaunchedEffect(unselectAllTrigger) {
             if (unselectAllTrigger > 0) {
                 imageStates.keys.forEach { key ->
@@ -173,13 +161,9 @@ fun CollagePreview(
             }
         }
 
-        // Sync lại khi parent đẩy transforms mới (ví dụ undo/redo, rotate,...)
-        // Chỉ sync khi imageTransforms thay đổi từ bên ngoài, không gọi callback để tránh vòng tròn
-        // Sử dụng key để tránh sync khi chính CollagePreview vừa tính và gọi callback
         var lastSyncedTransforms by remember { mutableStateOf<Map<Int, ImageTransformState>?>(null) }
         LaunchedEffect(imageTransforms) {
             if (imageTransforms.isNotEmpty() && !isInitializing) {
-                // Chỉ sync nếu transforms thực sự khác với lần sync trước (từ undo/redo, không phải từ chính CollagePreview)
                 if (lastSyncedTransforms != imageTransforms) {
                     imageTransforms.forEach { (index, transform) ->
                         val isSelected = imageStates[index]?.second ?: false
@@ -218,7 +202,6 @@ fun CollagePreview(
                 !isInitializing && processedCells.isNotEmpty() && imageStates.isNotEmpty()
 
             if (!isReady) {
-                // Placeholder / shimmer area – bạn có thể thay bằng shimmer lib đang dùng
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
