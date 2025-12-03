@@ -33,5 +33,6 @@ fun provideDatabase(application: Application): AppRoomDatabase {
         AppRoomDatabase::class.java,
         DatabaseInfo.DATABASE_NAME
     )
+        .fallbackToDestructiveMigration(true)
     return databaseBuilder.build()
 }
