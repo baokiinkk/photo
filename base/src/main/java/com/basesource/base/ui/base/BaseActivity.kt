@@ -37,7 +37,7 @@ abstract class BaseActivity : ComponentActivity() {
     }
 
     open fun onBackActivity() {
-
+        finish()
     }
     override fun attachBaseContext(newBase: Context) {
         val language = LanguageManager.getCurrentLanguage(newBase)

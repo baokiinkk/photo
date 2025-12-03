@@ -16,11 +16,6 @@ import com.basesource.base.utils.toJson
 class ImagePickerActivity : BaseActivity() {
     val args: ImageRequest? by lazy { intent.getStringExtra("arg")?.fromJson() }
 
-    override fun onBackActivity() {
-        super.onBackActivity()
-        finish()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (hasPermission()) {
