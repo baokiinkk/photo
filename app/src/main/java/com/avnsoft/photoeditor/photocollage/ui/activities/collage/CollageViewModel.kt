@@ -37,6 +37,7 @@ class CollageViewModel(
     private val undoStack = Stack<CollageState>()
     private val redoStack = Stack<CollageState>()
     private var initialState: CollageState? = null
+    private var isFirstState = true
 
     private val _templates = MutableStateFlow(emptyList<CollageTemplate>())
     val templates = _templates.asStateFlow()
@@ -63,7 +64,16 @@ class CollageViewModel(
             val stickers = extractStickers(v)
             val newState = _state.value.copy(stickerList = stickers)
             _state.value = newState
-            if (initialState == null) initialState = newState.copy()
+            if (initialState == null && isFirstState) {
+                initialState = newState.copy()
+                undoStack.clear()
+                undoStack.push(initialState!!.copy())
+                redoStack.clear()
+                redoStack.push(initialState!!.copy())
+                _canUndo.value = false
+                _canRedo.value = false
+                isFirstState = false
+            }
         }
 
     private var tempRatio: Pair<Int, Int>?? = null
@@ -108,15 +118,16 @@ class CollageViewModel(
 
                     updateState { it.copy(templateId = first) }
 
-                    if (initialState == null) {
-                        // Đảm bảo push initialState với đầy đủ data hiện tại
+                    if (initialState == null && isFirstState) {
                         val currentState = _state.value.copy()
                         initialState = currentState.copy()
                         undoStack.clear()
                         undoStack.push(initialState!!.copy())
                         redoStack.clear()
+                        redoStack.push(initialState!!.copy())
                         _canUndo.value = false
                         _canRedo.value = false
+                        isFirstState = false
                     }
                 }
 
@@ -279,14 +290,17 @@ class CollageViewModel(
 
             updateState { it.copy(imageUris = uris, imageBitmaps = bitmaps) }
 
-            // Nếu chưa có initialState, push state hiện tại vào stack
-            if (initialState == null && undoStack.isEmpty()) {
+            // Nếu chưa có initialState, push state hiện tại vào cả undo và redo stack
+            if (initialState == null && isFirstState) {
                 val currentState = _state.value.copy()
                 initialState = currentState.copy()
+                undoStack.clear()
                 undoStack.push(initialState!!.copy())
                 redoStack.clear()
+                redoStack.push(initialState!!.copy())
                 _canUndo.value = false
                 _canRedo.value = false
+                isFirstState = false
             }
         }
     }
