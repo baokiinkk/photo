@@ -20,6 +20,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -45,6 +48,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyl
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity.Companion.RESULT_URI
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
+import com.avnsoft.photoeditor.photocollage.ui.dialog.NetworkDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
@@ -88,6 +92,7 @@ class FreeStyleActivity : BaseActivity() {
                 containerColor = Color.White
             ) { inner ->
                 val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+                var showNetworkDialog by remember { mutableStateOf(false) }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -97,7 +102,8 @@ class FreeStyleActivity : BaseActivity() {
                         viewmodel = viewmodel,
                         stickerView = stickerView,
                         onBack = {
-                            viewmodel.showDiscardDialog()
+                            showNetworkDialog = true
+//                            viewmodel.showDiscardDialog()
                         },
                         onDownloadSuccess = {
                             launchActivity(
@@ -150,6 +156,14 @@ class FreeStyleActivity : BaseActivity() {
                         },
                         onCancel = {
                             viewmodel.hideDiscardDialog()
+                        }
+                    )
+                }
+
+                if (showNetworkDialog){
+                    NetworkDialog(
+                        onDismiss = {
+                            showNetworkDialog = false
                         }
                     )
                 }
@@ -280,7 +294,12 @@ fun HeaderSave(
     textRight: String = stringResource(R.string.save),
     type: TEXT_TYPE = TEXT_TYPE.ROUND,
 ) {
-    Spacer(modifier = Modifier.fillMaxWidth().height(24.dp).background(BackgroundWhite))
+    Spacer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(24.dp)
+            .background(BackgroundWhite)
+    )
     Row(
         modifier = modifier,
     ) {

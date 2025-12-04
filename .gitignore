@@ -138,3 +138,4 @@ org.gradle.internal.instrumentation.agent.properties
 # Tệp backup
 *~
 /.idea/
+.kotlin/sessions/kotlin-compiler-13820148940367299849.salive
