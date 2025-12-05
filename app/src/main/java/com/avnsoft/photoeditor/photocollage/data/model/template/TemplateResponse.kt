@@ -5,28 +5,33 @@ import com.google.gson.annotations.SerializedName
 data class TemplateResponse(
     @SerializedName("version") val version: String?,
     @SerializedName("lastModified") val lastModified: String?,
+    @SerializedName("urlRoot") val urlRoot: String?,
+    @SerializedName("server") val server: String?,
     @SerializedName("data") val data: List<DataTemplate>,
 )
 
 data class DataTemplate(
-    @SerializedName("category")
-    val category: String?,
+    @SerializedName("categoryId")
+    val categoryId: Int?,
+    @SerializedName("categoryName")
+    val categoryName: String?,
     @SerializedName("content")
     val content: List<TemplateData>?,
-
-    )
+)
 
 data class TemplateData(
-    @SerializedName("id")
-    val id: Long?,
+    @SerializedName("itemId")
+    val itemId: Long?,
     @SerializedName("bannerUrl")
     val bannerUrl: String?,
     @SerializedName("previewUrl")
     val previewUrl: String? = null,
     @SerializedName("frameUrl")
     val frameUrl: String?,
-    @SerializedName("content")
-    val content: List<TemplateContent>?,
+    @SerializedName("layer")
+    val layer: List<TemplateLayer>?,
+    @SerializedName("placeholder")
+    val placeholder: List<TemplatePlaceholder>?,
     @SerializedName("isPro")
     val isPro: Boolean? = false,
     @SerializedName("isReward")
@@ -37,11 +42,19 @@ data class TemplateData(
     val isUsed: Boolean? = false,
 )
 
-data class TemplateContent(
-    @SerializedName("urlThumb") val urlThumb: String,
-    @SerializedName("x") val x: Float,
-    @SerializedName("y") val y: Float,
-    @SerializedName("width") val width: Float,
-    @SerializedName("height") val height: Float,
+data class TemplateLayer(
+    @SerializedName("urlThumb") val urlThumb: String?,
+    @SerializedName("x") val x: Float?,
+    @SerializedName("y") val y: Float?,
+    @SerializedName("width") val width: Float?,
+    @SerializedName("height") val height: Float?,
+    @SerializedName("rotate") val rotate: Int? = null,
+)
+
+data class TemplatePlaceholder(
+    @SerializedName("x") val x: Float?,
+    @SerializedName("y") val y: Float?,
+    @SerializedName("width") val width: Float?,
+    @SerializedName("height") val height: Float?,
     @SerializedName("rotate") val rotate: Int? = null,
 )

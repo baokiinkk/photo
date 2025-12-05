@@ -1,18 +1,21 @@
 {
   "version": "v1",
   "lastModified": "2021-06-05",
+  "urlRoot": "https://photo.footballtv.info",
+  "server": "amobear",
   "data": [
     {
-      "category": "Autumn",
+      "categoryId": 1,
+      "categoryName": "Autumn",
       "content": [
         {
-          "id": 1,
-          "bannerUrl": "pattern/Default/item_0.webp",
-          "previewUrl": "theme/collage_template_1.png",
+          "itemId": 1,
+          "bannerUrl": "file:///android_asset/pattern/Default/item_0.webp",
+          "previewUrl": "file:///android_asset/theme/collage_template_1.png",
           "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "content": [
+          "layer": [
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.091,
               "y": 0.233,
               "width": 0.238,
@@ -20,7 +23,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.382,
               "y": 0.322,
               "width": 0.238,
@@ -28,7 +31,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.672,
               "y": 0.233,
               "width": 0.238,
@@ -36,7 +39,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.091,
               "y": 0.539,
               "width": 0.238,
@@ -44,7 +47,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.382,
               "y": 0.610,
               "width": 0.238,
@@ -52,7 +55,51 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
+              "x": 0.672,
+              "y": 0.539,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            }
+          ],
+          "placeholder": [
+            {
+              "x": 0.091,
+              "y": 0.233,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            },
+            {
+              "x": 0.382,
+              "y": 0.322,
+              "width": 0.238,
+              "height": 0.245,
+              "rotate": null
+            },
+            {
+              "x": 0.672,
+              "y": 0.233,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            },
+            {
+              "x": 0.091,
+              "y": 0.539,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            },
+            {
+              "x": 0.382,
+              "y": 0.610,
+              "width": 0.238,
+              "height": 0.191,
+              "rotate": null
+            },
+            {
               "x": 0.672,
               "y": 0.539,
               "width": 0.238,
@@ -66,13 +113,13 @@
           "isUsed": true
         },
         {
-          "id": 2,
-          "bannerUrl": "pattern/Default/item_1.webp",
-          "previewUrl": "theme/collage_template_2.png",
+          "itemId": 2,
+          "bannerUrl": "file:///android_asset/pattern/Default/item_1.webp",
+          "previewUrl": "file:///android_asset/theme/collage_template_2.png",
           "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "content": [
+          "layer": [
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.507,
               "y": 0.423,
               "width": 0.403,
@@ -80,7 +127,7 @@
               "rotate": -3
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.501,
               "y": 0.073,
               "width": 0.404,
@@ -88,7 +135,7 @@
               "rotate": -8
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.070,
               "y": 0.644,
               "width": 0.404,
@@ -96,7 +143,37 @@
               "rotate": -4
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
+              "x": 0.082,
+              "y": 0.338,
+              "width": 0.404,
+              "height": 0.267,
+              "rotate": 2
+            }
+          ],
+          "placeholder": [
+            {
+              "x": 0.507,
+              "y": 0.423,
+              "width": 0.403,
+              "height": 0.480,
+              "rotate": -3
+            },
+            {
+              "x": 0.501,
+              "y": 0.073,
+              "width": 0.404,
+              "height": 0.305,
+              "rotate": -8
+            },
+            {
+              "x": 0.070,
+              "y": 0.644,
+              "width": 0.404,
+              "height": 0.267,
+              "rotate": -4
+            },
+            {
               "x": 0.082,
               "y": 0.338,
               "width": 0.404,
@@ -110,13 +187,13 @@
           "isUsed": true
         },
         {
-          "id": 3,
-          "bannerUrl": "pattern/Default/item_2.webp",
-          "previewUrl": "theme/collage_template_3.png",
+          "itemId": 3,
+          "bannerUrl": "file:///android_asset/pattern/Default/item_2.webp",
+          "previewUrl": "file:///android_asset/theme/collage_template_3.png",
           "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "content": [
+          "layer": [
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.287,
               "y": 0.251,
               "width": 0.426,
@@ -124,7 +201,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.164,
               "y": 0.668,
               "width": 0.194,
@@ -132,7 +209,7 @@
               "rotate": 13
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.121,
               "y": 0.521,
               "width": 0.194,
@@ -140,7 +217,37 @@
               "rotate": 13
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
+              "x": 0.079,
+              "y": 0.374,
+              "width": 0.194,
+              "height": 0.132,
+              "rotate": 13
+            }
+          ],
+          "placeholder": [
+            {
+              "x": 0.287,
+              "y": 0.251,
+              "width": 0.426,
+              "height": 0.423,
+              "rotate": null
+            },
+            {
+              "x": 0.164,
+              "y": 0.668,
+              "width": 0.194,
+              "height": 0.132,
+              "rotate": 13
+            },
+            {
+              "x": 0.121,
+              "y": 0.521,
+              "width": 0.194,
+              "height": 0.132,
+              "rotate": 13
+            },
+            {
               "x": 0.079,
               "y": 0.374,
               "width": 0.194,
@@ -156,16 +263,17 @@
       ]
     },
     {
-      "category": "Birthday",
+      "categoryId": 2,
+      "categoryName": "Birthday",
       "content": [
         {
-          "id": 1,
-          "bannerUrl": "pattern/Default/item_0.webp",
-          "previewUrl": "theme/collage_template_1.png",
+          "itemId": 1,
+          "bannerUrl": "file:///android_asset/pattern/Default/item_0.webp",
+          "previewUrl": "file:///android_asset/theme/collage_template_1.png",
           "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "content": [
+          "layer": [
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.091,
               "y": 0.233,
               "width": 0.238,
@@ -173,7 +281,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.382,
               "y": 0.322,
               "width": 0.238,
@@ -181,7 +289,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.672,
               "y": 0.233,
               "width": 0.238,
@@ -189,7 +297,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.091,
               "y": 0.539,
               "width": 0.238,
@@ -197,7 +305,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.382,
               "y": 0.610,
               "width": 0.238,
@@ -205,7 +313,51 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
+              "x": 0.672,
+              "y": 0.539,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            }
+          ],
+          "placeholder": [
+            {
+              "x": 0.091,
+              "y": 0.233,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            },
+            {
+              "x": 0.382,
+              "y": 0.322,
+              "width": 0.238,
+              "height": 0.245,
+              "rotate": null
+            },
+            {
+              "x": 0.672,
+              "y": 0.233,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            },
+            {
+              "x": 0.091,
+              "y": 0.539,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            },
+            {
+              "x": 0.382,
+              "y": 0.610,
+              "width": 0.238,
+              "height": 0.191,
+              "rotate": null
+            },
+            {
               "x": 0.672,
               "y": 0.539,
               "width": 0.238,
@@ -219,13 +371,13 @@
           "isUsed": true
         },
         {
-          "id": 2,
-          "bannerUrl": "pattern/Default/item_1.webp",
-          "previewUrl": "theme/collage_template_2.png",
+          "itemId": 2,
+          "bannerUrl": "file:///android_asset/pattern/Default/item_1.webp",
+          "previewUrl": "file:///android_asset/theme/collage_template_2.png",
           "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "content": [
+          "layer": [
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.507,
               "y": 0.423,
               "width": 0.403,
@@ -233,7 +385,7 @@
               "rotate": -3
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.501,
               "y": 0.073,
               "width": 0.404,
@@ -241,7 +393,7 @@
               "rotate": -8
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.070,
               "y": 0.644,
               "width": 0.404,
@@ -249,7 +401,37 @@
               "rotate": -4
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
+              "x": 0.082,
+              "y": 0.338,
+              "width": 0.404,
+              "height": 0.267,
+              "rotate": 2
+            }
+          ],
+          "placeholder": [
+            {
+              "x": 0.507,
+              "y": 0.423,
+              "width": 0.403,
+              "height": 0.480,
+              "rotate": -3
+            },
+            {
+              "x": 0.501,
+              "y": 0.073,
+              "width": 0.404,
+              "height": 0.305,
+              "rotate": -8
+            },
+            {
+              "x": 0.070,
+              "y": 0.644,
+              "width": 0.404,
+              "height": 0.267,
+              "rotate": -4
+            },
+            {
               "x": 0.082,
               "y": 0.338,
               "width": 0.404,
@@ -263,13 +445,13 @@
           "isUsed": true
         },
         {
-          "id": 3,
-          "bannerUrl": "pattern/Default/item_2.webp",
-          "previewUrl": "theme/collage_template_3.png",
+          "itemId": 3,
+          "bannerUrl": "file:///android_asset/pattern/Default/item_2.webp",
+          "previewUrl": "file:///android_asset/theme/collage_template_3.png",
           "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "content": [
+          "layer": [
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.287,
               "y": 0.251,
               "width": 0.426,
@@ -277,7 +459,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.164,
               "y": 0.668,
               "width": 0.194,
@@ -285,7 +467,7 @@
               "rotate": 13
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.121,
               "y": 0.521,
               "width": 0.194,
@@ -293,7 +475,37 @@
               "rotate": 13
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
+              "x": 0.079,
+              "y": 0.374,
+              "width": 0.194,
+              "height": 0.132,
+              "rotate": 13
+            }
+          ],
+          "placeholder": [
+            {
+              "x": 0.287,
+              "y": 0.251,
+              "width": 0.426,
+              "height": 0.423,
+              "rotate": null
+            },
+            {
+              "x": 0.164,
+              "y": 0.668,
+              "width": 0.194,
+              "height": 0.132,
+              "rotate": 13
+            },
+            {
+              "x": 0.121,
+              "y": 0.521,
+              "width": 0.194,
+              "height": 0.132,
+              "rotate": 13
+            },
+            {
               "x": 0.079,
               "y": 0.374,
               "width": 0.194,
@@ -309,16 +521,17 @@
       ]
     },
     {
-      "category": "Collage Art",
+      "categoryId": 3,
+      "categoryName": "Collage Art",
       "content": [
         {
-          "id": 1,
-          "bannerUrl": "pattern/Default/item_0.webp",
-          "previewUrl": "theme/collage_template_1.png",
+          "itemId": 1,
+          "bannerUrl": "file:///android_asset/pattern/Default/item_0.webp",
+          "previewUrl": "file:///android_asset/theme/collage_template_1.png",
           "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "content": [
+          "layer": [
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.091,
               "y": 0.233,
               "width": 0.238,
@@ -326,7 +539,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.382,
               "y": 0.322,
               "width": 0.238,
@@ -334,7 +547,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.672,
               "y": 0.233,
               "width": 0.238,
@@ -342,7 +555,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.091,
               "y": 0.539,
               "width": 0.238,
@@ -350,7 +563,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.382,
               "y": 0.610,
               "width": 0.238,
@@ -358,7 +571,51 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
+              "x": 0.672,
+              "y": 0.539,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            }
+          ],
+          "placeholder": [
+            {
+              "x": 0.091,
+              "y": 0.233,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            },
+            {
+              "x": 0.382,
+              "y": 0.322,
+              "width": 0.238,
+              "height": 0.245,
+              "rotate": null
+            },
+            {
+              "x": 0.672,
+              "y": 0.233,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            },
+            {
+              "x": 0.091,
+              "y": 0.539,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            },
+            {
+              "x": 0.382,
+              "y": 0.610,
+              "width": 0.238,
+              "height": 0.191,
+              "rotate": null
+            },
+            {
               "x": 0.672,
               "y": 0.539,
               "width": 0.238,
@@ -372,13 +629,13 @@
           "isUsed": true
         },
         {
-          "id": 2,
-          "bannerUrl": "pattern/Default/item_1.webp",
-          "previewUrl": "theme/collage_template_2.png",
+          "itemId": 2,
+          "bannerUrl": "file:///android_asset/pattern/Default/item_1.webp",
+          "previewUrl": "file:///android_asset/theme/collage_template_2.png",
           "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "content": [
+          "layer": [
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.507,
               "y": 0.423,
               "width": 0.403,
@@ -386,7 +643,7 @@
               "rotate": -3
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.501,
               "y": 0.073,
               "width": 0.404,
@@ -394,7 +651,7 @@
               "rotate": -8
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.070,
               "y": 0.644,
               "width": 0.404,
@@ -402,7 +659,37 @@
               "rotate": -4
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
+              "x": 0.082,
+              "y": 0.338,
+              "width": 0.404,
+              "height": 0.267,
+              "rotate": 2
+            }
+          ],
+          "placeholder": [
+            {
+              "x": 0.507,
+              "y": 0.423,
+              "width": 0.403,
+              "height": 0.480,
+              "rotate": -3
+            },
+            {
+              "x": 0.501,
+              "y": 0.073,
+              "width": 0.404,
+              "height": 0.305,
+              "rotate": -8
+            },
+            {
+              "x": 0.070,
+              "y": 0.644,
+              "width": 0.404,
+              "height": 0.267,
+              "rotate": -4
+            },
+            {
               "x": 0.082,
               "y": 0.338,
               "width": 0.404,
@@ -416,13 +703,13 @@
           "isUsed": true
         },
         {
-          "id": 3,
-          "bannerUrl": "pattern/Default/item_2.webp",
-          "previewUrl": "theme/collage_template_3.png",
+          "itemId": 3,
+          "bannerUrl": "file:///android_asset/pattern/Default/item_2.webp",
+          "previewUrl": "file:///android_asset/theme/collage_template_3.png",
           "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "content": [
+          "layer": [
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.287,
               "y": 0.251,
               "width": 0.426,
@@ -430,7 +717,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.164,
               "y": 0.668,
               "width": 0.194,
@@ -438,7 +725,7 @@
               "rotate": 13
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.121,
               "y": 0.521,
               "width": 0.194,
@@ -446,7 +733,37 @@
               "rotate": 13
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
+              "x": 0.079,
+              "y": 0.374,
+              "width": 0.194,
+              "height": 0.132,
+              "rotate": 13
+            }
+          ],
+          "placeholder": [
+            {
+              "x": 0.287,
+              "y": 0.251,
+              "width": 0.426,
+              "height": 0.423,
+              "rotate": null
+            },
+            {
+              "x": 0.164,
+              "y": 0.668,
+              "width": 0.194,
+              "height": 0.132,
+              "rotate": 13
+            },
+            {
+              "x": 0.121,
+              "y": 0.521,
+              "width": 0.194,
+              "height": 0.132,
+              "rotate": 13
+            },
+            {
               "x": 0.079,
               "y": 0.374,
               "width": 0.194,
@@ -462,16 +779,17 @@
       ]
     },
     {
-      "category": "Love",
+      "categoryId": 4,
+      "categoryName": "Love",
       "content": [
         {
-          "id": 1,
-          "bannerUrl": "pattern/Default/item_0.webp",
-          "previewUrl": "theme/collage_template_1.png",
+          "itemId": 1,
+          "bannerUrl": "file:///android_asset/pattern/Default/item_0.webp",
+          "previewUrl": "file:///android_asset/theme/collage_template_1.png",
           "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "content": [
+          "layer": [
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.091,
               "y": 0.233,
               "width": 0.238,
@@ -479,7 +797,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.382,
               "y": 0.322,
               "width": 0.238,
@@ -487,7 +805,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.672,
               "y": 0.233,
               "width": 0.238,
@@ -495,7 +813,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.091,
               "y": 0.539,
               "width": 0.238,
@@ -503,7 +821,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.382,
               "y": 0.610,
               "width": 0.238,
@@ -511,7 +829,51 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
+              "x": 0.672,
+              "y": 0.539,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            }
+          ],
+          "placeholder": [
+            {
+              "x": 0.091,
+              "y": 0.233,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            },
+            {
+              "x": 0.382,
+              "y": 0.322,
+              "width": 0.238,
+              "height": 0.245,
+              "rotate": null
+            },
+            {
+              "x": 0.672,
+              "y": 0.233,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            },
+            {
+              "x": 0.091,
+              "y": 0.539,
+              "width": 0.238,
+              "height": 0.263,
+              "rotate": null
+            },
+            {
+              "x": 0.382,
+              "y": 0.610,
+              "width": 0.238,
+              "height": 0.191,
+              "rotate": null
+            },
+            {
               "x": 0.672,
               "y": 0.539,
               "width": 0.238,
@@ -525,13 +887,13 @@
           "isUsed": true
         },
         {
-          "id": 2,
-          "bannerUrl": "pattern/Default/item_1.webp",
-          "previewUrl": "theme/collage_template_2.png",
+          "itemId": 2,
+          "bannerUrl": "file:///android_asset/pattern/Default/item_1.webp",
+          "previewUrl": "file:///android_asset/theme/collage_template_2.png",
           "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "content": [
+          "layer": [
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.507,
               "y": 0.423,
               "width": 0.403,
@@ -539,7 +901,7 @@
               "rotate": -3
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.501,
               "y": 0.073,
               "width": 0.404,
@@ -547,7 +909,7 @@
               "rotate": -8
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.070,
               "y": 0.644,
               "width": 0.404,
@@ -555,7 +917,37 @@
               "rotate": -4
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
+              "x": 0.082,
+              "y": 0.338,
+              "width": 0.404,
+              "height": 0.267,
+              "rotate": 2
+            }
+          ],
+          "placeholder": [
+            {
+              "x": 0.507,
+              "y": 0.423,
+              "width": 0.403,
+              "height": 0.480,
+              "rotate": -3
+            },
+            {
+              "x": 0.501,
+              "y": 0.073,
+              "width": 0.404,
+              "height": 0.305,
+              "rotate": -8
+            },
+            {
+              "x": 0.070,
+              "y": 0.644,
+              "width": 0.404,
+              "height": 0.267,
+              "rotate": -4
+            },
+            {
               "x": 0.082,
               "y": 0.338,
               "width": 0.404,
@@ -569,13 +961,13 @@
           "isUsed": true
         },
         {
-          "id": 3,
-          "bannerUrl": "pattern/Default/item_2.webp",
-          "previewUrl": "theme/collage_template_3.png",
+          "itemId": 3,
+          "bannerUrl": "file:///android_asset/pattern/Default/item_2.webp",
+          "previewUrl": "file:///android_asset/theme/collage_template_3.png",
           "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "content": [
+          "layer": [
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.287,
               "y": 0.251,
               "width": 0.426,
@@ -583,7 +975,7 @@
               "rotate": null
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.164,
               "y": 0.668,
               "width": 0.194,
@@ -591,7 +983,7 @@
               "rotate": 13
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
               "x": 0.121,
               "y": 0.521,
               "width": 0.194,
@@ -599,7 +991,37 @@
               "rotate": 13
             },
             {
-              "urlThumb": "https://thanhnien.mediacdn.vn/Uploaded/trucdl/2022_03_30/trieuledinhphunhantronthue1-4371.jpeg",
+              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
+              "x": 0.079,
+              "y": 0.374,
+              "width": 0.194,
+              "height": 0.132,
+              "rotate": 13
+            }
+          ],
+          "placeholder": [
+            {
+              "x": 0.287,
+              "y": 0.251,
+              "width": 0.426,
+              "height": 0.423,
+              "rotate": null
+            },
+            {
+              "x": 0.164,
+              "y": 0.668,
+              "width": 0.194,
+              "height": 0.132,
+              "rotate": 13
+            },
+            {
+              "x": 0.121,
+              "y": 0.521,
+              "width": 0.194,
+              "height": 0.132,
+              "rotate": 13
+            },
+            {
               "x": 0.079,
               "y": 0.374,
               "width": 0.194,

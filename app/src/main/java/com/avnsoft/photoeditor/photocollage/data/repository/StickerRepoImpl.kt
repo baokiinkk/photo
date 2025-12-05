@@ -24,6 +24,8 @@ class StickerRepoImpl(
 ) {
 
     suspend fun syncStickers() {
+        if (editorSharedPref.getIsSyncSticker()) return
+
         val response = safeApiCall<StickerResponse>(
             context = context,
             apiCallMock = { api.getStickers() },

@@ -4,12 +4,15 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
 import androidx.core.graphics.scale
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
+import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.ImageTransformState
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.ToolItem
@@ -61,15 +64,110 @@ class EditorStoreViewModel(
     fun setPathBitmap(
         pathBitmap: String?,
         bitmap: Bitmap?,
-        tool: CollageTool?
+        tool: CollageTool?,
+        template: TemplateModel? = null,
+        selectedImages: Map<Int, Uri> = emptyMap()
     ) {
         viewModelScope.launch {
             pathBitmapResult = copyImageToAppStorage(context, pathBitmap?.toUri())
             uiState.update {
-                it.copy(bitmap = bitmap)
+                it.copy(
+                    bitmap = bitmap,
+                    template = template,
+                    selectedImages = selectedImages
+                )
             }
             tool?.let {
                 onToolClick(tool)
+            }
+        }
+    }
+    
+    fun setTemplateData(
+        template: TemplateModel?,
+        selectedImages: Map<Int, Uri> = emptyMap()
+    ) {
+        viewModelScope.launch {
+            uiState.update {
+                it.copy(
+                    template = template,
+                    selectedImages = selectedImages,
+                    bitmap = null // Clear bitmap when using template
+                )
+            }
+        }
+    }
+    
+    fun updateImageTransforms(transforms: Map<Int, ImageTransformState>) {
+        uiState.update {
+            it.copy(imageTransforms = transforms)
+        }
+    }
+    
+    fun updateLayerTransforms(transforms: Map<Int, ImageTransformState>) {
+        uiState.update {
+            it.copy(layerTransforms = transforms)
+        }
+    }
+    
+    fun deleteLayer(index: Int) {
+        viewModelScope.launch {
+            val currentTemplate = uiState.value.template ?: return@launch
+            val updatedLayers = currentTemplate.layer?.toMutableList()?.apply {
+                if (index in indices) {
+                    removeAt(index)
+                }
+            }
+            
+            uiState.update {
+                it.copy(
+                    template = currentTemplate.copy(layer = updatedLayers),
+                    layerTransforms = it.layerTransforms.filterKeys { it != index }
+                        .mapKeys { if (it.key > index) it.key - 1 else it.key }
+                )
+            }
+        }
+    }
+    
+    fun duplicateLayer(index: Int) {
+        viewModelScope.launch {
+            val currentTemplate = uiState.value.template ?: return@launch
+            val updatedLayers = currentTemplate.layer?.toMutableList()?.apply {
+                if (index in indices) {
+                    val layerToDuplicate = this[index]
+                    add(layerToDuplicate) // Add duplicate at the end
+                }
+            }
+            
+            uiState.update {
+                it.copy(
+                    template = currentTemplate.copy(layer = updatedLayers)
+                )
+            }
+        }
+    }
+    
+    fun flipLayer(index: Int) {
+        viewModelScope.launch {
+            val currentFlip = uiState.value.layerFlip
+            val newFlip = currentFlip.toMutableMap()
+            val currentFlipValue = newFlip[index] ?: 1f
+            newFlip[index] = currentFlipValue * -1f // Toggle between 1f and -1f
+            
+            uiState.update {
+                it.copy(layerFlip = newFlip)
+            }
+        }
+    }
+    
+    fun updateLayerZoom(index: Int, scale: Float) {
+        viewModelScope.launch {
+            val currentTransforms = uiState.value.layerTransforms.toMutableMap()
+            val currentTransform = currentTransforms[index] ?: ImageTransformState()
+            currentTransforms[index] = currentTransform.copy(scale = scale)
+            
+            uiState.update {
+                it.copy(layerTransforms = currentTransforms)
             }
         }
     }
@@ -285,7 +383,12 @@ data class EditorStoreUIState(
     val backgroundColor: BackgroundSelection? = null,
     val canUndo: Boolean = false,
     val canRedo: Boolean = false,
-    val showDiscardDialog: Boolean = false
+    val showDiscardDialog: Boolean = false,
+    val template: TemplateModel? = null,
+    val selectedImages: Map<Int, Uri> = emptyMap(),
+    val imageTransforms: Map<Int, ImageTransformState> = emptyMap(),
+    val layerTransforms: Map<Int, ImageTransformState> = emptyMap(),
+    val layerFlip: Map<Int, Float> = emptyMap() // Map<layerIndex, flipScale> where 1f = normal, -1f = flipped
 )
 
 suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {
