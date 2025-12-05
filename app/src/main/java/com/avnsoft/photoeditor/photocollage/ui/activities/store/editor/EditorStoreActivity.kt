@@ -379,18 +379,3 @@ fun EditorStoreScreen(
         }
     }
 }
-
-@Composable
-fun AddSticker(
-    stickerView: FreeStyleStickerView,
-    sticker: FreeStyleSticker,
-) {
-    stickerView.addSticker(
-        sticker,
-        x = sticker.x,
-        y = sticker.y,
-        widthRatio = sticker.widthRatio,
-        heightRatio = sticker.heightRatio,
-        rotate = sticker.rotate
-    )
-}

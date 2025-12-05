@@ -20,7 +20,6 @@ class FreeStyleStickerView : StickerView {
         paramInt
     )
 
-
     fun addSticker(
         sticker: MutableList<FreeStyleSticker>,
         position: Int,

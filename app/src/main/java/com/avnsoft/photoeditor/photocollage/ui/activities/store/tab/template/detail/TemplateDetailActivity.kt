@@ -1,9 +1,11 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail
 
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -43,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
@@ -61,6 +64,15 @@ import coil.compose.AsyncImage
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.edittext.EditTextStickerActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleStickerComposeView
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.BucketSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.PickerHeaderBar
@@ -90,7 +102,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel as composeViewModel
 data class TemplateDetailInput(
     val template: TemplateModel?,
     val type: ToolInput.TYPE = ToolInput.TYPE.NEW,
-    ) : IScreenData
+) : IScreenData
 
 class TemplateDetailActivity : BaseActivity() {
 
@@ -102,6 +114,7 @@ class TemplateDetailActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initView()
         viewModel.initData(screenInput?.template)
         if (hasPermission()) {
             showContent()
@@ -124,6 +137,8 @@ class TemplateDetailActivity : BaseActivity() {
         return ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED
     }
 
+    private lateinit var stickerView: FreeStyleStickerView
+
     private fun showContent() {
         setContent {
             MainTheme {
@@ -139,21 +154,26 @@ class TemplateDetailActivity : BaseActivity() {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(
-                                top = inner.calculateTopPadding(), bottom = inner.calculateBottomPadding()
+                                top = inner.calculateTopPadding(),
+                                bottom = inner.calculateBottomPadding()
                             )
                     ) {
                         TemplateDetailHeader(
                             onClose = { finish() },
                             onApply = {
-                                if(screenInput?.type == ToolInput.TYPE.BACK_AND_RETURN){
+                                if (screenInput?.type == ToolInput.TYPE.BACK_AND_RETURN) {
                                     // For BACK_AND_RETURN, still capture bitmap
                                     scope.launch {
                                         try {
-                                            val bitmap = captureController.toImageBitmap().asAndroidBitmap()
+                                            val bitmap =
+                                                captureController.toImageBitmap().asAndroidBitmap()
                                             val pathBitmap = bitmap.toFile(context)
                                             val file = File(pathBitmap)
                                             val uri = file.toUri()
-                                            setResult(RESULT_OK, intent.putExtra("PATH", uri.toString()))
+                                            setResult(
+                                                RESULT_OK,
+                                                intent.putExtra("PATH", uri.toString())
+                                            )
                                             finish()
                                         } catch (ex: Throwable) {
                                             Toast.makeText(
@@ -165,10 +185,10 @@ class TemplateDetailActivity : BaseActivity() {
                                     }
                                 } else {
                                     // Convert Uri to String for serialization
-                                    val selectedImagesString = uiState.selectedImages.mapValues { 
-                                        it.value.toString() 
+                                    val selectedImagesString = uiState.selectedImages.mapValues {
+                                        it.value.toString()
                                     }
-                                    
+
                                     launchActivity(
                                         toActivity = EditorStoreActivity::class.java,
                                         input = ToolTemplateInput(
@@ -189,19 +209,92 @@ class TemplateDetailActivity : BaseActivity() {
                         uiState.template?.let { template ->
                             TemplateDetailContent(
                                 captureController = captureController,
-                                template = template, selectedImages = uiState.selectedImages, onImageSelected = { index, uri ->
+                                template = template,
+                                selectedImages = uiState.selectedImages,
+                                onImageSelected = { index, uri ->
                                     viewModel.selectImage(index, uri)
-                                }, onImageUnselected = { index ->
+                                },
+                                onImageUnselected = { index ->
                                     viewModel.unselectImage(index)
-                                }, modifier = Modifier
+                                },
+                                modifier = Modifier
                                     .fillMaxSize()
-                                    .background(BackgroundGray)
+                                    .background(BackgroundGray),
+                                stickerView = stickerView,
+                                icons = uiState.icons
                             )
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun initView() {
+        stickerView = FreeStyleStickerView(this)
+        stickerView.setLocked(false)
+        stickerView.setConstrained(true)
+        stickerView.configDefaultIcons()
+        stickerView.setOnStickerOperationListener(object : StickerView.OnStickerOperationListener {
+            public override fun onTextStickerEdit(param1Sticker: Sticker) {
+
+            }
+
+            public override fun onStickerAdded(sticker: Sticker) {
+                Log.d("stickerView", "onStickerAdded")
+                if (sticker is TextSticker) {
+                    stickerView.configDefaultIcons()
+                } else if (sticker is DrawableSticker || sticker is FreeStyleSticker) {
+                    stickerView.configStickerIcons()
+                }
+                stickerView.invalidate()
+            }
+
+            public override fun onStickerClicked(sticker: Sticker) {
+            }
+
+            public override fun onStickerDeleted(sticker: Sticker) {
+            }
+
+            public override fun onStickerDragFinished(sticker: Sticker) {
+            }
+
+
+            public override fun onStickerZoomFinished(sticker: Sticker) {
+            }
+
+            public override fun onTouchDownForBeauty(param1Float1: Float, param1Float2: Float) {
+            }
+
+            public override fun onTouchDragForBeauty(param1Float1: Float, param1Float2: Float) {
+            }
+
+            public override fun onTouchUpForBeauty(param1Float1: Float, param1Float2: Float) {
+            }
+
+
+            public override fun onStickerFlipped(sticker: Sticker) {
+            }
+
+            public override fun onStickerTouchOutside(param1Sticker: Sticker?) {
+            }
+
+            public override fun onStickerTouchedDown(sticker: Sticker) {
+                Log.d("stickerView", "onStickerTouchedDown")
+                stickerView.setShowFocus(true)
+                if (sticker is TextSticker) {
+                    stickerView.configDefaultIcons()
+                } else if (sticker is DrawableSticker) {
+                    stickerView.configStickerIcons()
+                } else if (sticker is FreeStyleSticker) {
+                }
+                stickerView.swapLayers()
+                stickerView.invalidate()
+            }
+
+            public override fun onStickerDoubleTapped(sticker: Sticker) {
+            }
+        })
     }
 }
 
@@ -236,12 +329,14 @@ fun TemplateDetailHeader(
 
 @Composable
 fun TemplateDetailContent(
+    stickerView: FreeStyleStickerView,
     template: TemplateModel,
     selectedImages: Map<Int, Uri>,
     onImageSelected: (Int, Uri) -> Unit,
     onImageUnselected: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    captureController: GraphicsLayer
+    captureController: GraphicsLayer,
+    icons: List<FreeStyleSticker>? = null
 ) {
     val imagePickerViewModel: ImagePickerViewModel = composeViewModel()
     val context = LocalContext.current
@@ -287,7 +382,9 @@ fun TemplateDetailContent(
 
                 Box(
                     modifier = Modifier
-                        .offset(x = with(density) { cellX.toDp() }, y = with(density) { cellY.toDp() })
+                        .offset(
+                            x = with(density) { cellX.toDp() },
+                            y = with(density) { cellY.toDp() })
                         .width(with(density) { cellWidth.toDp() })
                         .height(with(density) { cellHeight.toDp() })
                         .rotate(rotate)
@@ -298,7 +395,9 @@ fun TemplateDetailContent(
                                 Modifier
                                     .border(
                                         width = if (isSelected) 3.dp else 2.dp,
-                                        color = if (isSelected) Color(0xFF6425F3) else Color(0xFF6425F3).copy(alpha = 0.5f),
+                                        color = if (isSelected) Color(0xFF6425F3) else Color(
+                                            0xFF6425F3
+                                        ).copy(alpha = 0.5f),
                                         shape = RoundedCornerShape(4.dp)
                                     )
                                     .background(Color.White.copy(alpha = 0.1f))
@@ -309,7 +408,9 @@ fun TemplateDetailContent(
                         }) {
                     selectedImages[index]?.let { uri ->
                         LoadImage(
-                            model = uri, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop
+                            model = uri,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
                         )
                     }
                 }
@@ -318,14 +419,32 @@ fun TemplateDetailContent(
             // Frame overlay - Layer 2
             template.frameUrl?.let { frameUrl ->
                 LoadImage(
-                    model = frameUrl, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds
+                    model = frameUrl,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillBounds
                 )
             }
 
             // Layers overlay - Layer 3
-            template.layer?.forEachIndexed { index, layerItem ->
-                //import layer
+//            template.layer?.forEachIndexed { index, layerItem ->
+//                //import layer
+//            }
+            icons?.forEach {
+                stickerView.addStickerFromServer(it)
             }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clipToBounds(),
+            ) {
+                FreeStyleStickerComposeView(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clipToBounds(),
+                    view = stickerView
+                )
+            }
+
         }
 
         // ImagePickerScreen - always visible
@@ -466,7 +585,9 @@ fun CustomGalleryGrid(
                             }),
                     painter = painterResource(com.avnsoft.photoeditor.photocollage.R.drawable.ic_camera),
                     contentDescription = "",
-                    colorFilter = if (!canSelectMore) androidx.compose.ui.graphics.ColorFilter.tint(Color.Gray.copy(alpha = 0.5f)) else null
+                    colorFilter = if (!canSelectMore) androidx.compose.ui.graphics.ColorFilter.tint(
+                        Color.Gray.copy(alpha = 0.5f)
+                    ) else null
                 )
             }
         }
@@ -478,7 +599,10 @@ fun CustomGalleryGrid(
                     .clip(RoundedCornerShape(14.dp))
                     .clickableWithAlphaEffect() { onImageClick(img) }) {
                 AsyncImage(
-                    model = img.uri, contentDescription = img.displayName, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize()
+                    model = img.uri,
+                    contentDescription = img.displayName,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
                 )
                 // Find cell index for this URI
                 val cellIndex = selectedImages.entries.find { it.value == img.uri }?.key
@@ -492,7 +616,9 @@ fun CustomGalleryGrid(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            (cellIndex + 1).toString(), style = com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle.body2().bold().white()
+                            (cellIndex + 1).toString(),
+                            style = com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle.body2()
+                                .bold().white()
                         )
                     }
                 }

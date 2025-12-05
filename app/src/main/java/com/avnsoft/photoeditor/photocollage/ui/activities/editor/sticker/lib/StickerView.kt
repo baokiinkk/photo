@@ -28,6 +28,7 @@ import androidx.core.view.ViewCompat
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.SystemUtil
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -43,7 +44,6 @@ import kotlin.math.atan2
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sqrt
-
 
 
 open class StickerView : FrameLayout {
@@ -170,7 +170,7 @@ open class StickerView : FrameLayout {
 
         val typedArray: TypedArray
         try {
-            setBackgroundResource(R.drawable.bg_freestyle_view)
+//            setBackgroundResource(R.drawable.bg_freestyle_view)
 
             typedArray =
                 paramContext.obtainStyledAttributes(paramAttributeSet, R.styleable.StickerView)
@@ -305,33 +305,28 @@ open class StickerView : FrameLayout {
         return this
     }
 
-    fun addSticker(
-        sticker: Sticker,
-        x: Float,
-        y: Float,
-        widthRatio: Float,
-        heightRatio: Float,
-        rotate: Float
+    fun addStickerFromServer(
+        sticker: FreeStyleSticker
     ): StickerView {
         if (ViewCompat.isLaidOut(this)) {
             addStickerImmediately(
                 sticker,
-                x = x,
-                y = y,
-                widthRatio = widthRatio,
-                heightRatio = heightRatio,
-                rotate = rotate
+                x = sticker.x,
+                y = sticker.y,
+                widthRatio = sticker.widthRatio,
+                heightRatio = sticker.heightRatio,
+                rotate = sticker.rotate
             )
             return this
         }
         post(Runnable {
             this@StickerView.addStickerImmediately(
                 sticker,
-                x = x,
-                y = y,
-                widthRatio = widthRatio,
-                heightRatio = heightRatio,
-                rotate = rotate
+                x = sticker.x,
+                y = sticker.y,
+                widthRatio = sticker.widthRatio,
+                heightRatio = sticker.heightRatio,
+                rotate = sticker.rotate
             )
         })
         return this

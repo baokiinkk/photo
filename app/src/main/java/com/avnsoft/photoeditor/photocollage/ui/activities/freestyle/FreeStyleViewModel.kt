@@ -308,12 +308,3 @@ sealed class StackFreeStyle(
 
     data object NONE : StackFreeStyle(null, null)
 }
-
-suspend fun String.toFreeStyleSticker(
-    index: Int
-): FreeStyleSticker {
-    val drawable = this.urlToDrawable(BaseApplication.getInstanceApp())
-    val file = drawable?.toBitmap()?.toFile(BaseApplication.getInstanceApp())
-    val uri = file?.toUri()
-    return FreeStyleSticker(index, Photo(uri, 0), drawable)
-}
