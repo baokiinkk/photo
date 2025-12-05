@@ -132,11 +132,16 @@ class EditorViewModel(
 
     fun scaleBitmapToBox(canvasSize: Size) {
         viewModelScope.launch(Dispatchers.IO) {
-            val bitmap =
-                pathBitmapResult?.toUri()?.toScaledBitmapForUpload(context, 1504) ?: return@launch
-            uiState.update {
-                it.copy(originBitmap = bitmap)
+            val bitmap = if (isFirstInit) {
+               val originBitmap = pathBitmapResult?.toUri()?.toScaledBitmapForUpload(context, 1504) ?: return@launch
+                uiState.update {
+                    it.copy(originBitmap = originBitmap)
+                }
+                originBitmap
+            } else {
+                uiState.value.originBitmap ?: return@launch
             }
+//            val bitmap = pathBitmapResult?.toUri()?.toScaledBitmapForUpload(context, 1504) ?: return@launch
 
 //            val bitmap = uiState.value.originBitmap ?: return@launch
             val imageWidth = bitmap.width.toFloat()
@@ -151,13 +156,13 @@ class EditorViewModel(
             )
 
             val newBitmap = bitmap.scale(scaledSize.width.toInt(), scaledSize.height.toInt())
-            uiState.update { it.copy(bitmap = newBitmap )}
+            uiState.update { it.copy(bitmap = newBitmap) }
             if (isFirstInit) {
+                pathBitmapResult = bitmap.toFile(context)
                 pushFirstData(newBitmap)
                 isFirstInit = false
             }
 //            =================== new ================
-            pathBitmapResult = bitmap.toFile(context)
 
             hideLoading()
         }
