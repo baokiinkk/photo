@@ -2,9 +2,11 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.freestyle
 
 import android.content.Context
 import android.net.Uri
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.avnsoft.photoeditor.photocollage.BaseApplication
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.FrameSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
@@ -12,6 +14,8 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.li
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.Photo
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.urlToDrawable
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -151,12 +155,16 @@ class FreeStyleViewModel(
     }
 
     fun addMorePhoto(result: List<String>?) {
-        val uris = result?.map { it.toUri() } ?: emptyList()
-        val data = uris.mapIndexed { index, uri ->
+        viewModelScope.launch(Dispatchers.IO) {
+            val uris = result?.map { it.toUri() } ?: emptyList()
+            val data = uris.mapIndexed { index, uri ->
+//                val url = "https://cdn-icons-png.freepik.com/512/3135/3135715.png"
+//                url.toFreeStyleSticker(index)
             val drawable = FileUtil.decodeUriToDrawable(context, uri, 400, 400)
             FreeStyleSticker(index, Photo(uri, 0), drawable)
-        }.toMutableList()
-        freeStyleSticker.postValue(data)
+            }.toMutableList()
+            freeStyleSticker.postValue(data)
+        }
     }
 
     fun showRatioTool() {
@@ -239,7 +247,7 @@ class FreeStyleViewModel(
         }
     }
 
-    fun clearAllTool(){
+    fun clearAllTool() {
         uiState.update {
             it.copy(
                 isShowStickerTool = false,
@@ -299,4 +307,13 @@ sealed class StackFreeStyle(
     ) : StackFreeStyle(sticker, background)
 
     data object NONE : StackFreeStyle(null, null)
+}
+
+suspend fun String.toFreeStyleSticker(
+    index: Int
+): FreeStyleSticker {
+    val drawable = this.urlToDrawable(BaseApplication.getInstanceApp())
+    val file = drawable?.toBitmap()?.toFile(BaseApplication.getInstanceApp())
+    val uri = file?.toUri()
+    return FreeStyleSticker(index, Photo(uri, 0), drawable)
 }

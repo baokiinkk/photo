@@ -183,10 +183,20 @@ fun FreeStyleScreen(
                         .Gradient(GradientItem(colors = listOf("#FFCCE4", "#66A8FF")), GradientGroup()),
                     modifier = Modifier.fillMaxSize()
                 )
-                FreeStyleStickerComposeView(
-                    modifier = Modifier.fillMaxSize(),
-                    view = stickerView
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+//                        .background(Color.Red)
+                        .clipToBounds(),
+                ) {
+                    FreeStyleStickerComposeView(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clipToBounds(),
+                        view = stickerView
+                    )
+                }
+
                 uiState.frameSelection?.let { frame ->
                     when (frame) {
                         is FrameSelection.Frame -> {

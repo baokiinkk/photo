@@ -648,7 +648,6 @@ fun deleteDirectoryRecursively(dir: File): Boolean {
     return dir.delete()  // xóa file hoặc folder rỗng
 }
 
-
 fun BaseActivity.initEditorLib() {
     val mLoadImageCallback: LoadImageCallback = object : LoadImageCallback {
         override fun loadImage(str: String?, obj: Any?): Bitmap? {

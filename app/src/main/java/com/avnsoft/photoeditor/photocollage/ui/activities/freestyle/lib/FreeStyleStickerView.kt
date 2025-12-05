@@ -3,6 +3,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib
 import android.content.Context
 import android.util.AttributeSet
 import androidx.core.view.ViewCompat
+import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
 
 class FreeStyleStickerView : StickerView {

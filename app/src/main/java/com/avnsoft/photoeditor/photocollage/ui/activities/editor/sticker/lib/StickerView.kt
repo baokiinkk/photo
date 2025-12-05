@@ -20,7 +20,9 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewConfiguration
+import android.widget.FrameLayout
 import android.widget.RelativeLayout
+import androidx.compose.ui.unit.max
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import com.avnsoft.photoeditor.photocollage.R
@@ -43,7 +45,8 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 
-open class StickerView : RelativeLayout {
+
+open class StickerView : FrameLayout {
     private var bitmapPoints = FloatArray(8)
 
     private val borderPaint: Paint
@@ -167,6 +170,8 @@ open class StickerView : RelativeLayout {
 
         val typedArray: TypedArray
         try {
+            setBackgroundResource(R.drawable.bg_freestyle_view)
+
             typedArray =
                 paramContext.obtainStyledAttributes(paramAttributeSet, R.styleable.StickerView)
 
@@ -183,7 +188,7 @@ open class StickerView : RelativeLayout {
         this.linePaint.setColor(borderColor)
     }
 
-    constructor(context: Context?, attributeSet: AttributeSet?, i: Int, i2: Int) : super(
+    constructor(context: Context, attributeSet: AttributeSet?, i: Int, i2: Int) : super(
         context,
         attributeSet,
         i,
@@ -300,10 +305,42 @@ open class StickerView : RelativeLayout {
         return this
     }
 
+    fun addSticker(
+        sticker: Sticker,
+        x: Float,
+        y: Float,
+        widthRatio: Float,
+        heightRatio: Float,
+        rotate: Float
+    ): StickerView {
+        if (ViewCompat.isLaidOut(this)) {
+            addStickerImmediately(
+                sticker,
+                x = x,
+                y = y,
+                widthRatio = widthRatio,
+                heightRatio = heightRatio,
+                rotate = rotate
+            )
+            return this
+        }
+        post(Runnable {
+            this@StickerView.addStickerImmediately(
+                sticker,
+                x = x,
+                y = y,
+                widthRatio = widthRatio,
+                heightRatio = heightRatio,
+                rotate = rotate
+            )
+        })
+        return this
+    }
+
 
     protected fun addStickerImmediately(paramSticker: Sticker, paramInt: Int) {
-//        setStickerPosition(paramSticker, paramInt)
-        setStickerPosition(paramSticker,0.672f,0.233f)
+        setStickerPosition(paramSticker, paramInt)
+        constrainSticker(paramSticker)
         paramSticker.matrix.postScale(1.0f, 1.0f, width.toFloat(), height.toFloat())
         this.handlingSticker = paramSticker
         this.stickers.add(paramSticker)
@@ -312,6 +349,53 @@ open class StickerView : RelativeLayout {
         )
         invalidate()
     }
+
+    protected fun addStickerImmediately(
+        paramSticker: Sticker,
+        x: Float,
+        y: Float,
+        widthRatio: Float,
+        heightRatio: Float,
+        rotate: Float
+    ) {
+        // 1. Tính toán kích thước thực tế của sticker dựa trên tỉ lệ
+        val newWidth = this.width * widthRatio
+        val newHeight = this.height * heightRatio
+
+        // 2. Lấy kích thước gốc của sticker
+        val originalWidth = paramSticker.width.toFloat()
+        val originalHeight = paramSticker.height.toFloat()
+
+        // 3. Tính toán hệ số scale cần thiết
+        val scaleX = if (originalWidth > 0) newWidth / originalWidth else 1f
+        val scaleY = if (originalHeight > 0) newHeight / originalHeight else 1f
+
+        // 4. Đặt vị trí ban đầu cho sticker
+        setStickerPosition(paramSticker, x, y)
+
+        // 5. Áp dụng tỉ lệ scale vào ma trận của sticker
+        // SỬA LỖI Ở ĐÂY:
+        // Lấy điểm trung tâm sau khi đã đặt vị trí.
+        // Dùng getMappedCenterPoint để lấy điểm trung tâm đã biến đổi trên view.
+        paramSticker.getMappedCenterPoint(this.currentCenterPoint, this.point, this.tmp)
+        val centerX = this.currentCenterPoint.x
+        val centerY = this.currentCenterPoint.y
+        paramSticker.matrix.postScale(scaleX, scaleY, centerX, centerY)
+        paramSticker.matrix.postRotate(rotate, centerX, centerY)
+
+        // 6. Đảm bảo sticker nằm hoàn toàn trong khung nhìn
+        constrainSticker(paramSticker)
+
+        this.handlingSticker = paramSticker
+        this.stickers.add(paramSticker)
+
+        if (this.onStickerOperationListener != null) {
+            this.onStickerOperationListener!!.onStickerAdded(paramSticker)
+        }
+
+        invalidate()
+    }
+
 
     fun alignHorizontally() {
         this.moveMatrix.set(this.downMatrix)
@@ -400,27 +484,76 @@ open class StickerView : RelativeLayout {
         )
     }
 
-    protected fun constrainSticker(paramSticker: Sticker) {
-        val i = getWidth()
-        val j = getHeight()
-        paramSticker.getMappedCenterPoint(this.currentCenterPoint, this.point, this.tmp)
-        var f1 = this.currentCenterPoint.x
-        var f3 = 0.0f
-        if (f1 < 0.0f) {
-            f1 = -this.currentCenterPoint.x
-        } else {
-            f1 = 0.0f
+    //    protected fun constrainSticker(paramSticker: Sticker) {
+//        val i = getWidth()
+//        val j = getHeight()
+//        paramSticker.getMappedCenterPoint(this.currentCenterPoint, this.point, this.tmp)
+//        var f1 = this.currentCenterPoint.x
+//        var f3 = 0.0f
+//        if (f1 < 0.0f) {
+//            f1 = -this.currentCenterPoint.x
+//        } else {
+//            f1 = 0.0f
+//        }
+//        var f4 = this.currentCenterPoint.x
+//        var f2 = f1
+//        if (f4 > i.toFloat()) f2 = i.toFloat() - this.currentCenterPoint.x
+//        f1 = f3
+//        if (this.currentCenterPoint.y < 0.0f) f1 = -this.currentCenterPoint.y
+//        f3 = this.currentCenterPoint.y
+//        f4 = j.toFloat()
+//        if (f3 > f4) f1 = f4 - this.currentCenterPoint.y
+//        paramSticker.matrix.postTranslate(f2, f1)
+//    }
+    protected fun constrainSticker(sticker: Sticker) {
+        val viewWidth = this.width.toFloat()
+        val viewHeight = this.height.toFloat()
+
+        // 1. Lấy các điểm giới hạn gốc (chưa biến đổi) của sticker.
+        sticker.getBoundPoints(this.bounds)
+
+        // 2. Áp dụng ma trận hiện tại (xoay, di chuyển, phóng to) để lấy tọa độ 4 góc thực tế trên màn hình.
+        // Kết quả được lưu vào mảng `this.bitmapPoints`.
+        sticker.getMappedPoints(this.bitmapPoints, this.bounds)
+
+        // 3. Tìm hình chữ nhật nhỏ nhất bao quanh 4 góc đã biến đổi.
+        // this.bitmapPoints là mảng [x0, y0, x1, y1, x2, y2, x3, y3]
+        var minX = this.bitmapPoints[0]
+        var maxX = this.bitmapPoints[0]
+        var minY = this.bitmapPoints[1]
+        var maxY = this.bitmapPoints[1]
+
+        for (i in 1 until 4) {
+            minX = min(minX, this.bitmapPoints[i * 2])
+            maxX = kotlin.math.max(maxX, this.bitmapPoints[i * 2])
+            minY = min(minY, this.bitmapPoints[i * 2 + 1])
+            maxY = kotlin.math.max(maxY, this.bitmapPoints[i * 2 + 1])
         }
-        var f4 = this.currentCenterPoint.x
-        var f2 = f1
-        if (f4 > i.toFloat()) f2 = i.toFloat() - this.currentCenterPoint.x
-        f1 = f3
-        if (this.currentCenterPoint.y < 0.0f) f1 = -this.currentCenterPoint.y
-        f3 = this.currentCenterPoint.y
-        f4 = j.toFloat()
-        if (f3 > f4) f1 = f4 - this.currentCenterPoint.y
-        paramSticker.matrix.postTranslate(f2, f1)
+
+        // 4. Tính toán khoảng cách cần dịch chuyển (delta) để đưa sticker trở lại vào trong.
+        var dx = 0f
+        var dy = 0f
+
+        if (minX < 0) {
+            dx = -minX // Nếu cạnh trái vượt ra ngoài, dịch sang phải.
+        } else if (maxX > viewWidth) {
+            dx = viewWidth - maxX // Nếu cạnh phải vượt ra ngoài, dịch sang trái.
+        }
+
+        if (minY < 0) {
+            dy = -minY // Nếu cạnh trên vượt ra ngoài, dịch xuống dưới.
+        } else if (maxY > viewHeight) {
+            dy = viewHeight - maxY // Nếu cạnh dưới vượt ra ngoài, dịch lên trên.
+        }
+
+        // 5. Nếu cần dịch chuyển, áp dụng nó vào ma trận của sticker.
+        if (dx != 0f || dy != 0f) {
+            sticker.matrix.postTranslate(dx, dy)
+            // Yêu cầu vẽ lại view ngay lập tức để thấy sticker "bật" lại vào trong.
+            invalidate()
+        }
     }
+
 
     @Throws(OutOfMemoryError::class)
     fun createBitmap(): Bitmap {
@@ -774,6 +907,9 @@ open class StickerView : RelativeLayout {
             2 -> {
                 handleCurrentMode(paramMotionEvent)
                 invalidate()
+                if (isConstrained && handlingSticker != null) {
+                    constrainSticker(handlingSticker!!)
+                }
                 return true
             }
 

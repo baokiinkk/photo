@@ -137,5 +137,6 @@ private fun DependencyHandlerScope.koin() {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     implementation(libs.coil.compose)
+//    implementation(libs.coil.network.okhttp)
 
 }
