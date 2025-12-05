@@ -92,7 +92,6 @@ class FreeStyleActivity : BaseActivity() {
                 containerColor = Color.White
             ) { inner ->
                 val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
-                var showNetworkDialog by remember { mutableStateOf(false) }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -102,8 +101,7 @@ class FreeStyleActivity : BaseActivity() {
                         viewmodel = viewmodel,
                         stickerView = stickerView,
                         onBack = {
-                            showNetworkDialog = true
-//                            viewmodel.showDiscardDialog()
+                            viewmodel.showDiscardDialog()
                         },
                         onDownloadSuccess = {
                             launchActivity(
@@ -156,14 +154,6 @@ class FreeStyleActivity : BaseActivity() {
                         },
                         onCancel = {
                             viewmodel.hideDiscardDialog()
-                        }
-                    )
-                }
-
-                if (showNetworkDialog){
-                    NetworkDialog(
-                        onDismiss = {
-                            showNetworkDialog = false
                         }
                     )
                 }

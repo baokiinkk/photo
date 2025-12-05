@@ -20,6 +20,7 @@
         android:id="@+id/viewRemoveObject"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="40dp"
         android:layout_weight="1"
         app:layout_constraintBottom_toTopOf="@+id/composeFooter"

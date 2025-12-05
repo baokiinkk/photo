@@ -29,6 +29,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,9 +56,11 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
+import com.avnsoft.photoeditor.photocollage.ui.dialog.NetworkDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
+import com.basesource.base.network.NetworkUtils.isNetworkAvailable
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.ui.image.LoadImage
@@ -89,6 +94,7 @@ class ExportImageResultActivity : BaseActivity() {
             Scaffold(
                 containerColor = Color.White
             ) { innerPadding ->
+                val networkUIState by viewmodel.networkUIState.collectAsStateWithLifecycle()
 
                 ExportResultScreen(
                     onBackClick = { finish() },
@@ -115,61 +121,81 @@ class ExportImageResultActivity : BaseActivity() {
                     },
                     viewmodel = viewmodel
                 )
+
+                if (networkUIState.showNetworkDialog) {
+                    NetworkDialog(
+                        onClose = {
+                            viewmodel.hideNetworkDialog()
+                        }
+                    )
+                }
             }
         }
     }
 
     fun navigateToRemoveObject() {
-        lifecycleScope.launch {
-            if (viewmodel.isMark()) {
-                val uri = screenInput.pathUriMark?.toUri()
-                val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
-                launchActivity(
-                    toActivity = RemoveObjectActivity::class.java,
-                    input = EditorInput(pathBitmap = pathBitmap),
-                )
-            } else {
-                launchActivity(
-                    toActivity = RemoveObjectActivity::class.java,
-                    input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
-                )
+        if (isNetworkAvailable(this)) {
+            lifecycleScope.launch {
+                if (viewmodel.isMark()) {
+                    val uri = screenInput.pathUriMark?.toUri()
+                    val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
+                    launchActivity(
+                        toActivity = RemoveObjectActivity::class.java,
+                        input = EditorInput(pathBitmap = pathBitmap),
+                    )
+                } else {
+                    launchActivity(
+                        toActivity = RemoveObjectActivity::class.java,
+                        input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
+                    )
+                }
             }
+        } else {
+            viewmodel.showNetworkDialog()
         }
     }
 
     fun navigateToAIEnhance() {
-        lifecycleScope.launch {
-            if (viewmodel.isMark()) {
-                val uri = screenInput.pathUriMark?.toUri()
-                val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
-                launchActivity(
-                    toActivity = AIEnhanceActivity::class.java,
-                    input = EditorInput(pathBitmap = pathBitmap),
-                )
-            } else {
-                launchActivity(
-                    toActivity = AIEnhanceActivity::class.java,
-                    input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
-                )
+        if (isNetworkAvailable(this)) {
+            lifecycleScope.launch {
+                if (viewmodel.isMark()) {
+                    val uri = screenInput.pathUriMark?.toUri()
+                    val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
+                    launchActivity(
+                        toActivity = AIEnhanceActivity::class.java,
+                        input = EditorInput(pathBitmap = pathBitmap),
+                    )
+                } else {
+                    launchActivity(
+                        toActivity = AIEnhanceActivity::class.java,
+                        input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
+                    )
+                }
             }
+        } else {
+            viewmodel.showNetworkDialog()
         }
     }
 
     fun navigateToRemoveBackground() {
-        lifecycleScope.launch {
-            if (viewmodel.isMark()) {
-                val uri = screenInput.pathUriMark?.toUri()
-                val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
-                launchActivity(
-                    toActivity = RemoveBackgroundActivity::class.java,
-                    input = EditorInput(pathBitmap = pathBitmap),
-                )
-            } else {
-                launchActivity(
-                    toActivity = RemoveBackgroundActivity::class.java,
-                    input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
-                )
+        if (isNetworkAvailable(this)) {
+            lifecycleScope.launch {
+                if (viewmodel.isMark()) {
+                    val uri = screenInput.pathUriMark?.toUri()
+                    val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
+                    launchActivity(
+                        toActivity = RemoveBackgroundActivity::class.java,
+                        input = EditorInput(pathBitmap = pathBitmap),
+                    )
+                } else {
+                    launchActivity(
+                        toActivity = RemoveBackgroundActivity::class.java,
+                        input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
+                    )
+                }
             }
+        } else {
+            viewmodel.showNetworkDialog()
         }
     }
 

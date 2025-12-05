@@ -46,7 +46,7 @@ class RemoveBackgroundViewModel(
         showLoading()
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val jpegFile = File(pathBitmap)
+                val jpegFile = ensureUploadConstraints(File(pathBitmap))
                 val response = removeBackgroundRepo.requestRemoveBg(jpegFile)
                 uploadFileToS3(
                     data = response,

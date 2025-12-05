@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
@@ -32,6 +33,8 @@ abstract class BaseViewModel : ViewModel() {
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
+
+    val networkUIState = MutableStateFlow(NetworkUIState())
 
     /**
      * Executes a suspend function and handles the result.
@@ -162,4 +165,23 @@ abstract class BaseViewModel : ViewModel() {
     protected fun setError(message: String) {
         _error.value = message
     }
+
+    fun showNetworkDialog() {
+        networkUIState.update {
+            it.copy(
+                showNetworkDialog = true
+            )
+        }
+    }
+
+    fun hideNetworkDialog() {
+        networkUIState.update {
+            it.copy(
+                showNetworkDialog = false
+            )
+        }
+    }
 }
+data class NetworkUIState(
+    val showNetworkDialog: Boolean = false
+)

@@ -1,6 +1,9 @@
 package com.avnsoft.photoeditor.photocollage.utils
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.annotation.MainThread
 import androidx.lifecycle.ViewModel
 import com.basesource.base.ui.base.BaseActivity
