@@ -302,7 +302,8 @@ open class StickerView : RelativeLayout {
 
 
     protected fun addStickerImmediately(paramSticker: Sticker, paramInt: Int) {
-        setStickerPosition(paramSticker, paramInt)
+//        setStickerPosition(paramSticker, paramInt)
+        setStickerPosition(paramSticker,0.672f,0.233f)
         paramSticker.matrix.postScale(1.0f, 1.0f, width.toFloat(), height.toFloat())
         this.handlingSticker = paramSticker
         this.stickers.add(paramSticker)
@@ -993,6 +994,37 @@ open class StickerView : RelativeLayout {
             offsetX = offsetX / 2f
         }
         sticker.matrix.postTranslate(offsetX, offsetY)
+    }
+
+    fun setStickerPosition(sticker: Sticker, normalizedX: Float, normalizedY: Float) {
+        // 1. Lấy kích thước thực của khung chứa
+        val containerWidth = getWidth().toFloat()
+        val containerHeight = getHeight().toFloat()
+
+        // 2. Tính toán kích thước của Sticker
+        val stickerWidth = sticker.width.toFloat()
+        val stickerHeight = sticker.height.toFloat()
+
+        // 3. Tính toán vị trí tuyệt đối (tọa độ góc trên bên trái của Sticker)
+        // Công thức:
+        // offsetX = (normalizedX * containerWidth) - (stickerWidth / 2)
+        // offsetY = (normalizedY * containerHeight) - (stickerHeight / 2)
+
+        // normalizedX và normalizedY thường biểu thị TÂM của sticker theo tỷ lệ.
+        // Do đó, ta cần dịch chuyển lại để có tọa độ góc trên bên trái.
+
+        val offsetX: Float = (normalizedX * containerWidth) - (stickerWidth / 2f)
+        val offsetY: Float = (normalizedY * containerHeight) - (stickerHeight / 2f)
+
+        // 4. Đặt lại ma trận biến đổi (Matrix)
+        // Cần phải reset ma trận trước khi áp dụng tọa độ mới để tránh tích lũy dịch chuyển.
+        sticker.matrix.reset()
+
+        // 5. Áp dụng dịch chuyển
+        sticker.matrix.postTranslate(offsetX, offsetY)
+
+        // (Tùy chọn: Nếu cần các phép biến đổi khác như scale/rotate,
+        // bạn sẽ thêm chúng vào đây TRƯỚC postTranslate nếu muốn chúng áp dụng cho tâm)
     }
 
     fun setRandomCurrentSticker() {
