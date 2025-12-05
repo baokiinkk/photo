@@ -12,7 +12,16 @@ import androidx.annotation.IntRange
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 
 
-class FreeStyleSticker(var id: Int, photo: Photo?, override var drawable: Drawable?) : Sticker() {
+class FreeStyleSticker(
+    var id: Int,
+    photo: Photo?,
+    override var drawable: Drawable?,
+    val x: Float = 0f,
+    val y: Float = 0f,
+    val widthRatio: Float = 0f,
+    val heightRatio: Float = 0f,
+    val rotate: Float=0f,
+) : Sticker() {
     private val realBounds: Rect
     private val photo: Photo?
 
@@ -31,8 +40,8 @@ class FreeStyleSticker(var id: Int, photo: Photo?, override var drawable: Drawab
         paramCanvas.drawRoundRect(
             0.0f,
             0.0f,
-            drawable!!.getIntrinsicWidth().toFloat(),
-            drawable!!.getIntrinsicHeight().toFloat(),
+            drawable?.getIntrinsicWidth()?.toFloat() ?: 0f,
+            drawable?.getIntrinsicHeight()?.toFloat() ?: 0f,
             40f,
             40f,
             paint
@@ -48,14 +57,14 @@ class FreeStyleSticker(var id: Int, photo: Photo?, override var drawable: Drawab
     }
 
     override val alpha: Int
-        get() = this.drawable!!.getAlpha()
+        get() = this.drawable?.getAlpha() ?: 1
 
 
     override val height: Int
-        get() = this.drawable!!.getIntrinsicHeight()
+        get() = this.drawable?.getIntrinsicHeight() ?: 0
 
     override val width: Int
-        get() = this.drawable!!.getIntrinsicWidth()
+        get() = this.drawable?.getIntrinsicWidth() ?: 0
 
     override fun release() {
         super.release()

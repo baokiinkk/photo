@@ -8,13 +8,23 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.net.toUri
+import coil.ImageLoader
+import coil.request.ErrorResult
+import coil.request.ImageRequest
+import coil.request.SuccessResult
+import coil.size.Size
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.Quality
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -25,6 +35,8 @@ import java.util.Locale
 
 object FileUtil {
     const val FOLDER_SDK = "PhotoCollage"
+
+    const val MAX_SIZE_FILE = 1504
 
     @Throws(IOException::class)
     fun saveImageToStorageWithQuality(context: Context, quality: Quality, bitmap: Bitmap): Uri? {
@@ -130,6 +142,36 @@ object FileUtil {
         return file.absolutePath
     }
 
+    suspend fun Uri.toScaledBitmapForUpload(
+        context: Context,
+        size: Int = 1504
+    ): Bitmap? = withContext(Dispatchers.IO) {
+        val imageLoader = ImageLoader.Builder(context)
+            .crossfade(true)
+            // Tùy chọn: thiết lập cache nếu cần
+            .build()
+        // 1. Tạo ImageRequest với các thiết lập giới hạn
+        val request = ImageRequest.Builder(context)
+            .data(this@toScaledBitmapForUpload) // Uri/URL của ảnh
+            .size(Size(size, size)) // 👈 GIỚI HẠN KÍCH THƯỚC ĐẦU RA
+            .bitmapConfig(Bitmap.Config.ARGB_8888) // Đảm bảo chất lượng cao
+            .allowHardware(false) // Tắt Hardware Bitmap để dễ dàng trích xuất và xử lý
+            .diskCachePolicy(coil.request.CachePolicy.DISABLED) // Không cần lưu vào Disk Cache cho mục đích upload
+            .build()
+
+        // 2. Thực hiện request và chờ kết quả
+        val result = imageLoader.execute(request)
+
+        // 3. Trích xuất Bitmap từ kết quả
+        return@withContext if (result is SuccessResult) {
+            // Chuyển đổi Drawable thành Bitmap
+            result.drawable.toBitmap()
+        } else {
+            null
+        }
+    }
+
+
     fun String.scaleBitmapKeepRatio(maxWidth: Int, maxHeight: Int): Bitmap? {
         val bitmap = this.toBitmap() ?: return null
         return scaleBitmapKeepRatio(bitmap, maxWidth, maxHeight)
@@ -197,4 +239,46 @@ object FileUtil {
         }
         return null
     }
+
+    suspend fun String.urlToDrawable(
+        context: Context,
+        size: Int = 1504
+    ): Drawable? = withContext(Dispatchers.IO) {
+        val imageLoader = ImageLoader.Builder(context)
+            .crossfade(true)
+            // Tùy chọn: thiết lập cache nếu cần
+            .eventListener(object : coil.EventListener {
+                override fun onError(request: ImageRequest, result: ErrorResult) {
+                    result.throwable.printStackTrace()
+                }
+            })
+            .build()
+        // 1. Tạo ImageRequest với các thiết lập giới hạn
+        val request = ImageRequest.Builder(context)
+            .data(this@urlToDrawable) // Uri/URL của ảnh
+            .size(Size(size, size)) // 👈 GIỚI HẠN KÍCH THƯỚC ĐẦU RA
+            .bitmapConfig(Bitmap.Config.ARGB_8888) // Đảm bảo chất lượng cao
+            .allowHardware(false) // Tắt Hardware Bitmap để dễ dàng trích xuất và xử lý
+            .diskCachePolicy(coil.request.CachePolicy.DISABLED) // Không cần lưu vào Disk Cache cho mục đích upload
+            .build()
+
+        // 2. Thực hiện request và chờ kết quả
+        val result = imageLoader.execute(request)
+
+        // 3. Trích xuất Bitmap từ kết quả
+        return@withContext  when(result){
+            is SuccessResult -> {
+                result.drawable
+            }
+            is ErrorResult -> {
+                result.throwable.printStackTrace()
+                null
+            }
+        }
+
+    }
+}
+
+fun String.toFile(): File {
+    return File(this)
 }

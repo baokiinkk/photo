@@ -14,6 +14,34 @@ import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 
+@Composable
+fun LoadImageUrl(
+    modifier: Modifier = Modifier,
+    model: Any?,
+    size: Int,
+    contentScale: ContentScale = ContentScale.None,
+    colorFilter: ColorFilter? = null,
+    onSuccess: (() -> Unit)? = null
+) {
+    val context = LocalContext.current
+    val request = ImageRequest.Builder(context)
+        .data(model)
+        .diskCachePolicy(CachePolicy.ENABLED) // lưu ảnh xuống disk
+        .memoryCachePolicy(CachePolicy.ENABLED) // lưu ảnh vào RAM
+        .networkCachePolicy(CachePolicy.ENABLED) // dùng cache khi có mạng
+        .size(size)
+        .build()
+    AsyncImage(
+        model = request,
+        contentDescription = null,
+        contentScale = contentScale,
+        modifier = modifier,
+        colorFilter = colorFilter,
+        onSuccess = {
+            onSuccess?.invoke()
+        }
+    )
+}
 
 @Composable
 fun LoadImage(

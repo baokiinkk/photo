@@ -29,5 +29,5 @@ data class TemplateContentModel(
     val width: Float?,
     val height: Float?,
     val rotate: Int? = null,
-    val urlThumb: String? = null
+    var urlThumb: String? = null
 )

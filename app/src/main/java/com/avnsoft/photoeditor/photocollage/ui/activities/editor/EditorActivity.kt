@@ -65,6 +65,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportIma
 import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
+import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.avnsoft.photoeditor.photocollage.utils.getInput
@@ -139,7 +140,7 @@ class EditorActivity : BaseActivity() {
         blurView.tabShape()
         viewmodel.setPathBitmap(
             pathBitmap = screenInput?.pathBitmap,
-            bitmap = screenInput?.pathBitmap.uriToBitmap(this),
+//            bitmap = screenInput?.pathBitmap.uriToBitmap(this),
             tool = screenInput?.tool,
             backgroundSelection = backgroundSelection
         )
@@ -386,6 +387,7 @@ class EditorActivity : BaseActivity() {
             ) { inner ->
 
                 val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+                val networkUIState by viewmodel.networkUIState.collectAsStateWithLifecycle()
 
                 Box(
                     modifier = Modifier.fillMaxSize()
@@ -422,6 +424,10 @@ class EditorActivity : BaseActivity() {
                             viewmodel.hideDiscardDialog()
                         }
                     )
+
+                    if (networkUIState.isLoading) {
+                        LoadingScreen()
+                    }
                 }
             }
         }
@@ -641,7 +647,6 @@ fun deleteDirectoryRecursively(dir: File): Boolean {
     }
     return dir.delete()  // xóa file hoặc folder rỗng
 }
-
 
 fun BaseActivity.initEditorLib() {
     val mLoadImageCallback: LoadImageCallback = object : LoadImageCallback {

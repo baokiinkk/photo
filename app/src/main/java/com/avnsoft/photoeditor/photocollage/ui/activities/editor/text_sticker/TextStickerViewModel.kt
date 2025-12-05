@@ -82,7 +82,7 @@ class TextStickerViewModel : BaseViewModel() {
         }
     }
 
-    fun showLoading() {
+    override fun showLoading() {
         uiState.update {
             it.copy(
                 isLoading = true
@@ -90,7 +90,7 @@ class TextStickerViewModel : BaseViewModel() {
         }
     }
 
-    fun hideLoading() {
+    override fun hideLoading() {
         uiState.update {
             it.copy(
                 isLoading = false

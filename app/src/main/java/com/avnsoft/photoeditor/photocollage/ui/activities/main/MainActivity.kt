@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageActivity
@@ -35,14 +36,19 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivityInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.TemplateDetailActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.TemplateDetailInput
+import com.avnsoft.photoeditor.photocollage.ui.dialog.NetworkDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toScaledBitmapForUpload
+import com.basesource.base.network.NetworkUtils.isNetworkAvailable
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.fromJsonTypeToken
 import com.basesource.base.utils.launchActivity
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -66,6 +72,7 @@ class MainActivity : BaseActivity() {
         observerData()
         setContent {
             val selectedTab by viewModel.selectedTab.collectAsState()
+            val networkUIState by viewModel.networkUIState.collectAsStateWithLifecycle()
             MainTheme {
                 MainScreenUI(
                     modifier = Modifier
@@ -73,6 +80,14 @@ class MainActivity : BaseActivity() {
                         .background(BackgroundWhite),
                     selectedTab = selectedTab,
                     viewModel = viewModel,
+                )
+            }
+
+            if (networkUIState.showNetworkDialog) {
+                NetworkDialog(
+                    onClose = {
+                        viewModel.hideNetworkDialog()
+                    }
                 )
             }
         }
@@ -119,9 +134,11 @@ class MainActivity : BaseActivity() {
                             FeatureType.STORE -> {
                                 gotoStore()
                             }
+
                             FeatureType.TEMPLATE -> {
                                 gotoTemplate(event.data)
                             }
+
                             else -> {}
                         }
                     }
@@ -168,10 +185,15 @@ class MainActivity : BaseActivity() {
         ) { result ->
             val data: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
             data?.firstOrNull()?.let {
-                launchActivity(
-                    toActivity = EditorActivity::class.java,
-                    input = EditorInput(pathBitmap = it, tool = tool),
-                )
+                lifecycleScope.launch {
+//                    val bitmap = it.toUri().toScaledBitmapForUpload(this@MainActivity, 1504)
+//                    val pathBitmap = bitmap?.toFile(this@MainActivity) ?: return@launch
+//                    val file = File(pathBitmap)
+                    launchActivity(
+                        toActivity = EditorActivity::class.java,
+                        input = EditorInput(pathBitmap = it, tool = tool),
+                    )
+                }
             }
         }
     }
@@ -181,56 +203,77 @@ class MainActivity : BaseActivity() {
     }
 
     private fun gotoRemoveObject() {
-        launchActivity(
-            toActivity = ImagePickerActivity::class.java,
-            ImageRequest(TypeSelect.SINGLE)
-        ) { result ->
-            val data: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
-            data?.firstOrNull()?.let {
-                lifecycleScope.launch {
-                    val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
-                    launchActivity(
-                        toActivity = RemoveObjectActivity::class.java,
-                        input = ToolInput(pathBitmap = pathBitmap),
-                    )
+        if (isNetworkAvailable(this)) {
+            launchActivity(
+                toActivity = ImagePickerActivity::class.java,
+                ImageRequest(TypeSelect.SINGLE)
+            ) { result ->
+                val data: List<String>? =
+                    result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+                data?.firstOrNull()?.let {
+                    lifecycleScope.launch {
+//                        val bitmap = it.toUri().toScaledBitmapForUpload(this@MainActivity, 1504)
+//                        val pathBitmap = bitmap?.toFile(this@MainActivity)
+//                        val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
+                        launchActivity(
+                            toActivity = RemoveObjectActivity::class.java,
+                            input = ToolInput(pathBitmap = it),
+                        )
+                    }
                 }
             }
+        } else {
+            viewModel.showNetworkDialog()
         }
     }
 
     private fun gotoRemoveBackground() {
-        launchActivity(
-            toActivity = ImagePickerActivity::class.java,
-            ImageRequest(TypeSelect.SINGLE)
-        ) { result ->
-            val data: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
-            data?.firstOrNull()?.let {
-                lifecycleScope.launch {
-                    val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
-                    launchActivity(
-                        toActivity = RemoveBackgroundActivity::class.java,
-                        input = ToolInput(pathBitmap = pathBitmap),
-                    )
+        if (isNetworkAvailable(this)) {
+            launchActivity(
+                toActivity = ImagePickerActivity::class.java,
+                ImageRequest(TypeSelect.SINGLE)
+            ) { result ->
+                val data: List<String>? =
+                    result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+                data?.firstOrNull()?.let {
+                    lifecycleScope.launch {
+//                        val bitmap = it.toUri().toScaledBitmapForUpload(this@MainActivity, 1504)
+//                        val pathBitmap = bitmap?.toFile(this@MainActivity)
+//                        val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
+                        launchActivity(
+                            toActivity = RemoveBackgroundActivity::class.java,
+                            input = ToolInput(pathBitmap = it),
+                        )
+                    }
                 }
             }
+        } else {
+            viewModel.showNetworkDialog()
         }
     }
 
     private fun gotoAIEnhanceActivity() {
-        launchActivity(
-            toActivity = ImagePickerActivity::class.java,
-            ImageRequest(TypeSelect.SINGLE)
-        ) { result ->
-            val data: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
-            data?.firstOrNull()?.let {
-                lifecycleScope.launch {
-                    val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
-                    launchActivity(
-                        toActivity = AIEnhanceActivity::class.java,
-                        input = ToolInput(pathBitmap = pathBitmap),
-                    )
+        if (isNetworkAvailable(this)) {
+            launchActivity(
+                toActivity = ImagePickerActivity::class.java,
+                ImageRequest(TypeSelect.SINGLE)
+            ) { result ->
+                val data: List<String>? =
+                    result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+                data?.firstOrNull()?.let {
+                    lifecycleScope.launch {
+//                        val bitmap = it.toUri().toScaledBitmapForUpload(this@MainActivity, 1504)
+//                        val pathBitmap = bitmap?.toFile(this@MainActivity)
+//                        val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
+                        launchActivity(
+                            toActivity = AIEnhanceActivity::class.java,
+                            input = ToolInput(pathBitmap = it),
+                        )
+                    }
                 }
             }
+        } else {
+            viewModel.showNetworkDialog()
         }
     }
 

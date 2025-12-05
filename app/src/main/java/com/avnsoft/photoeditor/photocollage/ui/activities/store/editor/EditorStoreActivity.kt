@@ -49,6 +49,8 @@ import androidx.core.net.toUri
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageResultActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivityInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.TemplateDetailActivity
@@ -83,10 +85,10 @@ class EditorStoreActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         initEditorLib()
         // Convert String URIs back to Uri objects
-        val selectedImagesUri = screenInput?.selectedImages?.mapValues { 
-            it.value.toUri() 
+        val selectedImagesUri = screenInput?.selectedImages?.mapValues {
+            it.value.toUri()
         } ?: emptyMap()
-        
+
         viewmodel.setTemplateData(
             template = screenInput?.template,
             selectedImages = selectedImagesUri
@@ -152,10 +154,10 @@ class EditorStoreActivity : BaseActivity() {
                                 toActivity = TemplateDetailActivity::class.java,
                                 input = TemplateDetailInput(
                                     template = screenInput?.template,
-                                    type =  ToolInput.TYPE.BACK_AND_RETURN
+                                    type = ToolInput.TYPE.BACK_AND_RETURN
                                 )
                             ) {
-                                if(it.resultCode == RESULT_OK){
+                                if (it.resultCode == RESULT_OK) {
                                     val path = it.data?.getStringExtra("PATH")
                                     viewmodel.setPathBitmap(
                                         pathBitmap = path,
@@ -167,8 +169,11 @@ class EditorStoreActivity : BaseActivity() {
                         }
 
                         CollageTool.TEMPLATE -> {
-                            launchActivity(toActivity = StoreActivity::class.java, input = StoreActivityInput(TYPE.BACK_AND_RETURN)) {
-                                if(it.resultCode == RESULT_OK) {
+                            launchActivity(
+                                toActivity = StoreActivity::class.java,
+                                input = StoreActivityInput(TYPE.BACK_AND_RETURN)
+                            ) {
+                                if (it.resultCode == RESULT_OK) {
                                     setResult(RESULT_OK)
                                     finish()
                                 }

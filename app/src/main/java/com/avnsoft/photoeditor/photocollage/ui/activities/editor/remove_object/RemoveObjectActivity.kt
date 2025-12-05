@@ -12,12 +12,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -57,6 +63,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.BaseNativeActivity
@@ -101,7 +108,8 @@ class RemoveObjectActivity : BaseNativeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewmodel.setOriginalBitmap(
-            bitmap = screenInput?.getBitmap(this),
+            pathUri = screenInput?.pathBitmap,
+//            bitmap = screenInput?.getBitmap(this),
             newPathBitmap = cacheDir.absolutePath + "/BitmapOriginal_For_remove_obj.jpeg"
         )
         setContentView(binding.root)
@@ -386,45 +394,54 @@ class RemoveObjectActivity : BaseNativeActivity() {
             val undoRedoState by viewmodel.undoRedoState.collectAsStateWithLifecycle()
             val canSaveState by viewmodel.canSaveState.collectAsStateWithLifecycle()
             val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
-
             Box {
-                FeaturePhotoHeader(
-                    onBack = {
-                        viewmodel.showDiscardDialog()
-                    },
-                    onUndo = {
-                        viewmodel.setCurrImageIndex(false) { bm ->
-                            binding.viewRemoveObject.drawingView?.setBitmapDraw(bm)
-                        }
-
-                    },
-                    onRedo = {
-                        viewmodel.setCurrImageIndex(true) { bm ->
-                            binding.viewRemoveObject.drawingView?.setBitmapDraw(bm)
-                        }
-                    },
-                    onSave = {
-                        viewmodel.saveImg { pathSave ->
-                            Log.d("aaa", "----- $pathSave")
-                            if (pathSave != null) {
-                                val intent =
-                                    Intent(this@RemoveObjectActivity, EditorActivity::class.java)
-                                val file = File(pathSave)
-                                val input = EditorInput(pathBitmap = file.toUri().toString())
-                                intent.putExtra("arg", input.toJson())
-                                startActivity(intent)
-                                finish()
-                            } else {
-                                finish()
+                Column() {
+                    Spacer(
+                        modifier = Modifier
+                            .height(WindowInsets().asPaddingValues().calculateTopPadding())
+                    )
+                    FeaturePhotoHeader(
+                        onBack = {
+                            viewmodel.showDiscardDialog()
+                        },
+                        onUndo = {
+                            viewmodel.setCurrImageIndex(false) { bm ->
+                                binding.viewRemoveObject.drawingView?.setBitmapDraw(bm)
                             }
-                        }
-                    },
-                    canUndo = undoRedoState.canUndo,
-                    canRedo = undoRedoState.canRedo,
-                    type = TEXT_TYPE.TEXT,
-                    canSave = canSaveState,
-                    textRight = stringResource(R.string.apply)
-                )
+
+                        },
+                        onRedo = {
+                            viewmodel.setCurrImageIndex(true) { bm ->
+                                binding.viewRemoveObject.drawingView?.setBitmapDraw(bm)
+                            }
+                        },
+                        onSave = {
+                            viewmodel.saveImg { pathSave ->
+                                Log.d("aaa", "----- $pathSave")
+                                if (pathSave != null) {
+                                    val intent =
+                                        Intent(
+                                            this@RemoveObjectActivity,
+                                            EditorActivity::class.java
+                                        )
+                                    val file = File(pathSave)
+                                    val input = EditorInput(pathBitmap = file.toUri().toString())
+                                    intent.putExtra("arg", input.toJson())
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    finish()
+                                }
+                            }
+                        },
+                        canUndo = undoRedoState.canUndo,
+                        canRedo = undoRedoState.canRedo,
+                        type = TEXT_TYPE.TEXT,
+                        canSave = canSaveState,
+                        textRight = stringResource(R.string.apply)
+                    )
+                }
+
 
                 DiscardChangesDialog(
                     isVisible = uiState.showDiscardDialog,

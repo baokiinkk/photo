@@ -41,7 +41,7 @@ class FilterViewModel : BaseViewModel() {
         }
     }
 
-    fun showLoading() {
+    override fun showLoading() {
         uiState.update {
             it.copy(
                 isLoading = true
@@ -49,7 +49,7 @@ class FilterViewModel : BaseViewModel() {
         }
     }
 
-    fun hideLoading() {
+    override fun hideLoading() {
         uiState.update {
             it.copy(
                 isLoading = false

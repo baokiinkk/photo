@@ -61,8 +61,10 @@ class ExportImageResultViewmodel(
     }
 }
 
+
+
 data class ExportImageResultUIState(
     val imageUrl: String? = null,
     val pathBitmapOriginal: String? = null,
-    val isMark: Boolean = true
+    val isMark: Boolean = true,
 )

@@ -2,7 +2,6 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_backgro
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,21 +28,23 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.animation.LoadAnimation
 import com.basesource.base.ui.base.BaseActivity
-import com.basesource.base.ui.image.LoadImage
+import com.basesource.base.ui.image.LoadImageUrl
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.launchActivity
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
 
 class RemoveBackgroundActivity : BaseActivity() {
 
@@ -65,10 +65,15 @@ class RemoveBackgroundActivity : BaseActivity() {
             ) { inner ->
                 val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
                 Box {
-                    LoadImage(
+                    LoadImageUrl(
                         modifier = Modifier.fillMaxSize(),
-                        model = uiState.imageUrl
+                        model = screenInput?.pathBitmap,
+                        size = FileUtil.MAX_SIZE_FILE
                     )
+//                    LoadImage(
+//                        modifier = Modifier.fillMaxSize(),
+//                        model = uiState.imageUrl,
+//                    )
                     LoadingAnimation(
                         isShowLoading = uiState.isShowLoading,
                         content = stringResource(R.string.content_removing_object)

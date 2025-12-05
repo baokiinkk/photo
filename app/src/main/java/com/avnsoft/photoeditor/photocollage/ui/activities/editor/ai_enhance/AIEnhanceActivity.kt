@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -31,11 +28,11 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.HeaderApply
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.LoadingAnimation
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
-import com.basesource.base.ui.image.LoadImage
+import com.basesource.base.ui.image.LoadImageUrl
 import com.basesource.base.utils.toJson
-import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
@@ -84,9 +81,9 @@ class AIEnhanceActivity : BaseActivity() {
                                 val file = File(uiState.imageUrl)
                                 val uri = file.toUri()
                                 val intent = Intent(
-                                        this@AIEnhanceActivity,
-                                        EditorActivity::class.java
-                                    )
+                                    this@AIEnhanceActivity,
+                                    EditorActivity::class.java
+                                )
                                 val input = EditorInput(
                                     pathBitmap = uri.toString(),
                                 )
@@ -97,30 +94,28 @@ class AIEnhanceActivity : BaseActivity() {
                         )
                         Box(
                             modifier = Modifier
-                                .weight(1f)
-                               ,
+                                .weight(1f),
                             contentAlignment = Alignment.Center
                         ) {
-                            if (uiState.imageUrl.isNotEmpty()){
-                                LoadImage(
+                            if (uiState.imageUrl.isNotEmpty()) {
+                                LoadImageUrl(
                                     model = uiState.imageUrl,
-                                    contentDescription = null,
                                     contentScale = ContentScale.Fit,
                                     modifier = Modifier
                                         .fillMaxSize(),
+                                    size = FileUtil.MAX_SIZE_FILE,
                                     onSuccess = {
                                         viewmodel.hideImageOriginalAfterLoaded()
-                                    }
+                                    },
                                 )
                             }
-                            LoadImage(
+                            LoadImageUrl(
                                 model = screenInput?.pathBitmap,
-                                contentDescription = null,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .alpha(if (uiState.showOriginal) 1f else 0f)
-                                ,
+                                    .alpha(if (uiState.showOriginal) 1f else 0f),
                                 contentScale = ContentScale.Fit,
+                                size = FileUtil.MAX_SIZE_FILE,
                             )
                             OriginalButton(
                                 resId = R.drawable.ic_show_ui_original,
@@ -148,7 +143,7 @@ class AIEnhanceActivity : BaseActivity() {
                             finish()
                         },
                         onCancel = {
-                           viewmodel.hideDiscardDialog()
+                            viewmodel.hideDiscardDialog()
                         }
                     )
                 }

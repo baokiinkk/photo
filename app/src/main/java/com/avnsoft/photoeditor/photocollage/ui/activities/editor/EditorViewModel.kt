@@ -14,6 +14,8 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.too
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.ToolItem
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toScaledBitmapForUpload
 import com.basesource.base.viewmodel.BaseViewModel
 import com.tanishranjan.cropkit.util.MathUtils
 import kotlinx.coroutines.Dispatchers
@@ -65,16 +67,19 @@ class EditorViewModel(
 
     fun setPathBitmap(
         pathBitmap: String?,
-        bitmap: Bitmap?,
+        bitmap: Bitmap? = null,
         tool: CollageTool?,
         backgroundSelection: BackgroundSelection?
     ) {
+        showLoading()
         viewModelScope.launch {
-            pathBitmapResult = copyImageToAppStorage(context, pathBitmap?.toUri())
+            pathBitmapResult = pathBitmap
+//            bitmap = bitmap
+//            pathBitmapResult = copyImageToAppStorage(context, pathBitmap?.toUri())
             uiState.update {
                 it.copy(
-                    bitmap = bitmap,
-                    originBitmap = bitmap,
+//                    bitmap = bitmap,
+//                    originBitmap = bitmap,
                     backgroundColor = backgroundSelection
                 )
             }
@@ -126,8 +131,19 @@ class EditorViewModel(
     var isFirstInit: Boolean = true
 
     fun scaleBitmapToBox(canvasSize: Size) {
-        val bitmap = uiState.value.originBitmap ?: return
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val bitmap = if (isFirstInit) {
+               val originBitmap = pathBitmapResult?.toUri()?.toScaledBitmapForUpload(context, 1504) ?: return@launch
+                uiState.update {
+                    it.copy(originBitmap = originBitmap)
+                }
+                originBitmap
+            } else {
+                uiState.value.originBitmap ?: return@launch
+            }
+//            val bitmap = pathBitmapResult?.toUri()?.toScaledBitmapForUpload(context, 1504) ?: return@launch
+
+//            val bitmap = uiState.value.originBitmap ?: return@launch
             val imageWidth = bitmap.width.toFloat()
             val imageHeight = bitmap.height.toFloat()
 
@@ -141,11 +157,14 @@ class EditorViewModel(
 
             val newBitmap = bitmap.scale(scaledSize.width.toInt(), scaledSize.height.toInt())
             uiState.update { it.copy(bitmap = newBitmap) }
-
             if (isFirstInit) {
+                pathBitmapResult = bitmap.toFile(context)
                 pushFirstData(newBitmap)
                 isFirstInit = false
             }
+//            =================== new ================
+
+            hideLoading()
         }
     }
 
@@ -360,7 +379,7 @@ data class EditorUIState(
     val backgroundColor: BackgroundSelection? = null,
     val canUndo: Boolean = false,
     val canRedo: Boolean = false,
-    val showDiscardDialog: Boolean = false
+    val showDiscardDialog: Boolean = false,
 )
 
 suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {
