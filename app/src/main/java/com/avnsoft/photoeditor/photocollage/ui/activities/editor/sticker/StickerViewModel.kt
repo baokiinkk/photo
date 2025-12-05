@@ -79,7 +79,7 @@ class StickerViewModel(
         }
     }
 
-    fun showLoading() {
+    override fun showLoading() {
         uiState.update {
             it.copy(
                 isLoading = true
@@ -87,7 +87,7 @@ class StickerViewModel(
         }
     }
 
-    fun hideLoading() {
+    override fun hideLoading() {
         uiState.update {
             it.copy(
                 isLoading = false

@@ -63,6 +63,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.BaseNativeActivity
@@ -107,7 +108,8 @@ class RemoveObjectActivity : BaseNativeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewmodel.setOriginalBitmap(
-            bitmap = screenInput?.getBitmap(this),
+            pathUri = screenInput?.pathBitmap,
+//            bitmap = screenInput?.getBitmap(this),
             newPathBitmap = cacheDir.absolutePath + "/BitmapOriginal_For_remove_obj.jpeg"
         )
         setContentView(binding.root)
@@ -392,7 +394,6 @@ class RemoveObjectActivity : BaseNativeActivity() {
             val undoRedoState by viewmodel.undoRedoState.collectAsStateWithLifecycle()
             val canSaveState by viewmodel.canSaveState.collectAsStateWithLifecycle()
             val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
-
             Box {
                 Column() {
                     Spacer(

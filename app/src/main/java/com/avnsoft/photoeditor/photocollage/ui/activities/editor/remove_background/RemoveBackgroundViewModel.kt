@@ -3,12 +3,16 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_backgro
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.BaseApplication
 import com.avnsoft.photoeditor.photocollage.data.model.remove_background.AIDetectResponse
 import com.avnsoft.photoeditor.photocollage.data.repository.RemoveBackgroundRepoImpl
 import com.avnsoft.photoeditor.photocollage.data.repository.UPLOAD_TYPE_STATUS
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.saveFileAndReturnPathFile
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toScaledBitmapForUpload
+import com.avnsoft.photoeditor.photocollage.utils.toFile
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -34,19 +38,19 @@ class RemoveBackgroundViewModel(
     val _removeBgState = Channel<String>()
     val removeBgState = _removeBgState.receiveAsFlow()
 
-    fun initData(pathBitmap: String?) {
-        if (pathBitmap == null) return
-        uiState.update {
-            it.copy(imageUrl = pathBitmap)
-        }
-        requestRemoveBg(pathBitmap)
+    fun initData(pathUri: String?) {
+        requestRemoveBg(pathUri)
     }
 
-    fun requestRemoveBg(pathBitmap: String) {
+    fun requestRemoveBg(pathUri: String?) {
         showLoading()
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val jpegFile = ensureUploadConstraints(File(pathBitmap))
+                val newPathBitmap = pathUri?.toUri()?.toScaledBitmapForUpload(context)?.toFile(context) ?: return@launch
+                uiState.update {
+                    it.copy(imageUrl = newPathBitmap)
+                }
+                val jpegFile = File(newPathBitmap)
                 val response = removeBackgroundRepo.requestRemoveBg(jpegFile)
                 uploadFileToS3(
                     data = response,
@@ -97,7 +101,7 @@ class RemoveBackgroundViewModel(
         }
     }
 
-    fun showLoading() {
+    override fun showLoading() {
         uiState.update {
             it.copy(
                 isShowLoading = true
@@ -105,7 +109,7 @@ class RemoveBackgroundViewModel(
         }
     }
 
-    fun hideLoading() {
+    override fun hideLoading() {
         uiState.update {
             it.copy(
                 isShowLoading = false

@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.net.toUri
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
@@ -139,7 +140,7 @@ object FileUtil {
 
     suspend fun Uri.toScaledBitmapForUpload(
         context: Context,
-        size: Int
+        size: Int = 1504
     ): Bitmap? = withContext(Dispatchers.IO) {
         val imageLoader = ImageLoader.Builder(context)
             .crossfade(true)
@@ -234,4 +235,8 @@ object FileUtil {
         }
         return null
     }
+}
+
+fun String.toFile(): File {
+    return File(this)
 }

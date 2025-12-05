@@ -60,6 +60,7 @@ import com.avnsoft.photoeditor.photocollage.ui.dialog.NetworkDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.getInput
+import com.avnsoft.photoeditor.photocollage.utils.toFile
 import com.basesource.base.network.NetworkUtils.isNetworkAvailable
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
@@ -137,16 +138,18 @@ class ExportImageResultActivity : BaseActivity() {
         if (isNetworkAvailable(this)) {
             lifecycleScope.launch {
                 if (viewmodel.isMark()) {
-                    val uri = screenInput.pathUriMark?.toUri()
-                    val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
+                    val uri = screenInput.pathUriMark?.toUri() ?: return@launch
+//                    val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
                     launchActivity(
                         toActivity = RemoveObjectActivity::class.java,
-                        input = EditorInput(pathBitmap = pathBitmap),
+                        input = EditorInput(pathBitmap = uri.toString()),
                     )
                 } else {
                     launchActivity(
                         toActivity = RemoveObjectActivity::class.java,
-                        input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
+                        input = ToolInput(
+                            pathBitmap = screenInput.pathBitmapOriginal.toFile().toUri().toString()
+                        ),
                     )
                 }
             }
@@ -182,15 +185,17 @@ class ExportImageResultActivity : BaseActivity() {
             lifecycleScope.launch {
                 if (viewmodel.isMark()) {
                     val uri = screenInput.pathUriMark?.toUri()
-                    val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
+//                    val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
                     launchActivity(
                         toActivity = RemoveBackgroundActivity::class.java,
-                        input = EditorInput(pathBitmap = pathBitmap),
+                        input = EditorInput(pathBitmap = uri.toString()),
                     )
                 } else {
+                    val file = File(screenInput.pathBitmapOriginal)
+                    val uri = file.toUri()
                     launchActivity(
                         toActivity = RemoveBackgroundActivity::class.java,
-                        input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
+                        input = ToolInput(pathBitmap =uri.toString()),
                     )
                 }
             }

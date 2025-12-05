@@ -387,6 +387,7 @@ class EditorActivity : BaseActivity() {
             ) { inner ->
 
                 val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+                val networkUIState by viewmodel.networkUIState.collectAsStateWithLifecycle()
 
                 Box(
                     modifier = Modifier.fillMaxSize()
@@ -424,7 +425,7 @@ class EditorActivity : BaseActivity() {
                         }
                     )
 
-                    if (uiState.isLoading) {
+                    if (networkUIState.isLoading) {
                         LoadingScreen()
                     }
                 }

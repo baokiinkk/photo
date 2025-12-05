@@ -191,7 +191,7 @@ class MainActivity : BaseActivity() {
 //                    val file = File(pathBitmap)
                     launchActivity(
                         toActivity = EditorActivity::class.java,
-                        input = EditorInput(pathBitmap = it.toString(), tool = tool),
+                        input = EditorInput(pathBitmap = it, tool = tool),
                     )
                 }
             }
@@ -212,12 +212,12 @@ class MainActivity : BaseActivity() {
                     result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
                 data?.firstOrNull()?.let {
                     lifecycleScope.launch {
-                        val bitmap = it.toUri().toScaledBitmapForUpload(this@MainActivity, 1504)
-                        val pathBitmap = bitmap?.toFile(this@MainActivity)
+//                        val bitmap = it.toUri().toScaledBitmapForUpload(this@MainActivity, 1504)
+//                        val pathBitmap = bitmap?.toFile(this@MainActivity)
 //                        val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
                         launchActivity(
                             toActivity = RemoveObjectActivity::class.java,
-                            input = ToolInput(pathBitmap = pathBitmap),
+                            input = ToolInput(pathBitmap = it),
                         )
                     }
                 }
@@ -237,12 +237,12 @@ class MainActivity : BaseActivity() {
                     result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
                 data?.firstOrNull()?.let {
                     lifecycleScope.launch {
-                        val bitmap = it.toUri().toScaledBitmapForUpload(this@MainActivity, 1504)
-                        val pathBitmap = bitmap?.toFile(this@MainActivity)
+//                        val bitmap = it.toUri().toScaledBitmapForUpload(this@MainActivity, 1504)
+//                        val pathBitmap = bitmap?.toFile(this@MainActivity)
 //                        val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
                         launchActivity(
                             toActivity = RemoveBackgroundActivity::class.java,
-                            input = ToolInput(pathBitmap = pathBitmap),
+                            input = ToolInput(pathBitmap = it),
                         )
                     }
                 }

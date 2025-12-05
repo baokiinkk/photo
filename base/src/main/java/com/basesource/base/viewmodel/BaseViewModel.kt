@@ -181,7 +181,25 @@ abstract class BaseViewModel : ViewModel() {
             )
         }
     }
+
+    open fun showLoading() {
+        networkUIState.update {
+            it.copy(
+                isLoading = true
+            )
+        }
+    }
+
+    open fun hideLoading() {
+        networkUIState.update {
+            it.copy(
+                isLoading = false
+            )
+        }
+    }
 }
+
 data class NetworkUIState(
-    val showNetworkDialog: Boolean = false
+    val showNetworkDialog: Boolean = false,
+    val isLoading: Boolean = false
 )

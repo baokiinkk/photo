@@ -116,7 +116,7 @@ class AIEnhanceViewModel(
         }
     }
 
-    fun showLoading() {
+    override fun showLoading() {
         uiState.update {
             it.copy(
                 isShowLoading = true
@@ -124,7 +124,7 @@ class AIEnhanceViewModel(
         }
     }
 
-    fun hideLoading() {
+    override fun hideLoading() {
         uiState.update {
             it.copy(
                 isShowLoading = false

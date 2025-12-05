@@ -10,6 +10,7 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import android.util.Log
 import androidx.core.graphics.createBitmap
+import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.remove_background.AIDetectResponse
@@ -18,6 +19,7 @@ import com.avnsoft.photoeditor.photocollage.data.repository.UPLOAD_TYPE_STATUS
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.DrawingView
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.ObjAuto
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.lib.RemoveObjState
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toScaledBitmapForUpload
 import com.basesource.base.viewmodel.BaseViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
@@ -94,10 +96,12 @@ class RemoveObjectViewModel(
     val buttonState = _buttonState.asStateFlow()
 
     fun setOriginalBitmap(
-        bitmap: Bitmap?,
+        pathUri: String?,
         newPathBitmap: String,
     ) {
-        viewModelScope.launch {
+        showLoading()
+        viewModelScope.launch(Dispatchers.IO) {
+            val bitmap = pathUri?.toUri()?.toScaledBitmapForUpload(context)
             if (bitmap != null) {
                 FileOutputStream(newPathBitmap, false).use {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
@@ -109,6 +113,7 @@ class RemoveObjectViewModel(
                     bitmap = bitmap
                 )
             }
+            hideLoading()
         }
     }
 

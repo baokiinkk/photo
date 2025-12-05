@@ -71,6 +71,7 @@ class EditorViewModel(
         tool: CollageTool?,
         backgroundSelection: BackgroundSelection?
     ) {
+        showLoading()
         viewModelScope.launch {
             pathBitmapResult = pathBitmap
 //            bitmap = bitmap
@@ -131,9 +132,6 @@ class EditorViewModel(
 
     fun scaleBitmapToBox(canvasSize: Size) {
         viewModelScope.launch(Dispatchers.IO) {
-            uiState.update {
-                it.copy(isLoading = true)
-            }
             val bitmap =
                 pathBitmapResult?.toUri()?.toScaledBitmapForUpload(context, 1504) ?: return@launch
             uiState.update {
@@ -153,14 +151,15 @@ class EditorViewModel(
             )
 
             val newBitmap = bitmap.scale(scaledSize.width.toInt(), scaledSize.height.toInt())
-            uiState.update { it.copy(bitmap = newBitmap, isLoading = false) }
+            uiState.update { it.copy(bitmap = newBitmap )}
             if (isFirstInit) {
                 pushFirstData(newBitmap)
                 isFirstInit = false
             }
-
 //            =================== new ================
             pathBitmapResult = bitmap.toFile(context)
+
+            hideLoading()
         }
     }
 
@@ -376,7 +375,6 @@ data class EditorUIState(
     val canUndo: Boolean = false,
     val canRedo: Boolean = false,
     val showDiscardDialog: Boolean = false,
-    val isLoading: Boolean = false
 )
 
 suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {
