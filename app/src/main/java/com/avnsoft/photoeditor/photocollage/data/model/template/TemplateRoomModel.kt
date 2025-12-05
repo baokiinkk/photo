@@ -27,7 +27,9 @@ data class TemplateRoomModel(
     val isUsed: Boolean?, // From TemplateData.isUsed
     val isPro: Boolean? = false, // From TemplateData.isPro
     val isReward: Boolean? = false, // From TemplateData.isReward
-    val isFree: Boolean? = false // From TemplateData.isFree
+    val isFree: Boolean? = false, // From TemplateData.isFree
+    val width: Int? = null, // From TemplateData.width
+    val height: Int? = null // From TemplateData.height
 )
 
 data class TemplateContentRoom(

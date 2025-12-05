@@ -26,14 +26,33 @@ class TemplateRepoImpl(
     suspend fun syncTemplates() {
         val response = safeApiCall<TemplateResponse>(
             context = context,
-            apiCallMock = { api.getTemplates() },
-            apiCall = { api.getTemplates() }
+            apiCallMock = { api.getMockTemplates() },
+            apiCall = { api.getMockTemplates() }
         )
         when (response) {
             is Result.Success -> {
                 val urlRoot = response.data.urlRoot ?: ""
                 val categories = response.data.data.map { categoryData ->
                     val templates = categoryData.content?.map { templateItem ->
+                        // Get template bounds (width and height)
+                        val templateWidth = templateItem.width?.toFloat() ?: 1f
+                        val templateHeight = templateItem.height?.toFloat() ?: 1f
+                        
+                        // Helper function to convert px to ratio (0-1)
+                        // If template has width/height defined, and value > 1, assume it's in px
+                        fun convertToRatio(value: Float?, bound: Float): Float? {
+                            return value?.let { 
+                                // If bound is valid (> 0) and value > 1, assume it's in px
+                                if (bound > 0f && it > 1f) {
+                                    // Convert px to ratio
+                                    it / bound
+                                } else {
+                                    // If value <= 1 or bound is invalid, assume it's already a ratio
+                                    it
+                                }
+                            }
+                        }
+                        
                         // Use layer for content, fallback to placeholder if layer is empty
                         val layerContents = templateItem.layer?.map { layerItem ->
                             val url = layerItem.urlThumb?.let {
@@ -42,10 +61,10 @@ class TemplateRepoImpl(
                             }
                             TemplateContentRoom(
                                 urlThumb = url,
-                                x = layerItem.x,
-                                y = layerItem.y,
-                                width = layerItem.width,
-                                height = layerItem.height,
+                                x = convertToRatio(layerItem.x, templateWidth),
+                                y = convertToRatio(layerItem.y, templateHeight),
+                                width = convertToRatio(layerItem.width, templateWidth),
+                                height = convertToRatio(layerItem.height, templateHeight),
                                 rotate = layerItem.rotate
                             )
                         } ?: emptyList()
@@ -54,10 +73,10 @@ class TemplateRepoImpl(
                         val contents = templateItem.placeholder?.map { placeholderItem ->
                             TemplateContentRoom(
                                 urlThumb = null,
-                                x = placeholderItem.x,
-                                y = placeholderItem.y,
-                                width = placeholderItem.width,
-                                height = placeholderItem.height,
+                                x = convertToRatio(placeholderItem.x, templateWidth),
+                                y = convertToRatio(placeholderItem.y, templateHeight),
+                                width = convertToRatio(placeholderItem.width, templateWidth),
+                                height = convertToRatio(placeholderItem.height, templateHeight),
                                 rotate = placeholderItem.rotate
                             )
                         } ?: emptyList()
@@ -86,7 +105,9 @@ class TemplateRepoImpl(
                             isUsed = templateItem.isUsed,
                             isPro = templateItem.isPro,
                             isReward = templateItem.isReward,
-                            isFree = templateItem.isFree
+                            isFree = templateItem.isFree,
+                            width = templateItem.width,
+                            height = templateItem.height
                         )
                     }
 
@@ -142,7 +163,9 @@ class TemplateRepoImpl(
                     isPro = roomModel.isPro ?: false,
                     isReward = roomModel.isReward ?: false,
                     isFree = roomModel.isFree ?: false,
-                    bannerUrl = roomModel.bannerUrl ?: ""
+                    bannerUrl = roomModel.bannerUrl ?: "",
+                    width = roomModel.width,
+                    height = roomModel.height
                 )
             }
 

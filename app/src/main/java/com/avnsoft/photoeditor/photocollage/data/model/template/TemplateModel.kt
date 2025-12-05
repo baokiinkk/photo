@@ -18,7 +18,9 @@ data class TemplateModel(
     val isPro: Boolean? = false,
     val isReward: Boolean? = false,
     val isFree: Boolean? = false,
-    val bannerUrl: String?
+    val bannerUrl: String?,
+    val width: Int? = null,
+    val height: Int? = null
 ) : IScreenData
 
 data class TemplateContentModel(

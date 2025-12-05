@@ -254,6 +254,14 @@ fun TemplateDetailContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+                .then(
+                    if (template.width != null && template.height != null) {
+                        val ratio = template.width!!.toFloat() / template.height!!.toFloat()
+                        Modifier.aspectRatio(ratio)
+                    } else {
+                        Modifier
+                    }
+                )
                 .padding(20.dp)
                 .capturable(captureController)
         ) {
@@ -316,32 +324,7 @@ fun TemplateDetailContent(
 
             // Layers overlay - Layer 3
             template.layer?.forEachIndexed { index, layerItem ->
-                val x = layerItem.x ?: 0f
-                val y = layerItem.y ?: 0f
-                val width = layerItem.width ?: 0f
-                val height = layerItem.height ?: 0f
-                val rotate = layerItem.rotate?.toFloat() ?: 0f
-
-                val layerX = x * bannerWidth
-                val layerY = y * bannerHeight
-                val layerWidth = width * bannerWidth
-                val layerHeight = height * bannerHeight
-
-                Box(
-                    modifier = Modifier
-                        .offset(x = with(density) { layerX.toDp() }, y = with(density) { layerY.toDp() })
-                        .width(with(density) { layerWidth.toDp() })
-                        .height(with(density) { layerHeight.toDp() })
-                        .rotate(rotate)
-                ) {
-                    layerItem.urlThumb?.let { urlThumb ->
-                        LoadImage(
-                            model = urlThumb,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                }
+                //import layer
             }
         }
 

@@ -246,7 +246,6 @@ fun EditorStoreScreen(
     Box(
         modifier
             .background(BackgroundGray)
-            .statusBarsPadding()
             .navigationBarsPadding()
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -312,7 +311,14 @@ fun EditorStoreScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1f)
+                            .then(
+                                if (uiState.template?.width != null && uiState.template?.height != null) {
+                                    val ratio = uiState.template!!.width!!.toFloat() / uiState.template!!.height!!.toFloat()
+                                    Modifier.aspectRatio(ratio)
+                                } else {
+                                    Modifier.aspectRatio(1f)
+                                }
+                            )
                     )
                 } else {
                     uiState.bitmap?.let {

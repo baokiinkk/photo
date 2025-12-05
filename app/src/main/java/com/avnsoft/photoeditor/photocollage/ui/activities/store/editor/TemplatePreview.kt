@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store.editor
 
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -40,7 +43,10 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.pre
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
-import kotlin.math.atan2
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -69,24 +75,29 @@ fun TemplatePreview(
         val imageStates = remember { mutableStateMapOf<Int, Pair<ImageTransformState, Boolean>>() }
         val layerStates = remember { mutableStateMapOf<Int, Pair<ImageTransformState, Boolean>>() }
 
-        // Initialize transforms - only update transform, preserve selected state
-        imageTransforms.forEach { (index, transform) ->
-            val existingState = imageStates[index]
-            val isSelected = existingState?.second ?: false
-            // Only update if transform actually changed to avoid unnecessary recomposition
-            if (existingState?.first != transform) {
-                imageStates[index] = transform to isSelected
+        // Calculate initial transforms only once when entering screen
+        // Use a key that changes when template/selectedImages change, but only run once per combination
+        LaunchedEffect(template, selectedImages) {
+            // Only calculate if imageTransforms is empty (first time)
+            if (imageTransforms.isEmpty() &&
+                selectedImages.isNotEmpty() &&
+                bannerWidth > 0f &&
+                bannerHeight > 0f
+            ) {
+                val initialTransforms = calculateInitialTransformsForTemplate(
+                    template = template,
+                    selectedImages = selectedImages,
+                    canvasWidth = bannerWidth,
+                    canvasHeight = bannerHeight,
+                    context = context
+                )
+                if (initialTransforms.isNotEmpty()) {
+                    onImageTransformsChange?.invoke(initialTransforms)
+                }
             }
+            // After this block completes, LaunchedEffect won't run again unless template/selectedImages change
+            // And if imageTransforms is not empty, it won't calculate again
         }
-        layerTransforms.forEach { (index, transform) ->
-            val existingState = layerStates[index]
-            val isSelected = existingState?.second ?: false
-            // Only update if transform actually changed to avoid unnecessary recomposition
-            if (existingState?.first != transform) {
-                layerStates[index] = transform to isSelected
-            }
-        }
-
         // Banner background
         template.bannerUrl?.let { bannerUrl ->
             LoadImage(
@@ -111,7 +122,6 @@ fun TemplatePreview(
 
             val transformState = imageStates[index]?.first ?: ImageTransformState()
             val isSelected = imageStates[index]?.second ?: false
-            val hasImage = selectedImages.containsKey(index)
 
             Box(
                 modifier = Modifier
@@ -124,14 +134,7 @@ fun TemplatePreview(
                         height = with(density) { cellHeight.toDp() }
                     )
                     .then(
-                        if (hasImage && isSelected) {
-                            Modifier
-                                .border(
-                                    width = 3.dp,
-                                    color = Color(0xFF6425F3),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                        } else if (isSelected) {
+                        if (isSelected) {
                             Modifier
                                 .border(
                                     width = 3.dp,
@@ -144,10 +147,12 @@ fun TemplatePreview(
                     )
                     .clipToBounds()
                     .then(
-                        if (hasImage && isSelected) {
+                        if (isSelected) {
+                            // Use transformState from imageStates (user interactions) instead of prop
+                            val currentTransformState = imageStates[index]?.first ?: transformState
                             transformGestureModifier(
                                 index = index,
-                                transformState = transformState,
+                                transformState = currentTransformState,
                                 cellWidth = cellWidth,
                                 cellHeight = cellHeight,
                                 imageStates = imageStates,
@@ -179,7 +184,6 @@ fun TemplatePreview(
                                 transformOrigin = TransformOrigin.Center
                                 clip = true
                             },
-                        contentScale = ContentScale.Crop
                     )
                 }
             }
@@ -194,119 +198,8 @@ fun TemplatePreview(
             )
         }
 
-        // Layers overlay - Layer 3 (free move and zoom, no bounds)
         template.layer?.forEachIndexed { index, layerItem ->
-            val x = layerItem.x ?: 0f
-            val y = layerItem.y ?: 0f
-            val width = layerItem.width ?: 0f
-            val height = layerItem.height ?: 0f
-            val rotate = layerItem.rotate?.toFloat() ?: 0f
-
-            val layerX = x * bannerWidth
-            val layerY = y * bannerHeight
-            val layerWidth = width * bannerWidth
-            val layerHeight = height * bannerHeight
-
-            val layerState = layerStates[index]
-            val transformState = layerState?.first ?: ImageTransformState()
-            val isSelected = layerState?.second ?: false
-
-            // Use local state for smooth dragging without triggering recomposition
-            val localDragOffset = remember(index) { mutableStateOf(Offset.Zero) }
-            val isDragging = remember(index) { mutableStateOf(false) }
-            // Local scale state for zoom - only update this layer, not entire screen
-            val localZoomScale = remember(index) { mutableStateOf(transformState.scale) }
-
-            val currentTransform = layerStates[index]?.first ?: ImageTransformState()
-            val dragOffset = if (isDragging.value) localDragOffset.value else Offset.Zero
-            val finalX = layerX + currentTransform.offset.x + dragOffset.x
-            val finalY = layerY + currentTransform.offset.y + dragOffset.y
-            // Use local scale if dragging, otherwise use transform scale
-            val finalScale = if (isDragging.value) localZoomScale.value else currentTransform.scale
-            val finalRotate = rotate
-
-            layerItem.urlThumb?.let { urlThumb ->
-                Box(
-                    modifier = Modifier
-                        .offset(
-                            x = with(density) { finalX.toDp() },
-                            y = with(density) { finalY.toDp() }
-                        )
-                        .size(
-                            width = with(density) { (layerWidth * finalScale).toDp() },
-                            height = with(density) { (layerHeight * finalScale).toDp() }
-                        )
-                        .then(
-                            if (isSelected) {
-                                Modifier
-                                    .border(
-                                        width = 1.dp,
-                                        color = Color.White,
-                                        shape = RoundedCornerShape(4.dp)
-                                    )
-                            } else {
-                                Modifier
-                            }
-                        )
-                ) {
-                    val flipScale = layerFlip[index] ?: 1f
-                    LoadImage(
-                        model = urlThumb,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .graphicsLayer {
-                                scaleX = flipScale
-                                rotationZ = finalRotate
-                                transformOrigin = TransformOrigin.Center
-                            }
-                            .then(
-                                if (isSelected) {
-                                    transformGestureModifierForLayer(
-                                        index = index,
-                                        transformState = transformState,
-                                        initialX = layerX,
-                                        initialY = layerY,
-                                        layerStates = layerStates,
-                                        onLayerTransformsChange = onLayerTransformsChange,
-                                        onDragOffsetChange = { offset ->
-                                            localDragOffset.value = offset
-                                        },
-                                        onDragStateChange = { dragging ->
-                                            isDragging.value = dragging
-                                        }
-                                    )
-                                } else {
-                                    selectGestureModifier(
-                                        index = index,
-                                        imageStates = layerStates,
-                                        imageUri = urlThumb.toUri(),
-                                        onImageTransformsChange = onLayerTransformsChange
-                                    )
-                                }
-                            ),
-                        contentScale = ContentScale.FillBounds
-                    )
-                    
-                    // Control buttons when selected
-                    if (isSelected) {
-                        LayerControlButtons(
-                            onDelete = { onLayerDelete?.invoke(index) },
-                            onFlip = { onLayerFlip?.invoke(index) },
-                            onZoomChange = { newScale ->
-                                localZoomScale.value = newScale
-                                val newTransform = ImageTransformState(
-                                    offset = currentTransform.offset + dragOffset,
-                                    scale = newScale
-                                )
-                                layerStates[index] = newTransform to true
-                                onLayerTransformsChange?.invoke(extractTransforms(layerStates))
-                            },
-                            currentScale = finalScale,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                }
-            }
+            //import layer
         }
     }
 }
@@ -324,6 +217,7 @@ fun transformGestureModifier(
         val centerX = cellWidth / 2f
         val centerY = cellHeight / 2f
 
+        // Initialize from current transformState (from prop)
         var localScale = transformState.scale
         var localOffset = transformState.offset
 
@@ -347,10 +241,12 @@ fun transformGestureModifier(
                 y = localOffset.y.coerceIn(-maxOffsetY, maxOffsetY)
             )
 
-            imageStates[index] = ImageTransformState(localOffset, localScale) to true
+            val currentTransform = ImageTransformState(localOffset, localScale)
+            imageStates[index] = currentTransform to true
         }
 
         detectTapGestures {
+            // Sync transforms when tap (which happens after transform gesture ends)
             val currentTransform = ImageTransformState(localOffset, localScale)
             imageStates[index] = currentTransform to false
             onImageTransformsChange?.invoke(extractTransforms(imageStates))
@@ -461,14 +357,14 @@ fun LayerControlButtons(
     // Track drag offset to make button follow finger
     var dragOffset by remember { mutableStateOf(Offset.Zero) }
     var isDragging by remember { mutableStateOf(false) }
-    
+
     // Function to update drag offset (will be called from pointerInput)
     val updateDragOffset: (Offset) -> Unit = remember {
         { newOffset ->
             dragOffset = newOffset
         }
     }
-    
+
     val updateIsDragging: (Boolean) -> Unit = remember {
         { dragging ->
             isDragging = dragging
@@ -526,49 +422,49 @@ fun LayerControlButtons(
                     var initialButtonCenter: Offset? = null
                     var initialTouchPosition: Offset? = null
                     var accumulatedDrag = Offset.Zero
-                    
+
                     // Sticker center position (relative to parent Box)
                     val stickerCenterX = size.width / 2f
                     val stickerCenterY = size.height / 2f
-                    
+
                     // Button center position relative to parent Box
                     val buttonCenterX = size.width - buttonOffsetPx - buttonSizePx / 2
                     val buttonCenterY = size.height - buttonOffsetPx - buttonSizePx / 2
-                    
+
                     detectDragGestures(
                         onDragStart = { offset ->
                             updateIsDragging(true)
                             accumulatedDrag = Offset.Zero
                             updateDragOffset(Offset.Zero)
-                            
+
                             // Store initial button center position
                             initialButtonCenter = Offset(buttonCenterX, buttonCenterY)
                             initialTouchPosition = offset
-                            
+
                             // Calculate initial distance from sticker center to button center
                             initialDistance = sqrt(
-                                (buttonCenterX - stickerCenterX).pow(2) + 
-                                (buttonCenterY - stickerCenterY).pow(2)
+                                (buttonCenterX - stickerCenterX).pow(2) +
+                                        (buttonCenterY - stickerCenterY).pow(2)
                             )
                             initialScale = currentScale
                         },
                         onDrag = { change, dragAmount ->
                             change.consume()
-                            
+
                             if (initialDistance != null && initialButtonCenter != null && initialTouchPosition != null) {
                                 // Calculate new button center position by following finger
                                 accumulatedDrag += dragAmount
                                 val newButtonCenter = initialButtonCenter!! + accumulatedDrag
-                                
+
                                 // Update icon offset to make it follow finger
                                 updateDragOffset(accumulatedDrag)
-                                
+
                                 // Calculate new distance from sticker center to new button center
                                 val newDistance = sqrt(
-                                    (newButtonCenter.x - stickerCenterX).pow(2) + 
-                                    (newButtonCenter.y - stickerCenterY).pow(2)
+                                    (newButtonCenter.x - stickerCenterX).pow(2) +
+                                            (newButtonCenter.y - stickerCenterY).pow(2)
                                 )
-                                
+
                                 // Calculate scale based on distance ratio
                                 val scaleRatio = newDistance / initialDistance!!
                                 val newScale = (initialScale * scaleRatio).coerceIn(0.1f, 10f)
@@ -600,6 +496,80 @@ fun LayerControlButtons(
                 modifier = Modifier.size(20.dp)
             )
         }
+    }
+}
+
+private suspend fun calculateInitialTransformsForTemplate(
+    template: TemplateModel,
+    selectedImages: Map<Int, Uri>,
+    canvasWidth: Float,
+    canvasHeight: Float,
+    context: android.content.Context
+): Map<Int, ImageTransformState> {
+    return withContext(Dispatchers.IO) {
+        val transforms = mutableMapOf<Int, ImageTransformState>()
+
+        template.cells?.forEachIndexed { index, cell ->
+            val imageUri = selectedImages[index] ?: return@forEachIndexed
+
+            // Calculate cell bounds in pixels
+            val cellWidth = (cell.width ?: 0f) * canvasWidth
+            val cellHeight = (cell.height ?: 0f) * canvasHeight
+
+            // Get image size
+            val imageSize = getImageSizeFromUri(context, imageUri)
+
+            // Calculate initial scale to fill the cell
+            val scale = if (imageSize != null && cellWidth > 0f && cellHeight > 0f) {
+                calculateFillScale(
+                    boundWidth = cellWidth,
+                    boundHeight = cellHeight,
+                    imageWidth = imageSize.width,
+                    imageHeight = imageSize.height
+                )
+            } else {
+                1f
+            }
+
+            transforms[index] = ImageTransformState(
+                offset = Offset.Zero,
+                scale = scale
+            )
+        }
+
+        transforms
+    }
+}
+
+private fun calculateFillScale(
+    boundWidth: Float,
+    boundHeight: Float,
+    imageWidth: Float,
+    imageHeight: Float
+): Float {
+    val widthRatio = boundWidth / imageWidth
+    val heightRatio = boundHeight / imageHeight
+    val fitScale = min(widthRatio, heightRatio)
+    val fillScale = max(widthRatio, heightRatio)
+    return if (fitScale > 0f) fillScale / fitScale else 1f
+}
+
+private suspend fun getImageSizeFromUri(context: android.content.Context, uri: Uri): Size? {
+    return try {
+        withContext(Dispatchers.IO) {
+            val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            val inputStream = context.contentResolver.openInputStream(uri)
+            inputStream?.use {
+                BitmapFactory.decodeStream(it, null, options)
+                if (options.outWidth > 0 && options.outHeight > 0) {
+                    Size(options.outWidth.toFloat(), options.outHeight.toFloat())
+                } else {
+                    null
+                }
+            }
+        }
+    } catch (_: Exception) {
+        null
     }
 }
 

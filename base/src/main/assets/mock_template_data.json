@@ -1,7 +1,7 @@
 {
   "version": "v1",
   "lastModified": "2021-06-05",
-  "urlRoot": "https://photo.footballtv.info",
+  "urlRoot": "https://openai.amobear.com/",
   "server": "amobear",
   "data": [
     {
@@ -16,101 +16,103 @@
           "layer": [
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.091,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.382,
-              "y": 0.322,
-              "width": 0.238,
-              "height": 0.245,
+              "x": 315,
+              "y": 330,
+              "width": 196,
+              "height": 251,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.672,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.091,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.382,
-              "y": 0.610,
-              "width": 0.238,
-              "height": 0.191,
+              "x": 315,
+              "y": 625,
+              "width": 196,
+              "height": 196,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.672,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             }
           ],
           "placeholder": [
             {
-              "x": 0.091,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
-              "x": 0.382,
-              "y": 0.322,
-              "width": 0.238,
-              "height": 0.245,
+              "x": 315,
+              "y": 330,
+              "width": 196,
+              "height": 251,
               "rotate": null
             },
             {
-              "x": 0.672,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
-              "x": 0.091,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
-              "x": 0.382,
-              "y": 0.610,
-              "width": 0.238,
-              "height": 0.191,
+              "x": 315,
+              "y": 625,
+              "width": 196,
+              "height": 196,
               "rotate": null
             },
             {
-              "x": 0.672,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             }
           ],
           "isPro": false,
           "isReward": true,
           "isFree": false,
-          "isUsed": true
+          "isUsed": true,
+          "width": 825,
+          "height": 1024
         },
         {
           "itemId": 2,
@@ -120,71 +122,73 @@
           "layer": [
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.507,
-              "y": 0.423,
-              "width": 0.403,
-              "height": 0.480,
+              "x": 418,
+              "y": 433,
+              "width": 332,
+              "height": 492,
               "rotate": -3
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.501,
-              "y": 0.073,
-              "width": 0.404,
-              "height": 0.305,
+              "x": 413,
+              "y": 75,
+              "width": 333,
+              "height": 312,
               "rotate": -8
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.070,
-              "y": 0.644,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 58,
+              "y": 659,
+              "width": 333,
+              "height": 273,
               "rotate": -4
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.082,
-              "y": 0.338,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 68,
+              "y": 346,
+              "width": 333,
+              "height": 273,
               "rotate": 2
             }
           ],
           "placeholder": [
             {
-              "x": 0.507,
-              "y": 0.423,
-              "width": 0.403,
-              "height": 0.480,
+              "x": 418,
+              "y": 433,
+              "width": 332,
+              "height": 492,
               "rotate": -3
             },
             {
-              "x": 0.501,
-              "y": 0.073,
-              "width": 0.404,
-              "height": 0.305,
+              "x": 413,
+              "y": 75,
+              "width": 333,
+              "height": 312,
               "rotate": -8
             },
             {
-              "x": 0.070,
-              "y": 0.644,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 58,
+              "y": 659,
+              "width": 333,
+              "height": 273,
               "rotate": -4
             },
             {
-              "x": 0.082,
-              "y": 0.338,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 68,
+              "y": 346,
+              "width": 333,
+              "height": 273,
               "rotate": 2
             }
           ],
           "isPro": false,
           "isReward": true,
           "isFree": false,
-          "isUsed": true
+          "isUsed": true,
+          "width": 825,
+          "height": 1024
         },
         {
           "itemId": 3,
@@ -194,71 +198,73 @@
           "layer": [
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.287,
-              "y": 0.251,
-              "width": 0.426,
-              "height": 0.423,
+              "x": 237,
+              "y": 257,
+              "width": 351,
+              "height": 433,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.164,
-              "y": 0.668,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 135,
+              "y": 684,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.121,
-              "y": 0.521,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 100,
+              "y": 534,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.079,
-              "y": 0.374,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 65,
+              "y": 383,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             }
           ],
           "placeholder": [
             {
-              "x": 0.287,
-              "y": 0.251,
-              "width": 0.426,
-              "height": 0.423,
+              "x": 237,
+              "y": 257,
+              "width": 351,
+              "height": 433,
               "rotate": null
             },
             {
-              "x": 0.164,
-              "y": 0.668,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 135,
+              "y": 684,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
-              "x": 0.121,
-              "y": 0.521,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 100,
+              "y": 534,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
-              "x": 0.079,
-              "y": 0.374,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 65,
+              "y": 383,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             }
           ],
           "isPro": false,
           "isReward": true,
           "isFree": false,
-          "isUsed": true
+          "isUsed": true,
+          "width": 825,
+          "height": 1024
         }
       ]
     },
@@ -274,101 +280,103 @@
           "layer": [
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.091,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.382,
-              "y": 0.322,
-              "width": 0.238,
-              "height": 0.245,
+              "x": 315,
+              "y": 330,
+              "width": 196,
+              "height": 251,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.672,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.091,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.382,
-              "y": 0.610,
-              "width": 0.238,
-              "height": 0.191,
+              "x": 315,
+              "y": 625,
+              "width": 196,
+              "height": 196,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.672,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             }
           ],
           "placeholder": [
             {
-              "x": 0.091,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
-              "x": 0.382,
-              "y": 0.322,
-              "width": 0.238,
-              "height": 0.245,
+              "x": 315,
+              "y": 330,
+              "width": 196,
+              "height": 251,
               "rotate": null
             },
             {
-              "x": 0.672,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
-              "x": 0.091,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
-              "x": 0.382,
-              "y": 0.610,
-              "width": 0.238,
-              "height": 0.191,
+              "x": 315,
+              "y": 625,
+              "width": 196,
+              "height": 196,
               "rotate": null
             },
             {
-              "x": 0.672,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             }
           ],
           "isPro": false,
           "isReward": true,
           "isFree": false,
-          "isUsed": true
+          "isUsed": true,
+          "width": 825,
+          "height": 1024
         },
         {
           "itemId": 2,
@@ -378,71 +386,73 @@
           "layer": [
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.507,
-              "y": 0.423,
-              "width": 0.403,
-              "height": 0.480,
+              "x": 418,
+              "y": 433,
+              "width": 332,
+              "height": 492,
               "rotate": -3
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.501,
-              "y": 0.073,
-              "width": 0.404,
-              "height": 0.305,
+              "x": 413,
+              "y": 75,
+              "width": 333,
+              "height": 312,
               "rotate": -8
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.070,
-              "y": 0.644,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 58,
+              "y": 659,
+              "width": 333,
+              "height": 273,
               "rotate": -4
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.082,
-              "y": 0.338,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 68,
+              "y": 346,
+              "width": 333,
+              "height": 273,
               "rotate": 2
             }
           ],
           "placeholder": [
             {
-              "x": 0.507,
-              "y": 0.423,
-              "width": 0.403,
-              "height": 0.480,
+              "x": 418,
+              "y": 433,
+              "width": 332,
+              "height": 492,
               "rotate": -3
             },
             {
-              "x": 0.501,
-              "y": 0.073,
-              "width": 0.404,
-              "height": 0.305,
+              "x": 413,
+              "y": 75,
+              "width": 333,
+              "height": 312,
               "rotate": -8
             },
             {
-              "x": 0.070,
-              "y": 0.644,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 58,
+              "y": 659,
+              "width": 333,
+              "height": 273,
               "rotate": -4
             },
             {
-              "x": 0.082,
-              "y": 0.338,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 68,
+              "y": 346,
+              "width": 333,
+              "height": 273,
               "rotate": 2
             }
           ],
           "isPro": false,
           "isReward": true,
           "isFree": false,
-          "isUsed": true
+          "isUsed": true,
+          "width": 825,
+          "height": 1024
         },
         {
           "itemId": 3,
@@ -452,71 +462,73 @@
           "layer": [
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.287,
-              "y": 0.251,
-              "width": 0.426,
-              "height": 0.423,
+              "x": 237,
+              "y": 257,
+              "width": 351,
+              "height": 433,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.164,
-              "y": 0.668,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 135,
+              "y": 684,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.121,
-              "y": 0.521,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 100,
+              "y": 534,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.079,
-              "y": 0.374,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 65,
+              "y": 383,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             }
           ],
           "placeholder": [
             {
-              "x": 0.287,
-              "y": 0.251,
-              "width": 0.426,
-              "height": 0.423,
+              "x": 237,
+              "y": 257,
+              "width": 351,
+              "height": 433,
               "rotate": null
             },
             {
-              "x": 0.164,
-              "y": 0.668,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 135,
+              "y": 684,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
-              "x": 0.121,
-              "y": 0.521,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 100,
+              "y": 534,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
-              "x": 0.079,
-              "y": 0.374,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 65,
+              "y": 383,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             }
           ],
           "isPro": false,
           "isReward": true,
           "isFree": false,
-          "isUsed": true
+          "isUsed": true,
+          "width": 825,
+          "height": 1024
         }
       ]
     },
@@ -532,101 +544,103 @@
           "layer": [
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.091,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.382,
-              "y": 0.322,
-              "width": 0.238,
-              "height": 0.245,
+              "x": 315,
+              "y": 330,
+              "width": 196,
+              "height": 251,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.672,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.091,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.382,
-              "y": 0.610,
-              "width": 0.238,
-              "height": 0.191,
+              "x": 315,
+              "y": 625,
+              "width": 196,
+              "height": 196,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.672,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             }
           ],
           "placeholder": [
             {
-              "x": 0.091,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
-              "x": 0.382,
-              "y": 0.322,
-              "width": 0.238,
-              "height": 0.245,
+              "x": 315,
+              "y": 330,
+              "width": 196,
+              "height": 251,
               "rotate": null
             },
             {
-              "x": 0.672,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
-              "x": 0.091,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
-              "x": 0.382,
-              "y": 0.610,
-              "width": 0.238,
-              "height": 0.191,
+              "x": 315,
+              "y": 625,
+              "width": 196,
+              "height": 196,
               "rotate": null
             },
             {
-              "x": 0.672,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             }
           ],
           "isPro": false,
           "isReward": true,
           "isFree": false,
-          "isUsed": true
+          "isUsed": true,
+          "width": 825,
+          "height": 1024
         },
         {
           "itemId": 2,
@@ -636,71 +650,73 @@
           "layer": [
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.507,
-              "y": 0.423,
-              "width": 0.403,
-              "height": 0.480,
+              "x": 418,
+              "y": 433,
+              "width": 332,
+              "height": 492,
               "rotate": -3
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.501,
-              "y": 0.073,
-              "width": 0.404,
-              "height": 0.305,
+              "x": 413,
+              "y": 75,
+              "width": 333,
+              "height": 312,
               "rotate": -8
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.070,
-              "y": 0.644,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 58,
+              "y": 659,
+              "width": 333,
+              "height": 273,
               "rotate": -4
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.082,
-              "y": 0.338,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 68,
+              "y": 346,
+              "width": 333,
+              "height": 273,
               "rotate": 2
             }
           ],
           "placeholder": [
             {
-              "x": 0.507,
-              "y": 0.423,
-              "width": 0.403,
-              "height": 0.480,
+              "x": 418,
+              "y": 433,
+              "width": 332,
+              "height": 492,
               "rotate": -3
             },
             {
-              "x": 0.501,
-              "y": 0.073,
-              "width": 0.404,
-              "height": 0.305,
+              "x": 413,
+              "y": 75,
+              "width": 333,
+              "height": 312,
               "rotate": -8
             },
             {
-              "x": 0.070,
-              "y": 0.644,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 58,
+              "y": 659,
+              "width": 333,
+              "height": 273,
               "rotate": -4
             },
             {
-              "x": 0.082,
-              "y": 0.338,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 68,
+              "y": 346,
+              "width": 333,
+              "height": 273,
               "rotate": 2
             }
           ],
           "isPro": false,
           "isReward": true,
           "isFree": false,
-          "isUsed": true
+          "isUsed": true,
+          "width": 825,
+          "height": 1024
         },
         {
           "itemId": 3,
@@ -710,71 +726,73 @@
           "layer": [
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.287,
-              "y": 0.251,
-              "width": 0.426,
-              "height": 0.423,
+              "x": 237,
+              "y": 257,
+              "width": 351,
+              "height": 433,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.164,
-              "y": 0.668,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 135,
+              "y": 684,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.121,
-              "y": 0.521,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 100,
+              "y": 534,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.079,
-              "y": 0.374,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 65,
+              "y": 383,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             }
           ],
           "placeholder": [
             {
-              "x": 0.287,
-              "y": 0.251,
-              "width": 0.426,
-              "height": 0.423,
+              "x": 237,
+              "y": 257,
+              "width": 351,
+              "height": 433,
               "rotate": null
             },
             {
-              "x": 0.164,
-              "y": 0.668,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 135,
+              "y": 684,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
-              "x": 0.121,
-              "y": 0.521,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 100,
+              "y": 534,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
-              "x": 0.079,
-              "y": 0.374,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 65,
+              "y": 383,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             }
           ],
           "isPro": false,
           "isReward": true,
           "isFree": false,
-          "isUsed": true
+          "isUsed": true,
+          "width": 825,
+          "height": 1024
         }
       ]
     },
@@ -790,101 +808,103 @@
           "layer": [
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.091,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.382,
-              "y": 0.322,
-              "width": 0.238,
-              "height": 0.245,
+              "x": 315,
+              "y": 330,
+              "width": 196,
+              "height": 251,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.672,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.091,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.382,
-              "y": 0.610,
-              "width": 0.238,
-              "height": 0.191,
+              "x": 315,
+              "y": 625,
+              "width": 196,
+              "height": 196,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.672,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             }
           ],
           "placeholder": [
             {
-              "x": 0.091,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
-              "x": 0.382,
-              "y": 0.322,
-              "width": 0.238,
-              "height": 0.245,
+              "x": 315,
+              "y": 330,
+              "width": 196,
+              "height": 251,
               "rotate": null
             },
             {
-              "x": 0.672,
-              "y": 0.233,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 239,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
-              "x": 0.091,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 75,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             },
             {
-              "x": 0.382,
-              "y": 0.610,
-              "width": 0.238,
-              "height": 0.191,
+              "x": 315,
+              "y": 625,
+              "width": 196,
+              "height": 196,
               "rotate": null
             },
             {
-              "x": 0.672,
-              "y": 0.539,
-              "width": 0.238,
-              "height": 0.263,
+              "x": 554,
+              "y": 552,
+              "width": 196,
+              "height": 269,
               "rotate": null
             }
           ],
           "isPro": false,
           "isReward": true,
           "isFree": false,
-          "isUsed": true
+          "isUsed": true,
+          "width": 825,
+          "height": 1024
         },
         {
           "itemId": 2,
@@ -894,71 +914,73 @@
           "layer": [
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.507,
-              "y": 0.423,
-              "width": 0.403,
-              "height": 0.480,
+              "x": 418,
+              "y": 433,
+              "width": 332,
+              "height": 492,
               "rotate": -3
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.501,
-              "y": 0.073,
-              "width": 0.404,
-              "height": 0.305,
+              "x": 413,
+              "y": 75,
+              "width": 333,
+              "height": 312,
               "rotate": -8
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.070,
-              "y": 0.644,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 58,
+              "y": 659,
+              "width": 333,
+              "height": 273,
               "rotate": -4
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.082,
-              "y": 0.338,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 68,
+              "y": 346,
+              "width": 333,
+              "height": 273,
               "rotate": 2
             }
           ],
           "placeholder": [
             {
-              "x": 0.507,
-              "y": 0.423,
-              "width": 0.403,
-              "height": 0.480,
+              "x": 418,
+              "y": 433,
+              "width": 332,
+              "height": 492,
               "rotate": -3
             },
             {
-              "x": 0.501,
-              "y": 0.073,
-              "width": 0.404,
-              "height": 0.305,
+              "x": 413,
+              "y": 75,
+              "width": 333,
+              "height": 312,
               "rotate": -8
             },
             {
-              "x": 0.070,
-              "y": 0.644,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 58,
+              "y": 659,
+              "width": 333,
+              "height": 273,
               "rotate": -4
             },
             {
-              "x": 0.082,
-              "y": 0.338,
-              "width": 0.404,
-              "height": 0.267,
+              "x": 68,
+              "y": 346,
+              "width": 333,
+              "height": 273,
               "rotate": 2
             }
           ],
           "isPro": false,
           "isReward": true,
           "isFree": false,
-          "isUsed": true
+          "isUsed": true,
+          "width": 825,
+          "height": 1024
         },
         {
           "itemId": 3,
@@ -968,71 +990,73 @@
           "layer": [
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.287,
-              "y": 0.251,
-              "width": 0.426,
-              "height": 0.423,
+              "x": 237,
+              "y": 257,
+              "width": 351,
+              "height": 433,
               "rotate": null
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.164,
-              "y": 0.668,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 135,
+              "y": 684,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.121,
-              "y": 0.521,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 100,
+              "y": 534,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
               "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 0.079,
-              "y": 0.374,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 65,
+              "y": 383,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             }
           ],
           "placeholder": [
             {
-              "x": 0.287,
-              "y": 0.251,
-              "width": 0.426,
-              "height": 0.423,
+              "x": 237,
+              "y": 257,
+              "width": 351,
+              "height": 433,
               "rotate": null
             },
             {
-              "x": 0.164,
-              "y": 0.668,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 135,
+              "y": 684,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
-              "x": 0.121,
-              "y": 0.521,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 100,
+              "y": 534,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             },
             {
-              "x": 0.079,
-              "y": 0.374,
-              "width": 0.194,
-              "height": 0.132,
+              "x": 65,
+              "y": 383,
+              "width": 160,
+              "height": 135,
               "rotate": 13
             }
           ],
           "isPro": false,
           "isReward": true,
           "isFree": false,
-          "isUsed": true
+          "isUsed": true,
+          "width": 825,
+          "height": 1024
         }
       ]
     }

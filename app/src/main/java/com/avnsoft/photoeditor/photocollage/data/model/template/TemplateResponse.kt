@@ -28,6 +28,10 @@ data class TemplateData(
     val previewUrl: String? = null,
     @SerializedName("frameUrl")
     val frameUrl: String?,
+    @SerializedName("width")
+    val width: Int?,
+    @SerializedName("height")
+    val height: Int?,
     @SerializedName("layer")
     val layer: List<TemplateLayer>?,
     @SerializedName("placeholder")
