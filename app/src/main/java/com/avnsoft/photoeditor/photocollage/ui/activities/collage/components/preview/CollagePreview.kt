@@ -116,9 +116,7 @@ fun CollagePreview(
             }
             processedCells = cells
 
-            val finalTransforms = if (imageTransforms.isNotEmpty()) {
-                imageTransforms
-            } else {
+            val finalTransforms = imageTransforms.ifEmpty {
                 val calculated = ImageTransformCalculator.calculateInitialTransforms(context, cells)
                 if (calculated.isNotEmpty()) {
                     onImageTransformsChange?.invoke(calculated)

@@ -145,36 +145,41 @@ class TemplateDetailActivity : BaseActivity() {
                         TemplateDetailHeader(
                             onClose = { finish() },
                             onApply = {
-                                scope.launch {
-                                    try {
-                                        val bitmap = captureController.toImageBitmap().asAndroidBitmap()
-                                        val pathBitmap = bitmap.toFile(context)
-                                        val file = File(pathBitmap)
-                                        val uri = file.toUri()
-                                        if(screenInput?.type == ToolInput.TYPE.BACK_AND_RETURN){
+                                if(screenInput?.type == ToolInput.TYPE.BACK_AND_RETURN){
+                                    // For BACK_AND_RETURN, still capture bitmap
+                                    scope.launch {
+                                        try {
+                                            val bitmap = captureController.toImageBitmap().asAndroidBitmap()
+                                            val pathBitmap = bitmap.toFile(context)
+                                            val file = File(pathBitmap)
+                                            val uri = file.toUri()
                                             setResult(RESULT_OK, intent.putExtra("PATH", uri.toString()))
                                             finish()
-                                        }else {
-                                            launchActivity(
-                                                toActivity = EditorStoreActivity::class.java,
-                                                input = ToolTemplateInput(
-                                                    toolInput = ToolInput(pathBitmap = uri.toString()),
-                                                    template = screenInput?.template
-                                                )
-                                            ) {
-                                                if (it.resultCode == RESULT_OK) {
-                                                    setResult(RESULT_OK)
-                                                    finish()
-                                                }
-                                            }
+                                        } catch (ex: Throwable) {
+                                            Toast.makeText(
+                                                context,
+                                                "Error ${ex.message}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
-                                    } catch (ex: Throwable) {
-                                        Toast.makeText(
-                                            context,
-                                            "Error ${ex.message}",
-                                            Toast.LENGTH_SHORT
+                                    }
+                                } else {
+                                    // Convert Uri to String for serialization
+                                    val selectedImagesString = uiState.selectedImages.mapValues { 
+                                        it.value.toString() 
+                                    }
+                                    
+                                    launchActivity(
+                                        toActivity = EditorStoreActivity::class.java,
+                                        input = ToolTemplateInput(
+                                            template = screenInput?.template,
+                                            selectedImages = selectedImagesString
                                         )
-                                            .show()
+                                    ) {
+                                        if (it.resultCode == RESULT_OK) {
+                                            setResult(RESULT_OK)
+                                            finish()
+                                        }
                                     }
                                 }
                             },
@@ -255,14 +260,8 @@ fun TemplateDetailContent(
             val bannerWidth = constraints.maxWidth.toFloat()
             val bannerHeight = constraints.maxHeight.toFloat()
 
-            // Banner image
-            template.bannerUrl?.let { bannerUrl ->
-                LoadImage(
-                    model = bannerUrl, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds
-                )
-            }
 
-            // Cells overlay
+            // Contents (cells) overlay - Layer 1
             template.cells?.forEachIndexed { index, cell ->
                 val x = cell.x ?: 0f
                 val y = cell.y ?: 0f
@@ -308,11 +307,41 @@ fun TemplateDetailContent(
                 }
             }
 
-            // Frame overlay
+            // Frame overlay - Layer 2
             template.frameUrl?.let { frameUrl ->
                 LoadImage(
                     model = frameUrl, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds
                 )
+            }
+
+            // Layers overlay - Layer 3
+            template.layer?.forEachIndexed { index, layerItem ->
+                val x = layerItem.x ?: 0f
+                val y = layerItem.y ?: 0f
+                val width = layerItem.width ?: 0f
+                val height = layerItem.height ?: 0f
+                val rotate = layerItem.rotate?.toFloat() ?: 0f
+
+                val layerX = x * bannerWidth
+                val layerY = y * bannerHeight
+                val layerWidth = width * bannerWidth
+                val layerHeight = height * bannerHeight
+
+                Box(
+                    modifier = Modifier
+                        .offset(x = with(density) { layerX.toDp() }, y = with(density) { layerY.toDp() })
+                        .width(with(density) { layerWidth.toDp() })
+                        .height(with(density) { layerHeight.toDp() })
+                        .rotate(rotate)
+                ) {
+                    layerItem.urlThumb?.let { urlThumb ->
+                        LoadImage(
+                            model = urlThumb,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
             }
         }
 

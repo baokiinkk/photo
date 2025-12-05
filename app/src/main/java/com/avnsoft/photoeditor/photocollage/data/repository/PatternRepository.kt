@@ -76,6 +76,8 @@ class PatternRepository(
 
 
     suspend fun syncPatterns() {
+        if (editorSharedPref.getIsSyncPattern()) return
+
         val response = safeApiCall<PatternResponse>(
             context = context,
             apiCallMock = { api.getPatterns() },

@@ -10,8 +10,9 @@ data class TemplateCategoryModel(
 
 data class TemplateModel(
     val previewUrl: String?,
-    val frameUrl: String,
+    val frameUrl: String?,
     val cells: List<TemplateContentModel>?,
+    val layer: List<TemplateContentModel>?,
     val timeCreate: String = System.currentTimeMillis().toString(),
     val isUsed: Boolean?,
     val isPro: Boolean? = false,

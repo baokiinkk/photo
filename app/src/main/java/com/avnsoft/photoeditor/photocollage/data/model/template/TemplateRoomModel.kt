@@ -22,6 +22,7 @@ data class TemplateRoomModel(
     val previewUrl: String? = null, // From TemplateData.previewUrl
     val frameUrl: String?, // From TemplateData.frameUrl
     val content: List<TemplateContentRoom>?, // From TemplateData.content (cells)
+    val layerContents: List<TemplateContentRoom>?, // From TemplateData.layer
     val timeCreate: String = System.currentTimeMillis().toString(),
     val isUsed: Boolean?, // From TemplateData.isUsed
     val isPro: Boolean? = false, // From TemplateData.isPro

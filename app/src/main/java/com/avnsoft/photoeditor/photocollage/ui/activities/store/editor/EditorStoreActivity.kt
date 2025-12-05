@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store.editor
 
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -44,6 +45,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.uriToBitmap
+import androidx.core.net.toUri
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageResultActivity
@@ -65,8 +67,8 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 data class ToolTemplateInput(
-    val toolInput: ToolInput?,
-    val template: TemplateModel?
+    val template: TemplateModel?,
+    val selectedImages: Map<Int, String> = emptyMap() // Store as String to avoid Uri serialization issues
 ) : IScreenData
 
 class EditorStoreActivity : BaseActivity() {
@@ -80,10 +82,14 @@ class EditorStoreActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initEditorLib()
-        viewmodel.setPathBitmap(
-            pathBitmap = screenInput?.toolInput?.pathBitmap,
-            bitmap = screenInput?.toolInput?.pathBitmap.uriToBitmap(this),
-            tool = null
+        // Convert String URIs back to Uri objects
+        val selectedImagesUri = screenInput?.selectedImages?.mapValues { 
+            it.value.toUri() 
+        } ?: emptyMap()
+        
+        viewmodel.setTemplateData(
+            template = screenInput?.template,
+            selectedImages = selectedImagesUri
         )
         enableEdgeToEdge()
         setContent {
@@ -270,22 +276,51 @@ fun EditorStoreScreen(
                     .padding(top = 20.dp, bottom = 23.dp)
                     .onSizeChanged { layout ->
                         viewmodel.canvasSize = layout.toSize()
-                        viewmodel.scaleBitmapToBox(layout.toSize())
+                        if (uiState.template == null) {
+                            viewmodel.scaleBitmapToBox(layout.toSize())
+                        }
                     }
                     .capturable(captureController),
                 contentAlignment = Alignment.Center
             ) {
-                uiState.bitmap?.let {
-                    Image(
-                        bitmap = it.asImageBitmap(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        alignment = Alignment.Center,
+                if (uiState.template != null) {
+                    TemplatePreview(
+                        template = uiState.template!!,
+                        selectedImages = uiState.selectedImages,
+                        imageTransforms = uiState.imageTransforms,
+                        layerTransforms = uiState.layerTransforms,
+                        layerFlip = uiState.layerFlip,
+                        onImageTransformsChange = { transforms ->
+                            viewmodel.updateImageTransforms(transforms)
+                        },
+                        onLayerTransformsChange = { transforms ->
+                            viewmodel.updateLayerTransforms(transforms)
+                        },
+                        onLayerDelete = { index ->
+                            viewmodel.deleteLayer(index)
+                        },
+                        onLayerFlip = { index ->
+                            viewmodel.flipLayer(index)
+                        },
+                        onLayerZoomChange = { index, scale ->
+                            viewmodel.updateLayerZoom(index, scale)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1f)
-
                     )
+                } else {
+                    uiState.bitmap?.let {
+                        Image(
+                            bitmap = it.asImageBitmap(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                        )
+                    }
                 }
             }
 

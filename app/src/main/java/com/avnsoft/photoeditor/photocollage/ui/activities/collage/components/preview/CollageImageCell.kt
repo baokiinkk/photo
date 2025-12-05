@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -120,6 +121,7 @@ fun CollageImageCell(
         if (cellData.imageBitmap != null) {
             Image(
                 bitmap = cellData.imageBitmap.asImageBitmap(),
+                contentScale = ContentScale.FillBounds,
                 contentDescription = null,
                 modifier = imageModifier
             )
@@ -127,6 +129,7 @@ fun CollageImageCell(
             AsyncImage(
                 model = cellData.imageUri,
                 contentDescription = null,
+                contentScale = ContentScale.FillBounds,
                 modifier = imageModifier,
                 error = painterResource(R.drawable.ic_empty_image)
             )

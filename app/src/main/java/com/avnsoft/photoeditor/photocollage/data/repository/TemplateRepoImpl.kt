@@ -31,24 +31,57 @@ class TemplateRepoImpl(
         )
         when (response) {
             is Result.Success -> {
+                val urlRoot = response.data.urlRoot ?: ""
                 val categories = response.data.data.map { categoryData ->
                     val templates = categoryData.content?.map { templateItem ->
-                        val contents = templateItem.content?.map { contentItem ->
+                        // Use layer for content, fallback to placeholder if layer is empty
+                        val layerContents = templateItem.layer?.map { layerItem ->
+                            val url = layerItem.urlThumb?.let {
+                                if (it.startsWith("http") || it.startsWith("file://")) it
+                                else "${urlRoot}${it}"
+                            }
                             TemplateContentRoom(
-                                urlThumb = contentItem.urlThumb,
-                                x = contentItem.x,
-                                y = contentItem.y,
-                                width = contentItem.width,
-                                height = contentItem.height,
-                                rotate = contentItem.rotate
+                                urlThumb = url,
+                                x = layerItem.x,
+                                y = layerItem.y,
+                                width = layerItem.width,
+                                height = layerItem.height,
+                                rotate = layerItem.rotate
                             )
+                        } ?: emptyList()
+
+                        // If layer is empty, use placeholder data
+                        val contents = templateItem.placeholder?.map { placeholderItem ->
+                            TemplateContentRoom(
+                                urlThumb = null,
+                                x = placeholderItem.x,
+                                y = placeholderItem.y,
+                                width = placeholderItem.width,
+                                height = placeholderItem.height,
+                                rotate = placeholderItem.rotate
+                            )
+                        } ?: emptyList()
+
+                        // Build URLs with urlRoot if needed
+                        val bannerUrl = templateItem.bannerUrl?.let {
+                            if (it.startsWith("http") || it.startsWith("file://")) it
+                            else "${urlRoot}${it}"
                         }
-                        
+                        val previewUrl = templateItem.previewUrl?.let {
+                            if (it.startsWith("http") || it.startsWith("file://")) it
+                            else "${urlRoot}${it}"
+                        }
+                        val frameUrl = templateItem.frameUrl?.let {
+                            if (it.startsWith("http") || it.startsWith("file://")) it
+                            else "${urlRoot}${it}"
+                        }
+
                         TemplateRoomModel(
-                            bannerUrl = "file:///android_asset/${templateItem.bannerUrl}",
-                            previewUrl = templateItem.previewUrl?.let { "file:///android_asset/$it" },
-                            frameUrl = templateItem.frameUrl,
+                            bannerUrl = bannerUrl,
+                            previewUrl = previewUrl,
+                            frameUrl = frameUrl,
                             content = contents,
+                            layerContents = layerContents,
                             timeCreate = System.currentTimeMillis().toString(),
                             isUsed = templateItem.isUsed,
                             isPro = templateItem.isPro,
@@ -56,10 +89,10 @@ class TemplateRepoImpl(
                             isFree = templateItem.isFree
                         )
                     }
-                    
+
                     TemplateCategoryRoomModel(
                         id = System.currentTimeMillis().toString(),
-                        category = categoryData.category,
+                        category = categoryData.categoryName,
                         templates = templates
                     )
                 }
@@ -72,6 +105,7 @@ class TemplateRepoImpl(
             }
         }
     }
+
     suspend fun getPreviewTemplates(): Flow<List<TemplateCategoryModel>> {
         syncTemplates()
         val response = appDataDao.getPreviewTemplateCategories()
@@ -84,13 +118,26 @@ class TemplateRepoImpl(
                         y = contentRoom.y,
                         width = contentRoom.width,
                         height = contentRoom.height,
-                        rotate = contentRoom.rotate
+                        rotate = contentRoom.rotate,
+                        urlThumb = contentRoom.urlThumb
+                    )
+                }
+                val layer = (roomModel.layerContents ?: emptyList()).map { layerRoom ->
+                    com.avnsoft.photoeditor.photocollage.data.model.template.TemplateContentModel(
+                        x = layerRoom.x,
+                        y = layerRoom.y,
+                        width = layerRoom.width,
+                        height = layerRoom.height,
+                        rotate = layerRoom.rotate,
+                        urlThumb = layerRoom.urlThumb
                     )
                 }
                 return TemplateModel(
                     previewUrl = roomModel.previewUrl,
                     frameUrl = roomModel.frameUrl ?: "",
                     cells = cells,
+                    layer = layer,
+                    timeCreate = roomModel.timeCreate,
                     isUsed = roomModel.isUsed ?: false,
                     isPro = roomModel.isPro ?: false,
                     isReward = roomModel.isReward ?: false,
@@ -102,7 +149,7 @@ class TemplateRepoImpl(
             val categoryModels = categories.map { categoryModel ->
                 val categoryName = categoryModel.category
                 val templates = (categoryModel.templates ?: emptyList()).map { toTemplateModel(it) }
-                
+
                 TemplateCategoryModel(
                     category = categoryName,
                     templates = templates
@@ -110,7 +157,7 @@ class TemplateRepoImpl(
             }
 
             val allTemplates = categoryModels.flatMap { it.templates.orEmpty() }
-            
+
             val result = mutableListOf<TemplateCategoryModel>()
             result.add(
                 TemplateCategoryModel(
