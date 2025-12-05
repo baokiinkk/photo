@@ -78,7 +78,7 @@ fun decryptResponse(context: Context, encryptedBody: String): String {
             .replace("\r", "")
             .trim()
 
-        val decryptedResult = AMGUtil.decryptTemplate(context, cleanedBody)
+        val decryptedResult = AMGUtil.decrypt(context, cleanedBody)
 
         decryptedResult.ifEmpty {
             // Strategy 2: Base64 validation and re-encoding

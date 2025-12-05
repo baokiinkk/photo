@@ -145,9 +145,11 @@ fun TemplatePreview(
                     .clipToBounds()
                     .then(
                         if (hasImage && isSelected) {
+                            // Use transformState from imageStates (user interactions) instead of prop
+                            val currentTransformState = imageStates[index]?.first ?: transformState
                             transformGestureModifier(
                                 index = index,
-                                transformState = transformState,
+                                transformState = currentTransformState,
                                 cellWidth = cellWidth,
                                 cellHeight = cellHeight,
                                 imageStates = imageStates,
@@ -179,7 +181,6 @@ fun TemplatePreview(
                                 transformOrigin = TransformOrigin.Center
                                 clip = true
                             },
-                        contentScale = ContentScale.Crop
                     )
                 }
             }
@@ -347,10 +348,12 @@ fun transformGestureModifier(
                 y = localOffset.y.coerceIn(-maxOffsetY, maxOffsetY)
             )
 
-            imageStates[index] = ImageTransformState(localOffset, localScale) to true
+            val currentTransform = ImageTransformState(localOffset, localScale)
+            imageStates[index] = currentTransform to true
         }
 
         detectTapGestures {
+            // Sync transforms when tap (which happens after transform gesture ends)
             val currentTransform = ImageTransformState(localOffset, localScale)
             imageStates[index] = currentTransform to false
             onImageTransformsChange?.invoke(extractTransforms(imageStates))
@@ -602,4 +605,5 @@ fun LayerControlButtons(
         }
     }
 }
+
 

@@ -254,6 +254,14 @@ fun TemplateDetailContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+                .then(
+                    if (template.width != null && template.height != null) {
+                        val ratio = template.width!!.toFloat() / template.height!!.toFloat()
+                        Modifier.aspectRatio(ratio)
+                    } else {
+                        Modifier
+                    }
+                )
                 .padding(20.dp)
                 .capturable(captureController)
         ) {

@@ -92,7 +92,8 @@ class EditorStoreViewModel(
                 it.copy(
                     template = template,
                     selectedImages = selectedImages,
-                    bitmap = null // Clear bitmap when using template
+                    bitmap = null, // Clear bitmap when using template
+                    imageTransforms = emptyMap() // Clear transforms, will be calculated in TemplatePreview
                 )
             }
         }
