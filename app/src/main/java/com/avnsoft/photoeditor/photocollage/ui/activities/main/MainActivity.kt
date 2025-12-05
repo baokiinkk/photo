@@ -262,12 +262,12 @@ class MainActivity : BaseActivity() {
                     result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
                 data?.firstOrNull()?.let {
                     lifecycleScope.launch {
-                        val bitmap = it.toUri().toScaledBitmapForUpload(this@MainActivity, 1504)
-                        val pathBitmap = bitmap?.toFile(this@MainActivity)
+//                        val bitmap = it.toUri().toScaledBitmapForUpload(this@MainActivity, 1504)
+//                        val pathBitmap = bitmap?.toFile(this@MainActivity)
 //                        val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
                         launchActivity(
                             toActivity = AIEnhanceActivity::class.java,
-                            input = ToolInput(pathBitmap = pathBitmap),
+                            input = ToolInput(pathBitmap = it),
                         )
                     }
                 }

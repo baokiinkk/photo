@@ -39,17 +39,15 @@ class RemoveBackgroundViewModel(
     val removeBgState = _removeBgState.receiveAsFlow()
 
     fun initData(pathUri: String?) {
+        if (pathUri == null) return
         requestRemoveBg(pathUri)
     }
 
-    fun requestRemoveBg(pathUri: String?) {
+    fun requestRemoveBg(pathUri: String) {
         showLoading()
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val newPathBitmap = pathUri?.toUri()?.toScaledBitmapForUpload(context)?.toFile(context) ?: return@launch
-                uiState.update {
-                    it.copy(imageUrl = newPathBitmap)
-                }
+                val newPathBitmap = pathUri.toUri()?.toScaledBitmapForUpload(context)?.toFile(context) ?: return@launch
                 val jpegFile = File(newPathBitmap)
                 val response = removeBackgroundRepo.requestRemoveBg(jpegFile)
                 uploadFileToS3(

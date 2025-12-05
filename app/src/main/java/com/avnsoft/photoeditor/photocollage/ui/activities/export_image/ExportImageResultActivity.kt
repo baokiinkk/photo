@@ -145,10 +145,12 @@ class ExportImageResultActivity : BaseActivity() {
                         input = EditorInput(pathBitmap = uri.toString()),
                     )
                 } else {
+                    val file = File(screenInput.pathBitmapOriginal)
+                    val uri = file.toUri()
                     launchActivity(
                         toActivity = RemoveObjectActivity::class.java,
                         input = ToolInput(
-                            pathBitmap = screenInput.pathBitmapOriginal.toFile().toUri().toString()
+                            pathBitmap = uri.toString()
                         ),
                     )
                 }
@@ -163,15 +165,17 @@ class ExportImageResultActivity : BaseActivity() {
             lifecycleScope.launch {
                 if (viewmodel.isMark()) {
                     val uri = screenInput.pathUriMark?.toUri()
-                    val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
+//                    val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
                     launchActivity(
                         toActivity = AIEnhanceActivity::class.java,
-                        input = EditorInput(pathBitmap = pathBitmap),
+                        input = EditorInput(pathBitmap = uri.toString()),
                     )
                 } else {
+                    val file = File(screenInput.pathBitmapOriginal)
+                    val uri = file.toUri()
                     launchActivity(
                         toActivity = AIEnhanceActivity::class.java,
-                        input = ToolInput(pathBitmap = screenInput.pathBitmapOriginal),
+                        input = ToolInput(pathBitmap = uri.toString()),
                     )
                 }
             }
@@ -195,7 +199,7 @@ class ExportImageResultActivity : BaseActivity() {
                     val uri = file.toUri()
                     launchActivity(
                         toActivity = RemoveBackgroundActivity::class.java,
-                        input = ToolInput(pathBitmap =uri.toString()),
+                        input = ToolInput(pathBitmap = uri.toString()),
                     )
                 }
             }

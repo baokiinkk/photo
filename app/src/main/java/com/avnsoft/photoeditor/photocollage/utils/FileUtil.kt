@@ -34,6 +34,7 @@ import java.util.Locale
 object FileUtil {
     const val FOLDER_SDK = "PhotoCollage"
 
+    const val MAX_SIZE_FILE = 1504
     @Throws(IOException::class)
     fun saveImageToStorageWithQuality(context: Context, quality: Quality, bitmap: Bitmap): Uri? {
         val imageOutStream: OutputStream?

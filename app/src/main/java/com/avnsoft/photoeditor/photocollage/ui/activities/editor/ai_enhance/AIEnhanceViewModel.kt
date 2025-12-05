@@ -1,6 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.ai_enhance
 
 import android.content.Context
+import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.data.model.remove_background.AIDetectResponse
 import com.avnsoft.photoeditor.photocollage.data.repository.AIEnhanceRepoImpl
@@ -9,6 +10,8 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_backgrou
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.downloadAndSaveToFile
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.saveFileAndReturnPathFile
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toScaledBitmapForUpload
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,16 +28,17 @@ class AIEnhanceViewModel(
 
     val uiState = MutableStateFlow(AIEnhanceUIState())
 
-    fun initData(pathBitmap: String?) {
-        if (pathBitmap == null) return
-        requestAIEnhance(pathBitmap)
+    fun initData(pathUri: String?) {
+        if (pathUri == null) return
+        requestAIEnhance(pathUri)
     }
 
-    fun requestAIEnhance(pathBitmap: String) {
+    fun requestAIEnhance(pathUri: String) {
         showLoading()
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val jpegFile = File(pathBitmap)
+                val newPathBitmap = pathUri.toUri().toScaledBitmapForUpload(context)?.toFile(context) ?: return@launch
+                val jpegFile = File(newPathBitmap)
                 val response = aiEnhanceRepoImpl.requestAIEnhance(jpegFile)
                 uploadFileToS3(
                     data = response,
