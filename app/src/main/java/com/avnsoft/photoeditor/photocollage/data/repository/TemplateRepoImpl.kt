@@ -1,57 +1,53 @@
 package com.avnsoft.photoeditor.photocollage.data.repository
 
 import android.content.Context
-import com.avnsoft.photoeditor.photocollage.data.local.room.AppDataDao
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateCategoryModel
-import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateCategoryRoomModel
-import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateContentRoom
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateContentModel
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateResponse
-import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateRoomModel
 import com.basesource.base.network.CollageApiService
 import com.basesource.base.network.safeApiCall
 import com.basesource.base.result.Result
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flow
 import org.koin.core.annotation.Single
 
 @Single
 class TemplateRepoImpl(
     private val context: Context,
     private val api: CollageApiService,
-    private val appDataDao: AppDataDao,
-    private val editorSharedPref: EditorSharedPref
 ) {
-    suspend fun syncTemplates() {
+    suspend fun getPreviewTemplates(): Flow<List<TemplateCategoryModel>> = flow {
         val response = safeApiCall<TemplateResponse>(
             context = context,
             apiCallMock = { api.getMockTemplates() },
             apiCall = { api.getTemplates() }
         )
+        
         when (response) {
             is Result.Success -> {
                 val urlRoot = response.data.urlRoot ?: ""
-                val categories = response.data.data.map { categoryData ->
+                
+                // Helper function to convert px to ratio (0-1)
+                fun convertToRatio(value: Float?, bound: Float): Float? {
+                    return value?.let { 
+                        // If bound is valid (> 0) and value > 1, assume it's in px
+                        if (bound > 0f && it > 1f) {
+                            // Convert px to ratio
+                            it / bound
+                        } else {
+                            // If value <= 1 or bound is invalid, assume it's already a ratio
+                            it
+                        }
+                    }
+                }
+                
+                val categoryModels = response.data.data.map { categoryData ->
                     val templates = categoryData.content?.map { templateItem ->
                         // Get template bounds (width and height)
                         val templateWidth = templateItem.width?.toFloat() ?: 1f
                         val templateHeight = templateItem.height?.toFloat() ?: 1f
-                        
-                        // Helper function to convert px to ratio (0-1)
-                        // If template has width/height defined, and value > 1, assume it's in px
-                        fun convertToRatio(value: Float?, bound: Float): Float? {
-                            return value?.let { 
-                                // If bound is valid (> 0) and value > 1, assume it's in px
-                                if (bound > 0f && it > 1f) {
-                                    // Convert px to ratio
-                                    it / bound
-                                } else {
-                                    // If value <= 1 or bound is invalid, assume it's already a ratio
-                                    it
-                                }
-                            }
-                        }
                         
                         // Use layer for content, fallback to placeholder if layer is empty
                         val layerContents = templateItem.layer?.map { layerItem ->
@@ -59,7 +55,7 @@ class TemplateRepoImpl(
                                 if (it.startsWith("http") || it.startsWith("file://")) it
                                 else "${urlRoot}${it}"
                             }
-                            TemplateContentRoom(
+                            TemplateContentModel(
                                 urlThumb = url,
                                 x = convertToRatio(layerItem.x, templateWidth),
                                 y = convertToRatio(layerItem.y, templateHeight),
@@ -71,7 +67,7 @@ class TemplateRepoImpl(
 
                         // If layer is empty, use placeholder data
                         val contents = templateItem.placeholder?.map { placeholderItem ->
-                            TemplateContentRoom(
+                            TemplateContentModel(
                                 urlThumb = null,
                                 x = convertToRatio(placeholderItem.x, templateWidth),
                                 y = convertToRatio(placeholderItem.y, templateHeight),
@@ -95,103 +91,44 @@ class TemplateRepoImpl(
                             else "${urlRoot}${it}"
                         }
 
-                        TemplateRoomModel(
+                        TemplateModel(
                             bannerUrl = bannerUrl,
                             previewUrl = previewUrl,
-                            frameUrl = frameUrl,
-                            content = contents,
-                            layerContents = layerContents,
+                            frameUrl = frameUrl ?: "",
+                            cells = contents,
+                            layer = layerContents,
                             timeCreate = System.currentTimeMillis().toString(),
-                            isUsed = templateItem.isUsed,
-                            isPro = templateItem.isPro,
-                            isReward = templateItem.isReward,
-                            isFree = templateItem.isFree,
+                            isUsed = templateItem.isUsed ?: false,
+                            isPro = templateItem.isPro ?: false,
+                            isReward = templateItem.isReward ?: false,
+                            isFree = templateItem.isFree ?: false,
                             width = templateItem.width,
                             height = templateItem.height
                         )
                     }
 
-                    TemplateCategoryRoomModel(
-                        id = System.currentTimeMillis().toString(),
+                    TemplateCategoryModel(
                         category = categoryData.categoryName,
                         templates = templates
                     )
                 }
 
-                appDataDao.refreshAllCategories(categories)
-            }
+                val allTemplates = categoryModels.flatMap { it.templates.orEmpty() }
 
+                val result = mutableListOf<TemplateCategoryModel>()
+                result.add(
+                    TemplateCategoryModel(
+                        category = "All",
+                        templates = allTemplates
+                    )
+                )
+                result.addAll(categoryModels)
+                emit(result)
+            }
             else -> {
-
+                emit(emptyList())
             }
         }
-    }
-
-    suspend fun getPreviewTemplates(): Flow<List<TemplateCategoryModel>> {
-        syncTemplates()
-        val response = appDataDao.getPreviewTemplateCategories()
-
-        val data = response.map { categories ->
-            fun toTemplateModel(roomModel: TemplateRoomModel): TemplateModel {
-                val cells = (roomModel.content ?: emptyList()).map { contentRoom ->
-                    com.avnsoft.photoeditor.photocollage.data.model.template.TemplateContentModel(
-                        x = contentRoom.x,
-                        y = contentRoom.y,
-                        width = contentRoom.width,
-                        height = contentRoom.height,
-                        rotate = contentRoom.rotate,
-                        urlThumb = contentRoom.urlThumb
-                    )
-                }
-                val layer = (roomModel.layerContents ?: emptyList()).map { layerRoom ->
-                    com.avnsoft.photoeditor.photocollage.data.model.template.TemplateContentModel(
-                        x = layerRoom.x,
-                        y = layerRoom.y,
-                        width = layerRoom.width,
-                        height = layerRoom.height,
-                        rotate = layerRoom.rotate,
-                        urlThumb = layerRoom.urlThumb
-                    )
-                }
-                return TemplateModel(
-                    previewUrl = roomModel.previewUrl,
-                    frameUrl = roomModel.frameUrl ?: "",
-                    cells = cells,
-                    layer = layer,
-                    timeCreate = roomModel.timeCreate,
-                    isUsed = roomModel.isUsed ?: false,
-                    isPro = roomModel.isPro ?: false,
-                    isReward = roomModel.isReward ?: false,
-                    isFree = roomModel.isFree ?: false,
-                    bannerUrl = roomModel.bannerUrl ?: "",
-                    width = roomModel.width,
-                    height = roomModel.height
-                )
-            }
-
-            val categoryModels = categories.map { categoryModel ->
-                val categoryName = categoryModel.category
-                val templates = (categoryModel.templates ?: emptyList()).map { toTemplateModel(it) }
-
-                TemplateCategoryModel(
-                    category = categoryName,
-                    templates = templates
-                )
-            }
-
-            val allTemplates = categoryModels.flatMap { it.templates.orEmpty() }
-
-            val result = mutableListOf<TemplateCategoryModel>()
-            result.add(
-                TemplateCategoryModel(
-                    category = "All",
-                    templates = allTemplates
-                )
-            )
-            result.addAll(categoryModels)
-            result
-        }
-        return data
     }
 
 }
