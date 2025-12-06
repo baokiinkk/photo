@@ -211,6 +211,7 @@ class FreeStyleActivity : BaseActivity() {
                                     paramAddTextProperties
                                 )
                             )
+                            viewmodel.hideEditTextSticker()
                         }
                     }
                 }

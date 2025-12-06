@@ -366,23 +366,6 @@ fun FreeStyleScreen(
             }
         }
 
-        if (uiState.isVisibleTextField) {
-            EditTextStickerLayer(
-                modifier = Modifier
-                    .fillMaxSize(),
-                onEditText = {
-                    viewmodel.hideEditTextSticker()
-                    stickerView.replace(
-                        TextSticker(
-                            stickerView.context,
-                            it
-                        )
-                    )
-                },
-                editTextProperties = uiState.editTextProperties
-            )
-        }
-
         if (showBottomSheetSaveImage) {
             ExportImageBottomSheet(
                 pathBitmap = pathBitmap,

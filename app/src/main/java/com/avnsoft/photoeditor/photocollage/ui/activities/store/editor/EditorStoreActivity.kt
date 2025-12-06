@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store.editor
 
+import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -50,10 +51,14 @@ import androidx.core.net.toUri
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.edittext.EditTextStickerActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageResultActivity
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.StickerFooterTool
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.TextStickerFooterTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.StoreActivity
@@ -123,37 +128,39 @@ class EditorStoreActivity : BaseActivity() {
                         }
 
                         CollageTool.STICKER -> {
-                            launchActivity(
-                                toActivity = StickerActivity::class.java,
-                                input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-                                callback = { result ->
-                                    if (result.resultCode == RESULT_OK) {
-                                        val pathBitmap =
-                                            result.data?.getStringExtra(EditorActivity.PATH_BITMAP)
-                                        viewmodel.updateBitmap(
-                                            pathBitmap = pathBitmap,
-                                            bitmap = pathBitmap.toBitmap()
-                                        )
-                                    }
-                                }
-                            )
+                            viewmodel.showStickerTool()
+//                            launchActivity(
+//                                toActivity = StickerActivity::class.java,
+//                                input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+//                                callback = { result ->
+//                                    if (result.resultCode == RESULT_OK) {
+//                                        val pathBitmap =
+//                                            result.data?.getStringExtra(EditorActivity.PATH_BITMAP)
+//                                        viewmodel.updateBitmap(
+//                                            pathBitmap = pathBitmap,
+//                                            bitmap = pathBitmap.toBitmap()
+//                                        )
+//                                    }
+//                                }
+//                            )
                         }
 
                         CollageTool.TEXT -> {
-                            launchActivity(
-                                toActivity = TextStickerActivity::class.java,
-                                input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-                                callback = { result ->
-                                    if (result.resultCode == RESULT_OK) {
-                                        val pathBitmap =
-                                            result.data?.getStringExtra(EditorActivity.PATH_BITMAP)
-                                        viewmodel.updateBitmap(
-                                            pathBitmap = pathBitmap,
-                                            bitmap = pathBitmap.toBitmap()
-                                        )
-                                    }
-                                }
-                            )
+                            viewmodel.showTextSticker()
+//                            launchActivity(
+//                                toActivity = TextStickerActivity::class.java,
+//                                input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
+//                                callback = { result ->
+//                                    if (result.resultCode == RESULT_OK) {
+//                                        val pathBitmap =
+//                                            result.data?.getStringExtra(EditorActivity.PATH_BITMAP)
+//                                        viewmodel.updateBitmap(
+//                                            pathBitmap = pathBitmap,
+//                                            bitmap = pathBitmap.toBitmap()
+//                                        )
+//                                    }
+//                                }
+//                            )
                         }
 
                         CollageTool.REPLACE -> {
@@ -242,7 +249,39 @@ class EditorStoreActivity : BaseActivity() {
         stickerView.configDefaultIcons()
         stickerView.setOnStickerOperationListener(object : StickerView.OnStickerOperationListener {
             public override fun onTextStickerEdit(param1Sticker: Sticker) {
+                if (param1Sticker is TextSticker) {
+                    viewmodel.showEditTextSticker()
+                    val intent = EditTextStickerActivity.newIntent(
+                        this@EditorStoreActivity,
+                        param1Sticker.getAddTextProperties()?.text
+                    )
+                    activityResultManager.launchActivity(intent, null) {
+                        if (it.resultCode == Activity.RESULT_OK) {
+                            val textResult =
+                                it.data?.getStringExtra(EditTextStickerActivity.EXTRA_TEXT)
+                                    .orEmpty()
+                            val widthResult =
+                                it.data?.getIntExtra(EditTextStickerActivity.EXTRA_WIDTH, 0)
+                            val heightResult =
+                                it.data?.getIntExtra(EditTextStickerActivity.EXTRA_HEIGHT, 0)
 
+                            val paramAddTextProperties = param1Sticker.getAddTextProperties()
+                                ?: AddTextProperties.defaultProperties
+                            paramAddTextProperties.apply {
+                                this.text = textResult
+                                this.textWidth = widthResult ?: 0
+                                this.textHeight = heightResult ?: 0
+                            }
+                            stickerView.replace(
+                                TextSticker(
+                                    stickerView.context,
+                                    paramAddTextProperties
+                                )
+                            )
+                            viewmodel.hideEditTextSticker()
+                        }
+                    }
+                }
             }
 
             public override fun onStickerAdded(sticker: Sticker) {
@@ -396,41 +435,113 @@ fun EditorStoreScreen(
                 onToolClick = onToolClick
             )
         }
-        if (showBottomSheetSaveImage) {
-            ExportImageBottomSheet(
-                pathBitmap = pathBitmap,
-                onDismissRequest = {
-                    showBottomSheetSaveImage = false
-                },
-                onDownload = {
-                    if (pathBitmap.isNotEmpty()) {
-                        scope.launch {
-                            try {
-                                val bitmap = pathBitmap.toBitmap() ?: return@launch
-                                val bitmapMark =
-                                    FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25)
-                                val uriMark = FileUtil.saveImageToStorageWithQuality(
-                                    context = context,
-                                    quality = it,
-                                    bitmap = bitmapMark
-                                )
-                                onDownloadSuccess.invoke(
-                                    ExportImageData(
-                                        pathUriMark = uriMark?.toString(),
-                                        pathBitmapOriginal = pathBitmap,
-                                        quality = it
+        when{
+            showBottomSheetSaveImage -> {
+                ExportImageBottomSheet(
+                    pathBitmap = pathBitmap,
+                    onDismissRequest = {
+                        showBottomSheetSaveImage = false
+                    },
+                    onDownload = {
+                        if (pathBitmap.isNotEmpty()) {
+                            scope.launch {
+                                try {
+                                    val bitmap = pathBitmap.toBitmap() ?: return@launch
+                                    val bitmapMark =
+                                        FileUtil.addDiagonalWatermark(bitmap, "COLLAGE MAKER", 25)
+                                    val uriMark = FileUtil.saveImageToStorageWithQuality(
+                                        context = context,
+                                        quality = it,
+                                        bitmap = bitmapMark
                                     )
-                                )
-                            } catch (ex: Throwable) {
-                                Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
-                                    .show()
+                                    onDownloadSuccess.invoke(
+                                        ExportImageData(
+                                            pathUriMark = uriMark?.toString(),
+                                            pathBitmapOriginal = pathBitmap,
+                                            quality = it
+                                        )
+                                    )
+                                } catch (ex: Throwable) {
+                                    Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
                             }
+                        } else {
+                            Toast.makeText(context, "Save Image Error", Toast.LENGTH_SHORT).show()
                         }
-                    } else {
-                        Toast.makeText(context, "Save Image Error", Toast.LENGTH_SHORT).show()
                     }
-                }
-            )
+                )
+            }
+
+            uiState.isShowStickerTool -> {
+//                stickerView.setLocked(true)
+                StickerFooterTool(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter),
+                    stickerView = stickerView,
+                    onCancel = {
+                        stickerView.removeCurrentSticker()
+                        stickerView.setLocked(false)
+                        viewmodel.cancelSticker()
+                    },
+                    onApply = {
+                        stickerView.setLocked(false)
+                        viewmodel.applySticker(stickerView.getCurrentDrawableSticker())
+                    }
+                )
+            }
+
+            uiState.isShowTextStickerTool -> {
+//                stickerView.setLocked(true)
+                TextStickerFooterTool(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter),
+                    stickerView = stickerView,
+                    onCancel = {
+                        if (!viewmodel.isEditTextSticker) {
+                            stickerView.removeCurrentSticker()
+                        }
+                        stickerView.setLocked(false)
+                        viewmodel.cancelTextSticker()
+                    },
+                    onApply = {
+                        stickerView.setLocked(false)
+                        viewmodel.applyTextSticker()
+                    },
+                    onAddFirstText = {
+                        if (uiState.isVisibleTextField) return@TextStickerFooterTool
+                        stickerView.addSticker(
+                            TextSticker(
+                                stickerView.context,
+                                it,
+
+                                ),
+                            Sticker.Position.TOP
+                        )
+                    },
+                    addTextSticker = { font ->
+                        if (viewmodel.isEditTextSticker) {
+                            val properties = uiState.editTextProperties
+                            properties.fontName = font.fontName
+                            stickerView.replace(
+                                TextSticker(
+                                    stickerView.context,
+                                    properties
+                                )
+                            )
+                        } else {
+                            stickerView.replace(
+                                TextSticker(
+                                    stickerView.context,
+                                    font
+                                )
+                            )
+                        }
+                    },
+                )
+            }
         }
     }
 }

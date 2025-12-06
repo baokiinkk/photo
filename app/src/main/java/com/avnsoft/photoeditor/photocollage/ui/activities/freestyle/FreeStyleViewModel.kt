@@ -107,7 +107,7 @@ class FreeStyleViewModel(
 //        isEditTextSticker = true
         uiState.update {
             it.copy(
-//                isVisibleTextField = true,
+                isVisibleTextField = true,
 //                editTextProperties = editTextProperties ?: AddTextProperties.defaultProperties,
                 isShowTextStickerTool = true
             )

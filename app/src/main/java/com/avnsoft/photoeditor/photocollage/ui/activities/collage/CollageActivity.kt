@@ -89,6 +89,7 @@ class CollageActivity : BaseActivity() {
                                     paramAddTextProperties
                                 )
                             )
+                            freeStyleViewModel.hideEditTextSticker()
                         }
                     }
                 }
