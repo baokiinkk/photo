@@ -24,8 +24,8 @@ data class TemplateModel(
 ) : IScreenData
 
 data class TemplateContentModel(
-    val x: Float?,
-    val y: Float?,
+    var x: Float?,
+    var y: Float?,
     val width: Float?,
     val height: Float?,
     val rotate: Int? = null,

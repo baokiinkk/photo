@@ -20,6 +20,8 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.pre
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.ToolItem
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.Photo
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
@@ -69,6 +71,8 @@ class EditorStoreViewModel(
 
     var canvasSize: Size? = null
 
+    var isEditTextSticker: Boolean = false
+
     fun setPathBitmap(
         pathBitmap: String?,
         bitmap: Bitmap?,
@@ -105,9 +109,11 @@ class EditorStoreViewModel(
         }
         viewModelScope.launch(Dispatchers.IO) {
             val icons = template?.layer?.mapIndexed { index, model ->
-                Log.d("aaaaaa","${model.urlThumb}")
-//                model.urlThumb ="https://png.pngtree.com/png-clipart/20220620/ourmid/pngtree-pink-cute-cat-icon-animal-png-yuri-png-image_5230763.png"
-//                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPW_IipOBJnoB3E02a1yO5ylPoy2Jw-SoQ7w&s"
+                if (index == 2) {
+                    Log.d("aaaaaa", "${model.urlThumb}")
+                    model.x = 94f / 825f
+                    model.y = 310f / 1024f
+                }
                 model.toFreeStyleSticker(index)
             }
             uiState.update {
@@ -379,6 +385,75 @@ class EditorStoreViewModel(
             )
         }
     }
+
+    fun showStickerTool() {
+        uiState.update {
+            it.copy(
+                isShowStickerTool = true
+            )
+        }
+    }
+
+    fun cancelSticker() {
+        uiState.update {
+            it.copy(
+                isShowStickerTool = false
+            )
+        }
+    }
+
+    fun applySticker(sticker: Sticker?) {
+        uiState.update {
+            it.copy(
+                isShowStickerTool = false
+            )
+        }
+    }
+
+    fun showTextSticker() {
+        uiState.update {
+            it.copy(
+                isShowTextStickerTool = true
+            )
+        }
+    }
+
+    fun cancelTextSticker() {
+        uiState.update {
+            it.copy(
+                isShowTextStickerTool = false,
+                isVisibleTextField = false
+            )
+        }
+        isEditTextSticker = false
+    }
+
+    fun applyTextSticker() {
+        uiState.update {
+            it.copy(
+                isShowTextStickerTool = false,
+                isVisibleTextField = false
+            )
+        }
+        isEditTextSticker = false
+    }
+
+    fun showEditTextSticker() {
+        uiState.update {
+            it.copy(
+                isVisibleTextField = true,
+                isShowTextStickerTool = true
+            )
+        }
+    }
+
+    fun hideEditTextSticker() {
+        uiState.update {
+            it.copy(
+                isVisibleTextField = false,
+            )
+        }
+    }
 }
 
 sealed class StackData {
@@ -410,7 +485,11 @@ data class EditorStoreUIState(
     val imageTransforms: Map<Int, ImageTransformState> = emptyMap(),
     val layerTransforms: Map<Int, ImageTransformState> = emptyMap(),
     val layerFlip: Map<Int, Float> = emptyMap(), // Map<layerIndex, flipScale> where 1f = normal, -1f = flipped,
-    val icons: List<FreeStyleSticker>? = null
+    val icons: List<FreeStyleSticker>? = null,
+    val isShowStickerTool: Boolean = false,
+    val isShowTextStickerTool: Boolean = false,
+    val isVisibleTextField: Boolean = false,
+    val editTextProperties: AddTextProperties = AddTextProperties.getAddTextProperties(),
 )
 
 suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {
