@@ -7,18 +7,23 @@ import android.net.Uri
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
+import com.avnsoft.photoeditor.photocollage.BaseApplication
 import com.avnsoft.photoeditor.photocollage.R
+import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateContentModel
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.ImageTransformState
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.ToolItem
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
-import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.toFreeStyleSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.Photo
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.urlToDrawable
 import com.basesource.base.viewmodel.BaseViewModel
 import com.tanishranjan.cropkit.util.MathUtils
 import kotlinx.coroutines.Dispatchers
@@ -428,4 +433,23 @@ suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {
         e.printStackTrace()
         return null
     }
+}
+
+suspend fun TemplateContentModel.toFreeStyleSticker(
+    index: Int,
+): FreeStyleSticker {
+    val model = this
+    val drawable = model.urlThumb?.urlToDrawable(BaseApplication.getInstanceApp())
+    val file = drawable?.toBitmap()?.toFile(BaseApplication.getInstanceApp())
+    val uri = file?.toUri()
+    return FreeStyleSticker(
+        id = index,
+        photo = Photo(uri, 0),
+        drawable = drawable,
+        x = model.x ?: 0f,
+        y = model.y ?: 00f,
+        widthRatio = model.width ?: 0f,
+        heightRatio = model.height ?: 0f,
+        rotate = model.rotate?.toFloat() ?: 0f
+    )
 }

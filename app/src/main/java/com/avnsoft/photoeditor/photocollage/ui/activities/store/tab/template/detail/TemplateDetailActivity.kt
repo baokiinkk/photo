@@ -1,11 +1,9 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail
 
-import android.app.Activity
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -45,7 +43,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
@@ -57,6 +54,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.takeOrElse
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -64,15 +62,6 @@ import coil.compose.AsyncImage
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.edittext.EditTextStickerActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.AddTextProperties
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
-import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleStickerComposeView
-import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
-import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.BucketSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.PickerHeaderBar
@@ -112,11 +101,8 @@ class TemplateDetailActivity : BaseActivity() {
         intent.getInput()
     }
 
-    private lateinit var stickerView: FreeStyleStickerView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initView()
         viewModel.initData(screenInput?.template)
         if (hasPermission()) {
             showContent()
@@ -139,7 +125,6 @@ class TemplateDetailActivity : BaseActivity() {
         return ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED
     }
 
-
     private fun showContent() {
         setContent {
             MainTheme {
@@ -155,32 +140,26 @@ class TemplateDetailActivity : BaseActivity() {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(
-                                top = inner.calculateTopPadding(),
-                                bottom = inner.calculateBottomPadding()
+                                top = inner.calculateTopPadding(), bottom = inner.calculateBottomPadding()
                             )
                     ) {
                         TemplateDetailHeader(
-                            onClose = { finish() },
-                            onApply = {
+                            onClose = { finish() }, onApply = {
                                 if (screenInput?.type == ToolInput.TYPE.BACK_AND_RETURN) {
                                     // For BACK_AND_RETURN, still capture bitmap
                                     scope.launch {
                                         try {
-                                            val bitmap =
-                                                captureController.toImageBitmap().asAndroidBitmap()
+                                            val bitmap = captureController.toImageBitmap().asAndroidBitmap()
                                             val pathBitmap = bitmap.toFile(context)
                                             val file = File(pathBitmap)
                                             val uri = file.toUri()
                                             setResult(
-                                                RESULT_OK,
-                                                intent.putExtra("PATH", uri.toString())
+                                                RESULT_OK, intent.putExtra("PATH", uri.toString())
                                             )
                                             finish()
                                         } catch (ex: Throwable) {
                                             Toast.makeText(
-                                                context,
-                                                "Error ${ex.message}",
-                                                Toast.LENGTH_SHORT
+                                                context, "Error ${ex.message}", Toast.LENGTH_SHORT
                                             ).show()
                                         }
                                     }
@@ -191,10 +170,8 @@ class TemplateDetailActivity : BaseActivity() {
                                     }
 
                                     launchActivity(
-                                        toActivity = EditorStoreActivity::class.java,
-                                        input = ToolTemplateInput(
-                                            template = screenInput?.template,
-                                            selectedImages = selectedImagesString
+                                        toActivity = EditorStoreActivity::class.java, input = ToolTemplateInput(
+                                            template = screenInput?.template, selectedImages = selectedImagesString
                                         )
                                     ) {
                                         if (it.resultCode == RESULT_OK) {
@@ -203,8 +180,7 @@ class TemplateDetailActivity : BaseActivity() {
                                         }
                                     }
                                 }
-                            },
-                            modifier = Modifier.fillMaxWidth()
+                            }, modifier = Modifier.fillMaxWidth()
                         )
 
                         uiState.template?.let { template ->
@@ -221,8 +197,6 @@ class TemplateDetailActivity : BaseActivity() {
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .background(BackgroundGray),
-                                stickerView = stickerView,
-                                icons = uiState.icons
                             )
                         }
                     }
@@ -230,80 +204,11 @@ class TemplateDetailActivity : BaseActivity() {
             }
         }
     }
-
-    private fun initView() {
-        stickerView = FreeStyleStickerView(this)
-        stickerView.setLocked(false)
-        stickerView.setConstrained(true)
-        stickerView.configDefaultIcons()
-        stickerView.setOnStickerOperationListener(object : StickerView.OnStickerOperationListener {
-            public override fun onTextStickerEdit(param1Sticker: Sticker) {
-
-            }
-
-            public override fun onStickerAdded(sticker: Sticker) {
-                Log.d("stickerView", "onStickerAdded")
-                if (sticker is TextSticker) {
-                    stickerView.configDefaultIcons()
-                } else if (sticker is DrawableSticker || sticker is FreeStyleSticker) {
-                    stickerView.configStickerIcons()
-                }
-                stickerView.invalidate()
-            }
-
-            public override fun onStickerClicked(sticker: Sticker) {
-            }
-
-            public override fun onStickerDeleted(sticker: Sticker) {
-            }
-
-            public override fun onStickerDragFinished(sticker: Sticker) {
-            }
-
-
-            public override fun onStickerZoomFinished(sticker: Sticker) {
-            }
-
-            public override fun onTouchDownForBeauty(param1Float1: Float, param1Float2: Float) {
-            }
-
-            public override fun onTouchDragForBeauty(param1Float1: Float, param1Float2: Float) {
-            }
-
-            public override fun onTouchUpForBeauty(param1Float1: Float, param1Float2: Float) {
-            }
-
-
-            public override fun onStickerFlipped(sticker: Sticker) {
-            }
-
-            public override fun onStickerTouchOutside(param1Sticker: Sticker?) {
-            }
-
-            public override fun onStickerTouchedDown(sticker: Sticker) {
-                Log.d("stickerView", "onStickerTouchedDown")
-                stickerView.setShowFocus(true)
-                if (sticker is TextSticker) {
-                    stickerView.configDefaultIcons()
-                } else if (sticker is DrawableSticker) {
-                    stickerView.configStickerIcons()
-                } else if (sticker is FreeStyleSticker) {
-                }
-                stickerView.swapLayers()
-                stickerView.invalidate()
-            }
-
-            public override fun onStickerDoubleTapped(sticker: Sticker) {
-            }
-        })
-    }
 }
 
 @Composable
 fun TemplateDetailHeader(
-    onClose: () -> Unit,
-    onApply: () -> Unit,
-    modifier: Modifier = Modifier
+    onClose: () -> Unit, onApply: () -> Unit, modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -313,8 +218,7 @@ fun TemplateDetailHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         ImageWidget(
-            resId = R.drawable.ic_close,
-            modifier = Modifier
+            resId = R.drawable.ic_close, modifier = Modifier
                 .size(28.dp)
                 .clickableWithAlphaEffect(onClick = onClose)
         )
@@ -330,14 +234,12 @@ fun TemplateDetailHeader(
 
 @Composable
 fun TemplateDetailContent(
-    stickerView: FreeStyleStickerView,
     template: TemplateModel,
     selectedImages: Map<Int, Uri>,
     onImageSelected: (Int, Uri) -> Unit,
     onImageUnselected: (Int) -> Unit,
     modifier: Modifier = Modifier,
     captureController: GraphicsLayer,
-    icons: List<FreeStyleSticker>? = null
 ) {
     val imagePickerViewModel: ImagePickerViewModel = composeViewModel()
     val context = LocalContext.current
@@ -348,17 +250,17 @@ fun TemplateDetailContent(
         // Banner with cells overlay and frame
         BoxWithConstraints(
             modifier = Modifier
+                .padding(20.dp)
                 .fillMaxWidth()
                 .weight(1f)
                 .then(
                     if (template.width != null && template.height != null) {
-                        val ratio = template.width!!.toFloat() / template.height!!.toFloat()
+                        val ratio = template.width.toFloat() / template.height.toFloat()
                         Modifier.aspectRatio(ratio)
                     } else {
                         Modifier
                     }
                 )
-                .padding(20.dp)
                 .capturable(captureController)
         ) {
             val bannerWidth = constraints.maxWidth.toFloat()
@@ -366,6 +268,15 @@ fun TemplateDetailContent(
 
 
             // Contents (cells) overlay - Layer 1
+
+            // Frame overlay - Layer 2
+            template.bannerUrl?.let { frameUrl ->
+                LoadImage(
+                    model = frameUrl,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
             template.cells?.forEachIndexed { index, cell ->
                 val x = cell.x ?: 0f
                 val y = cell.y ?: 0f
@@ -383,9 +294,7 @@ fun TemplateDetailContent(
 
                 Box(
                     modifier = Modifier
-                        .offset(
-                            x = with(density) { cellX.toDp() },
-                            y = with(density) { cellY.toDp() })
+                        .offset(x = with(density) { cellX.toDp() }, y = with(density) { cellY.toDp() })
                         .width(with(density) { cellWidth.toDp() })
                         .height(with(density) { cellHeight.toDp() })
                         .rotate(rotate)
@@ -395,54 +304,51 @@ fun TemplateDetailContent(
                             } else {
                                 Modifier
                                     .border(
-                                        width = if (isSelected) 3.dp else 2.dp,
-                                        color = if (isSelected) Color(0xFF6425F3) else Color(
+                                        width = if (isSelected) 3.dp else 2.dp, color = if (isSelected) Color(0xFF6425F3) else Color(
                                             0xFF6425F3
-                                        ).copy(alpha = 0.5f),
-                                        shape = RoundedCornerShape(4.dp)
+                                        ).copy(alpha = 0.5f), shape = RoundedCornerShape(4.dp)
                                     )
                                     .background(Color.White.copy(alpha = 0.1f))
                             }
                         )
                         .clickableWithAlphaEffect {
                             selectedCellIndex = index
-                        }
-                ) {
+                        }) {
                     selectedImages[index]?.let { uri ->
                         LoadImage(
-                            model = uri,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
+                            model = uri, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop
                         )
                     }
                 }
             }
 
-            // Frame overlay - Layer 2
-            template.frameUrl?.let { frameUrl ->
-                LoadImage(
-                    model = frameUrl,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.FillBounds
-                )
-            }
+            template.layer?.forEachIndexed { index, layerItem ->
+                val x = layerItem.x ?: 0f
+                val y = layerItem.y ?: 0f
+                val width = layerItem.width ?: 0f
+                val height = layerItem.height ?: 0f
+                val rotate = layerItem.rotate?.toFloat() ?: 0f
 
-            // Layers overlay - Layer 3
-//            template.layer?.forEachIndexed { index, layerItem ->
-//                //import layer
-//            }
-            icons?.forEach {
-                stickerView.addStickerFromServer(it)
+                val layerX = x * bannerWidth
+                val layerY = y * bannerHeight
+                val layerWidth = width * bannerWidth
+                val layerHeight = height * bannerHeight
+
+                Box(
+                    modifier = Modifier
+                        .offset(x = with(density) { layerX.toDp() }, y = with(density) { layerY.toDp() })
+                        .width(with(density) { layerWidth.toDp() })
+                        .height(with(density) { layerHeight.toDp() })
+                        .rotate(rotate)
+                ) {
+                    layerItem.urlThumb?.let { urlThumb ->
+                        LoadImage(
+                            model = urlThumb, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop
+                        )
+                    }
+                }
             }
-            FreeStyleStickerComposeView(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clipToBounds(),
-                view = stickerView
-            )
         }
-
-        // ImagePickerScreen - always visible
 
         CustomImagePickerScreen(
             modifier = Modifier
@@ -468,7 +374,8 @@ fun TemplateDetailContent(
             },
             onCancel = {
                 // Do nothing, keep screen open
-            })
+            }
+        )
     }
 }
 
@@ -594,10 +501,7 @@ fun CustomGalleryGrid(
                     .clip(RoundedCornerShape(14.dp))
                     .clickableWithAlphaEffect() { onImageClick(img) }) {
                 AsyncImage(
-                    model = img.uri,
-                    contentDescription = img.displayName,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    model = img.uri, contentDescription = img.displayName, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize()
                 )
                 // Find cell index for this URI
                 val cellIndex = selectedImages.entries.find { it.value == img.uri }?.key
@@ -611,9 +515,7 @@ fun CustomGalleryGrid(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            (cellIndex + 1).toString(),
-                            style = com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle.body2()
-                                .bold().white()
+                            (cellIndex + 1).toString(), style = com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle.body2().bold().white()
                         )
                     }
                 }

@@ -27,7 +27,7 @@ class TemplateRepoImpl(
         val response = safeApiCall<TemplateResponse>(
             context = context,
             apiCallMock = { api.getMockTemplates() },
-            apiCall = { api.getMockTemplates() }
+            apiCall = { api.getTemplates() }
         )
         when (response) {
             is Result.Success -> {
@@ -65,7 +65,7 @@ class TemplateRepoImpl(
                                 y = convertToRatio(layerItem.y, templateHeight),
                                 width = convertToRatio(layerItem.width, templateWidth),
                                 height = convertToRatio(layerItem.height, templateHeight),
-                                rotate = layerItem.rotate
+                                rotate = layerItem.rotate?.times((-1))
                             )
                         } ?: emptyList()
 
@@ -77,7 +77,7 @@ class TemplateRepoImpl(
                                 y = convertToRatio(placeholderItem.y, templateHeight),
                                 width = convertToRatio(placeholderItem.width, templateWidth),
                                 height = convertToRatio(placeholderItem.height, templateHeight),
-                                rotate = placeholderItem.rotate
+                                rotate = placeholderItem.rotate?.times((-1))
                             )
                         } ?: emptyList()
 
