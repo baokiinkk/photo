@@ -77,12 +77,13 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.rememberCaptureController
+import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 data class ToolTemplateInput(
-    val template: TemplateModel?,
-    val selectedImages: Map<Int, String> = emptyMap() // Store as String to avoid Uri serialization issues
+    @SerializedName("template") val template: TemplateModel?,
+    @SerializedName("selectedImages") val selectedImages: Map<Int, String> = emptyMap() // Store as String to avoid Uri serialization issues
 ) : IScreenData
 
 class EditorStoreActivity : BaseActivity() {

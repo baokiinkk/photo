@@ -82,6 +82,7 @@ import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.rememberCaptureController
 import com.basesource.base.utils.requestPermission
 import com.basesource.base.utils.toJson
+import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -144,44 +145,44 @@ class TemplateDetailActivity : BaseActivity() {
                     ) {
                         TemplateDetailHeader(
                             onClose = { finish() }, onApply = {
-                                if (screenInput?.type == ToolInput.TYPE.BACK_AND_RETURN) {
-                                    // For BACK_AND_RETURN, still capture bitmap
-                                    scope.launch {
-                                        try {
-                                            val selectedImagesString = uiState.selectedImages.mapValues {
-                                                it.value.toString()
-                                            }
-                                            val input = ToolTemplateInput(
-                                                template = screenInput?.template, selectedImages = selectedImagesString
-                                            )
-                                            setResult(
-                                                RESULT_OK, intent.putExtra("PATH",  input.toJson())
-                                            )
-                                            finish()
-                                        } catch (ex: Throwable) {
-                                            Toast.makeText(
-                                                context, "Error ${ex.message}", Toast.LENGTH_SHORT
-                                            ).show()
+                            if (screenInput?.type == ToolInput.TYPE.BACK_AND_RETURN) {
+                                // For BACK_AND_RETURN, still capture bitmap
+                                scope.launch {
+                                    try {
+                                        val selectedImagesString = uiState.selectedImages.mapValues {
+                                            it.value.toString()
                                         }
-                                    }
-                                } else {
-                                    // Convert Uri to String for serialization
-                                    val selectedImagesString = uiState.selectedImages.mapValues {
-                                        it.value.toString()
-                                    }
-
-                                    launchActivity(
-                                        toActivity = EditorStoreActivity::class.java, input = ToolTemplateInput(
+                                        val input = ToolTemplateInput(
                                             template = screenInput?.template, selectedImages = selectedImagesString
                                         )
-                                    ) {
-                                        if (it.resultCode == RESULT_OK) {
-                                            setResult(RESULT_OK)
-                                            finish()
-                                        }
+                                        setResult(
+                                            RESULT_OK, intent.putExtra("PATH", input.toJson())
+                                        )
+                                        finish()
+                                    } catch (ex: Throwable) {
+                                        Toast.makeText(
+                                            context, "Error ${ex.message}", Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
-                            }, modifier = Modifier.fillMaxWidth()
+                            } else {
+                                // Convert Uri to String for serialization
+                                val selectedImagesString = uiState.selectedImages.mapValues {
+                                    it.value.toString()
+                                }
+
+                                launchActivity(
+                                    toActivity = EditorStoreActivity::class.java, input = ToolTemplateInput(
+                                        template = screenInput?.template, selectedImages = selectedImagesString
+                                    )
+                                ) {
+                                    if (it.resultCode == RESULT_OK) {
+                                        setResult(RESULT_OK)
+                                        finish()
+                                    }
+                                }
+                            }
+                        }, modifier = Modifier.fillMaxWidth()
                         )
 
                         uiState.template?.let { template ->
@@ -263,9 +264,7 @@ fun TemplateDetailContent(
             // Banner background - Layer 0
             template.bannerUrl?.let { bannerUrl ->
                 LoadImage(
-                    model = bannerUrl,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.FillBounds
+                    model = bannerUrl, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds
                 )
             }
 
@@ -343,17 +342,12 @@ fun TemplateDetailContent(
             },
             onCancel = {
                 // Do nothing, keep screen open
-            }
-        )
+            })
     }
 }
 
 fun Modifier.baseBannerItemModifier(
-    x: Float?,
-    y: Float?,
-    width: Float?,
-    height: Float?,
-    rotate: Float?
+    x: Float?, y: Float?, width: Float?, height: Float?, rotate: Float?
 ): Modifier {
     val xRatio = x ?: 0f
     val yRatio = y ?: 0f
@@ -373,8 +367,7 @@ fun Modifier.baseBannerItemModifier(
 
             val placeable = measurable.measure(
                 Constraints.fixed(
-                    width = childWidthPx,
-                    height = childHeightPx
+                    width = childWidthPx, height = childHeightPx
                 )
             )
             layout(parentWidth, parentHeight) {

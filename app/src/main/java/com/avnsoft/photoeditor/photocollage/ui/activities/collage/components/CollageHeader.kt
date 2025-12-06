@@ -35,6 +35,7 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 
 @Composable
 fun FeaturePhotoHeader(
+    modifier: Modifier = Modifier,
     onBack: (() -> Unit)? = null,
     onUndo: () -> Unit,
     onRedo: () -> Unit,
@@ -49,7 +50,7 @@ fun FeaturePhotoHeader(
     val context = LocalContext.current
     Spacer(modifier = Modifier.fillMaxWidth().height(24.dp).background(BackgroundWhite))
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
             .background(Color.White),
