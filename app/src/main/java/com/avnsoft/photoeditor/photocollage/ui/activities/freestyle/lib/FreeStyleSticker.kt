@@ -36,7 +36,7 @@ class FreeStyleSticker(
         paramCanvas.concat(matrix)
 
         val paint = Paint()
-        paint.setColor(Color.RED)
+        paint.setColor(Color.TRANSPARENT)
         paramCanvas.drawRoundRect(
             0.0f,
             0.0f,
@@ -57,7 +57,7 @@ class FreeStyleSticker(
     }
 
     override val alpha: Int
-        get() = this.drawable?.getAlpha() ?: 1
+        get() = this.drawable?.alpha ?: 0
 
 
     override val height: Int
