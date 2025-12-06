@@ -40,6 +40,9 @@ import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.ImageTransformState
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview.extractTransforms
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleStickerComposeView
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
@@ -52,7 +55,9 @@ import kotlin.math.sqrt
 
 @Composable
 fun TemplatePreview(
+    stickerView: FreeStyleStickerView,
     template: TemplateModel,
+    icons: List<FreeStyleSticker>? = null,
     selectedImages: Map<Int, Uri>,
     imageTransforms: Map<Int, ImageTransformState> = emptyMap(),
     layerTransforms: Map<Int, ImageTransformState> = emptyMap(),
@@ -198,9 +203,21 @@ fun TemplatePreview(
             )
         }
 
-        template.layer?.forEachIndexed { index, layerItem ->
-            //import layer
+//        template.layer?.forEachIndexed { index, layerItem ->
+//            //import layer
+//        }
+
+        icons?.forEach {
+            stickerView.addStickerFromServer(it)
         }
+        stickerView.setShowFocus(false)
+
+        FreeStyleStickerComposeView(
+            modifier = Modifier
+                .fillMaxSize()
+                .clipToBounds(),
+            view = stickerView
+        )
     }
 }
 

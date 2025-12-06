@@ -2,6 +2,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.store.editor
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -46,6 +47,10 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.Te
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.uriToBitmap
 import androidx.core.net.toUri
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
+import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageResultActivity
@@ -80,9 +85,11 @@ class EditorStoreActivity : BaseActivity() {
         intent.getInput()
     }
 
+    private lateinit var stickerView: FreeStyleStickerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initView()
         initEditorLib()
         // Convert String URIs back to Uri objects
         val selectedImagesUri = screenInput?.selectedImages?.mapValues {
@@ -193,6 +200,7 @@ class EditorStoreActivity : BaseActivity() {
             ) {
                 EditorStoreScreen(
                     viewmodel = viewmodel,
+                    stickerView = stickerView,
                     modifier = Modifier
                         .fillMaxSize(),
                     onBack = {
@@ -226,11 +234,79 @@ class EditorStoreActivity : BaseActivity() {
     override fun onBackActivity() {
         viewmodel.showDiscardDialog()
     }
+
+    private fun initView() {
+        stickerView = FreeStyleStickerView(this)
+        stickerView.setLocked(false)
+        stickerView.setConstrained(true)
+        stickerView.configDefaultIcons()
+        stickerView.setOnStickerOperationListener(object : StickerView.OnStickerOperationListener {
+            public override fun onTextStickerEdit(param1Sticker: Sticker) {
+
+            }
+
+            public override fun onStickerAdded(sticker: Sticker) {
+                Log.d("stickerView", "onStickerAdded")
+                if (sticker is TextSticker) {
+                    stickerView.configDefaultIcons()
+                } else if (sticker is DrawableSticker || sticker is FreeStyleSticker) {
+                    stickerView.configStickerIcons()
+                }
+                stickerView.invalidate()
+            }
+
+            public override fun onStickerClicked(sticker: Sticker) {
+            }
+
+            public override fun onStickerDeleted(sticker: Sticker) {
+            }
+
+            public override fun onStickerDragFinished(sticker: Sticker) {
+            }
+
+
+            public override fun onStickerZoomFinished(sticker: Sticker) {
+            }
+
+            public override fun onTouchDownForBeauty(param1Float1: Float, param1Float2: Float) {
+            }
+
+            public override fun onTouchDragForBeauty(param1Float1: Float, param1Float2: Float) {
+            }
+
+            public override fun onTouchUpForBeauty(param1Float1: Float, param1Float2: Float) {
+            }
+
+
+            public override fun onStickerFlipped(sticker: Sticker) {
+            }
+
+            public override fun onStickerTouchOutside(param1Sticker: Sticker?) {
+            }
+
+            public override fun onStickerTouchedDown(sticker: Sticker) {
+                Log.d("stickerView", "onStickerTouchedDown")
+                stickerView.setShowFocus(true)
+                if (sticker is TextSticker) {
+                    stickerView.configDefaultIcons()
+                } else if (sticker is DrawableSticker) {
+                    stickerView.configStickerIcons()
+                } else if (sticker is FreeStyleSticker) {
+                }
+                stickerView.swapLayers()
+                stickerView.invalidate()
+            }
+
+            public override fun onStickerDoubleTapped(sticker: Sticker) {
+            }
+        })
+    }
 }
 
 @Composable
 fun EditorStoreScreen(
     modifier: Modifier = Modifier,
+    stickerView: FreeStyleStickerView,
     viewmodel: EditorStoreViewModel,
     onBack: () -> Unit,
     onToolClick: (CollageTool) -> Unit,
@@ -289,7 +365,9 @@ fun EditorStoreScreen(
             ) {
                 if (uiState.template != null) {
                     TemplatePreview(
+                        stickerView = stickerView,
                         template = uiState.template!!,
+                        icons = uiState.icons,
                         selectedImages = uiState.selectedImages,
                         imageTransforms = uiState.imageTransforms,
                         layerTransforms = uiState.layerTransforms,
@@ -313,7 +391,8 @@ fun EditorStoreScreen(
                             .fillMaxWidth()
                             .then(
                                 if (uiState.template?.width != null && uiState.template?.height != null) {
-                                    val ratio = uiState.template!!.width!!.toFloat() / uiState.template!!.height!!.toFloat()
+                                    val ratio =
+                                        uiState.template!!.width!!.toFloat() / uiState.template!!.height!!.toFloat()
                                     Modifier.aspectRatio(ratio)
                                 } else {
                                     Modifier.aspectRatio(1f)
