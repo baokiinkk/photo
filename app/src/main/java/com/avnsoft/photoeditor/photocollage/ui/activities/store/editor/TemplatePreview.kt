@@ -67,6 +67,8 @@ fun TemplatePreview(
     selectedImages: Map<Int, Uri>,
     imageTransforms: Map<Int, ImageTransformState> = emptyMap(),
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)? = null,
+    unselectAllImagesTrigger: Int = 0,
+    onOutsideClick: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     var isFirstSticker by remember { mutableStateOf(true) }
@@ -86,8 +88,27 @@ fun TemplatePreview(
         val bannerWidth = constraints.maxWidth.toFloat()
         val bannerHeight = constraints.maxHeight.toFloat()
 
-        // States for image transforms
-        val imageStates = remember { mutableStateMapOf<Int, Pair<ImageTransformState, Boolean>>() }
+        // Separate selected state to avoid recomposition when unselecting
+        var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
+        
+        // States for image transforms only (no selected state to avoid recomposition)
+        val imageTransformsLocal = remember { mutableStateMapOf<Int, ImageTransformState>() }
+
+        // Sync with prop imageTransforms
+        LaunchedEffect(imageTransforms) {
+            if (imageTransforms.isNotEmpty()) {
+                imageTransforms.forEach { (index, transform) ->
+                    imageTransformsLocal[index] = transform
+                }
+            }
+        }
+
+        // Unselect all images when trigger is fired
+        LaunchedEffect(unselectAllImagesTrigger) {
+            if (unselectAllImagesTrigger > 0) {
+                selectedImageIndex = null
+            }
+        }
 
         // Calculate initial transforms only once when entering screen
         // Use a key that changes when template/selectedImages change, but only run once per combination
@@ -121,6 +142,37 @@ fun TemplatePreview(
             )
         }
 
+        // Detect tap outside cells to unselect (only when image is selected to avoid blocking sticker)
+        if (selectedImageIndex != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(template.cells?.size ?: 0, bannerWidth, bannerHeight, selectedImageIndex) {
+                        detectTapGestures { tapOffset ->
+                            val x = tapOffset.x
+                            val y = tapOffset.y
+                            
+                            // Check if tap is inside any cell
+                            val insideCell = template.cells?.any { cell ->
+                                val cellX = (cell.x ?: 0f) * bannerWidth
+                                val cellY = (cell.y ?: 0f) * bannerHeight
+                                val cellWidth = (cell.width ?: 0f) * bannerWidth
+                                val cellHeight = (cell.height ?: 0f) * bannerHeight
+                                
+                                x >= cellX &&
+                                x <= cellX + cellWidth &&
+                                y >= cellY &&
+                                y <= cellY + cellHeight
+                            } ?: false
+                            
+                            if (!insideCell) {
+                                onOutsideClick?.invoke()
+                            }
+                        }
+                    }
+            )
+        }
+
         // Contents (cells) - Layer 1
         template.cells?.forEachIndexed { index, cell ->
             val width = cell.width ?: 0f
@@ -128,8 +180,8 @@ fun TemplatePreview(
             val cellWidth = width * bannerWidth
             val cellHeight = height * bannerHeight
 
-            val transformState = imageStates[index]?.first ?: ImageTransformState()
-            val isSelected = imageStates[index]?.second ?: false
+            val transformState = imageTransformsLocal[index] ?: imageTransforms[index] ?: ImageTransformState()
+            val isSelected = selectedImageIndex == index
 
             Box(
                 modifier = Modifier
@@ -155,20 +207,23 @@ fun TemplatePreview(
                     .clipToBounds()
                     .then(
                         if (isSelected) {
-                            // Use transformState from imageStates (user interactions) instead of prop
-                            val currentTransformState = imageStates[index]?.first ?: transformState
+                            // Use transformState from local state (user interactions) instead of prop
+                            val currentTransformState = imageTransformsLocal[index] ?: transformState
                             transformGestureModifier(
                                 index = index,
                                 transformState = currentTransformState,
                                 cellWidth = cellWidth,
                                 cellHeight = cellHeight,
-                                imageStates = imageStates,
+                                imageTransforms = imageTransformsLocal,
+                                selectedImageIndex = selectedImageIndex,
+                                onSelectedImageIndexChange = { selectedImageIndex = it },
                                 onImageTransformsChange = onImageTransformsChange
                             )
                         } else {
                             selectGestureModifier(
                                 index = index,
-                                imageStates = imageStates,
+                                selectedImageIndex = selectedImageIndex,
+                                onSelectedImageIndexChange = { selectedImageIndex = it },
                                 imageUri = selectedImages[index] ?: Uri.EMPTY,
                                 onImageTransformsChange = onImageTransformsChange
                             )
@@ -176,7 +231,7 @@ fun TemplatePreview(
                     )
             ) {
                 selectedImages[index]?.let { uri ->
-                    val currentTransform = imageStates[index]?.first ?: ImageTransformState()
+                    val currentTransform = imageTransformsLocal[index] ?: imageTransforms[index] ?: ImageTransformState()
                     AsyncImage(
                         model = uri,
                         contentDescription = null,
@@ -199,8 +254,17 @@ fun TemplatePreview(
             icons?.forEach {
                 stickerView.addStickerFromServer(it)
             }
+            stickerView.setShowFocus(false)
+
         }
-        stickerView.setShowFocus(false)
+        
+        // Only set showFocus to false when image is selected, not on every recomposition
+        // This prevents resetting sticker focus when unselecting images
+        LaunchedEffect(selectedImageIndex) {
+            if (selectedImageIndex != null) {
+                stickerView.setShowFocus(false)
+            }
+        }
 
         FreeStyleStickerComposeView(
             modifier = Modifier
@@ -217,7 +281,9 @@ fun transformGestureModifier(
     transformState: ImageTransformState,
     cellWidth: Float,
     cellHeight: Float,
-    imageStates: MutableMap<Int, Pair<ImageTransformState, Boolean>>,
+    imageTransforms: MutableMap<Int, ImageTransformState>,
+    selectedImageIndex: Int?,
+    onSelectedImageIndexChange: (Int?) -> Unit,
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)?
 ): Modifier {
     return Modifier.pointerInput(index, cellWidth, cellHeight) {
@@ -249,14 +315,14 @@ fun transformGestureModifier(
             )
 
             val currentTransform = ImageTransformState(localOffset, localScale)
-            imageStates[index] = currentTransform to true
+            imageTransforms[index] = currentTransform
         }
 
         detectTapGestures {
             // Sync transforms when tap (which happens after transform gesture ends)
             val currentTransform = ImageTransformState(localOffset, localScale)
-            imageStates[index] = currentTransform to false
-            onImageTransformsChange?.invoke(extractTransforms(imageStates))
+            imageTransforms[index] = currentTransform
+            onImageTransformsChange?.invoke(imageTransforms.toMap())
         }
     }
 }
@@ -326,27 +392,19 @@ fun transformGestureModifierForLayer(
 @Composable
 fun selectGestureModifier(
     index: Int,
-    imageStates: MutableMap<Int, Pair<ImageTransformState, Boolean>>,
+    selectedImageIndex: Int?,
+    onSelectedImageIndexChange: (Int?) -> Unit,
     imageUri: Uri,
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)?
 ): Modifier {
-    return Modifier.pointerInput(index) {
+    return Modifier.pointerInput(index, selectedImageIndex) {
         detectTapGestures {
-            val current = imageStates[index]
-            val isSelected = current?.second == true
+            val isSelected = selectedImageIndex == index
 
             if (isSelected) {
-                val (transform, _) = current
-                imageStates[index] = transform to false
+                onSelectedImageIndexChange(null)
             } else {
-                imageStates.keys.forEach { key ->
-                    if (key != index) {
-                        val (t, _) = imageStates[key] ?: (ImageTransformState() to false)
-                        imageStates[key] = t to false
-                    }
-                }
-                val (transform, _) = current ?: (ImageTransformState() to false)
-                imageStates[index] = transform to true
+                onSelectedImageIndexChange(index)
             }
         }
     }

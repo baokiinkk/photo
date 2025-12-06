@@ -73,6 +73,7 @@ import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.capturable
+import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.rememberCaptureController
 import kotlinx.coroutines.launch
@@ -129,38 +130,10 @@ class EditorStoreActivity : BaseActivity() {
 
                         CollageTool.STICKER -> {
                             viewmodel.showStickerTool()
-//                            launchActivity(
-//                                toActivity = StickerActivity::class.java,
-//                                input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-//                                callback = { result ->
-//                                    if (result.resultCode == RESULT_OK) {
-//                                        val pathBitmap =
-//                                            result.data?.getStringExtra(EditorActivity.PATH_BITMAP)
-//                                        viewmodel.updateBitmap(
-//                                            pathBitmap = pathBitmap,
-//                                            bitmap = pathBitmap.toBitmap()
-//                                        )
-//                                    }
-//                                }
-//                            )
                         }
 
                         CollageTool.TEXT -> {
                             viewmodel.showTextSticker()
-//                            launchActivity(
-//                                toActivity = TextStickerActivity::class.java,
-//                                input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-//                                callback = { result ->
-//                                    if (result.resultCode == RESULT_OK) {
-//                                        val pathBitmap =
-//                                            result.data?.getStringExtra(EditorActivity.PATH_BITMAP)
-//                                        viewmodel.updateBitmap(
-//                                            pathBitmap = pathBitmap,
-//                                            bitmap = pathBitmap.toBitmap()
-//                                        )
-//                                    }
-//                                }
-//                            )
                         }
 
                         CollageTool.REPLACE -> {
@@ -325,6 +298,8 @@ class EditorStoreActivity : BaseActivity() {
 
             public override fun onStickerTouchedDown(sticker: Sticker) {
                 Log.d("stickerView", "onStickerTouchedDown")
+                viewmodel.triggerUnselectAllImages()
+
                 stickerView.setShowFocus(true)
                 if (sticker is TextSticker) {
                     stickerView.configDefaultIcons()
@@ -352,6 +327,7 @@ fun EditorStoreScreen(
     onDownloadSuccess: (ExportImageData) -> Unit
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+    val unselectAllImagesTrigger by viewmodel.unselectAllImagesTrigger.collectAsStateWithLifecycle()
     val captureController = rememberCaptureController()
     val scope = rememberCoroutineScope()
     var pathBitmap by remember { mutableStateOf("") }
@@ -393,6 +369,9 @@ fun EditorStoreScreen(
                     .weight(1f)
                     .background(BackgroundGray)
                     .padding(top = 20.dp, bottom = 23.dp)
+                    .clickableWithAlphaEffect{
+                        viewmodel.triggerUnselectAllImages()
+                    }
                     .onSizeChanged { layout ->
                         viewmodel.canvasSize = layout.toSize()
                         if (uiState.template == null) {
@@ -411,6 +390,10 @@ fun EditorStoreScreen(
                         imageTransforms = uiState.imageTransforms,
                         onImageTransformsChange = { transforms ->
                             viewmodel.updateImageTransforms(transforms)
+                        },
+                        unselectAllImagesTrigger = unselectAllImagesTrigger,
+                        onOutsideClick = {
+                            viewmodel.triggerUnselectAllImages()
                         },
                         modifier = Modifier.fillMaxWidth()
                     )
