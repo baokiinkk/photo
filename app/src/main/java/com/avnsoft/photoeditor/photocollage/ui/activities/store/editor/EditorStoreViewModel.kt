@@ -99,25 +99,16 @@ class EditorStoreViewModel(
         template: TemplateModel?,
         selectedImages: Map<Int, Uri> = emptyMap()
     ) {
-        uiState.update {
-            it.copy(
-                template = template,
-                selectedImages = selectedImages,
-                bitmap = null, // Clear bitmap when using template
-                imageTransforms = emptyMap() // Clear transforms, will be calculated in TemplatePreview
-            )
-        }
         viewModelScope.launch(Dispatchers.IO) {
             val icons = template?.layer?.mapIndexed { index, model ->
-                if (index == 2) {
-                    Log.d("aaaaaa", "${model.urlThumb}")
-                    model.x = 94f / 825f
-                    model.y = 310f / 1024f
-                }
                 model.toFreeStyleSticker(index)
             }
             uiState.update {
                 it.copy(
+                    template = template,
+                    selectedImages = selectedImages,
+                    bitmap = null,
+                    imageTransforms = emptyMap(),
                     icons = icons
                 )
             }
