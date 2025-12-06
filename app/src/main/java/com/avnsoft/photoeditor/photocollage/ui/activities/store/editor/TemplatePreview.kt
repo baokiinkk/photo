@@ -47,6 +47,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.pre
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleStickerComposeView
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleStickerView
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.baseBannerItemModifier
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
@@ -122,14 +123,8 @@ fun TemplatePreview(
 
         // Contents (cells) - Layer 1
         template.cells?.forEachIndexed { index, cell ->
-            val x = cell.x ?: 0f
-            val y = cell.y ?: 0f
             val width = cell.width ?: 0f
             val height = cell.height ?: 0f
-            val rotate = cell.rotate?.toFloat() ?: 0f
-
-            val cellX = x * bannerWidth
-            val cellY = y * bannerHeight
             val cellWidth = width * bannerWidth
             val cellHeight = height * bannerHeight
 
@@ -138,10 +133,13 @@ fun TemplatePreview(
 
             Box(
                 modifier = Modifier
-                    .offset(x = with(density) { cellX.toDp() }, y = with(density) { cellY.toDp() })
-                    .width(with(density) { cellWidth.toDp() })
-                    .height(with(density) { cellHeight.toDp() })
-                    .rotate(rotate)
+                    .baseBannerItemModifier(
+                        x = cell.x,
+                        y = cell.y,
+                        width = cell.width,
+                        height = cell.height,
+                        rotate = cell.rotate?.toFloat(),
+                    )
                     .then(
                         if (isSelected) {
                             Modifier

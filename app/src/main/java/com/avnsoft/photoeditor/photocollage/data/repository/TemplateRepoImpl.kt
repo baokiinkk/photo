@@ -65,7 +65,7 @@ class TemplateRepoImpl(
                                 y = convertToRatio(layerItem.y, templateHeight),
                                 width = convertToRatio(layerItem.width, templateWidth),
                                 height = convertToRatio(layerItem.height, templateHeight),
-                                rotate = layerItem.rotate?.times((-1))
+                                rotate = layerItem.rotate
                             )
                         } ?: emptyList()
 
@@ -77,7 +77,7 @@ class TemplateRepoImpl(
                                 y = convertToRatio(placeholderItem.y, templateHeight),
                                 width = convertToRatio(placeholderItem.width, templateWidth),
                                 height = convertToRatio(placeholderItem.height, templateHeight),
-                                rotate = placeholderItem.rotate?.times((-1))
+                                rotate = placeholderItem.rotate
                             )
                         } ?: emptyList()
 

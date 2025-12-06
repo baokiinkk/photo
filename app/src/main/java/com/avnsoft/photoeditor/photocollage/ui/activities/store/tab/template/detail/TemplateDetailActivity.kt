@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -53,6 +54,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.takeOrElse
 import androidx.core.content.ContextCompat
@@ -86,6 +91,7 @@ import com.basesource.base.utils.requestPermission
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
+import kotlin.math.roundToInt
 import androidx.lifecycle.viewmodel.compose.viewModel as composeViewModel
 
 data class TemplateDetailInput(
@@ -242,17 +248,15 @@ fun TemplateDetailContent(
     captureController: GraphicsLayer,
 ) {
     val imagePickerViewModel: ImagePickerViewModel = composeViewModel()
-    val context = LocalContext.current
-    val density = LocalDensity.current
     var selectedCellIndex by remember { mutableStateOf<Int?>(0) }
 
     Column(modifier = modifier) {
-        // Banner with cells overlay and frame
-        BoxWithConstraints(
+
+        Box(
             modifier = Modifier
-                .padding(20.dp)
                 .fillMaxWidth()
                 .weight(1f)
+                .padding(20.dp)
                 .then(
                     if (template.width != null && template.height != null) {
                         val ratio = template.width.toFloat() / template.height.toFloat()
@@ -263,54 +267,34 @@ fun TemplateDetailContent(
                 )
                 .capturable(captureController)
         ) {
-            val bannerWidth = constraints.maxWidth.toFloat()
-            val bannerHeight = constraints.maxHeight.toFloat()
 
-
-            // Contents (cells) overlay - Layer 1
-
-            // Frame overlay - Layer 2
-            template.bannerUrl?.let { frameUrl ->
+            // Banner background - Layer 0
+            template.bannerUrl?.let { bannerUrl ->
                 LoadImage(
-                    model = frameUrl,
+                    model = bannerUrl,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.FillWidth
+                    contentScale = ContentScale.FillBounds
                 )
             }
+
+            // Contents (cells) overlay - Layer 1
             template.cells?.forEachIndexed { index, cell ->
-                val x = cell.x ?: 0f
-                val y = cell.y ?: 0f
-                val width = cell.width ?: 0f
-                val height = cell.height ?: 0f
-                val rotate = cell.rotate?.toFloat() ?: 0f
-
-                val cellX = x * bannerWidth
-                val cellY = y * bannerHeight
-                val cellWidth = width * bannerWidth
-                val cellHeight = height * bannerHeight
-
                 val isSelected = selectedCellIndex == index
                 val hasImage = selectedImages.containsKey(index)
-
+                val baseModifier = Modifier.baseBannerItemModifier(
+                    x = cell.x,
+                    y = cell.y,
+                    width = cell.width,
+                    height = cell.height,
+                    rotate = cell.rotate?.toFloat(),
+                )
                 Box(
-                    modifier = Modifier
-                        .offset(x = with(density) { cellX.toDp() }, y = with(density) { cellY.toDp() })
-                        .width(with(density) { cellWidth.toDp() })
-                        .height(with(density) { cellHeight.toDp() })
-                        .rotate(rotate)
-                        .then(
-                            if (hasImage) {
-                                Modifier
-                            } else {
-                                Modifier
-                                    .border(
-                                        width = if (isSelected) 3.dp else 2.dp, color = if (isSelected) Color(0xFF6425F3) else Color(
-                                            0xFF6425F3
-                                        ).copy(alpha = 0.5f), shape = RoundedCornerShape(4.dp)
-                                    )
-                                    .background(Color.White.copy(alpha = 0.1f))
-                            }
+                    modifier = baseModifier
+                        .border(
+                            width = if (isSelected) 3.dp else 2.dp,
+                            color = if (isSelected) Color(0xFF6425F3) else Color.Transparent,
                         )
+                        .background(Color.White.copy(alpha = 0.1f))
                         .clickableWithAlphaEffect {
                             selectedCellIndex = index
                         }) {
@@ -323,23 +307,16 @@ fun TemplateDetailContent(
             }
 
             template.layer?.forEachIndexed { index, layerItem ->
-                val x = layerItem.x ?: 0f
-                val y = layerItem.y ?: 0f
-                val width = layerItem.width ?: 0f
-                val height = layerItem.height ?: 0f
-                val rotate = layerItem.rotate?.toFloat() ?: 0f
-
-                val layerX = x * bannerWidth
-                val layerY = y * bannerHeight
-                val layerWidth = width * bannerWidth
-                val layerHeight = height * bannerHeight
+                val baseModifier = Modifier.baseBannerItemModifier(
+                    x = layerItem.x,
+                    y = layerItem.y,
+                    width = layerItem.width,
+                    height = layerItem.height,
+                    rotate = layerItem.rotate?.toFloat(),
+                )
 
                 Box(
-                    modifier = Modifier
-                        .offset(x = with(density) { layerX.toDp() }, y = with(density) { layerY.toDp() })
-                        .width(with(density) { layerWidth.toDp() })
-                        .height(with(density) { layerHeight.toDp() })
-                        .rotate(rotate)
+                    modifier = baseModifier
                 ) {
                     layerItem.urlThumb?.let { urlThumb ->
                         LoadImage(
@@ -377,6 +354,53 @@ fun TemplateDetailContent(
             }
         )
     }
+}
+
+fun Modifier.baseBannerItemModifier(
+    x: Float?,
+    y: Float?,
+    width: Float?,
+    height: Float?,
+    rotate: Float?
+): Modifier {
+    val xRatio = x ?: 0f
+    val yRatio = y ?: 0f
+    val wRatio = width ?: 0f
+    val hRatio = height ?: 0f
+    val rotation = rotate ?: 0f
+
+    return this
+        .layout { measurable, constraints ->
+            val parentWidth = constraints.maxWidth
+            val parentHeight = constraints.maxHeight
+
+            // Tính px bằng constraints trực tiếp (0 → parentWidth / parentHeight)
+            val childWidthPx = (wRatio * parentWidth).roundToInt().coerceAtLeast(0)
+            val childHeightPx = (hRatio * parentHeight).roundToInt().coerceAtLeast(0)
+            val childX = (xRatio * parentWidth).roundToInt()
+            val childY = (yRatio * parentHeight).roundToInt()
+
+            val placeable = measurable.measure(
+                Constraints.fixed(
+                    width = childWidthPx,
+                    height = childHeightPx
+                )
+            )
+            layout(parentWidth, parentHeight) {
+                placeable.placeRelative(childX, childY)
+            }
+        }
+        .graphicsLayer {
+            val rotate = rotation * (-1)
+            rotationZ = rotate
+            transformOrigin = if (rotate < 0f) {
+                TransformOrigin(1f, 0f)
+            } else if (rotate > 0f) {
+                TransformOrigin(0f, 1f)
+            } else {
+                TransformOrigin.Center
+            }
+        }
 }
 
 @Composable
