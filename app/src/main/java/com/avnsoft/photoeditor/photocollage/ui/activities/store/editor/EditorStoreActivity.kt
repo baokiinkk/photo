@@ -366,38 +366,14 @@ fun EditorStoreScreen(
                 if (uiState.template != null) {
                     TemplatePreview(
                         stickerView = stickerView,
-                        template = uiState.template!!,
+                        template = uiState.template,
                         icons = uiState.icons,
                         selectedImages = uiState.selectedImages,
                         imageTransforms = uiState.imageTransforms,
-                        layerTransforms = uiState.layerTransforms,
-                        layerFlip = uiState.layerFlip,
                         onImageTransformsChange = { transforms ->
                             viewmodel.updateImageTransforms(transforms)
                         },
-                        onLayerTransformsChange = { transforms ->
-                            viewmodel.updateLayerTransforms(transforms)
-                        },
-                        onLayerDelete = { index ->
-                            viewmodel.deleteLayer(index)
-                        },
-                        onLayerFlip = { index ->
-                            viewmodel.flipLayer(index)
-                        },
-                        onLayerZoomChange = { index, scale ->
-                            viewmodel.updateLayerZoom(index, scale)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .then(
-                                if (uiState.template?.width != null && uiState.template?.height != null) {
-                                    val ratio =
-                                        uiState.template!!.width!!.toFloat() / uiState.template!!.height!!.toFloat()
-                                    Modifier.aspectRatio(ratio)
-                                } else {
-                                    Modifier.aspectRatio(1f)
-                                }
-                            )
+                        modifier = Modifier.fillMaxWidth()
                     )
                 } else {
                     uiState.bitmap?.let {

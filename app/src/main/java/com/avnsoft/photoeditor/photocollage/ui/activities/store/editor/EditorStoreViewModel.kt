@@ -449,7 +449,7 @@ suspend fun TemplateContentModel.toFreeStyleSticker(
         photo = Photo(uri, 0),
         drawable = drawable,
         x = model.x ?: 0f,
-        y = model.y ?: 00f,
+        y = model.y ?: 0f,
         widthRatio = model.width ?: 0f,
         heightRatio = model.height ?: 0f,
         rotate = model.rotate?.toFloat() ?: 0f
