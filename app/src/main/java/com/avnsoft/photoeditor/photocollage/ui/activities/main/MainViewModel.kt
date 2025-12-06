@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.main
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
@@ -91,8 +92,8 @@ class MainViewModel(
             async {
                 try {
                     patternRepo.syncPatterns()
-                } catch (_: Exception) {
-
+                } catch (e: Exception) {
+                    Log.d("quocbao", e.message.toString())
                 }
             }
             async {

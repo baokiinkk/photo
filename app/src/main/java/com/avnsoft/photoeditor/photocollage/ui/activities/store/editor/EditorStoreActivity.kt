@@ -73,14 +73,17 @@ import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.capturable
+import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.rememberCaptureController
+import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 data class ToolTemplateInput(
-    val template: TemplateModel?,
-    val selectedImages: Map<Int, String> = emptyMap() // Store as String to avoid Uri serialization issues
+    @SerializedName("template") val template: TemplateModel?,
+    @SerializedName("selectedImages") val selectedImages: Map<Int, String> = emptyMap() // Store as String to avoid Uri serialization issues
 ) : IScreenData
 
 class EditorStoreActivity : BaseActivity() {
@@ -129,38 +132,10 @@ class EditorStoreActivity : BaseActivity() {
 
                         CollageTool.STICKER -> {
                             viewmodel.showStickerTool()
-//                            launchActivity(
-//                                toActivity = StickerActivity::class.java,
-//                                input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-//                                callback = { result ->
-//                                    if (result.resultCode == RESULT_OK) {
-//                                        val pathBitmap =
-//                                            result.data?.getStringExtra(EditorActivity.PATH_BITMAP)
-//                                        viewmodel.updateBitmap(
-//                                            pathBitmap = pathBitmap,
-//                                            bitmap = pathBitmap.toBitmap()
-//                                        )
-//                                    }
-//                                }
-//                            )
                         }
 
                         CollageTool.TEXT -> {
                             viewmodel.showTextSticker()
-//                            launchActivity(
-//                                toActivity = TextStickerActivity::class.java,
-//                                input = ToolInput(pathBitmap = viewmodel.pathBitmapResult),
-//                                callback = { result ->
-//                                    if (result.resultCode == RESULT_OK) {
-//                                        val pathBitmap =
-//                                            result.data?.getStringExtra(EditorActivity.PATH_BITMAP)
-//                                        viewmodel.updateBitmap(
-//                                            pathBitmap = pathBitmap,
-//                                            bitmap = pathBitmap.toBitmap()
-//                                        )
-//                                    }
-//                                }
-//                            )
                         }
 
                         CollageTool.REPLACE -> {
@@ -172,11 +147,14 @@ class EditorStoreActivity : BaseActivity() {
                                 )
                             ) {
                                 if (it.resultCode == RESULT_OK) {
-                                    val path = it.data?.getStringExtra("PATH")
-                                    viewmodel.setPathBitmap(
-                                        pathBitmap = path,
-                                        bitmap = path.uriToBitmap(this@EditorStoreActivity),
-                                        tool = null
+                                    val result = it.data?.getStringExtra("PATH")?.fromJson<ToolTemplateInput>()
+                                    val selectedImagesUri = result?.selectedImages?.mapValues {
+                                        it.value.toUri()
+                                    } ?: emptyMap()
+
+                                    viewmodel.setTemplateData(
+                                        template = result?.template,
+                                        selectedImages = selectedImagesUri
                                     )
                                 }
                             }
@@ -325,6 +303,8 @@ class EditorStoreActivity : BaseActivity() {
 
             public override fun onStickerTouchedDown(sticker: Sticker) {
                 Log.d("stickerView", "onStickerTouchedDown")
+                viewmodel.triggerUnselectAllImages()
+
                 stickerView.setShowFocus(true)
                 if (sticker is TextSticker) {
                     stickerView.configDefaultIcons()
@@ -352,6 +332,7 @@ fun EditorStoreScreen(
     onDownloadSuccess: (ExportImageData) -> Unit
 ) {
     val uiState by viewmodel.uiState.collectAsStateWithLifecycle()
+    val unselectAllImagesTrigger by viewmodel.unselectAllImagesTrigger.collectAsStateWithLifecycle()
     val captureController = rememberCaptureController()
     val scope = rememberCoroutineScope()
     var pathBitmap by remember { mutableStateOf("") }
@@ -372,9 +353,12 @@ fun EditorStoreScreen(
                 onRedo = {
                     viewmodel.redo()
                 },
+                isUndo = false,
                 onSave = {
                     scope.launch {
                         try {
+                            viewmodel.triggerUnselectAllImages()
+                            stickerView.setShowFocus(false)
                             val bitmap = captureController.toImageBitmap().asAndroidBitmap()
                             pathBitmap = bitmap.toFile(context)
                             showBottomSheetSaveImage = true
@@ -393,6 +377,9 @@ fun EditorStoreScreen(
                     .weight(1f)
                     .background(BackgroundGray)
                     .padding(top = 20.dp, bottom = 23.dp)
+                    .clickableWithAlphaEffect{
+                        viewmodel.triggerUnselectAllImages()
+                    }
                     .onSizeChanged { layout ->
                         viewmodel.canvasSize = layout.toSize()
                         if (uiState.template == null) {
@@ -412,6 +399,10 @@ fun EditorStoreScreen(
                         imageTransforms = uiState.imageTransforms,
                         onImageTransformsChange = { transforms ->
                             viewmodel.updateImageTransforms(transforms)
+                        },
+                        unselectAllImagesTrigger = unselectAllImagesTrigger,
+                        onOutsideClick = {
+                            viewmodel.triggerUnselectAllImages()
                         },
                         modifier = Modifier.fillMaxWidth()
                     )

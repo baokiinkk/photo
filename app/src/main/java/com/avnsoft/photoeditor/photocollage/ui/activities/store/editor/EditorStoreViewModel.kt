@@ -32,6 +32,7 @@ import com.tanishranjan.cropkit.util.MathUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -72,6 +73,13 @@ class EditorStoreViewModel(
     var canvasSize: Size? = null
 
     var isEditTextSticker: Boolean = false
+
+    private val _unselectTrigger = MutableStateFlow(0)
+    val unselectAllImagesTrigger = _unselectTrigger.asStateFlow()
+
+    fun triggerUnselectAllImages() {
+        _unselectTrigger.update { it + 1 }
+    }
 
     fun setPathBitmap(
         pathBitmap: String?,
@@ -490,6 +498,7 @@ data class EditorStoreUIState(
     val isShowTextStickerTool: Boolean = false,
     val isVisibleTextField: Boolean = false,
     val editTextProperties: AddTextProperties = AddTextProperties.getAddTextProperties(),
+    val unselectAllImagesTrigger: Int = 0
 )
 
 suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {

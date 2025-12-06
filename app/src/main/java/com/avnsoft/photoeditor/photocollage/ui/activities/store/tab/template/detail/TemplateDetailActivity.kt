@@ -10,7 +10,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,10 +18,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -43,23 +40,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.takeOrElse
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -88,6 +81,8 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.rememberCaptureController
 import com.basesource.base.utils.requestPermission
+import com.basesource.base.utils.toJson
+import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -135,7 +130,6 @@ class TemplateDetailActivity : BaseActivity() {
         setContent {
             MainTheme {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-                val captureController = rememberCaptureController()
                 val scope = rememberCoroutineScope()
                 val context = LocalContext.current
 
@@ -151,47 +145,48 @@ class TemplateDetailActivity : BaseActivity() {
                     ) {
                         TemplateDetailHeader(
                             onClose = { finish() }, onApply = {
-                                if (screenInput?.type == ToolInput.TYPE.BACK_AND_RETURN) {
-                                    // For BACK_AND_RETURN, still capture bitmap
-                                    scope.launch {
-                                        try {
-                                            val bitmap = captureController.toImageBitmap().asAndroidBitmap()
-                                            val pathBitmap = bitmap.toFile(context)
-                                            val file = File(pathBitmap)
-                                            val uri = file.toUri()
-                                            setResult(
-                                                RESULT_OK, intent.putExtra("PATH", uri.toString())
-                                            )
-                                            finish()
-                                        } catch (ex: Throwable) {
-                                            Toast.makeText(
-                                                context, "Error ${ex.message}", Toast.LENGTH_SHORT
-                                            ).show()
+                            if (screenInput?.type == ToolInput.TYPE.BACK_AND_RETURN) {
+                                // For BACK_AND_RETURN, still capture bitmap
+                                scope.launch {
+                                    try {
+                                        val selectedImagesString = uiState.selectedImages.mapValues {
+                                            it.value.toString()
                                         }
-                                    }
-                                } else {
-                                    // Convert Uri to String for serialization
-                                    val selectedImagesString = uiState.selectedImages.mapValues {
-                                        it.value.toString()
-                                    }
-
-                                    launchActivity(
-                                        toActivity = EditorStoreActivity::class.java, input = ToolTemplateInput(
+                                        val input = ToolTemplateInput(
                                             template = screenInput?.template, selectedImages = selectedImagesString
                                         )
-                                    ) {
-                                        if (it.resultCode == RESULT_OK) {
-                                            setResult(RESULT_OK)
-                                            finish()
-                                        }
+                                        setResult(
+                                            RESULT_OK, intent.putExtra("PATH", input.toJson())
+                                        )
+                                        finish()
+                                    } catch (ex: Throwable) {
+                                        Toast.makeText(
+                                            context, "Error ${ex.message}", Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
-                            }, modifier = Modifier.fillMaxWidth()
+                            } else {
+                                // Convert Uri to String for serialization
+                                val selectedImagesString = uiState.selectedImages.mapValues {
+                                    it.value.toString()
+                                }
+
+                                launchActivity(
+                                    toActivity = EditorStoreActivity::class.java, input = ToolTemplateInput(
+                                        template = screenInput?.template, selectedImages = selectedImagesString
+                                    )
+                                ) {
+                                    if (it.resultCode == RESULT_OK) {
+                                        setResult(RESULT_OK)
+                                        finish()
+                                    }
+                                }
+                            }
+                        }, modifier = Modifier.fillMaxWidth()
                         )
 
                         uiState.template?.let { template ->
                             TemplateDetailContent(
-                                captureController = captureController,
                                 template = template,
                                 selectedImages = uiState.selectedImages,
                                 onImageSelected = { index, uri ->
@@ -245,7 +240,6 @@ fun TemplateDetailContent(
     onImageSelected: (Int, Uri) -> Unit,
     onImageUnselected: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    captureController: GraphicsLayer,
 ) {
     val imagePickerViewModel: ImagePickerViewModel = composeViewModel()
     var selectedCellIndex by remember { mutableStateOf<Int?>(0) }
@@ -265,15 +259,12 @@ fun TemplateDetailContent(
                         Modifier
                     }
                 )
-                .capturable(captureController)
         ) {
 
             // Banner background - Layer 0
             template.bannerUrl?.let { bannerUrl ->
                 LoadImage(
-                    model = bannerUrl,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.FillBounds
+                    model = bannerUrl, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds
                 )
             }
 
@@ -351,17 +342,12 @@ fun TemplateDetailContent(
             },
             onCancel = {
                 // Do nothing, keep screen open
-            }
-        )
+            })
     }
 }
 
 fun Modifier.baseBannerItemModifier(
-    x: Float?,
-    y: Float?,
-    width: Float?,
-    height: Float?,
-    rotate: Float?
+    x: Float?, y: Float?, width: Float?, height: Float?, rotate: Float?
 ): Modifier {
     val xRatio = x ?: 0f
     val yRatio = y ?: 0f
@@ -381,8 +367,7 @@ fun Modifier.baseBannerItemModifier(
 
             val placeable = measurable.measure(
                 Constraints.fixed(
-                    width = childWidthPx,
-                    height = childHeightPx
+                    width = childWidthPx, height = childHeightPx
                 )
             )
             layout(parentWidth, parentHeight) {
