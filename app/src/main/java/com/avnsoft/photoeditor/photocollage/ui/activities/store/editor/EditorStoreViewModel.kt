@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
@@ -104,8 +105,9 @@ class EditorStoreViewModel(
         }
         viewModelScope.launch(Dispatchers.IO) {
             val icons = template?.layer?.mapIndexed { index, model ->
-                model.urlThumb =
-                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPW_IipOBJnoB3E02a1yO5ylPoy2Jw-SoQ7w&s"
+                Log.d("aaaaaa","${model.urlThumb}")
+//                model.urlThumb ="https://png.pngtree.com/png-clipart/20220620/ourmid/pngtree-pink-cute-cat-icon-animal-png-yuri-png-image_5230763.png"
+//                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPW_IipOBJnoB3E02a1yO5ylPoy2Jw-SoQ7w&s"
                 model.toFreeStyleSticker(index)
             }
             uiState.update {
