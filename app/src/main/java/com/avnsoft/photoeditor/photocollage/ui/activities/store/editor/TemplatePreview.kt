@@ -9,9 +9,13 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -24,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -34,7 +39,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
@@ -55,30 +59,34 @@ import kotlin.math.sqrt
 
 @Composable
 fun TemplatePreview(
+    modifier: Modifier = Modifier,
     stickerView: FreeStyleStickerView,
-    template: TemplateModel,
+    template: TemplateModel?,
     icons: List<FreeStyleSticker>? = null,
     selectedImages: Map<Int, Uri>,
     imageTransforms: Map<Int, ImageTransformState> = emptyMap(),
-    layerTransforms: Map<Int, ImageTransformState> = emptyMap(),
-    layerFlip: Map<Int, Float> = emptyMap(),
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)? = null,
-    onLayerTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)? = null,
-    onLayerDelete: ((Int) -> Unit)? = null,
-    onLayerFlip: ((Int) -> Unit)? = null,
-    onLayerZoomChange: ((Int, Float) -> Unit)? = null,
-    modifier: Modifier = Modifier
 ) {
     val density = LocalDensity.current
     val context = LocalContext.current
-
-    BoxWithConstraints(modifier = modifier.clipToBounds()) {
+    if (template == null) return
+    BoxWithConstraints(
+        modifier = modifier
+            .padding(20.dp)
+            .then(
+                if (template.width != null && template.height != null) {
+                    val ratio = template.width.toFloat() / template.height.toFloat()
+                    Modifier.aspectRatio(ratio)
+                } else {
+                    Modifier
+                }
+            )
+    ) {
         val bannerWidth = constraints.maxWidth.toFloat()
         val bannerHeight = constraints.maxHeight.toFloat()
 
         // States for image transforms
         val imageStates = remember { mutableStateMapOf<Int, Pair<ImageTransformState, Boolean>>() }
-        val layerStates = remember { mutableStateMapOf<Int, Pair<ImageTransformState, Boolean>>() }
 
         // Calculate initial transforms only once when entering screen
         // Use a key that changes when template/selectedImages change, but only run once per combination
@@ -108,7 +116,7 @@ fun TemplatePreview(
             LoadImage(
                 model = bannerUrl,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.FillWidth
             )
         }
 
@@ -130,14 +138,10 @@ fun TemplatePreview(
 
             Box(
                 modifier = Modifier
-                    .offset(
-                        x = with(density) { cellX.toDp() },
-                        y = with(density) { cellY.toDp() }
-                    )
-                    .size(
-                        width = with(density) { cellWidth.toDp() },
-                        height = with(density) { cellHeight.toDp() }
-                    )
+                    .offset(x = with(density) { cellX.toDp() }, y = with(density) { cellY.toDp() })
+                    .width(with(density) { cellWidth.toDp() })
+                    .height(with(density) { cellHeight.toDp() })
+                    .rotate(rotate)
                     .then(
                         if (isSelected) {
                             Modifier
@@ -185,7 +189,6 @@ fun TemplatePreview(
                                 translationY = currentTransform.offset.y
                                 scaleX = currentTransform.scale
                                 scaleY = currentTransform.scale
-                                rotationZ = rotate
                                 transformOrigin = TransformOrigin.Center
                                 clip = true
                             },
