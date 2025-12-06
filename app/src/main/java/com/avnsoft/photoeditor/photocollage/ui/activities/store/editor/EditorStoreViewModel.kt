@@ -16,6 +16,8 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.pre
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSelection
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.ToolItem
+import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
+import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.toFreeStyleSticker
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.basesource.base.viewmodel.BaseViewModel
 import com.tanishranjan.cropkit.util.MathUtils
@@ -82,35 +84,45 @@ class EditorStoreViewModel(
             }
         }
     }
-    
+
     fun setTemplateData(
         template: TemplateModel?,
         selectedImages: Map<Int, Uri> = emptyMap()
     ) {
-        viewModelScope.launch {
+        uiState.update {
+            it.copy(
+                template = template,
+                selectedImages = selectedImages,
+                bitmap = null, // Clear bitmap when using template
+                imageTransforms = emptyMap() // Clear transforms, will be calculated in TemplatePreview
+            )
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            val icons = template?.layer?.mapIndexed { index, model ->
+                model.urlThumb =
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPW_IipOBJnoB3E02a1yO5ylPoy2Jw-SoQ7w&s"
+                model.toFreeStyleSticker(index)
+            }
             uiState.update {
                 it.copy(
-                    template = template,
-                    selectedImages = selectedImages,
-                    bitmap = null, // Clear bitmap when using template
-                    imageTransforms = emptyMap() // Clear transforms, will be calculated in TemplatePreview
+                    icons = icons
                 )
             }
         }
     }
-    
+
     fun updateImageTransforms(transforms: Map<Int, ImageTransformState>) {
         uiState.update {
             it.copy(imageTransforms = transforms)
         }
     }
-    
+
     fun updateLayerTransforms(transforms: Map<Int, ImageTransformState>) {
         uiState.update {
             it.copy(layerTransforms = transforms)
         }
     }
-    
+
     fun deleteLayer(index: Int) {
         viewModelScope.launch {
             val currentTemplate = uiState.value.template ?: return@launch
@@ -119,7 +131,7 @@ class EditorStoreViewModel(
                     removeAt(index)
                 }
             }
-            
+
             uiState.update {
                 it.copy(
                     template = currentTemplate.copy(layer = updatedLayers),
@@ -129,7 +141,7 @@ class EditorStoreViewModel(
             }
         }
     }
-    
+
     fun duplicateLayer(index: Int) {
         viewModelScope.launch {
             val currentTemplate = uiState.value.template ?: return@launch
@@ -139,7 +151,7 @@ class EditorStoreViewModel(
                     add(layerToDuplicate) // Add duplicate at the end
                 }
             }
-            
+
             uiState.update {
                 it.copy(
                     template = currentTemplate.copy(layer = updatedLayers)
@@ -147,26 +159,26 @@ class EditorStoreViewModel(
             }
         }
     }
-    
+
     fun flipLayer(index: Int) {
         viewModelScope.launch {
             val currentFlip = uiState.value.layerFlip
             val newFlip = currentFlip.toMutableMap()
             val currentFlipValue = newFlip[index] ?: 1f
             newFlip[index] = currentFlipValue * -1f // Toggle between 1f and -1f
-            
+
             uiState.update {
                 it.copy(layerFlip = newFlip)
             }
         }
     }
-    
+
     fun updateLayerZoom(index: Int, scale: Float) {
         viewModelScope.launch {
             val currentTransforms = uiState.value.layerTransforms.toMutableMap()
             val currentTransform = currentTransforms[index] ?: ImageTransformState()
             currentTransforms[index] = currentTransform.copy(scale = scale)
-            
+
             uiState.update {
                 it.copy(layerTransforms = currentTransforms)
             }
@@ -216,6 +228,7 @@ class EditorStoreViewModel(
             )
         }
     }
+
     fun updateBitmap(
         pathBitmap: String?,
         bitmap: Bitmap?
@@ -389,7 +402,8 @@ data class EditorStoreUIState(
     val selectedImages: Map<Int, Uri> = emptyMap(),
     val imageTransforms: Map<Int, ImageTransformState> = emptyMap(),
     val layerTransforms: Map<Int, ImageTransformState> = emptyMap(),
-    val layerFlip: Map<Int, Float> = emptyMap() // Map<layerIndex, flipScale> where 1f = normal, -1f = flipped
+    val layerFlip: Map<Int, Float> = emptyMap(), // Map<layerIndex, flipScale> where 1f = normal, -1f = flipped,
+    val icons: List<FreeStyleSticker>? = null
 )
 
 suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {

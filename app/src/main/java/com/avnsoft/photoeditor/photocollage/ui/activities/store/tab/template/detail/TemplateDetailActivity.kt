@@ -112,6 +112,8 @@ class TemplateDetailActivity : BaseActivity() {
         intent.getInput()
     }
 
+    private lateinit var stickerView: FreeStyleStickerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
@@ -137,7 +139,6 @@ class TemplateDetailActivity : BaseActivity() {
         return ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED
     }
 
-    private lateinit var stickerView: FreeStyleStickerView
 
     private fun showContent() {
         setContent {
@@ -405,7 +406,8 @@ fun TemplateDetailContent(
                         )
                         .clickableWithAlphaEffect {
                             selectedCellIndex = index
-                        }) {
+                        }
+                ) {
                     selectedImages[index]?.let { uri ->
                         LoadImage(
                             model = uri,
@@ -432,19 +434,12 @@ fun TemplateDetailContent(
             icons?.forEach {
                 stickerView.addStickerFromServer(it)
             }
-            Box(
+            FreeStyleStickerComposeView(
                 modifier = Modifier
                     .fillMaxSize()
                     .clipToBounds(),
-            ) {
-                FreeStyleStickerComposeView(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clipToBounds(),
-                    view = stickerView
-                )
-            }
-
+                view = stickerView
+            )
         }
 
         // ImagePickerScreen - always visible
