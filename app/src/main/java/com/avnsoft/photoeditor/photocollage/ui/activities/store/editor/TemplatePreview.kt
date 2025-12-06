@@ -68,8 +68,8 @@ fun TemplatePreview(
     imageTransforms: Map<Int, ImageTransformState> = emptyMap(),
     onImageTransformsChange: ((Map<Int, ImageTransformState>) -> Unit)? = null,
 ) {
-    val density = LocalDensity.current
     val context = LocalContext.current
+    var isFirstSticker by remember { mutableStateOf(true) }
     if (template == null) return
     BoxWithConstraints(
         modifier = modifier
@@ -194,9 +194,11 @@ fun TemplatePreview(
                 }
             }
         }
-
-        icons?.forEach {
-            stickerView.addStickerFromServer(it)
+        if(isFirstSticker) {
+            isFirstSticker = false
+            icons?.forEach {
+                stickerView.addStickerFromServer(it)
+            }
         }
         stickerView.setShowFocus(false)
 
