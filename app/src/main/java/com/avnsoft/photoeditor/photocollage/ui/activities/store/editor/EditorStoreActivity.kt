@@ -74,6 +74,7 @@ import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.utils.capturable
 import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.rememberCaptureController
 import kotlinx.coroutines.launch
@@ -145,11 +146,14 @@ class EditorStoreActivity : BaseActivity() {
                                 )
                             ) {
                                 if (it.resultCode == RESULT_OK) {
-                                    val path = it.data?.getStringExtra("PATH")
-                                    viewmodel.setPathBitmap(
-                                        pathBitmap = path,
-                                        bitmap = path.uriToBitmap(this@EditorStoreActivity),
-                                        tool = null
+                                    val result = it.data?.getStringExtra("PATH")?.fromJson<ToolTemplateInput>()
+                                    val selectedImagesUri = result?.selectedImages?.mapValues {
+                                        it.value.toUri()
+                                    } ?: emptyMap()
+
+                                    viewmodel.setTemplateData(
+                                        template = result?.template,
+                                        selectedImages = selectedImagesUri
                                     )
                                 }
                             }
@@ -348,9 +352,12 @@ fun EditorStoreScreen(
                 onRedo = {
                     viewmodel.redo()
                 },
+                isUndo = false,
                 onSave = {
                     scope.launch {
                         try {
+                            viewmodel.triggerUnselectAllImages()
+                            stickerView.setShowFocus(false)
                             val bitmap = captureController.toImageBitmap().asAndroidBitmap()
                             pathBitmap = bitmap.toFile(context)
                             showBottomSheetSaveImage = true

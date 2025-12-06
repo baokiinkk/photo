@@ -43,7 +43,8 @@ fun FeaturePhotoHeader(
     canRedo: Boolean = false,
     canSave: Boolean = false,
     type: TEXT_TYPE = TEXT_TYPE.ROUND,
-    textRight: String = stringResource(R.string.save)
+    textRight: String = stringResource(R.string.save),
+    isUndo: Boolean = true
 ) {
     val context = LocalContext.current
     Spacer(modifier = Modifier.fillMaxWidth().height(24.dp).background(BackgroundWhite))
@@ -104,27 +105,28 @@ fun FeaturePhotoHeader(
             }
 
         }
-
-        Row(
-            modifier = Modifier.align(Alignment.Center),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            IconButton(onClick = {}, enabled = canUndo) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_undo),
-                    contentDescription = "Undo",
-                    tint = if (canUndo) Gray900 else Gray300,
-                    modifier = Modifier.clickableWithAlphaEffect(onClick = onUndo)
-                )
-            }
-            IconButton(onClick = onRedo, enabled = canRedo) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_redo),
-                    contentDescription = "Redo",
-                    tint = if (canRedo) Gray900 else Gray300,
-                    modifier = Modifier.clickableWithAlphaEffect(onClick = onRedo)
-                )
+        if(isUndo) {
+            Row(
+                modifier = Modifier.align(Alignment.Center),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                IconButton(onClick = {}, enabled = canUndo) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_undo),
+                        contentDescription = "Undo",
+                        tint = if (canUndo) Gray900 else Gray300,
+                        modifier = Modifier.clickableWithAlphaEffect(onClick = onUndo)
+                    )
+                }
+                IconButton(onClick = onRedo, enabled = canRedo) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_redo),
+                        contentDescription = "Redo",
+                        tint = if (canRedo) Gray900 else Gray300,
+                        modifier = Modifier.clickableWithAlphaEffect(onClick = onRedo)
+                    )
+                }
             }
         }
     }
