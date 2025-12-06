@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +53,7 @@ import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.max
 import kotlin.math.min
@@ -61,6 +63,7 @@ import kotlin.math.sqrt
 @Composable
 fun TemplatePreview(
     modifier: Modifier = Modifier,
+    viewmodel:EditorStoreViewModel,
     stickerView: FreeStyleStickerView,
     template: TemplateModel?,
     icons: List<FreeStyleSticker>? = null,
@@ -194,12 +197,22 @@ fun TemplatePreview(
                 }
             }
         }
-        if(isFirstSticker) {
-            isFirstSticker = false
-            icons?.forEach {
-                stickerView.addStickerFromServer(it)
+        val scope = rememberCoroutineScope()
+
+        if(viewmodel.isFirstSticker) {
+            template.layer?.forEachIndexed {index, model ->
+                scope.launch(Dispatchers.IO) {
+                    stickerView.addStickerFromServer(model.toFreeStyleSticker(index))
+                }
             }
+            viewmodel.isFirstSticker = false
         }
+//        if(viewmodel.isFirstSticker) {
+//            viewmodel.isFirstSticker = false
+//            icons?.forEach {
+//                stickerView.addStickerFromServer(it)
+//            }
+//        }
         stickerView.setShowFocus(false)
 
         FreeStyleStickerComposeView(

@@ -95,26 +95,35 @@ class EditorStoreViewModel(
         }
     }
 
+    var isFirstSticker: Boolean = true
     fun setTemplateData(
         template: TemplateModel?,
         selectedImages: Map<Int, Uri> = emptyMap()
     ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val icons = template?.layer?.mapIndexed { index, model ->
-                model.toFreeStyleSticker(index)
-            }
-            uiState.update {
-                it.copy(
-                    template = template,
-                    selectedImages = selectedImages,
-                    bitmap = null,
-                    imageTransforms = emptyMap(),
-                    icons = icons
-                )
-            }
+        uiState.update {
+            it.copy(
+                template = template,
+                selectedImages = selectedImages,
+                bitmap = null,
+                imageTransforms = emptyMap(),
+            )
         }
+//        viewModelScope.launch(Dispatchers.IO) {
+//            isFirstSticker = true
+//            val icons = template?.layer?.mapIndexed { index, model ->
+//                model.toFreeStyleSticker(index)
+//            }
+//            uiState.update {
+//                it.copy(
+//                    icons = icons
+//                )
+//            }
+//        }
     }
 
+    fun downloadIcon(){
+
+    }
     fun updateImageTransforms(transforms: Map<Int, ImageTransformState>) {
         uiState.update {
             it.copy(imageTransforms = transforms)

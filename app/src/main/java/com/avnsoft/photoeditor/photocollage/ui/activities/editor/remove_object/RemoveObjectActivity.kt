@@ -398,7 +398,10 @@ class RemoveObjectActivity : BaseNativeActivity() {
                 Column() {
                     Spacer(
                         modifier = Modifier
-                            .height(WindowInsets().asPaddingValues().calculateTopPadding())
+                            .height(
+                                WindowInsets(0.dp, 0.dp, 0.dp, 0.dp).asPaddingValues()
+                                    .calculateTopPadding()
+                            )
                     )
                     FeaturePhotoHeader(
                         onBack = {
