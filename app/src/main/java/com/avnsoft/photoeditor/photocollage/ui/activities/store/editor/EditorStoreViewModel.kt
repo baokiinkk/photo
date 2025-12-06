@@ -95,23 +95,16 @@ class EditorStoreViewModel(
         template: TemplateModel?,
         selectedImages: Map<Int, Uri> = emptyMap()
     ) {
-        uiState.update {
-            it.copy(
-                template = template,
-                selectedImages = selectedImages,
-                bitmap = null, // Clear bitmap when using template
-                imageTransforms = emptyMap() // Clear transforms, will be calculated in TemplatePreview
-            )
-        }
         viewModelScope.launch(Dispatchers.IO) {
             val icons = template?.layer?.mapIndexed { index, model ->
-                Log.d("aaaaaa","${model.urlThumb}")
-//                model.urlThumb ="https://png.pngtree.com/png-clipart/20220620/ourmid/pngtree-pink-cute-cat-icon-animal-png-yuri-png-image_5230763.png"
-//                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPW_IipOBJnoB3E02a1yO5ylPoy2Jw-SoQ7w&s"
                 model.toFreeStyleSticker(index)
             }
             uiState.update {
                 it.copy(
+                    template = template,
+                    selectedImages = selectedImages,
+                    bitmap = null,
+                    imageTransforms = emptyMap(),
                     icons = icons
                 )
             }

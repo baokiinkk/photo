@@ -353,40 +353,65 @@ open class StickerView : FrameLayout {
         heightRatio: Float,
         rotate: Float
     ) {
-        // 1. Tính toán kích thước thực tế của sticker dựa trên tỉ lệ
-        val newWidth = this.width * widthRatio
-        val newHeight = this.height * heightRatio
+        if (width <= 0 || height <= 0) return
 
-        // 2. Lấy kích thước gốc của sticker
-        val originalWidth = paramSticker.width.toFloat()
-        val originalHeight = paramSticker.height.toFloat()
+        // 1. Quy đổi tỉ lệ sang pixel theo kích thước View
+        val parentWidth = width.toFloat()
+        val parentHeight = height.toFloat()
 
-        // 3. Tính toán hệ số scale cần thiết
-        val scaleX = if (originalWidth > 0) newWidth / originalWidth else 1f
-        val scaleY = if (originalHeight > 0) newHeight / originalHeight else 1f
+        // Tỉ lệ 0–1 -> px
+        val targetWidth = (parentWidth * widthRatio).coerceAtLeast(0f)
+        val targetHeight = (parentHeight * heightRatio).coerceAtLeast(0f)
+        val left = parentWidth * x          // top-left X của placeholder
+        val top = parentHeight * y          // top-left Y của placeholder
 
-        // 4. Đặt vị trí ban đầu cho sticker
-        setStickerPosition(paramSticker, x, y)
+        // 2. Kích thước gốc của sticker
+        val originalWidth = paramSticker.width.toFloat().takeIf { it > 0 } ?: targetWidth
+        val originalHeight = paramSticker.height.toFloat().takeIf { it > 0 } ?: targetHeight
 
-        // 5. Áp dụng tỉ lệ scale vào ma trận của sticker
-        // SỬA LỖI Ở ĐÂY:
-        // Lấy điểm trung tâm sau khi đã đặt vị trí.
-        // Dùng getMappedCenterPoint để lấy điểm trung tâm đã biến đổi trên view.
-        paramSticker.getMappedCenterPoint(this.currentCenterPoint, this.point, this.tmp)
-        val centerX = this.currentCenterPoint.x
-        val centerY = this.currentCenterPoint.y
-        paramSticker.matrix.postScale(scaleX, scaleY, centerX, centerY)
-        paramSticker.matrix.postRotate(rotate, centerX, centerY)
+        // 3. Scale cần thiết để sticker khớp placeholder
+        val scaleX = if (originalWidth > 0f) targetWidth / originalWidth else 1f
+        val scaleY = if (originalHeight > 0f) targetHeight / originalHeight else 1f
 
-        // 6. Đảm bảo sticker nằm hoàn toàn trong khung nhìn
+        // 4. Tính pivot xoay giống logic TransformOrigin bên Compose
+        val pivotX: Float
+        val pivotY: Float
+        if (rotate < 0f) {
+            // Góc xoay âm: xoay giữ góc phải trên
+            pivotX = left + targetWidth
+            pivotY = top
+        } else if (rotate > 0f) {
+            // Góc xoay dương: xoay giữ góc trái dưới
+            pivotX = left
+            pivotY = top + targetHeight
+        } else {
+            // Không xoay: pivot giữa khung
+            pivotX = left + targetWidth / 2f
+            pivotY = top + targetHeight / 2f
+        }
+
+        // 5. Reset ma trận và apply scale + rotate quanh pivot
+        val m = paramSticker.matrix
+        m.reset()
+
+        // Scale quanh pivot
+        m.postScale(scaleX, scaleY, pivotX, pivotY)
+        // Xoay quanh cùng pivot (đúng theo baseBannerItemModifier: rotate * -1 đã được apply ở JSON rồi)
+        m.postRotate(rotate, pivotX, pivotY)
+
+        // 6. Dời sticker để top-left sau transform trùng với (left, top)
+        val mapped = android.graphics.RectF(0f, 0f, originalWidth, originalHeight)
+        m.mapRect(mapped)
+        val dx = left - mapped.left
+        val dy = top - mapped.top
+        m.postTranslate(dx, dy)
+
+        // 7. Giữ sticker trong khung
         constrainSticker(paramSticker)
 
-        this.handlingSticker = paramSticker
-        this.stickers.add(paramSticker)
-
-        if (this.onStickerOperationListener != null) {
-            this.onStickerOperationListener!!.onStickerAdded(paramSticker)
-        }
+        handlingSticker = paramSticker
+        stickers.add(paramSticker)
+        onStickerOperationListener?.onStickerAdded(paramSticker)
 
         invalidate()
     }

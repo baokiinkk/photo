@@ -195,19 +195,6 @@ fun TemplatePreview(
             }
         }
 
-        // Frame overlay - Layer 2
-        template.frameUrl?.let { frameUrl ->
-            LoadImage(
-                model = frameUrl,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillBounds
-            )
-        }
-
-//        template.layer?.forEachIndexed { index, layerItem ->
-//            //import layer
-//        }
-
         icons?.forEach {
             stickerView.addStickerFromServer(it)
         }

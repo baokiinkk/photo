@@ -374,7 +374,6 @@ fun Modifier.baseBannerItemModifier(
             val parentWidth = constraints.maxWidth
             val parentHeight = constraints.maxHeight
 
-            // Tính px bằng constraints trực tiếp (0 → parentWidth / parentHeight)
             val childWidthPx = (wRatio * parentWidth).roundToInt().coerceAtLeast(0)
             val childHeightPx = (hRatio * parentHeight).roundToInt().coerceAtLeast(0)
             val childX = (xRatio * parentWidth).roundToInt()
