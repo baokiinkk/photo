@@ -43,10 +43,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput.TYPE
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.initEditorLib
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.uriToBitmap
 import androidx.core.net.toUri
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
@@ -68,6 +64,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.det
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toBitmap
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity

@@ -407,7 +407,7 @@ open class StickerView : FrameLayout {
         m.postTranslate(dx, dy)
 
         // 7. Giữ sticker trong khung
-//        constrainSticker(paramSticker)
+        constrainSticker(paramSticker)
 
         handlingSticker = paramSticker
         stickers.add(paramSticker)
@@ -525,53 +525,55 @@ open class StickerView : FrameLayout {
 //        if (f3 > f4) f1 = f4 - this.currentCenterPoint.y
 //        paramSticker.matrix.postTranslate(f2, f1)
 //    }
+
+    // hàm này để gữ sticker trong khung(do yêu cầu drag ra ngoài nên ẩn code)
     protected fun constrainSticker(sticker: Sticker) {
-        val viewWidth = this.width.toFloat()
-        val viewHeight = this.height.toFloat()
-
-        // 1. Lấy các điểm giới hạn gốc (chưa biến đổi) của sticker.
-        sticker.getBoundPoints(this.bounds)
-
-        // 2. Áp dụng ma trận hiện tại (xoay, di chuyển, phóng to) để lấy tọa độ 4 góc thực tế trên màn hình.
-        // Kết quả được lưu vào mảng `this.bitmapPoints`.
-        sticker.getMappedPoints(this.bitmapPoints, this.bounds)
-
-        // 3. Tìm hình chữ nhật nhỏ nhất bao quanh 4 góc đã biến đổi.
-        // this.bitmapPoints là mảng [x0, y0, x1, y1, x2, y2, x3, y3]
-        var minX = this.bitmapPoints[0]
-        var maxX = this.bitmapPoints[0]
-        var minY = this.bitmapPoints[1]
-        var maxY = this.bitmapPoints[1]
-
-        for (i in 1 until 4) {
-            minX = min(minX, this.bitmapPoints[i * 2])
-            maxX = kotlin.math.max(maxX, this.bitmapPoints[i * 2])
-            minY = min(minY, this.bitmapPoints[i * 2 + 1])
-            maxY = kotlin.math.max(maxY, this.bitmapPoints[i * 2 + 1])
-        }
-
-        // 4. Tính toán khoảng cách cần dịch chuyển (delta) để đưa sticker trở lại vào trong.
-        var dx = 0f
-        var dy = 0f
-
-        if (minX < 0) {
-            dx = -minX // Nếu cạnh trái vượt ra ngoài, dịch sang phải.
-        } else if (maxX > viewWidth) {
-            dx = viewWidth - maxX // Nếu cạnh phải vượt ra ngoài, dịch sang trái.
-        }
-
-        if (minY < 0) {
-            dy = -minY // Nếu cạnh trên vượt ra ngoài, dịch xuống dưới.
-        } else if (maxY > viewHeight) {
-            dy = viewHeight - maxY // Nếu cạnh dưới vượt ra ngoài, dịch lên trên.
-        }
-
-        // 5. Nếu cần dịch chuyển, áp dụng nó vào ma trận của sticker.
-        if (dx != 0f || dy != 0f) {
-            sticker.matrix.postTranslate(dx, dy)
-            // Yêu cầu vẽ lại view ngay lập tức để thấy sticker "bật" lại vào trong.
-            invalidate()
-        }
+//        val viewWidth = this.width.toFloat()
+//        val viewHeight = this.height.toFloat()
+//
+//        // 1. Lấy các điểm giới hạn gốc (chưa biến đổi) của sticker.
+//        sticker.getBoundPoints(this.bounds)
+//
+//        // 2. Áp dụng ma trận hiện tại (xoay, di chuyển, phóng to) để lấy tọa độ 4 góc thực tế trên màn hình.
+//        // Kết quả được lưu vào mảng `this.bitmapPoints`.
+//        sticker.getMappedPoints(this.bitmapPoints, this.bounds)
+//
+//        // 3. Tìm hình chữ nhật nhỏ nhất bao quanh 4 góc đã biến đổi.
+//        // this.bitmapPoints là mảng [x0, y0, x1, y1, x2, y2, x3, y3]
+//        var minX = this.bitmapPoints[0]
+//        var maxX = this.bitmapPoints[0]
+//        var minY = this.bitmapPoints[1]
+//        var maxY = this.bitmapPoints[1]
+//
+//        for (i in 1 until 4) {
+//            minX = min(minX, this.bitmapPoints[i * 2])
+//            maxX = kotlin.math.max(maxX, this.bitmapPoints[i * 2])
+//            minY = min(minY, this.bitmapPoints[i * 2 + 1])
+//            maxY = kotlin.math.max(maxY, this.bitmapPoints[i * 2 + 1])
+//        }
+//
+//        // 4. Tính toán khoảng cách cần dịch chuyển (delta) để đưa sticker trở lại vào trong.
+//        var dx = 0f
+//        var dy = 0f
+//
+//        if (minX < 0) {
+//            dx = -minX // Nếu cạnh trái vượt ra ngoài, dịch sang phải.
+//        } else if (maxX > viewWidth) {
+//            dx = viewWidth - maxX // Nếu cạnh phải vượt ra ngoài, dịch sang trái.
+//        }
+//
+//        if (minY < 0) {
+//            dy = -minY // Nếu cạnh trên vượt ra ngoài, dịch xuống dưới.
+//        } else if (maxY > viewHeight) {
+//            dy = viewHeight - maxY // Nếu cạnh dưới vượt ra ngoài, dịch lên trên.
+//        }
+//
+//        // 5. Nếu cần dịch chuyển, áp dụng nó vào ma trận của sticker.
+//        if (dx != 0f || dy != 0f) {
+//            sticker.matrix.postTranslate(dx, dy)
+//            // Yêu cầu vẽ lại view ngay lập tức để thấy sticker "bật" lại vào trong.
+//            invalidate()
+//        }
     }
 
 

@@ -3,8 +3,8 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.export_image
 import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.data.repository.GetImageInfoRepoImpl
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toBitmap
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

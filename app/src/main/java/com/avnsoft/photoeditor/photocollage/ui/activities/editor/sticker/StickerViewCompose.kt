@@ -13,9 +13,8 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerAsset.loadBitmapFromAssets
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toBitmap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

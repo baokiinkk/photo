@@ -37,8 +37,10 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.Back
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
+import com.basesource.base.ui.image.LoadImageUrl
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.toJson
@@ -58,7 +60,8 @@ class RemoveBackgroundResultActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         viewmodel.getConfigBackground(
             bitmap = screenInput?.getBitmap(this),
-            isBackgroundTransparent = screenInput?.isBackgroundTransparent ?: false
+            isBackgroundTransparent = screenInput?.isBackgroundTransparent ?: false,
+            pathBitmap = screenInput?.pathBitmap
         )
         enableEdgeToEdge()
 
@@ -117,44 +120,49 @@ class RemoveBackgroundResultActivity : BaseActivity() {
                                 finish()
                             }
                         )
-                        Spacer(modifier = Modifier.height(24.dp))
+//                        Spacer(modifier = Modifier.height(24.dp))
                         Box(
                             modifier = Modifier
                                 .weight(1f)
                         ) {
-                            uiState.originBitmap?.let {
-                                Image(
-                                    bitmap = it.asImageBitmap(),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .fillMaxSize()
+                            uiState.pathBitmap?.let {
+                                LoadImageUrl(
+                                    modifier = Modifier.fillMaxSize(),
+                                    model = screenInput?.pathBitmap,
+                                    size = FileUtil.MAX_SIZE_FILE
                                 )
+//                                Image(
+//                                    bitmap = it.asImageBitmap(),
+//                                    contentDescription = null,
+//                                    modifier = Modifier
+//                                        .fillMaxSize()
+//                                )
                             }
-                            Spacer(modifier = Modifier.height(36.dp))
-                            BackgroundSheet(
-                                isShowFooter = uiState.backgroundSelection == null,
-                                selectedBackgroundSelection = uiState.backgroundSelection,
-                                onBackgroundSelect = { _, selection ->
-                                    viewmodel.updateBackground(selection)
-                                },
-                                onClose = {
-                                    finish()
-                                },
-                                onConfirm = {
-                                    val intent = Intent()
-                                    intent.putExtra(
-                                        "backgroundSelection",
-                                        Json.encodeToString(uiState.backgroundSelection)
-                                    )
-                                    setResult(RESULT_OK, intent)
-                                    finish()
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .align(Alignment.BottomCenter)
-                            )
+//                            Spacer(modifier = Modifier.height(36.dp))
+
                         }
+                        BackgroundSheet(
+                            isShowFooter = uiState.backgroundSelection == null,
+                            selectedBackgroundSelection = uiState.backgroundSelection,
+                            onBackgroundSelect = { _, selection ->
+                                viewmodel.updateBackground(selection)
+                            },
+                            onClose = {
+                                finish()
+                            },
+                            onConfirm = {
+                                val intent = Intent()
+                                intent.putExtra(
+                                    "backgroundSelection",
+                                    Json.encodeToString(uiState.backgroundSelection)
+                                )
+                                setResult(RESULT_OK, intent)
+                                finish()
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        )
                     }
 
                     DiscardChangesDialog(

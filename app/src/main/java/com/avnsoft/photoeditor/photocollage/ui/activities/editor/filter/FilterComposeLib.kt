@@ -31,7 +31,7 @@ fun FilterComposeLib(
     var glView: ImageGLSurfaceView by remember { mutableStateOf(ImageGLSurfaceView(context, null)) }
 
     LaunchedEffect(Unit) {
-        viewmodel.getConfigFilter(bitmap)
+//        viewmodel.getConfigFilter(bitmap)
     }
     Box(
         modifier = modifier

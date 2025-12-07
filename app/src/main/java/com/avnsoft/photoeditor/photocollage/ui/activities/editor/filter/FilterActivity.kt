@@ -62,7 +62,7 @@ class FilterActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         glView = ImageGLSurfaceView(this, null)
-        viewmodel.getConfigFilter(screenInput?.getBitmap(this))
+        viewmodel.getConfigFilter(screenInput)
         enableEdgeToEdge()
 
         setContent {

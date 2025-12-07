@@ -67,6 +67,8 @@ import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.deleteShareImageFolder
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toBitmap
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
@@ -89,19 +91,6 @@ data class EditorInput(
     val pathBitmap: String? = null,
     val tool: CollageTool? = null,
 ) : IScreenData
-
-fun String?.toBitmap(context: Context? = null): Bitmap? {
-//    val imageUri = this?.toUri()
-//    val bitmap = imageUri?.toBitmap(context)
-    val bitmap = BitmapFactory.decodeFile(this)
-    return bitmap
-}
-
-fun String?.uriToBitmap(context: Context): Bitmap? {
-    val imageUri = this?.toUri()
-    val bitmap = imageUri?.toBitmap(context)
-    return bitmap
-}
 
 class EditorActivity : BaseActivity() {
 
@@ -613,39 +602,6 @@ fun EditorScreen(
             )
         }
     }
-}
-
-
-fun Uri.toBitmap(context: Context): Bitmap? {
-    val bitmap = if (Build.VERSION.SDK_INT < 28) {
-        MediaStore.Images.Media.getBitmap(
-            context.contentResolver,
-            this
-        )
-    } else {
-        val source = ImageDecoder.createSource(
-            context.contentResolver,
-            this
-        )
-        ImageDecoder.decodeBitmap(source)
-    }
-    return bitmap
-}
-
-fun deleteShareImageFolder(context: Context) {
-    val folder = context.getExternalFilesDir("editor_image_success")
-    folder?.let {
-        deleteDirectoryRecursively(it)
-    }
-}
-
-fun deleteDirectoryRecursively(dir: File): Boolean {
-    if (dir.isDirectory) {
-        dir.listFiles()?.forEach { file ->
-            deleteDirectoryRecursively(file)
-        }
-    }
-    return dir.delete()  // xóa file hoặc folder rỗng
 }
 
 fun BaseActivity.initEditorLib() {

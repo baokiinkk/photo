@@ -3,6 +3,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_backgro
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.BaseApplication
@@ -12,7 +13,6 @@ import com.avnsoft.photoeditor.photocollage.data.repository.UPLOAD_TYPE_STATUS
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.saveFileAndReturnPathFile
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toScaledBitmapForUpload
-import com.avnsoft.photoeditor.photocollage.utils.toFile
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -89,6 +89,7 @@ class RemoveBackgroundViewModel(
             id = id,
             status = status
         )
+        Log.d("aaa","${response.result.url}")
         val pathFile = saveFileAndReturnPathFile(context, response.result.url)
         hideLoading()
         _removeBgState.send(pathFile)
