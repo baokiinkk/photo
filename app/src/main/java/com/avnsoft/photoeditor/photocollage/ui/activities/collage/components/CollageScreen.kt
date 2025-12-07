@@ -297,8 +297,10 @@ fun CollageScreen(
                     .padding(horizontal = 16.dp)
                     .padding(top = 80.dp)
                     .capturable(captureController),
+
             ) {
                 CollagePreviewContainer(
+                    modifier = Modifier.fillMaxSize(),
                     viewModel = vm,
                     collageState = collageState,
                     currentUris = currentUris,

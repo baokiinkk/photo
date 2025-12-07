@@ -468,7 +468,10 @@ fun StickerFooterTool(
         }
     }
     StickerToolPanel(
-        modifier = modifier,
+        modifier = modifier
+            .clickableWithAlphaEffect{
+
+            },
         uiState = uiState,
         onTabSelected = {
             viewmodel.selectedTab(it)
