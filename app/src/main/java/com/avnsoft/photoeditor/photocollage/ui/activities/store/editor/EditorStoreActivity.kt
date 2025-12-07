@@ -391,6 +391,7 @@ fun EditorStoreScreen(
             ) {
                 if (uiState.template != null) {
                     TemplatePreview(
+                        viewmodel = viewmodel,
                         stickerView = stickerView,
                         template = uiState.template,
                         icons = uiState.icons,
@@ -426,7 +427,7 @@ fun EditorStoreScreen(
                 onToolClick = onToolClick
             )
         }
-        when{
+        when {
             showBottomSheetSaveImage -> {
                 ExportImageBottomSheet(
                     pathBitmap = pathBitmap,
@@ -453,7 +454,11 @@ fun EditorStoreScreen(
                                         )
                                     )
                                 } catch (ex: Throwable) {
-                                    Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                                    Toast.makeText(
+                                        context,
+                                        "Error ${ex.message}",
+                                        Toast.LENGTH_SHORT
+                                    )
                                         .show()
                                 }
                             }

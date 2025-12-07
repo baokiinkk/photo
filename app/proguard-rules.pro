@@ -131,7 +131,7 @@ native <methods>;
 -keep public class com.google.firebase.messaging.FirebaseMessagingService {
     public *;
 }
-
+#-keep class com.avnsoft.photoeditor.photocollage.data.model.** { *; }
 #-keep class com.android.langboarding.** {*;}
 #-keep class com.android.langboarding.*$* {*;}
 #-keep class com.android.langboarding.language.adapter.LanguageAdapter.** {

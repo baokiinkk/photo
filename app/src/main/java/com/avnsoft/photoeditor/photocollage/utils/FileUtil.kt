@@ -16,6 +16,7 @@ import android.provider.MediaStore
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import coil.ImageLoader
+import coil.request.CachePolicy
 import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
@@ -259,7 +260,9 @@ object FileUtil {
             .size(Size(size, size)) // 👈 GIỚI HẠN KÍCH THƯỚC ĐẦU RA
             .bitmapConfig(Bitmap.Config.ARGB_8888) // Đảm bảo chất lượng cao
             .allowHardware(false) // Tắt Hardware Bitmap để dễ dàng trích xuất và xử lý
-            .diskCachePolicy(coil.request.CachePolicy.DISABLED) // Không cần lưu vào Disk Cache cho mục đích upload
+            .diskCachePolicy(CachePolicy.ENABLED) // lưu ảnh xuống disk
+            .memoryCachePolicy(CachePolicy.ENABLED) // lưu ảnh vào RAM
+            .networkCachePolicy(CachePolicy.ENABLED) // dùng cache khi có mạng
             .build()
 
         // 2. Thực hiện request và chờ kết quả

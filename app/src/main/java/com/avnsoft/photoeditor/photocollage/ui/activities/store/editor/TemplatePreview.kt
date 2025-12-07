@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +53,7 @@ import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.max
 import kotlin.math.min
@@ -61,6 +63,7 @@ import kotlin.math.sqrt
 @Composable
 fun TemplatePreview(
     modifier: Modifier = Modifier,
+    viewmodel:EditorStoreViewModel,
     stickerView: FreeStyleStickerView,
     template: TemplateModel?,
     icons: List<FreeStyleSticker>? = null,
@@ -90,7 +93,7 @@ fun TemplatePreview(
 
         // Separate selected state to avoid recomposition when unselecting
         var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
-        
+
         // States for image transforms only (no selected state to avoid recomposition)
         val imageTransformsLocal = remember { mutableStateMapOf<Int, ImageTransformState>() }
 
@@ -151,20 +154,20 @@ fun TemplatePreview(
                         detectTapGestures { tapOffset ->
                             val x = tapOffset.x
                             val y = tapOffset.y
-                            
+
                             // Check if tap is inside any cell
                             val insideCell = template.cells?.any { cell ->
                                 val cellX = (cell.x ?: 0f) * bannerWidth
                                 val cellY = (cell.y ?: 0f) * bannerHeight
                                 val cellWidth = (cell.width ?: 0f) * bannerWidth
                                 val cellHeight = (cell.height ?: 0f) * bannerHeight
-                                
+
                                 x >= cellX &&
                                 x <= cellX + cellWidth &&
                                 y >= cellY &&
                                 y <= cellY + cellHeight
                             } ?: false
-                            
+
                             if (!insideCell) {
                                 onOutsideClick?.invoke()
                             }
@@ -249,15 +252,25 @@ fun TemplatePreview(
                 }
             }
         }
-        if(isFirstSticker) {
-            isFirstSticker = false
-            icons?.forEach {
-                stickerView.addStickerFromServer(it)
-            }
-            stickerView.setShowFocus(false)
+        val scope = rememberCoroutineScope()
 
+        if(viewmodel.isFirstSticker) {
+            template.layer?.forEachIndexed {index, model ->
+                scope.launch(Dispatchers.IO) {
+                    stickerView.addStickerFromServer(model.toFreeStyleSticker(index))
+                }
+            }
+            viewmodel.isFirstSticker = false
         }
-        
+//        if(isFirstSticker) {
+//            isFirstSticker = false
+//            icons?.forEach {
+//                stickerView.addStickerFromServer(it)
+//            }
+//            stickerView.setShowFocus(false)
+//
+//        }
+
         // Only set showFocus to false when image is selected, not on every recomposition
         // This prevents resetting sticker focus when unselecting images
         LaunchedEffect(selectedImageIndex) {
