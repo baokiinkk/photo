@@ -139,3 +139,6 @@ org.gradle.internal.instrumentation.agent.properties
 *~
 /.idea/
 .kotlin/sessions/kotlin-compiler-13820148940367299849.salive
+app/release/output-metadata.json
+app/release/baselineProfiles/0/app-release.dm
+app/release/baselineProfiles/1/app-release.dm

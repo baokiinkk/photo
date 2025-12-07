@@ -10,6 +10,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
+import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.BaseApplication
@@ -25,7 +26,9 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.li
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyleSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.Photo
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toBitmap
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toScaledBitmapForUpload
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.urlToDrawable
 import com.basesource.base.viewmodel.BaseViewModel
 import com.tanishranjan.cropkit.util.MathUtils
@@ -36,6 +39,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.annotation.KoinViewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -129,9 +133,10 @@ class EditorStoreViewModel(
 //        }
     }
 
-    fun downloadIcon(){
+    fun downloadIcon() {
 
     }
+
     fun updateImageTransforms(transforms: Map<Int, ImageTransformState>) {
         uiState.update {
             it.copy(imageTransforms = transforms)
@@ -252,33 +257,17 @@ class EditorStoreViewModel(
 
     fun updateBitmap(
         pathBitmap: String?,
-        bitmap: Bitmap?
     ) {
-        if (bitmap == null || canvasSize == null) return
-        pathBitmapResult = pathBitmap
-        viewModelScope.launch(Dispatchers.Default) {
-            val imageWidth = bitmap.width.toFloat()
-            val imageHeight = bitmap.height.toFloat()
-
-            val scaledSize = MathUtils.calculateScaledSize(
-                srcWidth = imageWidth,
-                srcHeight = imageHeight,
-                dstWidth = canvasSize!!.width,
-                dstHeight = canvasSize!!.height,
-                contentScale = ContentScale.Fit
-            )
-
-            val newBitmap = bitmap.scale(scaledSize.width.toInt(), scaledSize.height.toInt())
+        viewModelScope.launch(Dispatchers.IO) {
+            val uri = pathBitmap.toBitmap()?.toFile(context)?.toUri()?: return@launch
+            val index = uiState.value.selectedImageIndex
+            val map = uiState.value.selectedImages.toMutableMap()
+            map[index] = uri
             uiState.update {
-                it.copy(bitmap = newBitmap)
-            }
-            push(
-                stackData = StackData.EditorBitmap(
-                    bitmap = newBitmap,
-                    backgroundColor = uiState.value.backgroundColor,
-                    pathBitmapResult = pathBitmap,
+                it.copy(
+                    selectedImages = map
                 )
-            )
+            }
         }
     }
 
@@ -374,7 +363,16 @@ class EditorStoreViewModel(
 
     fun onToolClick(tool: CollageTool) {
         viewModelScope.launch {
-            _navigation.send(tool)
+            if (tool == CollageTool.FILTER) {
+                withContext(Dispatchers.IO) {
+                    val uri = uiState.value.selectedImages[uiState.value.selectedImageIndex]
+                    val bitmap = uri?.toScaledBitmapForUpload(context, 1504)
+                    pathBitmapResult = bitmap?.toFile(context)
+                    _navigation.send(tool)
+                }
+            } else {
+                _navigation.send(tool)
+            }
         }
     }
 
@@ -462,6 +460,15 @@ class EditorStoreViewModel(
             )
         }
     }
+
+    fun selectedImageIndex(index: Int) {
+        uiState.update {
+            it.copy(
+                selectedImageIndex = index
+            )
+        }
+    }
+
 }
 
 sealed class StackData {
@@ -498,7 +505,8 @@ data class EditorStoreUIState(
     val isShowTextStickerTool: Boolean = false,
     val isVisibleTextField: Boolean = false,
     val editTextProperties: AddTextProperties = AddTextProperties.getAddTextProperties(),
-    val unselectAllImagesTrigger: Int = 0
+    val unselectAllImagesTrigger: Int = 0,
+    val selectedImageIndex: Int = 0
 )
 
 suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {

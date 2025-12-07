@@ -65,7 +65,8 @@ import kotlin.math.sqrt
 @Composable
 fun TemplatePreview(
     modifier: Modifier = Modifier,
-    viewmodel:EditorStoreViewModel,
+    viewmodel: EditorStoreViewModel,
+    uiState: EditorStoreUIState,
     stickerView: FreeStyleStickerView,
     template: TemplateModel?,
     icons: List<FreeStyleSticker>? = null,
@@ -96,7 +97,7 @@ fun TemplatePreview(
         val bannerHeight = constraints.maxHeight.toFloat()
 
         // Separate selected state to avoid recomposition when unselecting
-        var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
+//        var selectedImageIndex by remember { mutableStateOf<Int>(0) }
 
         // States for image transforms only (no selected state to avoid recomposition)
         val imageTransformsLocal = remember { mutableStateMapOf<Int, ImageTransformState>() }
@@ -113,7 +114,8 @@ fun TemplatePreview(
         // Unselect all images when trigger is fired
         LaunchedEffect(unselectAllImagesTrigger) {
             if (unselectAllImagesTrigger > 0) {
-                selectedImageIndex = null
+                viewmodel.selectedImageIndex(0)
+//                selectedImageIndex = 0
             }
         }
 
@@ -150,11 +152,16 @@ fun TemplatePreview(
         }
 
         // Detect tap outside cells to unselect (only when image is selected to avoid blocking sticker)
-        if (selectedImageIndex != null) {
+        if (uiState.selectedImageIndex != null) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .pointerInput(template.cells?.size ?: 0, bannerWidth, bannerHeight, selectedImageIndex) {
+                    .pointerInput(
+                        template.cells?.size ?: 0,
+                        bannerWidth,
+                        bannerHeight,
+                        uiState.selectedImageIndex
+                    ) {
                         detectTapGestures { tapOffset ->
                             val x = tapOffset.x
                             val y = tapOffset.y
@@ -167,9 +174,9 @@ fun TemplatePreview(
                                 val cellHeight = (cell.height ?: 0f) * bannerHeight
 
                                 x >= cellX &&
-                                x <= cellX + cellWidth &&
-                                y >= cellY &&
-                                y <= cellY + cellHeight
+                                        x <= cellX + cellWidth &&
+                                        y >= cellY &&
+                                        y <= cellY + cellHeight
                             } ?: false
 
                             if (!insideCell) {
@@ -187,8 +194,9 @@ fun TemplatePreview(
             val cellWidth = width * bannerWidth
             val cellHeight = height * bannerHeight
 
-            val transformState = imageTransformsLocal[index] ?: imageTransforms[index] ?: ImageTransformState()
-            val isSelected = selectedImageIndex == index
+            val transformState =
+                imageTransformsLocal[index] ?: imageTransforms[index] ?: ImageTransformState()
+            val isSelected = uiState.selectedImageIndex == index
 
             Box(
                 modifier = Modifier
@@ -215,22 +223,28 @@ fun TemplatePreview(
                     .then(
                         if (isSelected) {
                             // Use transformState from local state (user interactions) instead of prop
-                            val currentTransformState = imageTransformsLocal[index] ?: transformState
+                            val currentTransformState =
+                                imageTransformsLocal[index] ?: transformState
                             transformGestureModifier(
                                 index = index,
                                 transformState = currentTransformState,
                                 cellWidth = cellWidth,
                                 cellHeight = cellHeight,
                                 imageTransforms = imageTransformsLocal,
-                                selectedImageIndex = selectedImageIndex,
-                                onSelectedImageIndexChange = { selectedImageIndex = it },
+                                selectedImageIndex = uiState.selectedImageIndex,
+                                onSelectedImageIndexChange = {
+                                    viewmodel.selectedImageIndex(it ?: 0)
+                                },
                                 onImageTransformsChange = onImageTransformsChange
                             )
                         } else {
                             selectGestureModifier(
                                 index = index,
-                                selectedImageIndex = selectedImageIndex,
-                                onSelectedImageIndexChange = { selectedImageIndex = it },
+                                selectedImageIndex = uiState.selectedImageIndex,
+                                onSelectedImageIndexChange = {
+                                    viewmodel.selectedImageIndex(it ?: 0)
+//                                    selectedImageIndex = it ?: 0
+                                },
                                 imageUri = selectedImages[index] ?: Uri.EMPTY,
                                 onImageTransformsChange = onImageTransformsChange
                             )
@@ -238,7 +252,8 @@ fun TemplatePreview(
                     )
             ) {
                 selectedImages[index]?.let { uri ->
-                    val currentTransform = imageTransformsLocal[index] ?: imageTransforms[index] ?: ImageTransformState()
+                    val currentTransform = imageTransformsLocal[index] ?: imageTransforms[index]
+                    ?: ImageTransformState()
                     AsyncImage(
                         model = uri,
                         contentDescription = null,
@@ -257,8 +272,8 @@ fun TemplatePreview(
             }
         }
 
-        if(viewmodel.isFirstSticker) {
-            template.layer?.forEachIndexed {index, model ->
+        if (viewmodel.isFirstSticker) {
+            template.layer?.forEachIndexed { index, model ->
                 scope.launch(Dispatchers.IO) {
                     stickerView.addStickerFromServer(model.toFreeStyleSticker(index))
                 }
@@ -277,8 +292,8 @@ fun TemplatePreview(
 
         // Only set showFocus to false when image is selected, not on every recomposition
         // This prevents resetting sticker focus when unselecting images
-        LaunchedEffect(selectedImageIndex) {
-            if (selectedImageIndex != null) {
+        LaunchedEffect(uiState.selectedImageIndex) {
+            if (uiState.selectedImageIndex != null) {
                 stickerView.setShowFocus(false)
             }
         }
