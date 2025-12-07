@@ -173,6 +173,7 @@ class StickerActivity : BaseActivity() {
                             finish()
                         },
                         onApply = {
+                            viewmodel.showLoading()
                             stickerView?.setShowFocus(false){
                                 stickerView?.post {
                                     captureView(
@@ -199,6 +200,7 @@ class StickerActivity : BaseActivity() {
                                             )
                                         }
                                     )
+                                    viewmodel.hideLoading()
                                 }
                             }
                         },
