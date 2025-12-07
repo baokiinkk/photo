@@ -105,7 +105,10 @@ fun CollageImageCell(
                 }
             }
     ) {
-        val currentTransform = imageStates[index]?.first ?: ImageTransformState()
+        val currentTransform = imageStates[index]?.first ?: ImageTransformState(
+            scale = if(cellData.width > cellData.height) cellData.width / (cellData.imageBitmap?.width?.toFloat() ?: 1f)
+                    else cellData.height / (cellData.imageBitmap?.height?.toFloat() ?: 1f)
+        )
 
         val imageModifier = Modifier
             .fillMaxSize()
@@ -118,10 +121,11 @@ fun CollageImageCell(
                 clip = true
             }
 
+        val contentScale = if(cellData.width > cellData.height) ContentScale.FillWidth else ContentScale.FillHeight
         if (cellData.imageBitmap != null) {
             Image(
                 bitmap = cellData.imageBitmap.asImageBitmap(),
-                contentScale = ContentScale.FillBounds,
+                contentScale = contentScale,
                 contentDescription = null,
                 modifier = imageModifier
             )
@@ -129,7 +133,7 @@ fun CollageImageCell(
             AsyncImage(
                 model = cellData.imageUri,
                 contentDescription = null,
-                contentScale = ContentScale.FillBounds,
+                contentScale = contentScale,
                 modifier = imageModifier,
                 error = painterResource(R.drawable.ic_empty_image)
             )

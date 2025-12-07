@@ -287,7 +287,6 @@ fun CollageScreen(
             Box(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(top = 80.dp)
                     .capturable(captureController)
             ) {
                 CollagePreviewContainer(
