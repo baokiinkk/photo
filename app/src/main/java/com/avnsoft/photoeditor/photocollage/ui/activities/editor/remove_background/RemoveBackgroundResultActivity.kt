@@ -131,15 +131,7 @@ class RemoveBackgroundResultActivity : BaseActivity() {
                                     model = screenInput?.pathBitmap,
                                     size = FileUtil.MAX_SIZE_FILE
                                 )
-//                                Image(
-//                                    bitmap = it.asImageBitmap(),
-//                                    contentDescription = null,
-//                                    modifier = Modifier
-//                                        .fillMaxSize()
-//                                )
                             }
-//                            Spacer(modifier = Modifier.height(36.dp))
-
                         }
                         BackgroundSheet(
                             isShowFooter = uiState.backgroundSelection == null,

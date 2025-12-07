@@ -501,6 +501,7 @@ fun EditorStoreScreen(
                     },
                     onApply = {
                         stickerView.setLocked(false)
+                        stickerView.setShowFocus(true)
                         viewmodel.applyTextSticker()
                     },
                     onAddFirstText = {

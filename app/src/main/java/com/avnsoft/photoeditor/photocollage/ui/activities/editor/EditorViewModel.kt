@@ -253,7 +253,7 @@ class EditorViewModel(
             uiState.update {
                 it.copy(
                     canUndo = false,
-                    canRedo = false,
+                    canRedo = true,
                     backgroundColor = null
                 )
             }
