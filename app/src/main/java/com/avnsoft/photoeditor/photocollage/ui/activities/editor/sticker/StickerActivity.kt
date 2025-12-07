@@ -173,32 +173,35 @@ class StickerActivity : BaseActivity() {
                             finish()
                         },
                         onApply = {
-                            stickerView?.setShowFocus(false)
-                            stickerView?.post {
-                                captureView(
-                                    localView,
-                                    callback = { bitmap ->
-                                        bitmap ?: return@captureView
-                                        val bounds = boxBounds ?: return@captureView
-                                        val captured = Bitmap.createBitmap(
-                                            bitmap,
-                                            bounds.left,
-                                            bounds.top,
-                                            bounds.width(),
-                                            bounds.height()
-                                        )
-                                        saveImage(
-                                            context = this@StickerActivity,
-                                            bitmap = captured,
-                                            onImageSaved = { pathBitmap ->
-                                                val intent = Intent()
-                                                intent.putExtra("pathBitmap", "$pathBitmap")
-                                                setResult(RESULT_OK, intent)
-                                                finish()
-                                            }
-                                        )
-                                    }
-                                )
+                            viewmodel.showLoading()
+                            stickerView?.setShowFocus(false){
+                                stickerView?.post {
+                                    captureView(
+                                        localView,
+                                        callback = { bitmap ->
+                                            bitmap ?: return@captureView
+                                            val bounds = boxBounds ?: return@captureView
+                                            val captured = Bitmap.createBitmap(
+                                                bitmap,
+                                                bounds.left,
+                                                bounds.top,
+                                                bounds.width(),
+                                                bounds.height()
+                                            )
+                                            saveImage(
+                                                context = this@StickerActivity,
+                                                bitmap = captured,
+                                                onImageSaved = { pathBitmap ->
+                                                    val intent = Intent()
+                                                    intent.putExtra("pathBitmap", "$pathBitmap")
+                                                    setResult(RESULT_OK, intent)
+                                                    finish()
+                                                }
+                                            )
+                                        }
+                                    )
+                                    viewmodel.hideLoading()
+                                }
                             }
                         },
                         onAddStickerFromGallery = {
