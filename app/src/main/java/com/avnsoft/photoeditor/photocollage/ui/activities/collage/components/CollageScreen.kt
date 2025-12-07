@@ -285,16 +285,14 @@ fun CollageScreen(
                         }
                     }
                 },
-            contentAlignment = Alignment.TopCenter
         ) {
             Box(
-                modifier = Modifier
+                modifier = Modifier.fillMaxSize()
                     .padding(horizontal = 16.dp)
-                    .padding(top = 60.dp)
-                    .capturable(captureController)
+                    .padding(top = 80.dp)
+                    .capturable(captureController),
             ) {
                 CollagePreviewContainer(
-                    modifier = Modifier.fillMaxSize(),
                     viewModel = vm,
                     collageState = collageState,
                     currentUris = currentUris,
