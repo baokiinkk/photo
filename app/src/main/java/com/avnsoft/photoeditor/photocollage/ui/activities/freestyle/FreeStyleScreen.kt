@@ -139,7 +139,7 @@ fun FreeStyleScreen(
                 onBack = onBack,
                 onActionRight = {
                     viewmodel.clearAllTool()
-                    stickerView.setShowFocus(false){
+                    stickerView.setShowFocus(false) {
                         stickerView.post {
                             scope.launch {
                                 try {
@@ -147,7 +147,11 @@ fun FreeStyleScreen(
                                     pathBitmap = bitmap.toFile(context)
                                     showBottomSheetSaveImage = true
                                 } catch (ex: Throwable) {
-                                    Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                                    Toast.makeText(
+                                        context,
+                                        "Error ${ex.message}",
+                                        Toast.LENGTH_SHORT
+                                    )
                                         .show()
                                 }
                             }
@@ -181,7 +185,10 @@ fun FreeStyleScreen(
             ) {
                 BackgroundLayer(
                     backgroundSelection = uiState.backgroundSelection ?: BackgroundSelection
-                        .Gradient(GradientItem(colors = listOf("#FFCCE4", "#66A8FF")), GradientGroup()),
+                        .Gradient(
+                            GradientItem(colors = listOf("#FFCCE4", "#66A8FF")),
+                            GradientGroup()
+                        ),
                     modifier = Modifier.fillMaxSize()
                 )
                 Box(
@@ -430,9 +437,16 @@ fun StickerFooterTool(
                     DrawableSticker(bitmap?.toDrawable(stickerView.resources))
                 )
             } else {
-                stickerView.replace(
-                    DrawableSticker(bitmap?.toDrawable(stickerView.resources))
-                )
+                val sticker = DrawableSticker(bitmap?.toDrawable(stickerView.resources))
+                if (stickerView.hasSticker()) {
+                    stickerView.replace(
+                        sticker
+                    )
+                } else {
+                    stickerView.addSticker(
+                        sticker
+                    )
+                }
             }
         }
     }
@@ -470,9 +484,17 @@ fun StickerFooterTool(
                             Sticker.Position.TOP
                         )
                     } else {
-                        stickerView.replace(
-                            DrawableSticker(bitmap?.toDrawable(stickerView.resources))
-                        )
+                        val sticker = DrawableSticker(bitmap?.toDrawable(stickerView.resources))
+                        if (stickerView.hasSticker()) {
+                            stickerView.replace(
+                                sticker
+                            )
+                        } else {
+                            stickerView.addSticker(
+                                sticker,
+                                Sticker.Position.TOP
+                            )
+                        }
                     }
                 }
             }

@@ -231,6 +231,7 @@ class FreeStyleActivity : BaseActivity() {
             }
 
             public override fun onStickerDeleted(sticker: Sticker) {
+
             }
 
             public override fun onStickerDragFinished(sticker: Sticker) {
