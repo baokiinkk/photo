@@ -48,7 +48,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppS
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.lib.TextSticker
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageBottomSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.ExportImageData
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.EditTextStickerLayer
@@ -59,6 +58,7 @@ import com.avnsoft.photoeditor.photocollage.ui.dialog.DeleteImageDialog
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toBitmap
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.capturable

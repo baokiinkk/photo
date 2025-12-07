@@ -148,19 +148,28 @@ class MainActivity : BaseActivity() {
     }
 
     private fun gotoTemplate(data: TemplateModel?) {
-        launchActivity(
-            toActivity = TemplateDetailActivity::class.java,
-            input = TemplateDetailInput(data)
-        )
+        if (isNetworkAvailable(this)) {
+            launchActivity(
+                toActivity = TemplateDetailActivity::class.java,
+                input = TemplateDetailInput(data)
+            )
+        } else {
+            viewModel.showNetworkDialog()
+        }
     }
 
     private fun gotoCollage() {
-        launchActivity(toActivity = ImagePickerActivity::class.java) { result ->
-            val result: List<String>? = result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
-            val uris = result?.map { it.toUri() } ?: emptyList()
-            if (uris.isNotEmpty()) {
-                CollageActivity.start(this, uris)
+        if (isNetworkAvailable(this)) {
+            launchActivity(toActivity = ImagePickerActivity::class.java) { result ->
+                val result: List<String>? =
+                    result.data?.getStringExtra(RESULT_URI)?.fromJsonTypeToken()
+                val uris = result?.map { it.toUri() } ?: emptyList()
+                if (uris.isNotEmpty()) {
+                    CollageActivity.start(this, uris)
+                }
             }
+        } else {
+            viewModel.showNetworkDialog()
         }
     }
 
@@ -175,7 +184,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun gotoStore() {
-        launchActivity(toActivity = StoreActivity::class.java, input = StoreActivityInput())
+        if (isNetworkAvailable(this)) {
+            launchActivity(toActivity = StoreActivity::class.java, input = StoreActivityInput())
+        } else {
+            viewModel.showNetworkDialog()
+        }
     }
 
     private fun gotoEditPhoto(tool: CollageTool? = null) {

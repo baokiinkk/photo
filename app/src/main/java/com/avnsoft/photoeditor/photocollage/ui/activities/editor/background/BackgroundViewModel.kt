@@ -15,7 +15,8 @@ class BackgroundViewModel : BaseViewModel() {
 
     fun getConfigBackground(
         bitmap: Bitmap?,
-        isBackgroundTransparent: Boolean
+        isBackgroundTransparent: Boolean,
+        pathBitmap: String?=null
     ) {
         uiState.update {
             it.copy(
@@ -24,7 +25,8 @@ class BackgroundViewModel : BaseViewModel() {
                     BackgroundSelection.BackgroundTransparent(R.drawable.bg_transparent)
                 } else {
                     null
-                }
+                },
+                pathBitmap = pathBitmap
             )
         }
     }
@@ -53,5 +55,6 @@ class BackgroundViewModel : BaseViewModel() {
 data class BackgroundUIState(
     val originBitmap: Bitmap? = null,
     val backgroundSelection: BackgroundSelection? = null,
-    val showDiscardDialog: Boolean = false
+    val showDiscardDialog: Boolean = false,
+    val pathBitmap: String? = null
 )

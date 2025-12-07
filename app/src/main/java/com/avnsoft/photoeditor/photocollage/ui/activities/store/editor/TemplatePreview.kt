@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store.editor
 
+import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.foundation.background
@@ -60,6 +61,7 @@ import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun TemplatePreview(
     modifier: Modifier = Modifier,
@@ -75,6 +77,8 @@ fun TemplatePreview(
 ) {
     val context = LocalContext.current
     var isFirstSticker by remember { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
+
     if (template == null) return
     BoxWithConstraints(
         modifier = modifier
@@ -252,7 +256,6 @@ fun TemplatePreview(
                 }
             }
         }
-        val scope = rememberCoroutineScope()
 
         if(viewmodel.isFirstSticker) {
             template.layer?.forEachIndexed {index, model ->
@@ -261,6 +264,7 @@ fun TemplatePreview(
                 }
             }
             viewmodel.isFirstSticker = false
+            stickerView.setShowFocus(false)
         }
 //        if(isFirstSticker) {
 //            isFirstSticker = false

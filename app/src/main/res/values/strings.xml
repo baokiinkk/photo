@@ -194,5 +194,5 @@ geo
     <!-- Network Dialog -->
     <string name="no_internet">No Internet!</string>
     <string name="no_internet_message">Please check your Wi-Fi or mobile data connection and try again.</string>
-    <string name="go_to_settings">Go to Settings</string>
+    <string name="go_to_settings">Setting</string>
 </resources>

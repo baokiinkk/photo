@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.ImageDecoder
 import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -22,7 +23,6 @@ import coil.request.ImageRequest
 import coil.request.SuccessResult
 import coil.size.Size
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.toBitmap
 import com.avnsoft.photoeditor.photocollage.ui.activities.export_image.Quality
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -280,8 +280,55 @@ object FileUtil {
         }
 
     }
-}
 
-fun String.toFile(): File {
-    return File(this)
+
+    fun Uri.toBitmap(context: Context): Bitmap? {
+        val bitmap = if (Build.VERSION.SDK_INT < 28) {
+            MediaStore.Images.Media.getBitmap(
+                context.contentResolver,
+                this
+            )
+        } else {
+            val source = ImageDecoder.createSource(
+                context.contentResolver,
+                this
+            )
+            ImageDecoder.decodeBitmap(source)
+        }
+        return bitmap
+    }
+
+    fun deleteShareImageFolder(context: Context) {
+        val folder = context.getExternalFilesDir("editor_image_success")
+        folder?.let {
+            deleteDirectoryRecursively(it)
+        }
+    }
+
+    fun deleteDirectoryRecursively(dir: File): Boolean {
+        if (dir.isDirectory) {
+            dir.listFiles()?.forEach { file ->
+                deleteDirectoryRecursively(file)
+            }
+        }
+        return dir.delete()  // xóa file hoặc folder rỗng
+    }
+
+
+    fun String.toFile(): File {
+        return File(this)
+    }
+
+    fun String?.uriToBitmap(context: Context): Bitmap? {
+        val imageUri = this?.toUri()
+        val bitmap = imageUri?.toBitmap(context)
+        return bitmap
+    }
+
+    fun String?.toBitmap(context: Context? = null): Bitmap? {
+//    val imageUri = this?.toUri()
+//    val bitmap = imageUri?.toBitmap(context)
+        val bitmap = BitmapFactory.decodeFile(this)
+        return bitmap
+    }
 }
