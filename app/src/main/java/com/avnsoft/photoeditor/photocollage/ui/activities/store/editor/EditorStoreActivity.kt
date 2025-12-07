@@ -120,7 +120,6 @@ class EditorStoreActivity : BaseActivity() {
                                             result.data?.getStringExtra(EditorActivity.PATH_BITMAP)
                                         viewmodel.updateBitmap(
                                             pathBitmap = pathBitmap,
-                                            bitmap = pathBitmap.toBitmap()
                                         )
                                     }
                                 }
@@ -144,7 +143,8 @@ class EditorStoreActivity : BaseActivity() {
                                 )
                             ) {
                                 if (it.resultCode == RESULT_OK) {
-                                    val result = it.data?.getStringExtra("PATH")?.fromJson<ToolTemplateInput>()
+                                    val result = it.data?.getStringExtra("PATH")
+                                        ?.fromJson<ToolTemplateInput>()
                                     val selectedImagesUri = result?.selectedImages?.mapValues {
                                         it.value.toUri()
                                     } ?: emptyMap()
@@ -374,7 +374,7 @@ fun EditorStoreScreen(
                     .weight(1f)
                     .background(BackgroundGray)
                     .padding(top = 20.dp, bottom = 23.dp)
-                    .clickableWithAlphaEffect{
+                    .clickableWithAlphaEffect {
                         viewmodel.triggerUnselectAllImages()
                     }
                     .onSizeChanged { layout ->
@@ -401,7 +401,8 @@ fun EditorStoreScreen(
                         onOutsideClick = {
                             viewmodel.triggerUnselectAllImages()
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        uiState = uiState
                     )
                 } else {
                     uiState.bitmap?.let {
