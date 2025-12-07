@@ -22,7 +22,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.too
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.ai_enhance.AIEnhanceActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
@@ -40,15 +39,12 @@ import com.avnsoft.photoeditor.photocollage.ui.dialog.NetworkDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
-import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
-import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toScaledBitmapForUpload
 import com.basesource.base.network.NetworkUtils.isNetworkAvailable
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.fromJsonTypeToken
 import com.basesource.base.utils.launchActivity
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -68,7 +64,6 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         viewModel.getTokenFirebase()
         deleteFolderTmp()
-        getSignature()
         observerData()
         setContent {
             val selectedTab by viewModel.selectedTab.collectAsState()
@@ -290,35 +285,35 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun getSignature() {
-        try {
-            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-            } else {
-                @Suppress("DEPRECATION") packageManager.getPackageInfo(
-                    packageName,
-                    PackageManager.GET_SIGNATURES
-                )
-            }
-
-            val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                packageInfo.signingInfo?.apkContentsSigners
-            } else {
-                @Suppress("DEPRECATION") packageInfo.signatures
-            }
-
-            val md = MessageDigest.getInstance("SHA")
-            signatures?.get(0)?.toByteArray()?.let { signatureBytes ->
-                md.update(signatureBytes)
-            }
-            val sig = Base64.encodeToString(md.digest(), Base64.DEFAULT)
-            Log.d("quocbao", sig)
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-        } catch (e: NoSuchAlgorithmException) {
-            e.printStackTrace()
-        }
-    }
+//    private fun getSignature() {
+//        try {
+//            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+//            } else {
+//                @Suppress("DEPRECATION") packageManager.getPackageInfo(
+//                    packageName,
+//                    PackageManager.GET_SIGNATURES
+//                )
+//            }
+//
+//            val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                packageInfo.signingInfo?.apkContentsSigners
+//            } else {
+//                @Suppress("DEPRECATION") packageInfo.signatures
+//            }
+//
+//            val md = MessageDigest.getInstance("SHA")
+//            signatures?.get(0)?.toByteArray()?.let { signatureBytes ->
+//                md.update(signatureBytes)
+//            }
+//            val sig = Base64.encodeToString(md.digest(), Base64.DEFAULT)
+//            Log.d("quocbao", sig)
+//        } catch (e: PackageManager.NameNotFoundException) {
+//            e.printStackTrace()
+//        } catch (e: NoSuchAlgorithmException) {
+//            e.printStackTrace()
+//        }
+//    }
 
     fun deleteFolderTmp() {
         try {
