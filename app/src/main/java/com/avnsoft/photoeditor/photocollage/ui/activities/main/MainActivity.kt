@@ -2,11 +2,7 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.main
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.util.Base64
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -45,8 +41,6 @@ import com.basesource.base.utils.fromJsonTypeToken
 import com.basesource.base.utils.launchActivity
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 
 class MainActivity : BaseActivity() {
 
