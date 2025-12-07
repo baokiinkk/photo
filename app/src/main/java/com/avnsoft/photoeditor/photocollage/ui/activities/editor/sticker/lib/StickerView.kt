@@ -407,7 +407,7 @@ open class StickerView : FrameLayout {
         m.postTranslate(dx, dy)
 
         // 7. Giữ sticker trong khung
-        constrainSticker(paramSticker)
+//        constrainSticker(paramSticker)
 
         handlingSticker = paramSticker
         stickers.add(paramSticker)
