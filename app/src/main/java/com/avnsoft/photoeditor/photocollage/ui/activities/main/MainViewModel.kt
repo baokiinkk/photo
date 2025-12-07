@@ -6,7 +6,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.local.sharedPref.EditorSharedPref
-import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateCategoryModel
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.data.repository.PatternRepository
 import com.avnsoft.photoeditor.photocollage.data.repository.RemoveObjectRepoImpl
@@ -39,8 +38,8 @@ class MainViewModel(
     private val _events = MutableSharedFlow<MainScreenEvent>()
     val events: SharedFlow<MainScreenEvent> = _events.asSharedFlow()
 
-    private val _templates = MutableStateFlow<List<TemplateCategoryModel>>(emptyList())
-    val templates: StateFlow<List<TemplateCategoryModel>> = _templates.asStateFlow()
+    private val _templates = MutableStateFlow<List<TemplateModel>>(emptyList())
+    val templates: StateFlow<List<TemplateModel>> = _templates.asStateFlow()
 
     init {
         initAppData()
@@ -106,7 +105,7 @@ class MainViewModel(
         try {
             val response = templateRepoImpl.getPreviewTemplates()
             response.collect { item ->
-                _templates.value = item
+                _templates.value = item.firstOrNull()?.templates.orEmpty()
             }
         } catch (ex: Exception) {
 

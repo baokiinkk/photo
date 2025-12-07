@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.asAndroidBitmap
@@ -250,7 +251,6 @@ fun TemplateDetailContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(20.dp)
                 .then(
                     if (template.width != null && template.height != null) {
                         val ratio = template.width.toFloat() / template.height.toFloat()
@@ -259,6 +259,8 @@ fun TemplateDetailContent(
                         Modifier
                     }
                 )
+                .padding(20.dp)
+                .clipToBounds(),
         ) {
 
             // Banner background - Layer 0

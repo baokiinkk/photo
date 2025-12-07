@@ -352,16 +352,19 @@ fun EditorStoreScreen(
                 },
                 isUndo = false,
                 onSave = {
-                    scope.launch {
-                        try {
-                            viewmodel.triggerUnselectAllImages()
-                            stickerView.setShowFocus(false)
-                            val bitmap = captureController.toImageBitmap().asAndroidBitmap()
-                            pathBitmap = bitmap.toFile(context)
-                            showBottomSheetSaveImage = true
-                        } catch (ex: Throwable) {
-                            Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
-                                .show()
+                    viewmodel.triggerUnselectAllImages()
+                    stickerView.setShowFocus(false)
+
+                    stickerView.post {
+                        scope.launch {
+                            try {
+                                val bitmap = captureController.toImageBitmap().asAndroidBitmap()
+                                pathBitmap = bitmap.toFile(context)
+                                showBottomSheetSaveImage = true
+                            } catch (ex: Throwable) {
+                                Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
                         }
                     }
                 },
