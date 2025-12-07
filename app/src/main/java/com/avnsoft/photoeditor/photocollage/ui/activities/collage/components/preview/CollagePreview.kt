@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.preview
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -36,7 +37,7 @@ data class ImageTransformState(
     val offset: Offset = Offset.Zero,
     val scale: Float = 1f
 )
-
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun CollagePreview(
     images: List<Uri>,

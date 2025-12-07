@@ -114,8 +114,7 @@ fun TemplatePreview(
         // Unselect all images when trigger is fired
         LaunchedEffect(unselectAllImagesTrigger) {
             if (unselectAllImagesTrigger > 0) {
-                viewmodel.selectedImageIndex(0)
-//                selectedImageIndex = 0
+                viewmodel.selectedImageIndex(null)
             }
         }
 

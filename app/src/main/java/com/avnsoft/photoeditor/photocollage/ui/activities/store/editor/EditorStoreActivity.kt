@@ -355,7 +355,7 @@ fun EditorStoreScreen(
                     viewmodel.triggerUnselectAllImages()
                     stickerView.setShowFocus(false)
 
-                    stickerView.post {
+                    stickerView.postDelayed({
                         scope.launch {
                             try {
                                 val bitmap = captureController.toImageBitmap().asAndroidBitmap()
@@ -366,7 +366,7 @@ fun EditorStoreScreen(
                                     .show()
                             }
                         }
-                    }
+                    },500)
                 },
                 canUndo = uiState.canUndo,
                 canRedo = uiState.canRedo

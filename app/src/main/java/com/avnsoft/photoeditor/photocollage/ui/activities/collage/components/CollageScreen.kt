@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.input.pointer.pointerInput
@@ -253,8 +254,9 @@ fun CollageScreen(
             onRedo = { vm.redo() },
             onSave = {
                 clearAllSheets()
+                vm.triggerUnselectAllImages()
                 stickerView.setShowFocus(false)
-                stickerView.post {
+                stickerView.postDelayed ({
                     scope.launch {
                         try {
                             val bitmap = captureController.toImageBitmap().asAndroidBitmap()
@@ -265,7 +267,7 @@ fun CollageScreen(
                                 .show()
                         }
                     }
-                }
+                },500)
             },
             canUndo = canUndo && !showGridsSheet && !showRatioSheet,
             canRedo = canRedo && !showGridsSheet && !showRatioSheet
@@ -282,16 +284,15 @@ fun CollageScreen(
                             vm.triggerUnselectAllImages()
                         }
                     }
-                }
+                },
         ) {
             Box(
-                modifier = Modifier
+                modifier = Modifier.fillMaxSize()
                     .padding(horizontal = 16.dp)
                     .padding(top = 80.dp)
-                    .capturable(captureController)
+                    .capturable(captureController),
             ) {
                 CollagePreviewContainer(
-                    modifier = Modifier.fillMaxSize(),
                     viewModel = vm,
                     collageState = collageState,
                     currentUris = currentUris,
