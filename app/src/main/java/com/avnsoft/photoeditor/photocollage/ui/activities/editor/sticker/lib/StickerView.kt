@@ -307,6 +307,11 @@ open class StickerView : FrameLayout {
         return this
     }
 
+    fun hasSticker(): Boolean {
+        return handlingSticker != null
+    }
+
+
     fun addStickerFromServer(
         sticker: FreeStyleSticker
     ): StickerView {
@@ -660,7 +665,7 @@ open class StickerView : FrameLayout {
                     i++
                 }
             }
-        } else{
+        } else {
             onInvalidateDone?.invoke()
             onInvalidateDone = null
         }
@@ -1075,6 +1080,11 @@ open class StickerView : FrameLayout {
             return true
         }
         return false
+    }
+
+    fun findDrawableSticker(paramSticker: DrawableSticker): Boolean {
+        val i = this.stickers.indexOf(paramSticker)
+        return i != -1
     }
 
     @Throws(Exception::class)

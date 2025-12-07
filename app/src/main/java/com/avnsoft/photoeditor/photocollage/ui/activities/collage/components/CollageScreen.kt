@@ -58,6 +58,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.lib.FreeStyl
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DeleteImageDialog
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.Background2
+import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toBitmap
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
@@ -88,6 +89,8 @@ fun CollageScreen(
     val canRedo by vm.canRedo.collectAsState()
     val unselectAllImagesTrigger by vm.unselectAllImagesTrigger.collectAsState()
     val showDiscardDialog by vm.showDiscardDialog.collectAsState()
+
+    val networkUIState by freeStyleViewModel.networkUIState.collectAsStateWithLifecycle()
 
     // Intercept back press
     BackHandler {
@@ -253,10 +256,10 @@ fun CollageScreen(
             onUndo = { vm.undo() },
             onRedo = { vm.redo() },
             onSave = {
+                freeStyleViewModel.showLoading()
                 clearAllSheets()
                 vm.triggerUnselectAllImages()
-                stickerView.setShowFocus(false)
-                stickerView.postDelayed ({
+                stickerView.setShowFocus(false) {
                     scope.launch {
                         try {
                             val bitmap = captureController.toImageBitmap().asAndroidBitmap()
@@ -265,9 +268,11 @@ fun CollageScreen(
                         } catch (ex: Throwable) {
                             Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
                                 .show()
+                        } finally {
+                            freeStyleViewModel.hideLoading()
                         }
                     }
-                },500)
+                }
             },
             canUndo = canUndo && !showGridsSheet && !showRatioSheet,
             canRedo = canRedo && !showGridsSheet && !showRatioSheet
@@ -287,12 +292,15 @@ fun CollageScreen(
                 },
         ) {
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(horizontal = 16.dp)
                     .padding(top = 80.dp)
                     .capturable(captureController),
+
             ) {
                 CollagePreviewContainer(
+                    modifier = Modifier.fillMaxSize(),
                     viewModel = vm,
                     collageState = collageState,
                     currentUris = currentUris,
@@ -490,6 +498,10 @@ fun CollageScreen(
                 vm.hideDiscardDialog()
             }
         )
+
+        if (networkUIState.isLoading) {
+            LoadingScreen()
+        }
     }
 }
 
