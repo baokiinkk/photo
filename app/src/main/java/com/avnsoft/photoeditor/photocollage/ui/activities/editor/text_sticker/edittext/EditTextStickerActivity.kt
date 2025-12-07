@@ -85,7 +85,7 @@ class EditTextStickerActivity : BaseActivity() {
 
 
                 LaunchedEffect(Unit) {
-                    delay(150) // tránh trường hợp Activity chưa render kịp
+                    delay(200) // tránh trường hợp Activity chưa render kịp
                     focusRequester.requestFocus()
                     keyboardController?.show()
                 }
