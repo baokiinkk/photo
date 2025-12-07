@@ -261,6 +261,7 @@ class EditorStoreViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val uri = pathBitmap.toBitmap()?.toFile(context)?.toUri()?: return@launch
             val index = uiState.value.selectedImageIndex
+            if(index == null) return@launch
             val map = uiState.value.selectedImages.toMutableMap()
             map[index] = uri
             uiState.update {
@@ -461,7 +462,7 @@ class EditorStoreViewModel(
         }
     }
 
-    fun selectedImageIndex(index: Int) {
+    fun selectedImageIndex(index: Int?) {
         uiState.update {
             it.copy(
                 selectedImageIndex = index
@@ -506,7 +507,7 @@ data class EditorStoreUIState(
     val isVisibleTextField: Boolean = false,
     val editTextProperties: AddTextProperties = AddTextProperties.getAddTextProperties(),
     val unselectAllImagesTrigger: Int = 0,
-    val selectedImageIndex: Int = 0
+    val selectedImageIndex: Int? = 0
 )
 
 suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {

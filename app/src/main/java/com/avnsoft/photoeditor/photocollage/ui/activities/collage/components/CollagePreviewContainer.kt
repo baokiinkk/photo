@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -24,6 +25,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.too
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropAspect.Companion.toAspectRatio
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun CollagePreviewContainer(
     modifier: Modifier = Modifier,
