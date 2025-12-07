@@ -84,7 +84,13 @@ class EditorViewModel(
                 )
             }
             tool?.let {
-                onToolClick(tool)
+                viewModelScope.launch(Dispatchers.IO) {
+                    val originBitmap =
+                        pathBitmapResult?.toUri()?.toScaledBitmapForUpload(context, 1504)
+                            ?: return@launch
+                    pathBitmapResult = originBitmap.toFile(context)
+                    onToolClick(tool)
+                }
             }
         }
 
@@ -133,7 +139,8 @@ class EditorViewModel(
     fun scaleBitmapToBox(canvasSize: Size) {
         viewModelScope.launch(Dispatchers.IO) {
             val bitmap = if (isFirstInit) {
-               val originBitmap = pathBitmapResult?.toUri()?.toScaledBitmapForUpload(context, 1504) ?: return@launch
+                val originBitmap = pathBitmapResult?.toUri()?.toScaledBitmapForUpload(context, 1504)
+                    ?: return@launch
                 uiState.update {
                     it.copy(originBitmap = originBitmap)
                 }
