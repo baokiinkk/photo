@@ -173,7 +173,7 @@ class StickerActivity : BaseActivity() {
                             finish()
                         },
                         onApply = {
-                            viewmodel.showLoading()
+//                            viewmodel.showLoading()
                             stickerView?.setShowFocus(false){
                                 stickerView?.post {
                                     captureView(

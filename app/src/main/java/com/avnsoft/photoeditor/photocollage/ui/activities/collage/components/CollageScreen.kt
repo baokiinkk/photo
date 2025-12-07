@@ -256,10 +256,10 @@ fun CollageScreen(
             onUndo = { vm.undo() },
             onRedo = { vm.redo() },
             onSave = {
-                freeStyleViewModel.showLoading()
+//                freeStyleViewModel.showLoading()
                 clearAllSheets()
                 vm.triggerUnselectAllImages()
-                stickerView.setShowFocus(false) {
+                stickerView.setShowFocus(false){
                     scope.launch {
                         try {
                             val bitmap = captureController.toImageBitmap().asAndroidBitmap()
@@ -269,7 +269,7 @@ fun CollageScreen(
                             Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
                                 .show()
                         } finally {
-                            freeStyleViewModel.hideLoading()
+//                            freeStyleViewModel.hideLoading()
                         }
                     }
                 }
@@ -300,7 +300,6 @@ fun CollageScreen(
 
             ) {
                 CollagePreviewContainer(
-                    modifier = Modifier.fillMaxSize(),
                     viewModel = vm,
                     collageState = collageState,
                     currentUris = currentUris,
@@ -499,9 +498,9 @@ fun CollageScreen(
             }
         )
 
-        if (networkUIState.isLoading) {
-            LoadingScreen()
-        }
+//        if (networkUIState.isLoading) {
+//            LoadingScreen()
+//        }
     }
 }
 
