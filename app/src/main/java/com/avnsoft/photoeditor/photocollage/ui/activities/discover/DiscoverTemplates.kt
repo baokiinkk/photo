@@ -37,7 +37,7 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 
 @Composable
 fun DiscoverTemplates(
-    templates: List<TemplateCategoryModel> = emptyList(),
+    templates: List<TemplateModel> = emptyList(),
     onSeeAll: () -> Unit = {},
     onTemplateClick: (TemplateModel) -> Unit = {}
 ) {
@@ -68,39 +68,24 @@ fun DiscoverTemplates(
 
         //UI template
         if (templates.isNotEmpty()) {
-            val allTemplates = templates.flatMap { it.templates.orEmpty() }.take(10)
-            
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                allTemplates.forEach { template ->
-                    Box(
+                templates.forEach { template ->
+                    LoadImage(
+                        model = template.previewUrl,
                         modifier = Modifier
                             .size(130.dp)
                             .clip(RoundedCornerShape(16.dp))
                             .clickableWithAlphaEffect {
                                 onTemplateClick.invoke(template)
-                            }
-                    ) {
-                        LoadImage(
-                            model = template.previewUrl,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                        if (template.isPro == true && template.isUsed == false) {
-                            ImageWidget(
-                                resId = R.drawable.button_pro,
-                                modifier = Modifier
-                                    .width(45.dp)
-                                    .height(20.dp)
-                                    .align(Alignment.TopEnd)
-                                    .padding(top = 8.dp, end = 8.dp)
-                            )
-                        }
-                    }
+                            },
+                        contentScale = ContentScale.Crop
+                    )
+
                 }
             }
         }
