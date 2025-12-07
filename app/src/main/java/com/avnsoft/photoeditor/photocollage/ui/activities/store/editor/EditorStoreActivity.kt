@@ -63,6 +63,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.det
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail.TemplateDetailInput
 import com.avnsoft.photoeditor.photocollage.ui.dialog.DiscardChangesDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
+import com.avnsoft.photoeditor.photocollage.ui.theme.LoadingScreen
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toBitmap
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
@@ -336,6 +337,7 @@ fun EditorStoreScreen(
     val context = LocalContext.current
     var showBottomSheetSaveImage by remember { mutableStateOf(false) }
 
+    val networkUIState by viewmodel.networkUIState.collectAsStateWithLifecycle()
     Box(
         modifier
             .background(BackgroundGray)
@@ -352,10 +354,9 @@ fun EditorStoreScreen(
                 },
                 isUndo = false,
                 onSave = {
+                    viewmodel.showLoading()
                     viewmodel.triggerUnselectAllImages()
-                    stickerView.setShowFocus(false)
-
-                    stickerView.postDelayed({
+                    stickerView.setShowFocus(false) {
                         scope.launch {
                             try {
                                 val bitmap = captureController.toImageBitmap().asAndroidBitmap()
@@ -364,9 +365,11 @@ fun EditorStoreScreen(
                             } catch (ex: Throwable) {
                                 Toast.makeText(context, "Error ${ex.message}", Toast.LENGTH_SHORT)
                                     .show()
+                            } finally {
+                                viewmodel.hideLoading()
                             }
                         }
-                    },500)
+                    }
                 },
                 canUndo = uiState.canUndo,
                 canRedo = uiState.canRedo
@@ -427,6 +430,9 @@ fun EditorStoreScreen(
                 tools = uiState.items,
                 onToolClick = onToolClick
             )
+        }
+        if (networkUIState.isLoading) {
+            LoadingScreen()
         }
         when {
             showBottomSheetSaveImage -> {
