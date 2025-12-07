@@ -266,7 +266,10 @@ fun FreeStyleScreen(
                 TextStickerFooterTool(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.BottomCenter),
+                        .align(Alignment.BottomCenter)
+                        .clickableWithAlphaEffect {
+
+                        },
                     stickerView = stickerView,
                     onCancel = {
                         if (!viewmodel.isEditTextSticker) {
@@ -328,6 +331,9 @@ fun FreeStyleScreen(
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .align(Alignment.BottomCenter)
+                        .clickableWithAlphaEffect {
+
+                        }
                 )
             }
 
@@ -347,6 +353,9 @@ fun FreeStyleScreen(
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .align(Alignment.BottomCenter)
+                        .clickableWithAlphaEffect {
+
+                        }
                 )
             }
 
@@ -366,6 +375,9 @@ fun FreeStyleScreen(
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .align(Alignment.BottomCenter)
+                        .clickableWithAlphaEffect {
+
+                        }
                 )
             }
 
@@ -469,7 +481,7 @@ fun StickerFooterTool(
     }
     StickerToolPanel(
         modifier = modifier
-            .clickableWithAlphaEffect{
+            .clickableWithAlphaEffect {
 
             },
         uiState = uiState,
