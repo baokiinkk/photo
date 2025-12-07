@@ -99,7 +99,8 @@ fun CollageScreen(
         }
     }
 
-    val currentUris: List<Uri> = if (collageState.imageUris.isEmpty()) uris else collageState.imageUris
+    val currentUris: List<Uri> =
+        if (collageState.imageUris.isEmpty()) uris else collageState.imageUris
     val canAddPhoto = currentUris.size < MAX_PHOTOS
     val canUseGrid = currentUris.size > 1
 
@@ -184,6 +185,7 @@ fun CollageScreen(
                     launcher.launch("image/*")
                 }
             }
+
             else -> Unit
         }
     }
@@ -195,10 +197,12 @@ fun CollageScreen(
                 replaceImageIndex = index
                 replaceLauncher.launch("image/*")
             }
+
             ImageEditAction.SWAP -> {
                 isSwapMode = true
                 Toast.makeText(context, R.string.copy, Toast.LENGTH_SHORT).show()
             }
+
             ImageEditAction.CROP -> {
                 val selectedUri = currentUris.getOrNull(index) ?: return
                 scope.launch(Dispatchers.IO) {
@@ -223,6 +227,7 @@ fun CollageScreen(
                     }
                 }
             }
+
             ImageEditAction.ROTATE -> vm.rotateImage(context, index)
             ImageEditAction.FLIP_HORIZONTAL -> vm.flipImageHorizontal(context, index)
             ImageEditAction.FLIP_VERTICAL -> vm.flipImageVertical(context, index)
@@ -279,51 +284,54 @@ fun CollageScreen(
                     }
                 }
         ) {
-            CollagePreviewContainer(
+            Box(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 80.dp)
                     .capturable(captureController)
-                ,
-                viewModel = vm,
-                collageState = collageState,
-                currentUris = currentUris,
-                selectedImageIndex = selectedImageIndex,
-                isSwapMode = isSwapMode,
-                unselectAllImagesTrigger = unselectAllImagesTrigger,
-                onImageClick = { index ->
-                    if (selectedImageIndex == index) {
-                        selectedImageIndex = null
-                        isSwapMode = false
-                    } else {
-                        selectedImageIndex = index
-                    }
-                },
-                onImageSwap = { firstIndex, secondIndex ->
-                    if (firstIndex < currentUris.size && secondIndex < currentUris.size) {
-                        val newUris = currentUris.toMutableList().apply {
-                            val temp = this[firstIndex]
-                            this[firstIndex] = this[secondIndex]
-                            this[secondIndex] = temp
+            ) {
+                CollagePreviewContainer(
+                    modifier = Modifier.fillMaxSize(),
+                    viewModel = vm,
+                    collageState = collageState,
+                    currentUris = currentUris,
+                    selectedImageIndex = selectedImageIndex,
+                    isSwapMode = isSwapMode,
+                    unselectAllImagesTrigger = unselectAllImagesTrigger,
+                    onImageClick = { index ->
+                        if (selectedImageIndex == index) {
+                            selectedImageIndex = null
+                            isSwapMode = false
+                        } else {
+                            selectedImageIndex = index
                         }
-                        vm.setImageUris(context, newUris)
-                        isSwapMode = false
+                    },
+                    onImageSwap = { firstIndex, secondIndex ->
+                        if (firstIndex < currentUris.size && secondIndex < currentUris.size) {
+                            val newUris = currentUris.toMutableList().apply {
+                                val temp = this[firstIndex]
+                                this[firstIndex] = this[secondIndex]
+                                this[secondIndex] = temp
+                            }
+                            vm.setImageUris(context, newUris)
+                            isSwapMode = false
+                        }
+                    },
+                    onOutsideClick = {
+                        selectedImageIndex = null
+                        vm.triggerUnselectAllImages()
+                    },
+                    onUnselectAll = {
+                        selectedImageIndex = null
+                        vm.triggerUnselectAllImages()
                     }
-                },
-                onOutsideClick = {
-                    selectedImageIndex = null
-                    vm.triggerUnselectAllImages()
-                },
-                onUnselectAll = {
-                    selectedImageIndex = null
-                    vm.triggerUnselectAllImages()
-                }
-            )
+                )
 
-            FreeStyleStickerComposeView(
-                modifier = Modifier.fillMaxSize(),
-                view = stickerView
-            )
+                FreeStyleStickerComposeView(
+                    modifier = Modifier.fillMaxSize(),
+                    view = stickerView
+                )
+            }
 
             Box(modifier = Modifier.align(Alignment.BottomCenter)) {
                 if (selectedImageIndex != null &&
