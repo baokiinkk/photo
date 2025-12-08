@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -276,7 +277,7 @@ fun CollageScreen(
             canRedo = canRedo && !showGridsSheet && !showRatioSheet
         )
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
@@ -292,12 +293,14 @@ fun CollageScreen(
         {
             Box(
                 modifier = Modifier
-                    .weight(1f)
                     .padding(horizontal = 16.dp)
+                    .padding(top = 80.dp)
                     .capturable(captureController),
-            ) {
+                contentAlignment = Alignment.TopCenter
+            )
+            {
                 CollagePreviewContainer(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier,
                     viewModel = vm,
                     collageState = collageState,
                     currentUris = currentUris,
@@ -334,12 +337,12 @@ fun CollageScreen(
                 )
 
                 FreeStyleStickerComposeView(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.matchParentSize(),
                     view = stickerView
                 )
             }
 
-            Box(modifier = Modifier) {
+            Box(modifier = Modifier.align(Alignment.BottomCenter)) {
                 if (selectedImageIndex != null &&
                     !showTextSheet &&
                     !showStickerSheet &&
