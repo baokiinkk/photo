@@ -132,6 +132,8 @@ open class StickerView : FrameLayout {
 
     private var onInvalidateDone: (() -> Unit)? = null
 
+    var isAddStickerFromServer: Boolean = false
+
     @JvmOverloads
     constructor(paramContext: Context, paramAttributeSet: AttributeSet? = null) : this(
         paramContext,
@@ -419,7 +421,7 @@ open class StickerView : FrameLayout {
         handlingSticker = paramSticker
         stickers.add(paramSticker)
         onStickerOperationListener?.onStickerAdded(paramSticker)
-
+        isAddStickerFromServer = true
         invalidate()
     }
 
@@ -810,7 +812,7 @@ open class StickerView : FrameLayout {
                         )
                     }
                     this.handlingSticker!!.setMatrix(this.moveMatrix)
-                    if (this.isConstrained) constrainSticker(this.handlingSticker!!)
+                    if (this.isConstrained && !isAddStickerFromServer) constrainSticker(this.handlingSticker!!)
                 }
             }
 
@@ -939,7 +941,7 @@ open class StickerView : FrameLayout {
             2 -> {
                 handleCurrentMode(paramMotionEvent)
                 invalidate()
-                if (isConstrained && handlingSticker != null) {
+                if (isConstrained && handlingSticker != null && !isAddStickerFromServer) {
                     constrainSticker(handlingSticker!!)
                 }
                 return true
