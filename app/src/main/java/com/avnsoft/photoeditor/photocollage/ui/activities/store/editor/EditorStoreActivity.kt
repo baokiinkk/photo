@@ -76,6 +76,7 @@ import com.basesource.base.utils.fromJson
 import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.rememberCaptureController
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -358,6 +359,7 @@ fun EditorStoreScreen(
                     viewmodel.triggerUnselectAllImages()
                     stickerView.setShowFocus(false) {
                         scope.launch {
+                            delay(200)
                             try {
                                 val bitmap = captureController.toImageBitmap().asAndroidBitmap()
                                 pathBitmap = bitmap.toFile(context)
