@@ -189,5 +189,10 @@
     <string name="edit">Modifier</string>
     <string name="collage">Collage</string>
     <string name="text_tool_home">Ajouter du texte</string>
+
+    <!-- Network Dialog -->
+    <string name="no_internet">Pas d\'Internet !</string>
+    <string name="no_internet_message">Veuillez vérifier votre connexion Wi-Fi ou données mobiles et réessayer.</string>
+    <string name="go_to_settings">Paramètres</string>
 </resources>
 

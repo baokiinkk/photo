@@ -189,5 +189,10 @@
     <string name="edit">編集</string>
     <string name="collage">コラージュ</string>
     <string name="text_tool_home">テキストを追加</string>
+
+    <!-- Network Dialog -->
+    <string name="no_internet">インターネット接続なし！</string>
+    <string name="no_internet_message">Wi-Fiまたはモバイルデータ接続を確認して、もう一度お試しください。</string>
+    <string name="go_to_settings">設定</string>
 </resources>
 
