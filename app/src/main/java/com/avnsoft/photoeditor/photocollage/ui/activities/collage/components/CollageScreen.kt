@@ -256,7 +256,6 @@ fun CollageScreen(
             onUndo = { vm.undo() },
             onRedo = { vm.redo() },
             onSave = {
-//                freeStyleViewModel.showLoading()
                 clearAllSheets()
                 vm.triggerUnselectAllImages()
                 stickerView.setShowFocus(false){
@@ -278,7 +277,7 @@ fun CollageScreen(
             canRedo = canRedo && !showGridsSheet && !showRatioSheet
         )
 
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
@@ -290,16 +289,16 @@ fun CollageScreen(
                         }
                     }
                 },
-        ) {
+        )
+        {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .weight(1f)
                     .padding(horizontal = 16.dp)
-                    .padding(top = 80.dp)
                     .capturable(captureController),
-
             ) {
                 CollagePreviewContainer(
+                    modifier = Modifier.fillMaxSize(),
                     viewModel = vm,
                     collageState = collageState,
                     currentUris = currentUris,
@@ -341,7 +340,7 @@ fun CollageScreen(
                 )
             }
 
-            Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+            Box(modifier = Modifier) {
                 if (selectedImageIndex != null &&
                     !showTextSheet &&
                     !showStickerSheet &&
@@ -497,10 +496,6 @@ fun CollageScreen(
                 vm.hideDiscardDialog()
             }
         )
-
-//        if (networkUIState.isLoading) {
-//            LoadingScreen()
-//        }
     }
 }
 
