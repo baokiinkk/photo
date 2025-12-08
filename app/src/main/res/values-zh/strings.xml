@@ -189,5 +189,10 @@
     <string name="edit">编辑</string>
     <string name="collage">拼贴</string>
     <string name="text_tool_home">添加文本</string>
+
+    <!-- Network Dialog -->
+    <string name="no_internet">无网络连接！</string>
+    <string name="no_internet_message">请检查您的Wi-Fi或移动数据连接，然后重试。</string>
+    <string name="go_to_settings">设置</string>
 </resources>
 
