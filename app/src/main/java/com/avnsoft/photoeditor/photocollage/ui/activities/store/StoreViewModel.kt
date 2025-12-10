@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.avnsoft.photoeditor.photocollage.data.model.pattern.PatternModel
 import com.avnsoft.photoeditor.photocollage.data.model.sticker.StickerModel
@@ -85,6 +86,7 @@ class StoreViewModel(
                 }
             }
         } catch (ex: Exception) {
+            Log.d("quocbao", ex.message.toString())
 
         }
     }

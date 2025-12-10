@@ -61,9 +61,11 @@ import coil.compose.AsyncImage
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
+import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.GalleryImage
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.BucketSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.PickerHeaderBar
+import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.createImageUri
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.editor.EditorStoreActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.editor.ToolTemplateInput
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
@@ -82,6 +84,7 @@ import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.rememberCaptureController
 import com.basesource.base.utils.requestPermission
+import com.basesource.base.utils.takePicture
 import com.basesource.base.utils.toJson
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.launch
@@ -451,7 +454,13 @@ fun CustomImagePickerScreen(
                         activity, android.Manifest.permission.CAMERA
                     ) == PackageManager.PERMISSION_GRANTED
                     val launchCamera: () -> Unit = {
-                        // Camera logic here - similar to ImagePickerScreen
+                        createImageUri(context)?.let { output ->
+                            activity.takePicture(output) { success ->
+                                if (success) {
+                                    onImageClick(output)
+                                }
+                            }
+                        }
                     }
                     if (hasCamera) {
                         launchCamera()

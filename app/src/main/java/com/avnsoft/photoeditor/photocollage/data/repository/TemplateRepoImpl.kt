@@ -21,7 +21,7 @@ class TemplateRepoImpl(
     suspend fun getPreviewTemplates(): Flow<List<TemplateCategoryModel>> = flow {
         val response = safeApiCall<TemplateResponse>(
             context = context,
-            apiCallMock = { api.getMockTemplates() },
+            apiCallMock = { api.getTemplates() },
             apiCall = { api.getTemplates() }
         )
         
