@@ -88,6 +88,16 @@ fun DiscoverTemplates(
                         .size(130.dp)
                         .clip(RoundedCornerShape(16.dp))
                 )
+                Shimmer(
+                    modifier = Modifier
+                        .size(130.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
+                Shimmer(
+                    modifier = Modifier
+                        .size(130.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
             }
         }
     }

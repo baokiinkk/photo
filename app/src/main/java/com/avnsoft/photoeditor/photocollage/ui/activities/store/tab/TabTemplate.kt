@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,6 +34,7 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.ImageWidget
+import com.basesource.base.utils.Shimmer
 import com.basesource.base.utils.clickableWithAlphaEffect
 
 @Composable
@@ -42,7 +42,6 @@ fun TabTemplates(
     templates: List<TemplateCategoryModel>,
     onItemClicked: (TemplateModel) -> Unit
 ) {
-    if(templates.isEmpty()) return
     var tabIndex by remember { mutableIntStateOf(0) }
     Column(
         modifier = Modifier
@@ -56,7 +55,7 @@ fun TabTemplates(
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            templates.forEachIndexed { index, item ->
+            templates.takeIf { it.isNotEmpty() }?.forEachIndexed { index, item ->
                 val isSelected = index == tabIndex
                 Box(
                     modifier = Modifier
@@ -86,7 +85,7 @@ fun TabTemplates(
             }
         }
 
-        templates[tabIndex].templates.takeIf { it?.isNotEmpty() == true }?.let {
+        templates.getOrNull(tabIndex)?.templates.takeIf { it?.isNotEmpty() == true }?.let {
             LazyVerticalGrid(
                 modifier = Modifier
                     .padding(top = 16.dp, bottom = 16.dp),
@@ -120,6 +119,24 @@ fun TabTemplates(
                             )
                         }
                     }
+                }
+            }
+        } ?: run {
+            //preview loading
+            LazyVerticalGrid(
+                modifier = Modifier
+                    .padding(top = 16.dp, bottom = 16.dp),
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                itemsIndexed(items = listOf("", "", "", "", "", "", "")) { index, item ->
+                    Shimmer(
+                        modifier = Modifier
+                            .fillMaxWidth(1f)
+                            .height(194.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                    )
                 }
             }
         }

@@ -266,13 +266,6 @@ fun TemplateDetailContent(
                 .clipToBounds(),
         ) {
 
-            // Banner background - Layer 0
-            template.bannerUrl?.let { bannerUrl ->
-                LoadImage(
-                    model = bannerUrl, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds
-                )
-            }
-
             // Contents (cells) overlay - Layer 1
             template.cells?.forEachIndexed { index, cell ->
                 val isSelected = selectedCellIndex == index
@@ -300,6 +293,13 @@ fun TemplateDetailContent(
                         )
                     }
                 }
+            }
+
+            // Banner background - Layer 0
+            template.bannerUrl?.let { bannerUrl ->
+                LoadImage(
+                    model = bannerUrl, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds
+                )
             }
 
             template.layer?.forEachIndexed { index, layerItem ->
