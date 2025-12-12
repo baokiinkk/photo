@@ -5,5 +5,6 @@
     <color name="colorAccent">#00FF00</color>
     <color name="sticker_icon_red">#E13e3e</color>
     <color name="color_text_selected">#615BFD</color>
-
+    <color name="color_900">#101828</color>
+    <color name="color_800">#1D2939</color>
 </resources>

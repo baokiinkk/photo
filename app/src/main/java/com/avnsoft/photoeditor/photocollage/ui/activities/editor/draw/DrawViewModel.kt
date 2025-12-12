@@ -25,7 +25,7 @@ class DrawViewModel : BaseViewModel() {
             tab = DrawTabData.TAB.Pattern
         ),
         DrawTabData(
-            stringResId = R.string.pattern,
+            stringResId = R.string.neon,
             icon = R.drawable.ic_draw_neon,
             tab = DrawTabData.TAB.Neon
         )
