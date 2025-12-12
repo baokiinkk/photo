@@ -382,13 +382,7 @@ fun Modifier.baseBannerItemModifier(
         .graphicsLayer {
             val rotate = rotation * (-1)
             rotationZ = rotate
-            transformOrigin = if (rotate < 0f) {
-                TransformOrigin(1f, 0f)
-            } else if (rotate > 0f) {
-                TransformOrigin(0f, 1f)
-            } else {
-                TransformOrigin.Center
-            }
+            transformOrigin = TransformOrigin.Center
         }
 }
 

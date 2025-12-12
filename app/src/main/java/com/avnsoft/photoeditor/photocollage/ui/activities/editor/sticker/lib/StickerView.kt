@@ -406,7 +406,7 @@ open class StickerView : FrameLayout {
         // Scale quanh pivot
         m.postScale(scaleX, scaleY, pivotX, pivotY)
         // Xoay quanh cùng pivot (đúng theo baseBannerItemModifier: rotate * -1 đã được apply ở JSON rồi)
-        m.postRotate(rotate, pivotX, pivotY)
+        m.postRotate(rotate)
 
         // 6. Dời sticker để top-left sau transform trùng với (left, top)
         val mapped = android.graphics.RectF(0f, 0f, originalWidth, originalHeight)
