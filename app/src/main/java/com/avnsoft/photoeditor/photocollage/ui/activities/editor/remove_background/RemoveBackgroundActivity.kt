@@ -1,7 +1,5 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background
 
-import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -28,12 +26,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import com.avnsoft.photoeditor.photocollage.R
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
@@ -77,7 +70,10 @@ class RemoveBackgroundActivity : BaseActivity() {
                     LoadingAnimation(
                         isShowLoading = uiState.isShowLoading,
                         content = stringResource(R.string.content_removing_object),
-                        isCancel = true
+                        isCancel = true,
+                        onCancel = {
+                            finish()
+                        }
                     )
 //                    Button(
 //                        modifier = Modifier.align(Alignment.BottomCenter),
@@ -184,28 +180,6 @@ fun LoadingAnimation(
                     }
                 }
             }
-        }
-    }
-}
-
-fun BaseActivity.returnToData(
-    type: ToolInput.TYPE,
-    pathUri: String?,
-    pathFile: String?
-) {
-    when (type) {
-        ToolInput.TYPE.NEW -> {
-            launchActivity(
-                toActivity = EditorActivity::class.java,
-                input = EditorInput(pathBitmap = pathUri),
-            )
-        }
-
-        ToolInput.TYPE.BACK_AND_RETURN -> {
-            val intent = Intent()
-            intent.putExtra("pathBitmap", "$pathFile")
-            setResult(RESULT_OK, intent)
-            finish()
         }
     }
 }

@@ -387,6 +387,18 @@ class AppColor(private val textStyle: TextStyle) {
         )
     }
 
+    fun primary100(): TextStyle {
+        return textStyle.copy(
+            color = Color(0xFFDAD3FD)
+        )
+    }
+
+    fun primary300(): TextStyle {
+        return textStyle.copy(
+            color = Color(0xFF937CF8)
+        )
+    }
+
     fun primary500(): TextStyle {
         return textStyle.copy(
             color = Color(0xFF6425F3)

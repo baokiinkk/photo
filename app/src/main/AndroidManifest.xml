@@ -34,6 +34,7 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
@@ -44,15 +45,18 @@
 
         <activity
             android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
 
         <activity
             android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.CropActivity_phase_1"
+            android:screenOrientation="portrait"
             android:exported="false" />
 
 
         <activity
             android:name="com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -60,54 +64,98 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity" />
-        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageActivity" />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageActivity"
+            android:screenOrientation="portrait"
+            />
 
-        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.adjust.AdjustActivity" />
-        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurActivity" />
-        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity" />
-        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity" />
-        <activity android:name=".ui.activities.store.tab.template.detail.TemplateDetailActivity" />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.adjust.AdjustActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.blur.BlurActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.StickerActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".ui.activities.store.tab.template.detail.TemplateDetailActivity"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.text_sticker.TextStickerActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysVisible" />
+            android:windowSoftInputMode="stateAlwaysVisible"
+            />
         <activity
             android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity"
+            android:screenOrientation="portrait"
             android:hardwareAccelerated="false"
             android:theme="@style/Theme.MyApp.Material" />
 
-        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity" />
+        <activity android:name="com.avnsoft.photoeditor.photocollage.ui.activities.editor.background.BackgroundActivity"
+            android:screenOrientation="portrait"
+            />
 
-        <activity android:name=".ui.activities.editor.draw.DrawActivity" />
-        <activity android:name=".ui.activities.store.StoreActivity" />
-        <activity android:name=".ui.activities.store.tab.sticker.detail.StoreStickerDetailActivity" />
-        <activity android:name=".ui.activities.store.tab.background.detail.StoreBackgroundDetailActivity" />
-        <activity android:name=".ui.activities.settings.SettingsActivity" />
-        <activity android:name=".ui.activities.language.LanguageSelectionActivity" />
+        <activity android:name=".ui.activities.editor.draw.DrawActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".ui.activities.store.StoreActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".ui.activities.store.tab.sticker.detail.StoreStickerDetailActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".ui.activities.store.tab.background.detail.StoreBackgroundDetailActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".ui.activities.settings.SettingsActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".ui.activities.language.LanguageSelectionActivity"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".ui.activities.store.editor.EditorStoreActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible" />
 
-        <activity android:name=".ui.activities.editor.remove_background.RemoveBackgroundActivity" />
+        <activity android:name=".ui.activities.editor.remove_background.RemoveBackgroundActivity"
+            android:screenOrientation="portrait"
+            />
 
-        <activity android:name=".ui.activities.editor.ai_enhance.AIEnhanceActivity" />
+        <activity android:name=".ui.activities.editor.ai_enhance.AIEnhanceActivity"
+            android:screenOrientation="portrait"
+            />
 
-        <activity android:name=".ui.activities.freestyle.FreeStyleActivity" />
+        <activity android:name=".ui.activities.freestyle.FreeStyleActivity"
+            android:screenOrientation="portrait"
+            />
 
-        <activity android:name=".ui.activities.export_image.ExportImageResultActivity" />
+        <activity android:name=".ui.activities.export_image.ExportImageResultActivity"
+            android:screenOrientation="portrait"
+            />
 
-        <activity android:name=".ui.activities.editor.remove_background.RemoveBackgroundResultActivity" />
+        <activity android:name=".ui.activities.editor.remove_background.RemoveBackgroundResultActivity"
+            android:screenOrientation="portrait"
+            />
 
-        <activity android:name=".ui.activities.editor.frame.FrameActivity" />
+        <activity android:name=".ui.activities.editor.frame.FrameActivity"
+            android:screenOrientation="portrait"
+            />
 
         <activity
             android:name=".ui.activities.editor.text_sticker.edittext.EditTextStickerActivity"
-            android:windowSoftInputMode="adjustResize|stateVisible"
-            android:theme="@style/Theme.TransparentActivity"/>
+            android:theme="@style/Theme.TransparentActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateVisible" />
+        <activity android:name=".ui.activities.editor.remove_background.onboard.OnboardRemoveBackgroundActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

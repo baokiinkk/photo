@@ -24,26 +24,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,15 +42,13 @@ import androidx.lifecycle.lifecycleScope
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.ai_enhance.AIEnhanceActivity
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.copyImageToAppStorage
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.main.MainActivity
 import com.avnsoft.photoeditor.photocollage.ui.dialog.NetworkDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.utils.NavigateUtils
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.network.NetworkUtils.isNetworkAvailable
 import com.basesource.base.ui.base.BaseActivity
@@ -165,17 +154,27 @@ class ExportImageResultActivity : BaseActivity() {
                 if (viewmodel.isMark()) {
                     val uri = screenInput.pathUriMark?.toUri()
 //                    val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
-                    launchActivity(
-                        toActivity = AIEnhanceActivity::class.java,
-                        input = EditorInput(pathBitmap = uri.toString()),
+                    NavigateUtils.navigateToOnboardRemoveBackground(
+                        activity = this@ExportImageResultActivity,
+                        pathBitmap = uri.toString(),
+                        type = ToolInput.TYPE.ENHANCE
                     )
+//                    launchActivity(
+//                        toActivity = AIEnhanceActivity::class.java,
+//                        input = EditorInput(pathBitmap = uri.toString()),
+//                    )
                 } else {
                     val file = File(screenInput.pathBitmapOriginal)
                     val uri = file.toUri()
-                    launchActivity(
-                        toActivity = AIEnhanceActivity::class.java,
-                        input = ToolInput(pathBitmap = uri.toString()),
+                    NavigateUtils.navigateToOnboardRemoveBackground(
+                        activity = this@ExportImageResultActivity,
+                        pathBitmap = uri.toString(),
+                        type = ToolInput.TYPE.ENHANCE
                     )
+//                    launchActivity(
+//                        toActivity = AIEnhanceActivity::class.java,
+//                        input = ToolInput(pathBitmap = uri.toString()),
+//                    )
                 }
             }
         } else {
@@ -189,17 +188,27 @@ class ExportImageResultActivity : BaseActivity() {
                 if (viewmodel.isMark()) {
                     val uri = screenInput.pathUriMark?.toUri()
 //                    val pathBitmap = copyImageToAppStorage(this@ExportImageResultActivity, uri)
-                    launchActivity(
-                        toActivity = RemoveBackgroundActivity::class.java,
-                        input = EditorInput(pathBitmap = uri.toString()),
+                    NavigateUtils.navigateToOnboardRemoveBackground(
+                        activity = this@ExportImageResultActivity,
+                        pathBitmap = uri.toString(),
+                        type = ToolInput.TYPE.REMOVE_BACKGROUND
                     )
+//                    launchActivity(
+//                        toActivity = RemoveBackgroundActivity::class.java,
+//                        input = EditorInput(pathBitmap = uri.toString()),
+//                    )
                 } else {
                     val file = File(screenInput.pathBitmapOriginal)
                     val uri = file.toUri()
-                    launchActivity(
-                        toActivity = RemoveBackgroundActivity::class.java,
-                        input = ToolInput(pathBitmap = uri.toString()),
+                    NavigateUtils.navigateToOnboardRemoveBackground(
+                        activity = this@ExportImageResultActivity,
+                        pathBitmap = uri.toString(),
+                        type = ToolInput.TYPE.REMOVE_BACKGROUND
                     )
+//                    launchActivity(
+//                        toActivity = RemoveBackgroundActivity::class.java,
+//                        input = ToolInput(pathBitmap = uri.toString()),
+//                    )
                 }
             }
         } else {
