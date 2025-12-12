@@ -17,9 +17,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageActivit
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.CollageTool
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.EditorInput
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.ai_enhance.AIEnhanceActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
-import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_background.RemoveBackgroundActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.RemoveObjectActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.freestyle.FreeStyleActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerActivity
@@ -35,6 +33,7 @@ import com.avnsoft.photoeditor.photocollage.ui.dialog.NetworkDialog
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
 import com.avnsoft.photoeditor.photocollage.utils.FileUtil
+import com.avnsoft.photoeditor.photocollage.utils.NavigateUtils
 import com.basesource.base.network.NetworkUtils.isNetworkAvailable
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.utils.fromJsonTypeToken
@@ -242,10 +241,15 @@ class MainActivity : BaseActivity() {
 //                        val bitmap = it.toUri().toScaledBitmapForUpload(this@MainActivity, 1504)
 //                        val pathBitmap = bitmap?.toFile(this@MainActivity)
 //                        val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
-                        launchActivity(
-                            toActivity = RemoveBackgroundActivity::class.java,
-                            input = ToolInput(pathBitmap = it),
+                        NavigateUtils.navigateToOnboardRemoveBackground(
+                            activity = this@MainActivity,
+                            pathBitmap = it,
+                            type = ToolInput.TYPE.REMOVE_BACKGROUND
                         )
+//                        launchActivity(
+//                            toActivity = RemoveBackgroundActivity::class.java,
+//                            input = ToolInput(pathBitmap = it),
+//                        )
                     }
                 }
             }
@@ -267,10 +271,15 @@ class MainActivity : BaseActivity() {
 //                        val bitmap = it.toUri().toScaledBitmapForUpload(this@MainActivity, 1504)
 //                        val pathBitmap = bitmap?.toFile(this@MainActivity)
 //                        val pathBitmap = copyImageToAppStorage(this@MainActivity, it.toUri())
-                        launchActivity(
-                            toActivity = AIEnhanceActivity::class.java,
-                            input = ToolInput(pathBitmap = it),
+                        NavigateUtils.navigateToOnboardRemoveBackground(
+                            activity = this@MainActivity,
+                            pathBitmap = it,
+                            type = ToolInput.TYPE.ENHANCE
                         )
+//                        launchActivity(
+//                            toActivity = AIEnhanceActivity::class.java,
+//                            input = ToolInput(pathBitmap = it),
+//                        )
                     }
                 }
             }

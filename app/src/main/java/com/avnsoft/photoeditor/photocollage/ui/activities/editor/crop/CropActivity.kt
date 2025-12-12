@@ -78,7 +78,9 @@ data class ToolInput(
 
     enum class TYPE {
         NEW,
-        BACK_AND_RETURN
+        BACK_AND_RETURN,
+        ENHANCE,
+        REMOVE_BACKGROUND
     }
 
     fun getBitmap(context: Context): Bitmap? {
@@ -86,6 +88,7 @@ data class ToolInput(
 //        val bitmap = imageUri?.toBitmap(context)
         return pathBitmap.toBitmap(context)
     }
+
 }
 
 class CropActivity : BaseActivity() {
