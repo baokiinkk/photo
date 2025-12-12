@@ -30,7 +30,7 @@
             android:adjustViewBounds="true"
             android:alpha="0.7"
             android:visibility="visible"
-            android:background="@color/color_900"
+            android:background="#6425F3"
             app:shapeAppearanceOverlay="@style/rounded_corner_10"/>
 <!--        android:src="@drawable/img_transparent_seleted"-->
 
