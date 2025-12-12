@@ -199,6 +199,7 @@ geo
     <string name="do_you_like">Enjoying</string>
     <string name="please_select_one_image">Please select one image</string>
     <string name="neon">Neon</string>
+    <string name="swab">Select a photo to swap</string>
     <string name="remove_background">Remove Background</string>
     <string name="enhance_with_magic_ai">Enhance with Magic AI</string>
     <string name="of_photos_achieved_significant_results">of photos achieved significant results</string>

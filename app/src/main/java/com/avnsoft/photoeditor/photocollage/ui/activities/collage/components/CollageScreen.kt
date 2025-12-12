@@ -173,8 +173,11 @@ fun CollageScreen(
         showStickerSheet = false
         showTextSheet = false
     }
+    fun isHasTool() = showGridsSheet || showRatioSheet || showBackgroundSheet || showFrameSheet || showStickerSheet || showTextSheet
+
 
     fun handleToolClick(tool: CollageTool) {
+        if (isHasTool()) return
         clearAllSheets()
         when (tool) {
             CollageTool.GRIDS -> showGridsSheet = true
@@ -203,7 +206,7 @@ fun CollageScreen(
 
             ImageEditAction.SWAP -> {
                 isSwapMode = true
-                Toast.makeText(context, R.string.copy, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.swab, Toast.LENGTH_SHORT).show()
             }
 
             ImageEditAction.CROP -> {

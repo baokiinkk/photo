@@ -122,7 +122,7 @@ fun FrameSheet(
                     },
                     modifier = Modifier
                         .background(
-                            if (selectedCategory == category) Color(0xFF9747FF) else Color(0xFFF3F4F6),
+                            if (selectedCategory == category) Color(0xFF6425F3) else Color(0xFFF3F4F6),
                             RoundedCornerShape(20.dp)
                         )
                         .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -265,7 +265,7 @@ private fun FrameItemCard(
                 )
                 .then(
                     if (isSelected) {
-                        Modifier.border(2.dp, Color(0xFF9747FF), RoundedCornerShape(12.dp))
+                        Modifier.border(2.dp, Color(0xFF6425F3), RoundedCornerShape(12.dp))
                     } else {
                         Modifier
                     }
@@ -293,7 +293,7 @@ private fun FrameItemCard(
                         .align(Alignment.TopEnd)
                         .padding(4.dp)
                         .background(
-                            color = Color(0xFF9747FF),
+                            color = Color(0xFF6425F3),
                             shape = RoundedCornerShape(4.dp)
                         )
                         .padding(horizontal = 6.dp, vertical = 2.dp)

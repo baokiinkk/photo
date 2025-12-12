@@ -516,7 +516,7 @@ fun CustomGalleryGrid(
                             .align(Alignment.BottomEnd)
                             .padding(6.dp)
                             .size(24.dp)
-                            .background(Color(0xFF9747FF), CircleShape),
+                            .background(Color(0xFF6425F3), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(

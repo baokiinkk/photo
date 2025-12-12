@@ -90,7 +90,7 @@ fun GalleryGrid(
                             .align(Alignment.BottomEnd)
                             .padding(6.dp)
                             .size(24.dp)
-                            .background(Color(0xFF9747FF), CircleShape), contentAlignment = Alignment.Center
+                            .background(Color(0xFF6425F3), CircleShape), contentAlignment = Alignment.Center
                     ) {
                         Text((idx+1).toString(), style = AppStyle.body2().bold().white())
                     }

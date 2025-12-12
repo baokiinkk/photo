@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -63,16 +60,14 @@ fun DeleteImageDialog(
                 )
         ) {
             Box(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
             ) {
                 // Background image
                 Image(
                     painter = painterResource(R.drawable.bg_popup_delete),
                     contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp)
+                    contentScale = ContentScale.FillHeight,
+                    modifier = Modifier.height(120.dp).align(Alignment.CenterEnd).padding(end = 48.dp)
                 )
                 Box(
                     modifier = Modifier
@@ -107,12 +102,16 @@ fun DeleteImageDialog(
                 text = stringResource(R.string.delete_image_message),
                 style = AppStyle.body1().medium().gray500(),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
             )
 
             // Action buttons
             Row(
-                modifier = Modifier.fillMaxWidth().padding(20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // Cancel button (gray)

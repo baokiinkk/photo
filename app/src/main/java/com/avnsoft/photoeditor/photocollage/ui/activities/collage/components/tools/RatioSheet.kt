@@ -120,7 +120,7 @@ private fun RatioOptionItem(
             modifier = Modifier
                 .size(56.dp)
                 .background(
-                    color = if (isSelected) Color(0xFF9747FF) else Color(0xFFF3F4F6),
+                    color = if (isSelected) Color(0xFF6425F3) else Color(0xFFF3F4F6),
                     shape = RoundedCornerShape(12.dp)
                 ),
             contentAlignment = Alignment.Center

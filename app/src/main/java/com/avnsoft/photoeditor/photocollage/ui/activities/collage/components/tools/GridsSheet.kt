@@ -103,7 +103,7 @@ fun GridsSheet(
                 },
                 modifier = Modifier
                     .background(
-                        if (selectedTab == GridsTab.LAYOUT) Color(0xFF9747FF) else Color(0xFFF3F4F6), RoundedCornerShape(24.dp)
+                        if (selectedTab == GridsTab.LAYOUT) Color(0xFF6425F3) else Color(0xFFF3F4F6), RoundedCornerShape(24.dp)
                     )
                     .padding(horizontal = 12.dp, vertical = 4.dp)
                     .clickableWithAlphaEffect {
@@ -117,7 +117,7 @@ fun GridsSheet(
                 },
                 modifier = Modifier
                     .background(
-                        if (selectedTab == GridsTab.MARGIN) Color(0xFF9747FF) else Color(0xFFF3F4F6), RoundedCornerShape(24.dp)
+                        if (selectedTab == GridsTab.MARGIN) Color(0xFF6425F3) else Color(0xFFF3F4F6), RoundedCornerShape(24.dp)
                     )
                     .padding(horizontal = 12.dp, vertical = 4.dp)
                     .clickableWithAlphaEffect {

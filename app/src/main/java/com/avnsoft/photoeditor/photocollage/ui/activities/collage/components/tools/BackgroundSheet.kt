@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -64,6 +65,7 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray100
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray500
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray900
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
+import com.avnsoft.photoeditor.photocollage.ui.theme.Primary500
 import com.avnsoft.photoeditor.photocollage.utils.loadPatternAssetPainter
 import com.basesource.base.components.ColorPickerUI
 import com.basesource.base.result.Result
@@ -196,58 +198,61 @@ fun BackgroundSheet(
                     }
                     Text(
                         text = selectedPatternGroup?.tabName ?: "",
-                        style = AppStyle.body1().medium().gray900(),
+                        style = AppStyle.title3().semibold().gray900(),
                     )
                 }
             } else {
                 val context = LocalContext.current
-                Row(
+                Box(
                     modifier = Modifier
                         .padding(vertical = 16.dp, horizontal = 20.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
+                        .fillMaxWidth()
                 ) {
                     Image(
                         modifier = Modifier
-                            .padding(end = 20.dp)
                             .clickableWithAlphaEffect {
                                 (context as? BaseActivity)?.launchActivity(toActivity = StoreActivity::class.java, input = StoreActivityInput())
                             },
                         painter = painterResource(R.drawable.ic_market_black),
                         contentDescription = ""
                     )
-
-                    listOf(
-                        BackgroundTab.SOLID,
-                        BackgroundTab.PATTERN,
-                        BackgroundTab.GRADIENT
-                    ).forEach { tab ->
-                        val tabText = when (tab) {
-                            BackgroundTab.SOLID -> "Solid"
-                            BackgroundTab.PATTERN -> "Pattern"
-                            BackgroundTab.GRADIENT -> "Gradient"
-                        }
-                        Text(
-                            text = tabText,
-                            style = AppStyle.body2().medium().let {
-                                if (currentTab == tab) it.white() else it.gray900()
-                            },
-                            modifier = Modifier
-                                .background(
-                                    if (currentTab == tab) Color(0xFF9747FF) else Color(0xFFF3F4F6),
-                                    RoundedCornerShape(24.dp)
-                                )
-                                .padding(horizontal = 12.dp, vertical = 4.dp)
-                                .clickableWithAlphaEffect {
-                                    currentTab = tab
-                                    if (tab == BackgroundTab.PATTERN) {
-                                        patternState = PatternState.GROUP
-                                        selectedPatternGroup = null
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        listOf(
+                            BackgroundTab.SOLID,
+                            BackgroundTab.PATTERN,
+                            BackgroundTab.GRADIENT
+                        ).forEach { tab ->
+                            val tabText = when (tab) {
+                                BackgroundTab.SOLID -> "Solid"
+                                BackgroundTab.PATTERN -> "Pattern"
+                                BackgroundTab.GRADIENT -> "Gradient"
+                            }
+                            Text(
+                                text = tabText,
+                                style = AppStyle.body2().medium().let {
+                                    if (currentTab == tab) it.white() else it.gray900()
+                                },
+                                modifier = Modifier
+                                    .background(
+                                        if (currentTab == tab) Color(0xFF6425F3) else Color(0xFFF3F4F6),
+                                        RoundedCornerShape(24.dp)
+                                    )
+                                    .padding(horizontal = 12.dp, vertical = 4.dp)
+                                    .clickableWithAlphaEffect {
+                                        currentTab = tab
+                                        if (tab == BackgroundTab.PATTERN) {
+                                            patternState = PatternState.GROUP
+                                            selectedPatternGroup = null
+                                        }
                                     }
-                                }
-                        )
-                        if (tab != BackgroundTab.GRADIENT) {
-                            Spacer(modifier = Modifier.size(12.dp))
+                            )
+                            if (tab != BackgroundTab.GRADIENT) {
+                                Spacer(modifier = Modifier.size(12.dp))
+                            }
                         }
                     }
                 }
@@ -354,7 +359,7 @@ private fun SolidBackgroundTab(
     ) {
         // Color swatches grid
         val solidColors = listOf(
-            Color(0xFFFFFFFF), // White
+            Color(0xFFF7F8F3), // White
             Color(0xFF000000), // Black
             Color(0xFFE5E7EB), // Gray
             Color(0xFF9CA3AF), // Dark Gray
@@ -367,23 +372,22 @@ private fun SolidBackgroundTab(
             Color(0xFF8B5CF6), // Purple
             Color(0xFFEC4899), // Pink
             Color(0xFFF97316), // Orange Red
-            Color(0xFF14B8A6), // Teal
-            Color(0xFF6366F1), // Indigo
         )
 
         LazyVerticalGrid(
-            columns = GridCells.FixedSize(32.dp),
+            columns = GridCells.Fixed(7),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                Image(painter = painterResource(R.drawable.ic_color_picker),
+                Image(
+                    painter = painterResource(R.drawable.ic_color_picker),
                     contentDescription = "",
                     modifier = Modifier
-                        .size(32.dp)
+                        .aspectRatio(1f)
                         .clickableWithAlphaEffect {
                             onColorWheelClick.invoke()
                         }
@@ -406,43 +410,31 @@ private fun SolidColorSwatch(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .size(32.dp)
-            .background(
-                color = color,
-                shape = CircleShape
-            )
-            .then(
-                if (isSelected) {
-                    Modifier.border(
-                        width = 3.dp,
-                        color = Color(0xFF9747FF),
-                        shape = CircleShape
-                    )
-                } else {
-                    Modifier.border(
-                        width = 1.dp,
-                        color = Color(0xFFE5E7EB),
-                        shape = CircleShape
-                    )
-                }
-            )
-            .clickableWithAlphaEffect(onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Spacer(
+            modifier = Modifier
+                .aspectRatio(1f)
+                .background(
+                    color = color,
+                    shape = CircleShape
+                )
+                .clickableWithAlphaEffect(onClick = onClick),
+        )
         if (isSelected) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = stringResource(R.string.selected),
-                tint = if (color.toArgb() == Color.White.toArgb() || color.toArgb() == Color(
-                        0xFFE5E7EB
-                    ).toArgb()
-                ) Color.Black else Color.White,
-                modifier = Modifier.size(20.dp)
+            Spacer(Modifier.height(2.dp))
+            Spacer(
+                modifier = Modifier
+                    .size(4.dp)
+                    .aspectRatio(1f)
+                    .background(
+                        color = Primary500,
+                        shape = CircleShape
+                    )
+                    .clickableWithAlphaEffect(onClick = onClick),
             )
         }
     }
+
 }
 
 fun Color.colorToHex(includeAlpha: Boolean = true): String {
@@ -634,7 +626,7 @@ private fun PatternGroupCard(
                         .align(Alignment.TopEnd)
                         .padding(4.dp)
                         .background(
-                            Color(0xFF9747FF),
+                            Color(0xFF6425F3),
                             RoundedCornerShape(4.dp)
                         )
                         .padding(horizontal = 6.dp, vertical = 2.dp)
@@ -728,7 +720,7 @@ private fun PatternItemCard(
                         .align(Alignment.TopEnd)
                         .padding(4.dp)
                         .background(
-                            color = Color(0xFF9747FF),
+                            color = Color(0xFF6425F3),
                             shape = RoundedCornerShape(4.dp)
                         )
                         .padding(horizontal = 6.dp, vertical = 2.dp)
@@ -754,7 +746,6 @@ private fun PatternItemCard(
 private fun GradientBackgroundTab(
     onGradientSelect: ((GradientItem, GradientGroup, String) -> Unit)? = null
 ) {
-    val context = LocalContext.current
     val gradientRepository: GradientRepository = koinInject()
 
     var gradients by remember { mutableStateOf<List<GradientGroup>>(emptyList()) }
@@ -830,7 +821,6 @@ private fun GradientBackgroundTab(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(140.dp)
                 ) {
                     gradients.forEach { group ->
                         items(group.content.orEmpty()) { item ->
@@ -869,8 +859,7 @@ private fun GradientItemCard(
     }
 
     Column(
-        modifier = Modifier
-            .width(100.dp),
+        modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -890,7 +879,7 @@ private fun GradientItemCard(
                     onGradientSelect?.invoke(gradientItem, gradientGroup)
                 },
             contentAlignment = Alignment.Center
-        ){
+        ) {
 
         }
 
