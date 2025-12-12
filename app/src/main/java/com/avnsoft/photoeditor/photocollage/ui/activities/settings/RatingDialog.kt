@@ -11,14 +11,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -35,15 +38,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
-import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.basesource.base.components.CustomButton
 import com.basesource.base.utils.clickableWithAlphaEffect
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeApi::class)
 
 @Composable
 fun RatingDialog(
@@ -52,26 +54,23 @@ fun RatingDialog(
     onRatingSubmitted: (Int) -> Unit
 ) {
     if (!isVisible) return
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     var selectedRating by remember { mutableIntStateOf(5) }
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.ic_rate_app_arrow))
-    val composition2 by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.ic_rate_app_blink))
-    val composition3 by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.ic_rate_app_star))
-
-    Dialog(
+    ModalBottomSheet(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true
-        )
-    ) {
+        sheetState = sheetState,
+        containerColor = Color.Transparent,
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        dragHandle = null
+    ){
         Box(modifier = Modifier
             .fillMaxWidth()
-            .height(391.dp)) {
+            .height(436.dp)) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(297.dp)
+                    .height(350.dp)
                     .align(Alignment.BottomCenter)
                     .background(
                         color = BackgroundWhite,
@@ -82,12 +81,14 @@ fun RatingDialog(
             )
             {
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // Close button
                     Image(
-                        painter = painterResource(R.drawable.ic_close),
+                        painter = painterResource(R.drawable.ic_close_black),
                         contentDescription = "",
                         modifier = Modifier
                             .size(20.dp)
@@ -97,78 +98,60 @@ fun RatingDialog(
                             }
                     )
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(62.dp))
 
                     // Title
-                    Text(
-                        text = stringResource(id = R.string.do_you_like_gps_checker),
-                        style = AppStyle.title2().semibold().grayScale09(),
-                        textAlign = TextAlign.Center
-                    )
+                    Row {
+                        Text(
+                            text = stringResource(id = R.string.do_you_like),
+                            style = AppStyle.title1().bold().gray900(),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = stringResource(id = R.string.app_name) + "?",
+                            style = AppStyle.title1().bold().primary800(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
 
                     // Subtitle
                     Text(
-                        text = stringResource(id = R.string.rate_your_experience),
-                        style = AppStyle.body1().regular().gray400(),
+                        text = stringResource(id = R.string.rate_your),
+                        style = AppStyle.title3().medium().gray500(),
                         textAlign = TextAlign.Center
                     )
-
-                    Row(
-                        modifier = Modifier.align(Alignment.End),
-                        ) {
-                        LottieAnimation(
-                            modifier = Modifier.size(62.dp,40.dp).offset(
-                                y = 10.dp,
-                                x = 10.dp
-                            ),
-                            composition = composition,
-                            iterations = LottieConstants.IterateForever
-                        )
-                        LottieAnimation(
-                            modifier = Modifier.size(48.dp,40.dp).offset(
-                                y = 20.dp
-                            ),
-                            composition = composition2,
-                            iterations = LottieConstants.IterateForever
-                        )
-                    }
+                    Spacer(modifier = Modifier.height(20.dp))
                     // Star rating
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         repeat(5) { index ->
                             val starIndex = index + 1
-                            if(starIndex > selectedRating){
-                                LottieAnimation(
-                                    modifier = Modifier.size(44.dp).clickableWithAlphaEffect {
+                            Image(
+                                painter = painterResource(
+                                    if (starIndex <= selectedRating) R.drawable.ic_star_rating
+                                    else R.drawable.ic_star_rating_disable
+                                ),
+                                contentDescription = "Star $starIndex",
+                                modifier = Modifier
+                                    .size(44.dp)
+                                    .clickableWithAlphaEffect {
                                         selectedRating = starIndex
-                                    },
-                                    composition = composition3,
-                                    iterations = LottieConstants.IterateForever
-                                )
-                            }else{
-                                Image(
-                                    painter = painterResource(
-                                        R.drawable.ic_star_rating
-                                    ),
-                                    contentDescription = "Star $starIndex",
-                                    modifier = Modifier
-                                        .size(44.dp)
-                                        .clickableWithAlphaEffect {
-                                            selectedRating = starIndex
-                                        }
-                                )
-                            }
+                                    }
+                            )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     // Submit button
                     CustomButton(
-                        text = if (selectedRating <= 3) stringResource(R.string.setting_send_feedback) else stringResource(R.string.rate_now),
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.rate_now),
+                        textStyle = AppStyle.buttonLarge().bold().white(),
                         onClick = {
                             onRatingSubmitted(selectedRating)
                             onDismiss()
@@ -178,16 +161,9 @@ fun RatingDialog(
             }
             Image(
                 modifier = Modifier
-                    .size(240.dp, 146.dp)
+                    .size(164.dp)
                     .align(Alignment.TopCenter),
-                painter = when (selectedRating) {
-                    5 -> painterResource(R.drawable.ic_emotion_rating_5)
-                    4 -> painterResource(R.drawable.ic_emotion_rating_4)
-                    3 -> painterResource(R.drawable.ic_emotion_rating_3)
-                    2 -> painterResource(R.drawable.ic_emotion_rating_2)
-                    1 -> painterResource(R.drawable.ic_emotion_rating_1)
-                    else -> painterResource(R.drawable.ic_emotion_rating_5)
-                },
+                painter = painterResource(R.drawable.ic_emotion_rating),
                 contentScale = ContentScale.Crop,
                 contentDescription = "Rating emotion",
             )

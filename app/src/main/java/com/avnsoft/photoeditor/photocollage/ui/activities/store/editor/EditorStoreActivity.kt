@@ -1,7 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store.editor
 
 import android.app.Activity
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,6 +31,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.FeaturePhotoHeader
@@ -43,7 +42,6 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput.TYPE
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.initEditorLib
-import androidx.core.net.toUri
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
@@ -141,7 +139,8 @@ class EditorStoreActivity : BaseActivity() {
                                 toActivity = TemplateDetailActivity::class.java,
                                 input = TemplateDetailInput(
                                     template = screenInput?.template,
-                                    type = ToolInput.TYPE.BACK_AND_RETURN
+                                    type = TYPE.BACK_AND_RETURN,
+                                    selectedImages = viewmodel.uiState.value.selectedImages.mapValues { it.value.toString() }
                                 )
                             ) {
                                 if (it.resultCode == RESULT_OK) {

@@ -1,6 +1,7 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.store.tab.template.detail
 
 import android.net.Uri
+import androidx.core.net.toUri
 import com.avnsoft.photoeditor.photocollage.data.model.template.TemplateModel
 import com.basesource.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,10 +13,11 @@ class TemplateDetailViewModel : BaseViewModel() {
 
     val uiState = MutableStateFlow(TemplateDetailUIState())
 
-    fun initData(template: TemplateModel?) {
+    fun initData(data: TemplateDetailInput?) {
         uiState.update {
             it.copy(
-                template = template,
+                template = data?.template,
+                selectedImages = data?.selectedImages?.mapValues { it.value.toUri() } ?: emptyMap()
             )
         }
     }

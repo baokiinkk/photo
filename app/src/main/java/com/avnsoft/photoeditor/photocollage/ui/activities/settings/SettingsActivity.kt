@@ -124,111 +124,106 @@ fun SettingsScreen(
         ) {
             onBack.invoke()
         }
+
         Column(
             modifier = Modifier
                 .background(BackgroundGray)
-                .weight(1f),
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Column(
+            Image(
+                painter = painterResource(R.drawable.img_banner_setting),
+                contentDescription = "",
+                contentScale = ContentScale.FillWidth,
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.img_banner_setting),
-                    contentDescription = "",
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(328f / 120),
+                    .fillMaxWidth()
+                    .aspectRatio(328f / 120),
+            )
+            SettingsGroup {
+                SettingsItem(
+                    icon = R.drawable.ic_subscription_setting,
+                    title = stringResource(id = R.string.manager_subscription),
+                    onClick = onManagerSubscription
                 )
-                SettingsGroup {
-                    SettingsItem(
-                        icon = R.drawable.ic_subscription_setting,
-                        title = stringResource(id = R.string.manager_subscription),
-                        onClick = onManagerSubscription
-                    )
-                    SettingsItem(
-                        icon = R.drawable.ic_restore_setting, title = stringResource(id = R.string.restore_purchase), onClick = onRestorePurchase
-                    )
-                    SettingsItem(
-                        icon = R.drawable.ic_language_setting,
-                        title = stringResource(id = R.string.setting_language),
-                        value = LanguageManager.getCurrentLanguage(LocalContext.current).displayName,
-                        onClick = onLanguageClick,
-                        showArrow = false
-                    )
-                    SettingsItem(
-                        icon = R.drawable.ic_rating_setting, title = stringResource(id = R.string.rate_us), onClick = {
-                            showRatingDialog = true
-                        })
-                    SettingsItem(
-                        icon = R.drawable.ic_feedback_setting, title = stringResource(id = R.string.feedback), onClick = onFeedback
-                    )
-                    SettingsItem(
-                        icon = R.drawable.ic_share_setting, title = stringResource(id = R.string.share_app), onClick = onShareApp
-                    )
-                }
-
-                SettingsGroup {
-
-                    SettingsItem(
-                        icon = R.drawable.ic_gdpr_setting, title = stringResource(id = R.string.gdpr), onClick = onGdpr
-                    )
-
-                    SettingsItem(
-                        icon = R.drawable.ic_policy_setting, title = stringResource(id = R.string.privacy_policy), onClick = onPrivacyPolicy
-                    )
-
-                    SettingsItem(
-                        icon = R.drawable.ic_update_setting, title = stringResource(id = R.string.check_app_update), onClick = onCheckUpdate
-                    )
-                }
+                SettingsItem(
+                    icon = R.drawable.ic_restore_setting, title = stringResource(id = R.string.restore_purchase), onClick = onRestorePurchase
+                )
+                SettingsItem(
+                    icon = R.drawable.ic_language_setting,
+                    title = stringResource(id = R.string.setting_language),
+                    value = LanguageManager.getCurrentLanguage(LocalContext.current).displayName,
+                    onClick = onLanguageClick,
+                    showArrow = false
+                )
+                SettingsItem(
+                    icon = R.drawable.ic_rating_setting, title = stringResource(id = R.string.rate_us), onClick = {
+                        showRatingDialog = true
+                    })
+                SettingsItem(
+                    icon = R.drawable.ic_feedback_setting, title = stringResource(id = R.string.feedback), onClick = onFeedback
+                )
+                SettingsItem(
+                    icon = R.drawable.ic_share_setting, title = stringResource(id = R.string.share_app), onClick = onShareApp
+                )
             }
-        }
 
-        // Join the Community Section
-        Text(
-            text = stringResource(id = R.string.join_the_community),
-            style = AppStyle.buttonLarge().medium().neutral01(),
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(BackgroundGray)
-                .padding(top = 4.dp)
-        )
+            SettingsGroup {
 
-        // Social Media Icons
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(BackgroundGray)
-                .align(Alignment.CenterHorizontally)
-                .padding(horizontal = 54.dp, vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ImageWidget(
-                resId = R.drawable.ic_facebook, modifier = Modifier.size(48.dp)
+                SettingsItem(
+                    icon = R.drawable.ic_gdpr_setting, title = stringResource(id = R.string.gdpr), onClick = onGdpr
+                )
+
+                SettingsItem(
+                    icon = R.drawable.ic_policy_setting, title = stringResource(id = R.string.privacy_policy), onClick = onPrivacyPolicy
+                )
+
+                SettingsItem(
+                    icon = R.drawable.ic_update_setting, title = stringResource(id = R.string.check_app_update), onClick = onCheckUpdate
+                )
+            }
+            Text(
+                text = stringResource(id = R.string.join_the_community),
+                style = AppStyle.buttonLarge().medium().neutral01(),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(BackgroundGray)
+                    .padding(top = 4.dp)
             )
-            ImageWidget(
-                resId = R.drawable.ic_instagram, modifier = Modifier.size(48.dp)
-            )
-            ImageWidget(
-                resId = R.drawable.ic_tiktok, modifier = Modifier.size(48.dp)
-            )
-            ImageWidget(
-                resId = R.drawable.ic_youtube, modifier = Modifier.size(48.dp)
+
+            // Social Media Icons
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(BackgroundGray)
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 54.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ImageWidget(
+                    resId = R.drawable.ic_facebook, modifier = Modifier.size(48.dp)
+                )
+                ImageWidget(
+                    resId = R.drawable.ic_instagram, modifier = Modifier.size(48.dp)
+                )
+                ImageWidget(
+                    resId = R.drawable.ic_tiktok, modifier = Modifier.size(48.dp)
+                )
+                ImageWidget(
+                    resId = R.drawable.ic_youtube, modifier = Modifier.size(48.dp)
+                )
+            }
+            Text(
+                text = stringResource(id = R.string.version_with_team, versionName ?: ""),
+                style = AppStyle.body2().medium().grayScale05(),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp)
             )
         }
-        Text(
-            text = stringResource(id = R.string.version_with_team, versionName ?: ""),
-            style = AppStyle.body2().medium().grayScale05(),
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 20.dp)
-        )
     }
     RatingDialog(isVisible = showRatingDialog, onDismiss = { showRatingDialog = false }, onRatingSubmitted = { rating ->
         if (rating <= 3) {
