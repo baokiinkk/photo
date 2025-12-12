@@ -79,7 +79,6 @@ fun MyCreateUIContentBottomSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .navigationBarsPadding()
             .verticalScroll(scrollState)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally

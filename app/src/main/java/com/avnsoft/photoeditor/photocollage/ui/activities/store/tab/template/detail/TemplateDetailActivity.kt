@@ -41,6 +41,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -65,10 +67,12 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.createImag
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.editor.EditorStoreActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.editor.ToolTemplateInput
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
+import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor.Companion.Gray200
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.Gray300
+import com.avnsoft.photoeditor.photocollage.ui.theme.Gray500
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
@@ -273,20 +277,18 @@ fun TemplateDetailContent(
                 )
                 Box(
                     modifier = baseModifier
-                        .background(Color.White)
+                        .background(color = Gray200)
 
                         .then(
                             if(isSelected){
                                 Modifier.border(
-                                    width = 3.dp,
+                                    width = 2.dp,
                                     color = Color(0xFF6425F3),
                                 )
                             }else{
-                                Modifier.dashedBorder(
-                                    color = Gray300,
-                                    strokeWidth = 2.dp,
-                                    dashWidth = 10.dp,
-                                    dashGap = 8.dp
+                                Modifier.border(
+                                    width = 1.dp,
+                                    color = BackgroundWhite,
                                 )
                             }
                         )
@@ -360,6 +362,25 @@ fun TemplateDetailContent(
                 // Do nothing, keep screen open
             })
     }
+}
+
+@Composable
+fun cellDebugBackgroundColor(
+    index: Int,
+    total: Int
+): Color {
+    val minGray = 0.75f
+    val maxGray = 0.95f
+
+    val fraction = if (total <= 1) 0f else index.toFloat() / (total - 1)
+    val grayValue = minGray + (maxGray - minGray) * fraction
+
+    return Color(
+        red = grayValue,
+        green = grayValue,
+        blue = grayValue,
+        alpha = 0.9f
+    )
 }
 
 fun Modifier.baseBannerItemModifier(
