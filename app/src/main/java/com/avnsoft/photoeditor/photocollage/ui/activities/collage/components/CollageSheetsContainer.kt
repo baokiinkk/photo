@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.data.model.collage.CollageTemplate
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.CollageViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools.BackgroundSheet
@@ -87,6 +88,7 @@ fun CollageSheetsContainer(
 
     if (showBackgroundSheet) {
         BackgroundSheet(
+            title = R.string.background,
             selectedBackgroundSelection = collageState.backgroundSelection,
             onBackgroundSelect = { _, selection ->
                 viewModel.updateBackground(selection)

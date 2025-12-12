@@ -1,5 +1,6 @@
 package com.avnsoft.photoeditor.photocollage.ui.activities.collage.components.tools
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -112,7 +113,8 @@ fun BackgroundSheet(
     onClose: () -> Unit,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
-    isShowFooter: Boolean = true
+    isShowFooter: Boolean = true,
+    @StringRes title: Int = R.string.background
 ) {
     var currentTab by remember(selectedTab) { mutableStateOf(selectedTab) }
     var showColorWheel by remember { mutableStateOf(false) }
@@ -176,19 +178,18 @@ fun BackgroundSheet(
             )
         } else {
             if (currentTab == BackgroundTab.PATTERN && patternState == PatternState.CHILD && selectedPatternGroup != null) {
-                Row(
+                Box(
                     modifier = Modifier
                         .padding(vertical = 16.dp, horizontal = 16.dp)
                         .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
+                    contentAlignment = Alignment.Center
                 ) {
                     IconButton(onClick = {
                         patternState = PatternState.GROUP
                         selectedPatternGroup = null
-                    }) {
+                    }, modifier = Modifier.align(Alignment.CenterStart)) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_arrow_left),
+                            painter = painterResource(R.drawable.ic_left_basic),
                             contentDescription = stringResource(R.string.back),
                             tint = Gray900
                         )
@@ -196,7 +197,6 @@ fun BackgroundSheet(
                     Text(
                         text = selectedPatternGroup?.tabName ?: "",
                         style = AppStyle.body1().medium().gray900(),
-                        modifier = Modifier.padding(start = 8.dp)
                     )
                 }
             } else {
@@ -324,7 +324,7 @@ fun BackgroundSheet(
                 }
 
                 Text(
-                    text = stringResource(R.string.color),
+                    text = stringResource(title),
                     style = AppStyle.title2().semibold().gray900()
                 )
 
