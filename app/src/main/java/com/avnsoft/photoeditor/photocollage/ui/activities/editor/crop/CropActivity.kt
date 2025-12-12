@@ -233,7 +233,9 @@ fun CropImageScreen(
                         CropShape.Original
                     }
 
-                    CropAspect.FREE -> CropShape.FreeForm
+                    CropAspect.FREE -> CropShape.FreeForm(
+                        cropState.aspect.ratio.toAspectRatio()
+                    )
 //                        CropShape.AspectRatio(
 //                        cropState.aspect.ratio.toAspectRatio(),
 //                        true

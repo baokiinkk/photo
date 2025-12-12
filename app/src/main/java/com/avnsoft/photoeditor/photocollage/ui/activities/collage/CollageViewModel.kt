@@ -357,7 +357,7 @@ class CollageViewModel(
 
             val controller = CropController(
                 bmp,
-                cropOptions = CropDefaults.cropOptions(CropShape.FreeForm),
+                cropOptions = CropDefaults.cropOptions(CropShape.FreeForm(0f)),
                 cropColors = CropColors(
                     overlay = Color.Transparent,
                     overlayActive = Color.Transparent,
