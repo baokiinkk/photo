@@ -190,7 +190,7 @@ internal class CropStateManager(
     }
 
     private fun dragHandles(activeHandle: DragHandle, dragAmount: Offset) {
-        if (!isMoveEnabled) return
+        if (!isMoveEnabled && cropShape !is CropShape.FreeForm) return
         val adjustedDragAmount = if (cropShape is CropShape.FreeForm) {
             dragAmount
         } else {
@@ -335,7 +335,7 @@ internal class CropStateManager(
         val offsetY = (canvasSize.height - scaledSize.height) / 2f
 
         val aspectRatio = when (cropShape) {
-            is CropShape.FreeForm -> null
+            is CropShape.FreeForm -> cropShape.ratio
             is CropShape.AspectRatio -> cropShape.ratio
             is CropShape.Original -> imageWidth / imageHeight
         }
@@ -387,7 +387,7 @@ internal class CropStateManager(
                 gridlinesActive = gridLinesVisibility == GridLinesVisibility.ALWAYS,
                 aspectRatio = when (cropShape) {
                     is CropShape.AspectRatio -> cropShape.ratio
-                    CropShape.FreeForm -> 0f
+                    is CropShape.FreeForm -> cropShape.ratio
                     CropShape.Original -> imageWidth / imageHeight
                 },
             )
@@ -411,7 +411,7 @@ internal class CropStateManager(
 
         // Tính toán aspectRatio mới
         val newAspectRatio = when (cropShape) {
-            is CropShape.FreeForm -> 0f // hoặc null tùy vào logic của bạn
+            is CropShape.FreeForm -> cropShape.ratio // hoặc null tùy vào logic của bạn
             is CropShape.AspectRatio -> cropShape.ratio
             is CropShape.Original -> originalBitmapWidth / originalBitmapHeight
         }

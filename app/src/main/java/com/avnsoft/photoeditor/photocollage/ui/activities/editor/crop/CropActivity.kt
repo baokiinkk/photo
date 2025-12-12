@@ -233,10 +233,13 @@ fun CropImageScreen(
                         CropShape.Original
                     }
 
-                    CropAspect.FREE -> CropShape.AspectRatio(
-                        cropState.aspect.ratio.toAspectRatio(),
-                        true
+                    CropAspect.FREE -> CropShape.FreeForm(
+                        cropState.aspect.ratio.toAspectRatio()
                     )
+//                        CropShape.AspectRatio(
+//                        cropState.aspect.ratio.toAspectRatio(),
+//                        true
+//                    )
 
                     else -> CropShape.AspectRatio(aspect.ratio.toAspectRatio(), false)
                 }
@@ -320,7 +323,8 @@ fun CropControlPanel(
                 val isSelected = selectedTab.value == tab
                 Box(
                     modifier = Modifier
-                        .width(64.dp)
+                        .wrapContentWidth()
+//                        .width(64.dp)
                         .height(24.dp)
                         .clip(RoundedCornerShape(50))
                         .clickableWithAlphaEffect { selectedTab.value = tab }

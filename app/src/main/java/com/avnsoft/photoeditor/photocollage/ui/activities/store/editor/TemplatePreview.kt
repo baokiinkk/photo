@@ -224,7 +224,7 @@ fun TemplatePreview(
                                 imageTransforms = imageTransformsLocal,
                                 selectedImageIndex = uiState.selectedImageIndex,
                                 onSelectedImageIndexChange = {
-                                    viewmodel.selectedImageIndex(it ?: 0)
+                                    viewmodel.selectedImageIndex(it)
                                 },
                                 onImageTransformsChange = onImageTransformsChange
                             )
@@ -233,7 +233,7 @@ fun TemplatePreview(
                                 index = index,
                                 selectedImageIndex = uiState.selectedImageIndex,
                                 onSelectedImageIndexChange = {
-                                    viewmodel.selectedImageIndex(it ?: 0)
+                                    viewmodel.selectedImageIndex(it )
 //                                    selectedImageIndex = it ?: 0
                                 },
                                 imageUri = selectedImages[index] ?: Uri.EMPTY,

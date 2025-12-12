@@ -8,5 +8,5 @@ data class ObjAuto(
     val bitmapMask: Bitmap,
     val rectBitmapMask: RectF,
     val bitmapMaskPreview: Bitmap,
-    val isRemoved : Boolean = false
+    val isRemoved: Boolean = false,
 )

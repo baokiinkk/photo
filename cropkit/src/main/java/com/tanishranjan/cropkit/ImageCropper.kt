@@ -244,7 +244,7 @@ fun ImageCropper(
 //                }
 
                 val handles = state.handles.getCornerHandles()
-                val edgeHandles = state.handles.getAllHandles()
+//                val edgeHandles = state.handles.getAllHandles()
                 handles.forEach { handle ->
                     drawOval(
                         color = cropColors.handle,

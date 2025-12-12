@@ -3,6 +3,8 @@ package com.avnsoft.photoeditor.photocollage.ui.activities.editor.remove_object.
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -11,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.databinding.ItemObjBinding
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
 class ObjAdapter(
     private val mContext: Context,
@@ -34,13 +38,17 @@ class ObjAdapter(
         fun bind(objAuto: ObjAuto) {
             this.objAuto = objAuto
 
-            Glide.with(mContext).load(objAuto.bitmapMaskPreview).into(binding.img)
+            Glide
+                .with(mContext)
+                .load(objAuto.bitmapMaskPreview)
+                .transform(CenterCrop(), RoundedCorners(10))
+                .into(binding.img)
 
             binding.tvName.text = objAuto.nameObj
 
             if (objAuto.isRemoved) {
-                binding.img.isVisible=false
-                binding.tvName.isVisible=false
+                binding.img.isVisible = false
+                binding.tvName.isVisible = false
 //                binding.viewSelected.visibility = View.GONE
 //                binding.viewState.visibility = View.VISIBLE
 ////                binding.viewState.setBackgroundResource(R.drawable.bg_btn_cancel_stroke_white)
@@ -48,9 +56,17 @@ class ObjAdapter(
             } else {
 //                binding.img.backgroundTintList = ContextCompat.getColorStateList(mContext, R.color.white)
                 if (listObjSelected.contains(objAuto)) {
-                    binding.img.isVisible=true
+                    binding.img.isVisible = true
                     binding.rootObjectDetect.setBackgroundResource(R.drawable.stroke_object_detect)
-                    binding.stateSelected.isVisible=true
+                    binding.tvName.setTextColor(
+                        ContextCompat.getColor(
+                            binding.tvName.context,
+                            R.color.color_900
+                        )
+                    )
+                    binding.tvName.typeface = ResourcesCompat.getFont( binding.tvName.context, R.font.quicksand_semibold)
+                    binding.stateSelected.alpha = 0.15f
+//                    binding.stateSelected.isVisible=true
 
 //                    binding.viewSelected.visibility = View.VISIBLE
 //                    binding.viewState.visibility = View.VISIBLE
@@ -58,9 +74,17 @@ class ObjAdapter(
 //                    binding.viewState.backgroundTintList =
 //                        ContextCompat.getColorStateList(mContext, R.color.white)
                 } else {
-                    binding.img.isVisible=true
-                    binding.stateSelected.isVisible=false
+                    binding.img.isVisible = true
+//                    binding.stateSelected.isVisible=false
                     binding.rootObjectDetect.setBackgroundResource(R.drawable.stroke_object_un_detect)
+                    binding.tvName.setTextColor(
+                        ContextCompat.getColor(
+                            binding.tvName.context,
+                            R.color.color_800
+                        )
+                    )
+                    binding.tvName.typeface = ResourcesCompat.getFont( binding.tvName.context, R.font.quicksand_medium)
+                    binding.stateSelected.alpha = 0.0f
 //                    binding.viewSelected.visibility = View.GONE
 //                    binding.viewState.visibility = View.GONE
                 }

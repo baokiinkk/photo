@@ -484,7 +484,9 @@ fun DrawTabView(
     Column(
         modifier = Modifier
             .padding(horizontal = 8.dp)
-            .clickableWithAlphaEffect(onClick = onClick)
+            .clickableWithAlphaEffect(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         ImageWidget(
             resId = item.icon,

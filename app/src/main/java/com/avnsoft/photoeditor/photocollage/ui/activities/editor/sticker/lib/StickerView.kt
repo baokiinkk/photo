@@ -153,7 +153,7 @@ open class StickerView : FrameLayout {
         this.paintCircle!!.setColor(
             ContextCompat.getColor(
                 getContext(),
-                R.color.colorAccent
+                android.R.color.transparent
             )
         ) //TODO 2131099703 checkbox_themeable_attribute_color
         this.paintCircle!!.setStrokeWidth(SystemUtil.dpToPx(getContext(), 2).toFloat())
@@ -167,10 +167,10 @@ open class StickerView : FrameLayout {
 
         this.borderPaint = Paint()
         this.borderPaint.setAntiAlias(true)
-        this.borderPaint.setColor(ContextCompat.getColor(getContext(), R.color.white))
+        this.borderPaint.setColor(ContextCompat.getColor(getContext(), android.R.color.transparent))
         this.borderPaintRed = Paint()
         this.borderPaintRed.setAntiAlias(true)
-        this.borderPaintRed.setColor(ContextCompat.getColor(getContext(), R.color.sticker_icon_red))
+        this.borderPaintRed.setColor(ContextCompat.getColor(getContext(), android.R.color.transparent))
 
         val typedArray: TypedArray
         try {

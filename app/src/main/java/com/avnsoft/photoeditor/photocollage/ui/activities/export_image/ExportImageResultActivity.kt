@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -432,8 +433,11 @@ fun ActionButton(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
+                modifier = Modifier
+                    .basicMarquee(),
                 text = text,
-                style = AppStyle.buttonMedium().semibold().primary500()
+                style = AppStyle.buttonMedium().semibold().primary500(),
+                maxLines = 1
             )
         }
     }
@@ -559,10 +563,11 @@ fun AIToolCard(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
+            modifier = Modifier
+                .basicMarquee(),
             text = title,
             style = AppStyle.caption1().semibold().Color_1D2939(),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
         )
     }
 }
