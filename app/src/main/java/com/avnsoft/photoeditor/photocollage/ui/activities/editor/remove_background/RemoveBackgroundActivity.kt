@@ -70,7 +70,10 @@ class RemoveBackgroundActivity : BaseActivity() {
                     LoadingAnimation(
                         isShowLoading = uiState.isShowLoading,
                         content = stringResource(R.string.content_removing_object),
-                        isCancel = true
+                        isCancel = true,
+                        onCancel = {
+                            finish()
+                        }
                     )
 //                    Button(
 //                        modifier = Modifier.align(Alignment.BottomCenter),
