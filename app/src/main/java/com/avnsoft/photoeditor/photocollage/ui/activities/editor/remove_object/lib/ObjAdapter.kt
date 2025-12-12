@@ -65,6 +65,7 @@ class ObjAdapter(
                         )
                     )
                     binding.tvName.typeface = ResourcesCompat.getFont( binding.tvName.context, R.font.quicksand_semibold)
+                    binding.stateSelected.alpha = 0.5f
 //                    binding.stateSelected.isVisible=true
 
 //                    binding.viewSelected.visibility = View.VISIBLE
@@ -83,6 +84,7 @@ class ObjAdapter(
                         )
                     )
                     binding.tvName.typeface = ResourcesCompat.getFont( binding.tvName.context, R.font.quicksand_medium)
+                    binding.stateSelected.alpha = 0.0f
 //                    binding.viewSelected.visibility = View.GONE
 //                    binding.viewState.visibility = View.GONE
                 }

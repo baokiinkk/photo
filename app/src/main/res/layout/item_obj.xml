@@ -29,8 +29,11 @@
             android:layout_margin="3dp"
             android:adjustViewBounds="true"
             android:alpha="0.7"
-            android:src="@drawable/img_transparent_seleted"
-            android:visibility="gone" />
+            android:visibility="visible"
+            android:background="@color/color_900"
+            app:shapeAppearanceOverlay="@style/rounded_corner_10"/>
+<!--        android:src="@drawable/img_transparent_seleted"-->
+
 
     </FrameLayout>
 
