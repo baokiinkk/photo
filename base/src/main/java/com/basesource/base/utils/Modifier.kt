@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.nativeCanvas
@@ -200,5 +201,36 @@ fun Modifier.capturable(graphicsLayer: GraphicsLayer): Modifier {
                 // draw the graphics layer on the visible canvas
                 drawLayer(graphicsLayer)
             }
+    )
+}
+fun Modifier.dashedBorder(
+    color: Color,
+    strokeWidth: Dp,
+    dashWidth: Dp,
+    dashGap: Dp,
+    cornerRadius: Dp = 0.dp
+) = drawBehind {
+    val paint = Paint().asFrameworkPaint().apply {
+        this.color = color.toArgb()
+        this.style = android.graphics.Paint.Style.STROKE
+        this.strokeWidth = strokeWidth.toPx()
+        this.pathEffect = android.graphics.DashPathEffect(
+            floatArrayOf(dashWidth.toPx(), dashGap.toPx()), 0f
+        )
+        isAntiAlias = true
+    }
+
+    val rect = android.graphics.RectF(
+        0f + strokeWidth.toPx()/2,
+        0f + strokeWidth.toPx()/2,
+        size.width - strokeWidth.toPx()/2,
+        size.height - strokeWidth.toPx()/2
+    )
+
+    drawContext.canvas.nativeCanvas.drawRoundRect(
+        rect,
+        cornerRadius.toPx(),
+        cornerRadius.toPx(),
+        paint
     )
 }

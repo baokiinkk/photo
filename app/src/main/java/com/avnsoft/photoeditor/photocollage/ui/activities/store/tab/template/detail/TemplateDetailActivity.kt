@@ -68,6 +68,7 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
+import com.avnsoft.photoeditor.photocollage.ui.theme.Gray300
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
@@ -75,6 +76,7 @@ import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.ImageWidget
 import com.basesource.base.utils.clickableWithAlphaEffect
+import com.basesource.base.utils.dashedBorder
 import com.basesource.base.utils.launchActivity
 import com.basesource.base.utils.requestPermission
 import com.basesource.base.utils.takePicture
@@ -271,14 +273,31 @@ fun TemplateDetailContent(
                 )
                 Box(
                     modifier = baseModifier
-                        .border(
-                            width = if (isSelected) 3.dp else 2.dp,
-                            color = if (isSelected) Color(0xFF6425F3) else Color.Transparent,
+                        .background(Color.White)
+
+                        .then(
+                            if(isSelected){
+                                Modifier.border(
+                                    width = 3.dp,
+                                    color = Color(0xFF6425F3),
+                                )
+                            }else{
+                                Modifier.dashedBorder(
+                                    color = Gray300,
+                                    strokeWidth = 2.dp,
+                                    dashWidth = 10.dp,
+                                    dashGap = 8.dp
+                                )
+                            }
                         )
-                        .background(Color.White.copy(alpha = 0.1f))
                         .clickableWithAlphaEffect {
                             selectedCellIndex = index
-                        }) {
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    LoadImage(
+                        model = R.drawable.ic_add_square
+                    )
                     selectedImages[index]?.let { uri ->
                         LoadImage(
                             model = uri, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop
