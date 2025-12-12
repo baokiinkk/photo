@@ -47,7 +47,7 @@ interface CollageApiService {
     @GET("mock_sticker_data")
     suspend fun getStickers(): Response<ResponseBody>
 
-    @GET("http://openai.amobear.com/2025_photo_collage/jsondata/data.json")
+    @GET("https://openai.amobear.com/2025_photo_collage/jsondata/data.json")
     suspend fun getTemplates(): Response<ResponseBody>
 
     @GET("mock_template_data")

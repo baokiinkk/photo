@@ -141,14 +141,6 @@ fun TemplatePreview(
             // After this block completes, LaunchedEffect won't run again unless template/selectedImages change
             // And if imageTransforms is not empty, it won't calculate again
         }
-        // Banner background
-        template.bannerUrl?.let { bannerUrl ->
-            LoadImage(
-                model = bannerUrl,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillWidth
-            )
-        }
 
         // Detect tap outside cells to unselect (only when image is selected to avoid blocking sticker)
         if (uiState.selectedImageIndex != null) {
@@ -269,6 +261,14 @@ fun TemplatePreview(
                     )
                 }
             }
+        }
+
+        template.bannerUrl?.let { bannerUrl ->
+            LoadImage(
+                model = bannerUrl,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.FillWidth
+            )
         }
 
         if (viewmodel.isFirstSticker) {

@@ -1,1064 +1,1238 @@
 {
-  "version": "v1",
-  "lastModified": "2021-06-05",
-  "urlRoot": "https://openai.amobear.com/",
-  "server": "amobear",
-  "data": [
-    {
-      "categoryId": 1,
-      "categoryName": "Autumn",
-      "content": [
-        {
-          "itemId": 1,
-          "bannerUrl": "file:///android_asset/pattern/Default/item_0.webp",
-          "previewUrl": "file:///android_asset/theme/collage_template_1.png",
-          "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "layer": [
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 75,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 315,
-              "y": 330,
-              "width": 196,
-              "height": 251,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 554,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 75,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 315,
-              "y": 625,
-              "width": 196,
-              "height": 196,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 554,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            }
-          ],
-          "placeholder": [
-            {
-              "x": 75,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "x": 315,
-              "y": 330,
-              "width": 196,
-              "height": 251,
-              "rotate": null
-            },
-            {
-              "x": 554,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "x": 75,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "x": 315,
-              "y": 625,
-              "width": 196,
-              "height": 196,
-              "rotate": null
-            },
-            {
-              "x": 554,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            }
-          ],
-          "isPro": false,
-          "isReward": true,
-          "isFree": false,
-          "isUsed": true,
-          "width": 825,
-          "height": 1024
-        },
-        {
-          "itemId": 2,
-          "bannerUrl": "file:///android_asset/pattern/Default/item_1.webp",
-          "previewUrl": "file:///android_asset/theme/collage_template_2.png",
-          "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "layer": [
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 418,
-              "y": 433,
-              "width": 332,
-              "height": 492,
-              "rotate": -3
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 413,
-              "y": 75,
-              "width": 333,
-              "height": 312,
-              "rotate": -8
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 58,
-              "y": 659,
-              "width": 333,
-              "height": 273,
-              "rotate": -4
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 68,
-              "y": 346,
-              "width": 333,
-              "height": 273,
-              "rotate": 2
-            }
-          ],
-          "placeholder": [
-            {
-              "x": 418,
-              "y": 433,
-              "width": 332,
-              "height": 492,
-              "rotate": -3
-            },
-            {
-              "x": 413,
-              "y": 75,
-              "width": 333,
-              "height": 312,
-              "rotate": -8
-            },
-            {
-              "x": 58,
-              "y": 659,
-              "width": 333,
-              "height": 273,
-              "rotate": -4
-            },
-            {
-              "x": 68,
-              "y": 346,
-              "width": 333,
-              "height": 273,
-              "rotate": 2
-            }
-          ],
-          "isPro": false,
-          "isReward": true,
-          "isFree": false,
-          "isUsed": true,
-          "width": 825,
-          "height": 1024
-        },
-        {
-          "itemId": 3,
-          "bannerUrl": "file:///android_asset/pattern/Default/item_2.webp",
-          "previewUrl": "file:///android_asset/theme/collage_template_3.png",
-          "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "layer": [
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 237,
-              "y": 257,
-              "width": 351,
-              "height": 433,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 135,
-              "y": 684,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 100,
-              "y": 534,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 65,
-              "y": 383,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            }
-          ],
-          "placeholder": [
-            {
-              "x": 237,
-              "y": 257,
-              "width": 351,
-              "height": 433,
-              "rotate": null
-            },
-            {
-              "x": 135,
-              "y": 684,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "x": 100,
-              "y": 534,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "x": 65,
-              "y": 383,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            }
-          ],
-          "isPro": false,
-          "isReward": true,
-          "isFree": false,
-          "isUsed": true,
-          "width": 825,
-          "height": 1024
-        }
-      ]
-    },
-    {
-      "categoryId": 2,
-      "categoryName": "Birthday",
-      "content": [
-        {
-          "itemId": 1,
-          "bannerUrl": "file:///android_asset/pattern/Default/item_0.webp",
-          "previewUrl": "file:///android_asset/theme/collage_template_1.png",
-          "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "layer": [
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 75,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 315,
-              "y": 330,
-              "width": 196,
-              "height": 251,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 554,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 75,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 315,
-              "y": 625,
-              "width": 196,
-              "height": 196,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 554,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            }
-          ],
-          "placeholder": [
-            {
-              "x": 75,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "x": 315,
-              "y": 330,
-              "width": 196,
-              "height": 251,
-              "rotate": null
-            },
-            {
-              "x": 554,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "x": 75,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "x": 315,
-              "y": 625,
-              "width": 196,
-              "height": 196,
-              "rotate": null
-            },
-            {
-              "x": 554,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            }
-          ],
-          "isPro": false,
-          "isReward": true,
-          "isFree": false,
-          "isUsed": true,
-          "width": 825,
-          "height": 1024
-        },
-        {
-          "itemId": 2,
-          "bannerUrl": "file:///android_asset/pattern/Default/item_1.webp",
-          "previewUrl": "file:///android_asset/theme/collage_template_2.png",
-          "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "layer": [
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 418,
-              "y": 433,
-              "width": 332,
-              "height": 492,
-              "rotate": -3
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 413,
-              "y": 75,
-              "width": 333,
-              "height": 312,
-              "rotate": -8
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 58,
-              "y": 659,
-              "width": 333,
-              "height": 273,
-              "rotate": -4
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 68,
-              "y": 346,
-              "width": 333,
-              "height": 273,
-              "rotate": 2
-            }
-          ],
-          "placeholder": [
-            {
-              "x": 418,
-              "y": 433,
-              "width": 332,
-              "height": 492,
-              "rotate": -3
-            },
-            {
-              "x": 413,
-              "y": 75,
-              "width": 333,
-              "height": 312,
-              "rotate": -8
-            },
-            {
-              "x": 58,
-              "y": 659,
-              "width": 333,
-              "height": 273,
-              "rotate": -4
-            },
-            {
-              "x": 68,
-              "y": 346,
-              "width": 333,
-              "height": 273,
-              "rotate": 2
-            }
-          ],
-          "isPro": false,
-          "isReward": true,
-          "isFree": false,
-          "isUsed": true,
-          "width": 825,
-          "height": 1024
-        },
-        {
-          "itemId": 3,
-          "bannerUrl": "file:///android_asset/pattern/Default/item_2.webp",
-          "previewUrl": "file:///android_asset/theme/collage_template_3.png",
-          "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "layer": [
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 237,
-              "y": 257,
-              "width": 351,
-              "height": 433,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 135,
-              "y": 684,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 100,
-              "y": 534,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 65,
-              "y": 383,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            }
-          ],
-          "placeholder": [
-            {
-              "x": 237,
-              "y": 257,
-              "width": 351,
-              "height": 433,
-              "rotate": null
-            },
-            {
-              "x": 135,
-              "y": 684,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "x": 100,
-              "y": 534,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "x": 65,
-              "y": 383,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            }
-          ],
-          "isPro": false,
-          "isReward": true,
-          "isFree": false,
-          "isUsed": true,
-          "width": 825,
-          "height": 1024
-        }
-      ]
-    },
-    {
-      "categoryId": 3,
-      "categoryName": "Collage Art",
-      "content": [
-        {
-          "itemId": 1,
-          "bannerUrl": "file:///android_asset/pattern/Default/item_0.webp",
-          "previewUrl": "file:///android_asset/theme/collage_template_1.png",
-          "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "layer": [
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 75,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 315,
-              "y": 330,
-              "width": 196,
-              "height": 251,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 554,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 75,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 315,
-              "y": 625,
-              "width": 196,
-              "height": 196,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 554,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            }
-          ],
-          "placeholder": [
-            {
-              "x": 75,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "x": 315,
-              "y": 330,
-              "width": 196,
-              "height": 251,
-              "rotate": null
-            },
-            {
-              "x": 554,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "x": 75,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "x": 315,
-              "y": 625,
-              "width": 196,
-              "height": 196,
-              "rotate": null
-            },
-            {
-              "x": 554,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            }
-          ],
-          "isPro": false,
-          "isReward": true,
-          "isFree": false,
-          "isUsed": true,
-          "width": 825,
-          "height": 1024
-        },
-        {
-          "itemId": 2,
-          "bannerUrl": "file:///android_asset/pattern/Default/item_1.webp",
-          "previewUrl": "file:///android_asset/theme/collage_template_2.png",
-          "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "layer": [
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 418,
-              "y": 433,
-              "width": 332,
-              "height": 492,
-              "rotate": -3
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 413,
-              "y": 75,
-              "width": 333,
-              "height": 312,
-              "rotate": -8
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 58,
-              "y": 659,
-              "width": 333,
-              "height": 273,
-              "rotate": -4
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 68,
-              "y": 346,
-              "width": 333,
-              "height": 273,
-              "rotate": 2
-            }
-          ],
-          "placeholder": [
-            {
-              "x": 418,
-              "y": 433,
-              "width": 332,
-              "height": 492,
-              "rotate": -3
-            },
-            {
-              "x": 413,
-              "y": 75,
-              "width": 333,
-              "height": 312,
-              "rotate": -8
-            },
-            {
-              "x": 58,
-              "y": 659,
-              "width": 333,
-              "height": 273,
-              "rotate": -4
-            },
-            {
-              "x": 68,
-              "y": 346,
-              "width": 333,
-              "height": 273,
-              "rotate": 2
-            }
-          ],
-          "isPro": false,
-          "isReward": true,
-          "isFree": false,
-          "isUsed": true,
-          "width": 825,
-          "height": 1024
-        },
-        {
-          "itemId": 3,
-          "bannerUrl": "file:///android_asset/pattern/Default/item_2.webp",
-          "previewUrl": "file:///android_asset/theme/collage_template_3.png",
-          "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "layer": [
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 237,
-              "y": 257,
-              "width": 351,
-              "height": 433,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 135,
-              "y": 684,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 100,
-              "y": 534,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 65,
-              "y": 383,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            }
-          ],
-          "placeholder": [
-            {
-              "x": 237,
-              "y": 257,
-              "width": 351,
-              "height": 433,
-              "rotate": null
-            },
-            {
-              "x": 135,
-              "y": 684,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "x": 100,
-              "y": 534,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "x": 65,
-              "y": 383,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            }
-          ],
-          "isPro": false,
-          "isReward": true,
-          "isFree": false,
-          "isUsed": true,
-          "width": 825,
-          "height": 1024
-        }
-      ]
-    },
-    {
-      "categoryId": 4,
-      "categoryName": "Love",
-      "content": [
-        {
-          "itemId": 1,
-          "bannerUrl": "file:///android_asset/pattern/Default/item_0.webp",
-          "previewUrl": "file:///android_asset/theme/collage_template_1.png",
-          "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "layer": [
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 75,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 315,
-              "y": 330,
-              "width": 196,
-              "height": 251,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 554,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 75,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 315,
-              "y": 625,
-              "width": 196,
-              "height": 196,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 554,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            }
-          ],
-          "placeholder": [
-            {
-              "x": 75,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "x": 315,
-              "y": 330,
-              "width": 196,
-              "height": 251,
-              "rotate": null
-            },
-            {
-              "x": 554,
-              "y": 239,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "x": 75,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            },
-            {
-              "x": 315,
-              "y": 625,
-              "width": 196,
-              "height": 196,
-              "rotate": null
-            },
-            {
-              "x": 554,
-              "y": 552,
-              "width": 196,
-              "height": 269,
-              "rotate": null
-            }
-          ],
-          "isPro": false,
-          "isReward": true,
-          "isFree": false,
-          "isUsed": true,
-          "width": 825,
-          "height": 1024
-        },
-        {
-          "itemId": 2,
-          "bannerUrl": "file:///android_asset/pattern/Default/item_1.webp",
-          "previewUrl": "file:///android_asset/theme/collage_template_2.png",
-          "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "layer": [
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 418,
-              "y": 433,
-              "width": 332,
-              "height": 492,
-              "rotate": -3
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 413,
-              "y": 75,
-              "width": 333,
-              "height": 312,
-              "rotate": -8
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 58,
-              "y": 659,
-              "width": 333,
-              "height": 273,
-              "rotate": -4
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 68,
-              "y": 346,
-              "width": 333,
-              "height": 273,
-              "rotate": 2
-            }
-          ],
-          "placeholder": [
-            {
-              "x": 418,
-              "y": 433,
-              "width": 332,
-              "height": 492,
-              "rotate": -3
-            },
-            {
-              "x": 413,
-              "y": 75,
-              "width": 333,
-              "height": 312,
-              "rotate": -8
-            },
-            {
-              "x": 58,
-              "y": 659,
-              "width": 333,
-              "height": 273,
-              "rotate": -4
-            },
-            {
-              "x": 68,
-              "y": 346,
-              "width": 333,
-              "height": 273,
-              "rotate": 2
-            }
-          ],
-          "isPro": false,
-          "isReward": true,
-          "isFree": false,
-          "isUsed": true,
-          "width": 825,
-          "height": 1024
-        },
-        {
-          "itemId": 3,
-          "bannerUrl": "file:///android_asset/pattern/Default/item_2.webp",
-          "previewUrl": "file:///android_asset/theme/collage_template_3.png",
-          "frameUrl": "https://photo.footballtv.info/202105collagemaker/frame/baby/thumb_1.png",
-          "layer": [
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 237,
-              "y": 257,
-              "width": 351,
-              "height": 433,
-              "rotate": null
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 135,
-              "y": 684,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 100,
-              "y": 534,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "urlThumb": "file:///android_asset/sticker/cat/01.webp",
-              "x": 65,
-              "y": 383,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            }
-          ],
-          "placeholder": [
-            {
-              "x": 237,
-              "y": 257,
-              "width": 351,
-              "height": 433,
-              "rotate": null
-            },
-            {
-              "x": 135,
-              "y": 684,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "x": 100,
-              "y": 534,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            },
-            {
-              "x": 65,
-              "y": 383,
-              "width": 160,
-              "height": 135,
-              "rotate": 13
-            }
-          ],
-          "isPro": false,
-          "isReward": true,
-          "isFree": false,
-          "isUsed": true,
-          "width": 825,
-          "height": 1024
-        }
-      ]
-    }
-  ]
+  "version" : "v1",
+  "lastModified" : "2021-06-05",
+  "urlRoot" : "https://openai.amobear.com/",
+  "server" : "amobear",
+  "data" : [ {
+    "categoryId" : 1,
+    "categoryName" : "Autumn",
+    "content" : [ {
+      "itemId" : 1,
+      "bannerUrl" : "2025_photo_collage/images/autumn/autumn_1/background.webp",
+      "previewUrl" : "2025_photo_collage/images/autumn/autumn_1/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_1/layer/layer-5.webp",
+        "x" : 447,
+        "y" : 485,
+        "width" : 200,
+        "height" : 200,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_1/layer/layer-6.webp",
+        "x" : 735,
+        "y" : 260,
+        "width" : 220,
+        "height" : 269,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_1/layer/layer-7.webp",
+        "x" : 94,
+        "y" : 310,
+        "width" : 150,
+        "height" : 150,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 134,
+        "y" : 400,
+        "width" : 310,
+        "height" : 422,
+        "rotate" : -8
+      }, {
+        "x" : 510,
+        "y" : 151,
+        "width" : 260,
+        "height" : 354,
+        "rotate" : 10
+      }, {
+        "x" : 547,
+        "y" : 592,
+        "width" : 210,
+        "height" : 300,
+        "rotate" : 2
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 2,
+    "categoryName" : "Autumn",
+    "content" : [ {
+      "itemId" : 2,
+      "bannerUrl" : "2025_photo_collage/images/autumn/autumn_2/background.webp",
+      "previewUrl" : "2025_photo_collage/images/autumn/autumn_2/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_2/layer/layer-10.webp",
+        "x" : 425,
+        "y" : 178,
+        "width" : 200,
+        "height" : 150,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 412.5,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 412.5,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 206,
+        "y" : 253,
+        "width" : 294,
+        "height" : 310,
+        "rotate" : null
+      }, {
+        "x" : 447,
+        "y" : 424,
+        "width" : 168,
+        "height" : 103,
+        "rotate" : -7
+      }, {
+        "x" : 432,
+        "y" : 540,
+        "width" : 168,
+        "height" : 103,
+        "rotate" : -7
+      }, {
+        "x" : 418,
+        "y" : 656,
+        "width" : 168,
+        "height" : 103,
+        "rotate" : -7
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 3,
+    "categoryName" : "Autumn",
+    "content" : [ {
+      "itemId" : 3,
+      "bannerUrl" : "2025_photo_collage/images/autumn/autumn_3/background.webp",
+      "previewUrl" : "2025_photo_collage/images/autumn/autumn_3/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ ],
+      "placeholder" : [ {
+        "x" : 0,
+        "y" : 0,
+        "width" : 825,
+        "height" : 1024,
+        "rotate" : null
+      }, {
+        "x" : 126,
+        "y" : 360,
+        "width" : 228,
+        "height" : 228,
+        "rotate" : null
+      }, {
+        "x" : 54,
+        "y" : 650,
+        "width" : 228,
+        "height" : 228,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 4,
+    "categoryName" : "Autumn",
+    "content" : [ {
+      "itemId" : 4,
+      "bannerUrl" : "2025_photo_collage/images/autumn/autumn_4/background.webp",
+      "previewUrl" : "2025_photo_collage/images/autumn/autumn_4/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_4/layer/layer-7.webp",
+        "x" : 532,
+        "y" : 289,
+        "width" : 140,
+        "height" : 140,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_4/layer/layer-8.webp",
+        "x" : 482,
+        "y" : 723,
+        "width" : 140,
+        "height" : 270,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_4/layer/layer-9.webp",
+        "x" : 293,
+        "y" : 296,
+        "width" : 220,
+        "height" : 220,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 129,
+        "y" : 440,
+        "width" : 270,
+        "height" : 270,
+        "rotate" : 17
+      }, {
+        "x" : 186,
+        "y" : 195,
+        "width" : 210,
+        "height" : 265,
+        "rotate" : 15
+      }, {
+        "x" : 412,
+        "y" : 63,
+        "width" : 220,
+        "height" : 220,
+        "rotate" : -13
+      }, {
+        "x" : 415,
+        "y" : 377,
+        "width" : 270,
+        "height" : 270,
+        "rotate" : -9
+      }, {
+        "x" : 306,
+        "y" : 664,
+        "width" : 240,
+        "height" : 303,
+        "rotate" : 5
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 5,
+    "categoryName" : "Autumn",
+    "content" : [ {
+      "itemId" : 5,
+      "bannerUrl" : "2025_photo_collage/images/autumn/autumn_5/background.webp",
+      "previewUrl" : "2025_photo_collage/images/autumn/autumn_5/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ ],
+      "placeholder" : [ {
+        "x" : 68,
+        "y" : 30,
+        "width" : 300,
+        "height" : 300,
+        "rotate" : null
+      }, {
+        "x" : 131,
+        "y" : 344,
+        "width" : 205,
+        "height" : 205,
+        "rotate" : null
+      }, {
+        "x" : 131,
+        "y" : 563,
+        "width" : 356,
+        "height" : 356,
+        "rotate" : null
+      }, {
+        "x" : 381,
+        "y" : 102,
+        "width" : 228,
+        "height" : 228,
+        "rotate" : null
+      }, {
+        "x" : 350,
+        "y" : 344,
+        "width" : 380,
+        "height" : 380,
+        "rotate" : null
+      }, {
+        "x" : 501,
+        "y" : 738,
+        "width" : 256,
+        "height" : 256,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 6,
+    "categoryName" : "Autumn",
+    "content" : [ {
+      "itemId" : 6,
+      "bannerUrl" : "2025_photo_collage/images/autumn/autumn_6/background.webp",
+      "previewUrl" : "2025_photo_collage/images/autumn/autumn_6/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ ],
+      "placeholder" : [ {
+        "x" : 0,
+        "y" : 0,
+        "width" : 825,
+        "height" : 1024,
+        "rotate" : null
+      }, {
+        "x" : 286,
+        "y" : 278,
+        "width" : 220,
+        "height" : 260,
+        "rotate" : null
+      }, {
+        "x" : 320,
+        "y" : 548,
+        "width" : 220,
+        "height" : 260,
+        "rotate" : null
+      }, {
+        "x" : 549,
+        "y" : 358,
+        "width" : 220,
+        "height" : 260,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 7,
+    "categoryName" : "Autumn",
+    "content" : [ {
+      "itemId" : 7,
+      "bannerUrl" : "2025_photo_collage/images/autumn/autumn_7/background.webp",
+      "previewUrl" : "2025_photo_collage/images/autumn/autumn_7/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_7/layer/layer-4.webp",
+        "x" : 32,
+        "y" : 3,
+        "width" : 247,
+        "height" : 291,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_7/layer/layer-5.webp",
+        "x" : 143,
+        "y" : 140,
+        "width" : 192,
+        "height" : 172,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_7/layer/layer-6.webp",
+        "x" : 92,
+        "y" : 833,
+        "width" : 209,
+        "height" : 282,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_7/layer/layer-7.webp",
+        "x" : 620,
+        "y" : 631,
+        "width" : 162,
+        "height" : 159,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_7/layer/layer-8.webp",
+        "x" : 301,
+        "y" : 910,
+        "width" : 224,
+        "height" : 74,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/autumn/autumn_7/layer/layer-9.webp",
+        "x" : 529,
+        "y" : 787,
+        "width" : 217,
+        "height" : 164,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 391,
+        "y" : 176,
+        "width" : 230,
+        "height" : 330,
+        "rotate" : null
+      }, {
+        "x" : 74,
+        "y" : 574,
+        "width" : 330,
+        "height" : 200,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 8,
+    "categoryName" : "Birthday",
+    "content" : [ {
+      "itemId" : 8,
+      "bannerUrl" : "2025_photo_collage/images/birthday/birthday_1/background.webp",
+      "previewUrl" : "2025_photo_collage/images/birthday/birthday_1/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/birthday/birthday_1/layer/layer-6.webp",
+        "x" : 185,
+        "y" : 100,
+        "width" : 531,
+        "height" : 400,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/birthday/birthday_1/layer/layer-7.webp",
+        "x" : 142,
+        "y" : 756,
+        "width" : 312,
+        "height" : 192,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/birthday/birthday_1/layer/layer-8.webp",
+        "x" : 318,
+        "y" : 454,
+        "width" : 737,
+        "height" : 734,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 237,
+        "y" : 257,
+        "width" : 351,
+        "height" : 433,
+        "rotate" : null
+      }, {
+        "x" : 135,
+        "y" : 685,
+        "width" : 160,
+        "height" : 135,
+        "rotate" : 13
+      }, {
+        "x" : 100,
+        "y" : 534,
+        "width" : 160,
+        "height" : 135,
+        "rotate" : 13
+      }, {
+        "x" : 65,
+        "y" : 383,
+        "width" : 160,
+        "height" : 135,
+        "rotate" : 13
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 9,
+    "categoryName" : "Birthday",
+    "content" : [ {
+      "itemId" : 9,
+      "bannerUrl" : "2025_photo_collage/images/birthday/birthday_2/background.webp",
+      "previewUrl" : "2025_photo_collage/images/birthday/birthday_2/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/birthday/birthday_2/layer/layer-5.webp",
+        "x" : 357,
+        "y" : 723,
+        "width" : 410,
+        "height" : 229,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/birthday/birthday_2/layer/layer-6.webp",
+        "x" : 60,
+        "y" : 375,
+        "width" : 265,
+        "height" : 260,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 0,
+        "y" : 0,
+        "width" : 825,
+        "height" : 1024,
+        "rotate" : null
+      }, {
+        "x" : 99,
+        "y" : 127,
+        "width" : 232,
+        "height" : 240,
+        "rotate" : 20
+      }, {
+        "x" : 137,
+        "y" : 560,
+        "width" : 232,
+        "height" : 240,
+        "rotate" : -12
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 10,
+    "categoryName" : "Birthday",
+    "content" : [ {
+      "itemId" : 10,
+      "bannerUrl" : "2025_photo_collage/images/birthday/birthday_3/background.webp",
+      "previewUrl" : "2025_photo_collage/images/birthday/birthday_3/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/birthday/birthday_3/layer/layer-4.webp",
+        "x" : 375,
+        "y" : 540,
+        "width" : 580,
+        "height" : 586,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/birthday/birthday_3/layer/layer-5.webp",
+        "x" : -43,
+        "y" : 163,
+        "width" : 354,
+        "height" : 480,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 294,
+        "y" : 216,
+        "width" : 322,
+        "height" : 322,
+        "rotate" : 12
+      }, {
+        "x" : 120,
+        "y" : 526,
+        "width" : 322,
+        "height" : 322,
+        "rotate" : -18
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 11,
+    "categoryName" : "Love",
+    "content" : [ {
+      "itemId" : 11,
+      "bannerUrl" : "2025_photo_collage/images/love/love_1/background.webp",
+      "previewUrl" : "2025_photo_collage/images/love/love_1/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/birthday/love_1/layer/layer-6.webp",
+        "x" : 0,
+        "y" : 0,
+        "width" : 825,
+        "height" : 1024,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/birthday/love_1/layer/layer-7.webp",
+        "x" : 34,
+        "y" : 56,
+        "width" : 354,
+        "height" : 206,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 418,
+        "y" : 433,
+        "width" : 332,
+        "height" : 492,
+        "rotate" : -3
+      }, {
+        "x" : 413,
+        "y" : 75,
+        "width" : 333,
+        "height" : 313,
+        "rotate" : -8
+      }, {
+        "x" : 58,
+        "y" : 660,
+        "width" : 333,
+        "height" : 273,
+        "rotate" : -4
+      }, {
+        "x" : 68,
+        "y" : 346,
+        "width" : 333,
+        "height" : 273,
+        "rotate" : 2
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 12,
+    "categoryName" : "Love",
+    "content" : [ {
+      "itemId" : 12,
+      "bannerUrl" : "2025_photo_collage/images/love/love_2/background.webp",
+      "previewUrl" : "2025_photo_collage/images/love/love_2/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/love/love_2/layer/layer-5.webp",
+        "x" : 40,
+        "y" : 770,
+        "width" : 200,
+        "height" : 200,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/love/love_2/layer/layer-6.webp",
+        "x" : 308,
+        "y" : 48,
+        "width" : 308,
+        "height" : 40,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/love/love_2/layer/layer-7.webp",
+        "x" : 415,
+        "y" : 57,
+        "width" : 300,
+        "height" : 156,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/love/love_2/layer/layer-8.webp",
+        "x" : 150,
+        "y" : 830,
+        "width" : 361,
+        "height" : 131,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/love/love_2/layer/layer-9.webp",
+        "x" : 495,
+        "y" : 672,
+        "width" : 120,
+        "height" : 100,
+        "rotate" : 10
+      }, {
+        "urlThumb" : "2025_photo_collage/images/love/love_2/layer/layer-10.webp",
+        "x" : 593,
+        "y" : 675,
+        "width" : 120,
+        "height" : 100,
+        "rotate" : -10
+      } ],
+      "placeholder" : [ {
+        "x" : 104,
+        "y" : 318,
+        "width" : 401,
+        "height" : 317,
+        "rotate" : null
+      }, {
+        "x" : 564,
+        "y" : 526,
+        "width" : 180,
+        "height" : 180,
+        "rotate" : -10
+      }, {
+        "x" : 378,
+        "y" : 526,
+        "width" : 180,
+        "height" : 180,
+        "rotate" : 10
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 13,
+    "categoryName" : "Love",
+    "content" : [ {
+      "itemId" : 13,
+      "bannerUrl" : "2025_photo_collage/images/love/love_3/background.webp",
+      "previewUrl" : "2025_photo_collage/images/love/love_3/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/love/love_3/layer/layer-6.webp",
+        "x" : 310,
+        "y" : 75,
+        "width" : 100,
+        "height" : 100,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/love/love_3/layer/layer-7.webp",
+        "x" : 715,
+        "y" : 330,
+        "width" : 100,
+        "height" : 120,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 411,
+        "y" : 16,
+        "width" : 320,
+        "height" : 235,
+        "rotate" : 6
+      }, {
+        "x" : 437,
+        "y" : 258,
+        "width" : 320,
+        "height" : 235,
+        "rotate" : 6
+      }, {
+        "x" : 462,
+        "y" : 499,
+        "width" : 320,
+        "height" : 235,
+        "rotate" : 6
+      }, {
+        "x" : 487,
+        "y" : 741,
+        "width" : 320,
+        "height" : 235,
+        "rotate" : 6
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 14,
+    "categoryName" : "Ig Story",
+    "content" : [ {
+      "itemId" : 14,
+      "bannerUrl" : "",
+      "previewUrl" : "2025_photo_collage/images/ig-story/ig_1/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_1/layer/layer-4.webp",
+        "x" : 303,
+        "y" : 304,
+        "width" : 241,
+        "height" : 19,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_1/layer/layer-5.webp",
+        "x" : 270,
+        "y" : 646,
+        "width" : 197,
+        "height" : 19,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_1/layer/layer-6.webp",
+        "x" : 344,
+        "y" : 987,
+        "width" : 409,
+        "height" : 19,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 0,
+        "y" : 0,
+        "width" : 825,
+        "height" : 341,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 341,
+        "width" : 825,
+        "height" : 342,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 683,
+        "width" : 825,
+        "height" : 341,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 15,
+    "categoryName" : "Ig Story",
+    "content" : [ {
+      "itemId" : 15,
+      "bannerUrl" : "",
+      "previewUrl" : "2025_photo_collage/images/ig-story/ig_2/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_2/layer/layer-4.webp",
+        "x" : 292,
+        "y" : 304,
+        "width" : 241,
+        "height" : 19,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_2/layer/layer-5.webp",
+        "x" : 314,
+        "y" : 646,
+        "width" : 197,
+        "height" : 19,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_2/layer/layer-6.webp",
+        "x" : 208,
+        "y" : 987,
+        "width" : 409,
+        "height" : 19,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 0,
+        "y" : 0,
+        "width" : 825,
+        "height" : 341,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 341,
+        "width" : 825,
+        "height" : 342,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 683,
+        "width" : 825,
+        "height" : 341,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 16,
+    "categoryName" : "Ig Story",
+    "content" : [ {
+      "itemId" : 16,
+      "bannerUrl" : "",
+      "previewUrl" : "2025_photo_collage/images/ig-story/ig_3/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_3/layer/layer-4.webp",
+        "x" : 293,
+        "y" : 304,
+        "width" : 241,
+        "height" : 19,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_3/layer/layer-5.webp",
+        "x" : 208,
+        "y" : 646,
+        "width" : 197,
+        "height" : 19,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_3/layer/layer-6.webp",
+        "x" : 274,
+        "y" : 987,
+        "width" : 409,
+        "height" : 19,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 0,
+        "y" : 0,
+        "width" : 825,
+        "height" : 341,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 341,
+        "width" : 825,
+        "height" : 342,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 683,
+        "width" : 825,
+        "height" : 341,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 17,
+    "categoryName" : "Ig Story",
+    "content" : [ {
+      "itemId" : 17,
+      "bannerUrl" : "2025_photo_collage/images/ig-story/ig_4/background.webp",
+      "previewUrl" : "2025_photo_collage/images/ig-story/ig_4/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_4/layer/layer-5.webp",
+        "x" : 302,
+        "y" : 304,
+        "width" : 241,
+        "height" : 19,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_4/layer/layer-6.webp",
+        "x" : 254,
+        "y" : 646,
+        "width" : 197,
+        "height" : 19,
+        "rotate" : null
+      }, {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_4/layer/layer-7.webp",
+        "x" : 153,
+        "y" : 987,
+        "width" : 409,
+        "height" : 19,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 0,
+        "y" : 0,
+        "width" : 825,
+        "height" : 341,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 341,
+        "width" : 825,
+        "height" : 342,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 683,
+        "width" : 825,
+        "height" : 341,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 18,
+    "categoryName" : "Ig Story",
+    "content" : [ {
+      "itemId" : 18,
+      "bannerUrl" : "2025_photo_collage/images/ig-story/ig_5/background.webp",
+      "previewUrl" : "2025_photo_collage/images/ig-story/ig_5/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ ],
+      "placeholder" : [ {
+        "x" : 412.5,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 412.5,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 322,
+        "y" : 292,
+        "width" : 270,
+        "height" : 292,
+        "rotate" : -7
+      }, {
+        "x" : 201,
+        "y" : 368,
+        "width" : 270,
+        "height" : 292,
+        "rotate" : 8
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 19,
+    "categoryName" : "Ig Story",
+    "content" : [ {
+      "itemId" : 19,
+      "bannerUrl" : "",
+      "previewUrl" : "2025_photo_collage/images/ig-story/ig_6/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_6/layer/layer-5.webp",
+        "x" : 303,
+        "y" : 402,
+        "width" : 220,
+        "height" : 220,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 412.5,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 412.5,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 20,
+    "categoryName" : "Ig Story",
+    "content" : [ {
+      "itemId" : 20,
+      "bannerUrl" : "",
+      "previewUrl" : "2025_photo_collage/images/ig-story/ig_7/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_7/layer/layer-5.webp",
+        "x" : 303,
+        "y" : 402,
+        "width" : 200,
+        "height" : 200,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 412.5,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 412.5,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 21,
+    "categoryName" : "Ig Story",
+    "content" : [ {
+      "itemId" : 21,
+      "bannerUrl" : "",
+      "previewUrl" : "2025_photo_collage/images/ig-story/ig_8/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_8/layer/layer-5.webp",
+        "x" : 303,
+        "y" : 402,
+        "width" : 200,
+        "height" : 200,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 412.5,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 412.5,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 22,
+    "categoryName" : "Ig Story",
+    "content" : [ {
+      "itemId" : 22,
+      "bannerUrl" : "",
+      "previewUrl" : "2025_photo_collage/images/ig-story/ig_9/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_9/layer/layer-5.webp",
+        "x" : 303,
+        "y" : 402,
+        "width" : 200,
+        "height" : 200,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 412.5,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 412.5,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  }, {
+    "categoryId" : 23,
+    "categoryName" : "Ig Story",
+    "content" : [ {
+      "itemId" : 23,
+      "bannerUrl" : "",
+      "previewUrl" : "2025_photo_collage/images/ig-story/ig_10/thumb.webp",
+      "width" : 825,
+      "height" : 1024,
+      "layer" : [ {
+        "urlThumb" : "2025_photo_collage/images/ig-story/ig_10/layer/layer-5.webp",
+        "x" : 303,
+        "y" : 402,
+        "width" : 200,
+        "height" : 200,
+        "rotate" : null
+      } ],
+      "placeholder" : [ {
+        "x" : 412.5,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 412.5,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 0,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      }, {
+        "x" : 0,
+        "y" : 512,
+        "width" : 412.5,
+        "height" : 512,
+        "rotate" : null
+      } ],
+      "isPro" : false,
+      "isReward" : true,
+      "isFree" : false,
+      "isUsed" : true
+    } ]
+  } ]
 }

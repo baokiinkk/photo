@@ -177,12 +177,10 @@ fun FrameSheet(
                     val frames = selectedCategory?.content
                     if (frames?.isNotEmpty() == true) {
                         LazyVerticalGrid(
-                            columns = GridCells.Fixed(3),
+                            columns = GridCells.Fixed(4),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(160.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(frames) { frame ->
                                 FrameItemCard(
@@ -220,7 +218,7 @@ fun FrameSheet(
             }
 
             Text(
-                text = stringResource(R.string.color),
+                text = stringResource(R.string.frame_tool),
                 style = AppStyle.title2().semibold().gray900()
             )
 

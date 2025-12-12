@@ -43,9 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
@@ -55,7 +53,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.avnsoft.photoeditor.photocollage.R
@@ -64,6 +61,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.ImagePickerViewModel
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.BucketSheet
 import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.components.PickerHeaderBar
+import com.avnsoft.photoeditor.photocollage.ui.activities.imagepicker.createImageUri
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.editor.EditorStoreActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.store.editor.ToolTemplateInput
 import com.avnsoft.photoeditor.photocollage.ui.theme.AppColor
@@ -71,28 +69,25 @@ import com.avnsoft.photoeditor.photocollage.ui.theme.AppStyle
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundGray
 import com.avnsoft.photoeditor.photocollage.ui.theme.BackgroundWhite
 import com.avnsoft.photoeditor.photocollage.ui.theme.MainTheme
-import com.avnsoft.photoeditor.photocollage.utils.FileUtil.toFile
 import com.avnsoft.photoeditor.photocollage.utils.getInput
 import com.basesource.base.ui.base.BaseActivity
 import com.basesource.base.ui.base.IScreenData
 import com.basesource.base.ui.image.LoadImage
 import com.basesource.base.utils.ImageWidget
-import com.basesource.base.utils.capturable
 import com.basesource.base.utils.clickableWithAlphaEffect
 import com.basesource.base.utils.launchActivity
-import com.basesource.base.utils.rememberCaptureController
 import com.basesource.base.utils.requestPermission
+import com.basesource.base.utils.takePicture
 import com.basesource.base.utils.toJson
-import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
 import kotlin.math.roundToInt
 import androidx.lifecycle.viewmodel.compose.viewModel as composeViewModel
 
 data class TemplateDetailInput(
     val template: TemplateModel?,
     val type: ToolInput.TYPE = ToolInput.TYPE.NEW,
+    val selectedImages: Map<Int, String> = emptyMap()
 ) : IScreenData
 
 class TemplateDetailActivity : BaseActivity() {
@@ -105,7 +100,7 @@ class TemplateDetailActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.initData(screenInput?.template)
+        viewModel.initData(screenInput)
         if (hasPermission()) {
             showContent()
         } else {
@@ -263,13 +258,6 @@ fun TemplateDetailContent(
                 .clipToBounds(),
         ) {
 
-            // Banner background - Layer 0
-            template.bannerUrl?.let { bannerUrl ->
-                LoadImage(
-                    model = bannerUrl, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds
-                )
-            }
-
             // Contents (cells) overlay - Layer 1
             template.cells?.forEachIndexed { index, cell ->
                 val isSelected = selectedCellIndex == index
@@ -297,6 +285,13 @@ fun TemplateDetailContent(
                         )
                     }
                 }
+            }
+
+            // Banner background - Layer 0
+            template.bannerUrl?.let { bannerUrl ->
+                LoadImage(
+                    model = bannerUrl, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds
+                )
             }
 
             template.layer?.forEachIndexed { index, layerItem ->
@@ -379,13 +374,7 @@ fun Modifier.baseBannerItemModifier(
         .graphicsLayer {
             val rotate = rotation * (-1)
             rotationZ = rotate
-            transformOrigin = if (rotate < 0f) {
-                TransformOrigin(1f, 0f)
-            } else if (rotate > 0f) {
-                TransformOrigin(0f, 1f)
-            } else {
-                TransformOrigin.Center
-            }
+            transformOrigin = TransformOrigin.Center
         }
 }
 
@@ -451,7 +440,13 @@ fun CustomImagePickerScreen(
                         activity, android.Manifest.permission.CAMERA
                     ) == PackageManager.PERMISSION_GRANTED
                     val launchCamera: () -> Unit = {
-                        // Camera logic here - similar to ImagePickerScreen
+                        createImageUri(context)?.let { output ->
+                            activity.takePicture(output) { success ->
+                                if (success) {
+                                    onImageClick(output)
+                                }
+                            }
+                        }
                     }
                     if (hasCamera) {
                         launchCamera()

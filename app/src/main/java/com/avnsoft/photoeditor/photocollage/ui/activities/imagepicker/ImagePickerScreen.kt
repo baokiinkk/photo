@@ -138,7 +138,7 @@ fun ImagePickerScreen(
     }
 }
 
-private fun createImageUri(context: Context): Uri? {
+fun createImageUri(context: Context): Uri? {
     val resolver = context.contentResolver
     val fileName = "IMG_${System.currentTimeMillis()}.jpg"
     val values = ContentValues().apply {

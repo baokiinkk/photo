@@ -195,6 +195,8 @@ geo
     <string name="no_internet">No Internet!</string>
     <string name="no_internet_message">Please check your Wi-Fi or mobile data connection and try again.</string>
     <string name="go_to_settings">Setting</string>
+    <string name="rate_your">Help us improve by leaving a quick rating. \nEvery star makes a difference.</string>
+    <string name="do_you_like">Enjoying</string>
     <string name="please_select_one_image">Please select one image</string>
     <string name="neon">Neon</string>
 </resources>

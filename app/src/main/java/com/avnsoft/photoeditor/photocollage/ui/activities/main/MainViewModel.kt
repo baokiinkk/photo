@@ -108,7 +108,7 @@ class MainViewModel(
                 _templates.value = item.firstOrNull()?.templates.orEmpty()
             }
         } catch (ex: Exception) {
-
+            Log.d("quocbao", ex.toString())
         }
     }
 
