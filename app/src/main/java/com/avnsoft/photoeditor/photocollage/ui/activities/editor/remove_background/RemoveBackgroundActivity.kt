@@ -153,11 +153,11 @@ fun LoadingAnimation(
             ) {
                 LoadAnimation(
                     modifier = Modifier
-                        .size(60.dp),
+                        .size(120.dp),
                     isShowDialog = true,
                     json = R.raw.anim_ai_loading
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+//                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = content,
                     style = AppStyle.title2().semibold().white()
