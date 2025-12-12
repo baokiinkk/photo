@@ -259,9 +259,9 @@ class EditorStoreViewModel(
         pathBitmap: String?,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val uri = pathBitmap.toBitmap()?.toFile(context)?.toUri()?: return@launch
+            val uri = pathBitmap.toBitmap()?.toFile(context)?.toUri() ?: return@launch
             val index = uiState.value.selectedImageIndex
-            if(index == null) return@launch
+            if (index == null) return@launch
             val map = uiState.value.selectedImages.toMutableMap()
             map[index] = uri
             uiState.update {
@@ -360,6 +360,10 @@ class EditorStoreViewModel(
 
             StackData.NONE -> {}
         }
+    }
+
+    fun hasSelectedImage(): Boolean {
+        return uiState.value.selectedImageIndex != null
     }
 
     fun onToolClick(tool: CollageTool) {
@@ -507,7 +511,7 @@ data class EditorStoreUIState(
     val isVisibleTextField: Boolean = false,
     val editTextProperties: AddTextProperties = AddTextProperties.getAddTextProperties(),
     val unselectAllImagesTrigger: Int = 0,
-    val selectedImageIndex: Int? = 0
+    val selectedImageIndex: Int? = null
 )
 
 suspend fun copyImageToAppStorage(context: Context, sourceUri: Uri?): String? {

@@ -190,7 +190,7 @@ internal class CropStateManager(
     }
 
     private fun dragHandles(activeHandle: DragHandle, dragAmount: Offset) {
-        if (!isMoveEnabled) return
+        if (!isMoveEnabled && cropShape !is CropShape.FreeForm) return
         val adjustedDragAmount = if (cropShape is CropShape.FreeForm) {
             dragAmount
         } else {

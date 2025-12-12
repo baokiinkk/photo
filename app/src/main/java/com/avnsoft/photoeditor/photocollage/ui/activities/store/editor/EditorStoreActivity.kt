@@ -44,6 +44,7 @@ import com.avnsoft.photoeditor.photocollage.ui.activities.editor.crop.ToolInput.
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.filter.FilterActivity
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.initEditorLib
 import androidx.core.net.toUri
+import com.avnsoft.photoeditor.photocollage.R
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.DrawableSticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.Sticker
 import com.avnsoft.photoeditor.photocollage.ui.activities.editor.sticker.lib.StickerView
@@ -191,7 +192,11 @@ class EditorStoreActivity : BaseActivity() {
                         viewmodel.showDiscardDialog()
                     },
                     onToolClick = {
-                        viewmodel.onToolClick(it)
+                        if (viewmodel.hasSelectedImage()){
+                            viewmodel.onToolClick(it)
+                        } else {
+                            Toast.makeText(this@EditorStoreActivity, getString(R.string.please_select_one_image), Toast.LENGTH_SHORT).show()
+                        }
                     },
                     onDownloadSuccess = {
                         launchActivity(
@@ -286,6 +291,8 @@ class EditorStoreActivity : BaseActivity() {
 
             public override fun onTouchDownForBeauty(param1Float1: Float, param1Float2: Float) {
             }
+
+
 
             public override fun onTouchDragForBeauty(param1Float1: Float, param1Float2: Float) {
             }
