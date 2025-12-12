@@ -199,4 +199,5 @@ geo
     <string name="do_you_like">Enjoying</string>
     <string name="please_select_one_image">Please select one image</string>
     <string name="neon">Neon</string>
+    <string name="swab">Select a photo to swap</string>
 </resources>
